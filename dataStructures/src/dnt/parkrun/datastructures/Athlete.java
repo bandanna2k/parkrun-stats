@@ -13,9 +13,18 @@ public class Athlete
 
     private Athlete(String name, URL url, long athleteId)
     {
-        this.name = name;
-        this.url = url;
-        this.athleteId = athleteId;
+        if(athleteId == NO_ATHLETE_ID)
+        {
+            this.url = url;
+            this.name = null;
+            this.athleteId = NO_ATHLETE_ID;
+        }
+        else
+        {
+            this.url = url;
+            this.name = name;
+            this.athleteId = athleteId;
+        }
     }
 
     @Override

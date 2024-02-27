@@ -56,8 +56,13 @@ public class Parser
                         .childNode(0) // div 2 (male)
                         .childNode(0) // a
                         .attr("href");
-                String firstMaleName = "1st man";
-                Athlete maleFirstFinisher = Athlete.fromSummaryLink(firstMaleName, firstMaleLink);
+                Node firstMaleName = row
+                        .childNode(1) // td
+                        .childNode(1) // div details
+                        .childNode(0) // div 2 (male)
+                        .childNode(0) // a
+                        .childNode(0); // a value;
+                Athlete maleFirstFinisher = Athlete.fromSummaryLink(firstMaleName.toString(), firstMaleLink);
 //                System.out.print(maleFirstFinisher);
 //                System.out.print("\t");
 
@@ -67,8 +72,13 @@ public class Parser
                         .childNode(1) // div 2 (female)
                         .childNode(0) // a
                         .attr("href");
-                String firstFemaleName = "1st woman";
-                Athlete femaleFirstFinisher = Athlete.fromSummaryLink(firstFemaleName, firstFemaleLink);
+                Node firstFemaleName = row
+                        .childNode(1) // td
+                        .childNode(1) // div details
+                        .childNode(1) // div 2 (female)
+                        .childNode(0) // a
+                        .childNode(0); // a value;
+                Athlete femaleFirstFinisher = Athlete.fromSummaryLink(firstFemaleName.toString(), firstFemaleLink);
 //                System.out.print(femaleFirstFinisher);
 //                System.out.print("\t");
 
