@@ -1,6 +1,7 @@
 package dnt.parkrun.courseeventsummary;
 
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,13 +17,15 @@ import java.util.function.Consumer;
 
 public class Parser
 {
-    private Document doc;
-    private Consumer<CourseEventSummary> historyRecordConsumer;
+    private final Document doc;
+    private final Course course;
+    private final Consumer<CourseEventSummary> consumer;
 
-    private Parser(Document doc, Consumer<CourseEventSummary> historyRecordConsumer)
+    private Parser(Document doc, Course course, Consumer<CourseEventSummary> consumer)
     {
         this.doc = doc;
-        this.historyRecordConsumer = historyRecordConsumer;
+        this.course = course;
+        this.consumer = consumer;
     }
 
     public void parse()
@@ -47,30 +50,36 @@ public class Parser
 //                System.out.print(date);
 //                System.out.print("\t");
 
-                String maleFirstLink = row
+                String firstMaleLink = row
                         .childNode(1) // td
                         .childNode(1) // div details
                         .childNode(0) // div 2 (male)
                         .childNode(0) // a
                         .attr("href");
-                Athlete maleFirstFinisher = Athlete.fromSummaryLink(maleFirstLink);
+                String firstMaleName = "1st man";
+                Athlete maleFirstFinisher = Athlete.fromSummaryLink(firstMaleName, firstMaleLink);
 //                System.out.print(maleFirstFinisher);
 //                System.out.print("\t");
 
-                String femaleFirstLink = row
+                String firstFemaleLink = row
                         .childNode(1) // td
                         .childNode(1) // div details
                         .childNode(1) // div 2 (female)
                         .childNode(0) // a
                         .attr("href");
-                Athlete femaleFirstFinisher = Athlete.fromSummaryLink(femaleFirstLink);
+                String firstFemaleName = "1st woman";
+                Athlete femaleFirstFinisher = Athlete.fromSummaryLink(firstFemaleName, firstFemaleLink);
 //                System.out.print(femaleFirstFinisher);
 //                System.out.print("\t");
 
 //                System.out.println();
 
-                CourseEventSummary eventSummary = new CourseEventSummary(Integer.parseInt(eventNumber.toString()), maleFirstFinisher, femaleFirstFinisher);
-                historyRecordConsumer.accept(eventSummary);
+                CourseEventSummary eventSummary = new CourseEventSummary(
+                        course,
+                        Integer.parseInt(eventNumber.toString()),
+                        maleFirstFinisher,
+                        femaleFirstFinisher);
+                consumer.accept(eventSummary);
             }
         }
     }
@@ -78,11 +87,12 @@ public class Parser
     public static class Builder
     {
         private Document doc;
-        private Consumer<CourseEventSummary> eventHistoryRecordConsumer = ehr -> {};
+        private Consumer<CourseEventSummary> consumer = ehr -> {};
+        private Course course;
 
         public Parser build() throws IOException
         {
-            return new Parser(doc, eventHistoryRecordConsumer);
+            return new Parser(doc, course, consumer);
         }
 
         public Builder url(URL url) throws IOException
@@ -99,7 +109,13 @@ public class Parser
 
         public Builder forEachCourseEvent(Consumer<CourseEventSummary> eventHistoryRecordConsumer)
         {
-            this.eventHistoryRecordConsumer = eventHistoryRecordConsumer;
+            this.consumer = eventHistoryRecordConsumer;
+            return this;
+        }
+
+        public Builder course(Course course)
+        {
+            this.course = course;
             return this;
         }
     }

@@ -13,6 +13,7 @@ public class ParserTest
     {
         URL resource = this.getClass().getResource("/example.event.with.unknowns.html");
         Parser parser = new Parser.Builder()
+                .courseName("example")
                 .forEachResult(System.out::println)
                 .file(new File(resource.getFile()))
                 .build();
@@ -24,6 +25,7 @@ public class ParserTest
     {
         URL resource = this.getClass().getResource("/example.event.with.hour.plus.times.html");
         Parser parser = new Parser.Builder()
+                .courseName("example")
                 .forEachResult(System.out::println)
                 .file(new File(resource.getFile()))
                 .build();

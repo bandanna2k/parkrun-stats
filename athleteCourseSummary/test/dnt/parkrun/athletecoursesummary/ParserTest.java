@@ -16,7 +16,7 @@ public class ParserTest
         AtomicInteger counter = new AtomicInteger(0);
 
         URL resource = this.getClass().getResource("/example.athlete.course.summary.html");
-        new Parser.Builder()
+        new dnt.parkrun.athletecoursesummary.Parser.Builder()
                 .file(new File(resource.getFile()))
                 .forEachAthleteCourseSummary(x ->
                 {

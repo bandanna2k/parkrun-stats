@@ -9,12 +9,12 @@ public class AthleteCourseSummary
     public final URL athleteAtEventUrl;
     public final Athlete athlete;
 
-    public AthleteCourseSummary(String course, int countOfRuns, URL athleteAtEventUrl)
+    public AthleteCourseSummary(String name, String course, int countOfRuns, URL athleteAtEventUrl)
     {
         this.course = course;
         this.countOfRuns = countOfRuns;
         this.athleteAtEventUrl = athleteAtEventUrl;
-        this.athlete = Athlete.fromEventLink(athleteAtEventUrl.toString());
+        this.athlete = Athlete.fromEventLink(name, athleteAtEventUrl.toString());
     }
 
     @Override

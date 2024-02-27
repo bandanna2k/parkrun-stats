@@ -28,6 +28,9 @@ public class Parser
 
     public void parse() throws MalformedURLException
     {
+        Elements nameElements = doc.getElementsByTag("h2");
+        String name = extractName(nameElements);
+
         Elements summaries = doc.getElementById("event-summary").parents();
         Elements tableElements = summaries.select("table");
 
@@ -54,9 +57,17 @@ public class Parser
                         .childNode(0)   // a;
                         .attr("href");
 
-                consumer.accept(new AthleteCourseSummary(eventNode.toString(), Integer.parseInt(countNode.toString()), new URL(athleteAtEvent)));
+                consumer.accept(new AthleteCourseSummary(name, eventNode.toString(), Integer.parseInt(countNode.toString()), new URL(athleteAtEvent)));
             }
         }
+    }
+
+    private static String extractName(Elements nameElements)
+    {
+        String nameWithId = nameElements.eachText().get(0);
+        int indexOf = nameWithId.indexOf("(");
+        String nameUntrimmed = nameWithId.substring(0, indexOf);
+        return nameUntrimmed.trim();
     }
 
 

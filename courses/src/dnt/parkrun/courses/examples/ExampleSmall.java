@@ -13,7 +13,7 @@ public class ExampleSmall
         Supplier<InputStream> supplier = () -> EventsJsonFileReader.class.getResourceAsStream("/events.small.json");
         EventsJsonFileReader reader = new EventsJsonFileReader.Builder(supplier)
                 .forEachCountry(country -> System.out.println("Country:" + country))
-                .forEachEvent(event -> System.out.println("Event:" + event))
+                .forEachCourse(event -> System.out.println("Event:" + event))
                 .build();
         reader.read();
     }

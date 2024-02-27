@@ -7,11 +7,13 @@ public class Athlete
 {
     public static final long NO_ATHLETE_ID = Long.MIN_VALUE;
 
-    public final URL url;
+    private final String name;
     public final long athleteId;
+    public final URL url;
 
-    private Athlete(URL url, long athleteId)
+    private Athlete(String name, URL url, long athleteId)
     {
+        this.name = name;
         this.url = url;
         this.athleteId = athleteId;
     }
@@ -19,12 +21,14 @@ public class Athlete
     @Override
     public String toString()
     {
-        return "AthleteId{" +
-                "athleteId=" + athleteId +
+        return "Athlete{" +
+                "name='" + name + '\'' +
+                ", athleteId=" + athleteId +
+                ", url=" + url +
                 '}';
     }
 
-    public static Athlete fromSummaryLink(String link)
+    public static Athlete fromSummaryLink(String name, String link)
     {
         URL url = null;
         try
@@ -35,10 +39,10 @@ public class Athlete
         {
             // Do nothing at present
         }
-        return new Athlete(url, extractIdFromSummaryLink(link));
+        return new Athlete(name, url, extractIdFromSummaryLink(link));
     }
 
-    public static Athlete fromEventLink(String link)
+    public static Athlete fromEventLink(String name, String link)
     {
         URL url = null;
         try
@@ -49,7 +53,7 @@ public class Athlete
         {
             // Do nothing at present
         }
-        return new Athlete(url, extractIdFromEventLink(link));
+        return new Athlete(name, url, extractIdFromEventLink(link));
     }
 
     static long extractIdFromSummaryLink(String href)

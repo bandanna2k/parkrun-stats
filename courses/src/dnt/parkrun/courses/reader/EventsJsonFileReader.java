@@ -3,8 +3,8 @@ package dnt.parkrun.courses.reader;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.courses.Country;
+import dnt.parkrun.datastructures.Course;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +47,7 @@ public class EventsJsonFileReader
         }
     }
 
-    public void parseRoot(JsonParser jsonParser) throws IOException
+    private void parseRoot(JsonParser jsonParser) throws IOException
     {
         while (jsonParser.nextToken() != JsonToken.END_OBJECT)
         {
@@ -218,7 +218,7 @@ public class EventsJsonFileReader
             return this;
         }
 
-        public Builder forEachEvent(Consumer<Course> eventConsumer)
+        public Builder forEachCourse(Consumer<Course> eventConsumer)
         {
             this.eventConsumer = eventConsumer;
             return this;

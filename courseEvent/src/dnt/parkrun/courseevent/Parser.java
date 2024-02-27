@@ -18,11 +18,13 @@ import java.util.function.Consumer;
 public class Parser
 {
     private final Document doc;
+    private final String courseName;
     private final Consumer<Result> consumer;
 
-    public Parser(Document doc, Consumer<Result> consumer)
+    public Parser(Document doc, String courseName, Consumer<Result> consumer)
     {
         this.doc = doc;
+        this.courseName = courseName;
         this.consumer = consumer;
     }
 
@@ -43,11 +45,12 @@ public class Parser
                 Node positionNode = row.childNode(0).childNode(0);
                 int position = Integer.parseInt(String.valueOf(positionNode));
 
+                String name = row.attr("data-name");
                 Node athleteAtEventLink = row
                         .childNode(1)   // td
                         .childNode(0)  // a
                         .childNode(0);  // div
-                Athlete athlete = Athlete.fromEventLink(athleteAtEventLink.attr("href"));
+                Athlete athlete = Athlete.fromEventLink(name, athleteAtEventLink.attr("href"));
 
                 Node timeDiv = row
                         .childNode(5)   // td
@@ -59,11 +62,11 @@ public class Parser
                             .childNode(0)   // div compact
                             .childNode(0);  // value
                     Time time = Time.fromString(timeNode.toString());
-                    consumer.accept(new Result(position, athlete, time));
+                    consumer.accept(new Result(courseName, position, athlete, time));
                 }
                 else
                 {
-                    consumer.accept(new Result(position, athlete, Time.NO_TIME));
+                    consumer.accept(new Result(courseName, position, athlete, Time.NO_TIME));
                 }
             }
         }
@@ -73,10 +76,11 @@ public class Parser
     {
         private Document doc;
         private Consumer<Result> resultConsumer = r -> {};
+        private String courseName;
 
         public Parser build() throws IOException
         {
-            return new Parser(doc, resultConsumer);
+            return new Parser(doc, courseName, resultConsumer);
         }
 
         public Builder url(URL url) throws IOException
@@ -94,6 +98,12 @@ public class Parser
         public Builder forEachResult(Consumer<Result> resultConsumer)
         {
             this.resultConsumer = resultConsumer;
+            return this;
+        }
+
+        public Builder courseName(String name)
+        {
+            this.courseName = name;
             return this;
         }
     }

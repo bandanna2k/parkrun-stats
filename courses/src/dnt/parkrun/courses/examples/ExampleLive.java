@@ -25,7 +25,7 @@ public class ExampleLive
             }
         })
                 .forEachCountry(country -> System.out.println("Country:" + country))
-                .forEachEvent(event ->
+                .forEachCourse(event ->
                 {
                     System.out.println("Event:" + event);
                     counter.incrementAndGet();

@@ -2,9 +2,8 @@ package dnt.parkrun.tests;
 
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.courses.Country;
-import dnt.parkrun.datastructures.AthleteCourseSummary;
-import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
+import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.Result;
 import org.junit.Test;
@@ -28,7 +27,7 @@ public class WalkerTest
         Supplier<InputStream> supplier = () -> EventsJsonFileReader.class.getResourceAsStream("/events.json");
         EventsJsonFileReader reader = new EventsJsonFileReader.Builder(supplier)
                 .forEachCountry(c -> countries.put(c.countryCode, c))
-                .forEachEvent(courses::add)
+                .forEachCourse(courses::add)
                 .build();
         reader.read();
 
@@ -45,6 +44,7 @@ public class WalkerTest
         Country country = countries.get(course.countryCode);
         URL courseEventSummaryUrl = new URL("https://" + country.url + "/" + course.name + "/results/eventhistory/");
         Parser courseEventSummaryParser = new Parser.Builder()
+                .course(course)
                 .url(courseEventSummaryUrl)
                 .forEachCourseEvent(events::add)
                 .build();

@@ -23,7 +23,7 @@ public class EventsJsonFileReaderTest
 
     private EventsJsonFileReader reader = new EventsJsonFileReader.Builder(inputStreamSupplier)
             .forEachCountry(country -> countryList.add(country))
-            .forEachEvent(course -> eventList.add(course))
+            .forEachCourse(course -> eventList.add(course))
             .build();
 
     @Before
