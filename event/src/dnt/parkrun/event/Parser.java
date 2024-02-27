@@ -1,6 +1,7 @@
 package dnt.parkrun.event;
 
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.datastructures.Time;
 import org.jsoup.Jsoup;
@@ -17,26 +18,16 @@ import java.util.function.Consumer;
 
 public class Parser
 {
+    private final Document doc;
     private final Consumer<Result> consumer;
 
-    public Parser(Consumer<Result> consumer)
+    public Parser(Document doc, Consumer<Result> consumer)
     {
+        this.doc = doc;
         this.consumer = consumer;
     }
 
-    public void parse(File file) throws IOException
-    {
-        Document doc = Jsoup.parse(file);
-        parse(doc);
-    }
-
-    public void parse(URL url) throws IOException
-    {
-        Document doc = Jsoup.parse(url, 5000);
-        parse(doc);
-    }
-
-    private void parse(Document doc)
+    public void parse()
     {
         Elements tableElements = doc.getElementsByClass("Results-table");
 
@@ -76,6 +67,35 @@ public class Parser
                     consumer.accept(new Result(position, athlete, Time.NO_TIME));
                 }
             }
+        }
+    }
+
+    public static class Builder
+    {
+        private Document doc;
+        private Consumer<Result> resultConsumer = r -> {};
+
+        public Parser build() throws IOException
+        {
+            return new Parser(doc, resultConsumer);
+        }
+
+        public Builder url(URL url) throws IOException
+        {
+            this.doc = Jsoup.parse(url, 5000);
+            return this;
+        }
+
+        public Builder file(File file) throws IOException
+        {
+            this.doc = Jsoup.parse(file);
+            return this;
+        }
+
+        public Builder forEachResult(Consumer<Result> resultConsumer)
+        {
+            this.resultConsumer = resultConsumer;
+            return this;
         }
     }
 }

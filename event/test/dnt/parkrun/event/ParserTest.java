@@ -12,15 +12,21 @@ public class ParserTest
     public void shouldParseWithUnknowns() throws IOException
     {
         URL resource = this.getClass().getResource("/example.event.with.unknowns.html");
-        File file = new File(resource.getFile());
-        new Parser(System.out::println).parse(file);
+        Parser parser = new Parser.Builder()
+                .forEachResult(System.out::println)
+                .file(new File(resource.getFile()))
+                .build();
+        parser.parse();
     }
 
     @Test
     public void shouldParseWithHourPlusRunners() throws IOException
     {
         URL resource = this.getClass().getResource("/example.event.with.hour.plus.times.html");
-        File file = new File(resource.getFile());
-        new Parser(System.out::println).parse(file);
+        Parser parser = new Parser.Builder()
+                .forEachResult(System.out::println)
+                .file(new File(resource.getFile()))
+                .build();
+        parser.parse();
     }
 }
