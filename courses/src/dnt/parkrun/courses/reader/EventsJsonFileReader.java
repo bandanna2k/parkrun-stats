@@ -1,0 +1,227 @@
+package dnt.parkrun.courses.reader;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import dnt.parkrun.datastructures.Course;
+import dnt.parkrun.courses.Country;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+public class EventsJsonFileReader
+{
+    private final JsonFactory jsonFactory = new JsonFactory();
+    private final Supplier<InputStream> inputStreamSupplier;
+    private final Consumer<Country> countryConsumer;
+    private final Consumer<Course> eventConsumer;
+
+    private EventsJsonFileReader(
+            Supplier<InputStream> inputStreamSupplier,
+            Consumer<Country> countryConsumer,
+            Consumer<Course> eventConsumer)
+    {
+        this.inputStreamSupplier = inputStreamSupplier;
+        this.countryConsumer = countryConsumer;
+        this.eventConsumer = eventConsumer;
+    }
+
+    public void read() throws IOException
+    {
+        JsonParser jsonParser = null;
+        try
+        {
+            jsonParser = jsonFactory.createParser(inputStreamSupplier.get());
+
+            jsonParser.nextToken();
+            parseRoot(jsonParser);
+        }
+        finally
+        {
+            if (jsonParser != null)
+            {
+                jsonParser.close();
+            }
+        }
+    }
+
+    public void parseRoot(JsonParser jsonParser) throws IOException
+    {
+        while (jsonParser.nextToken() != JsonToken.END_OBJECT)
+        {
+            String fieldname = jsonParser.getCurrentName();
+            if ("countries".equals(fieldname))
+            {
+                jsonParser.nextToken();
+                parseCountries(jsonParser);
+            }
+
+            if ("events".equals(fieldname))
+            {
+                jsonParser.nextToken();
+                parseEvents(jsonParser);
+            }
+        }
+    }
+
+    private void parseEvents(JsonParser jsonParser) throws IOException
+    {
+        while (jsonParser.nextToken() != JsonToken.END_OBJECT)
+        {
+            String fieldname = jsonParser.getCurrentName();
+            if ("type".equals(fieldname))
+            {
+                jsonParser.nextToken();
+            }
+            if ("features".equals(fieldname))
+            {
+                jsonParser.nextToken();
+                parseEventFeatures(jsonParser);
+            }
+        }
+    }
+
+    private void parseEventFeatures(JsonParser jsonParser) throws IOException
+    {
+        while (jsonParser.nextToken() != JsonToken.END_ARRAY)
+        {
+            parseEventFeature(jsonParser);
+        }
+    }
+
+    private void parseEventFeature(JsonParser jsonParser) throws IOException
+    {
+        while (jsonParser.nextToken() != JsonToken.END_OBJECT)
+        {
+            String fieldname = jsonParser.getCurrentName();
+            if ("geometry".equals(fieldname))
+            {
+                jsonParser.nextToken();
+                ignoreObject(jsonParser);
+            }
+            if ("properties".equals(fieldname))
+            {
+                jsonParser.nextToken();
+                parseEventFeatureProperties(jsonParser);
+            }
+        }
+    }
+
+    private void parseEventFeatureProperties(JsonParser jsonParser) throws IOException
+    {
+        final Course.Builder builder = new Course.Builder();
+        while (jsonParser.nextToken() != JsonToken.END_OBJECT)
+        {
+            String fieldname = jsonParser.getCurrentName();
+            if ("eventname".equals(fieldname))
+            {
+                jsonParser.nextToken();
+                builder.name(jsonParser.getText());
+            }
+            if ("countrycode".equals(fieldname))
+            {
+                jsonParser.nextToken();
+                builder.countryCode(jsonParser.getIntValue());
+                eventConsumer.accept(builder.build());
+            }
+        }
+    }
+
+    private void parseCountries(JsonParser jsonParser) throws IOException
+    {
+        while (jsonParser.nextToken() != JsonToken.END_OBJECT)
+        {
+            String countryId = jsonParser.getCurrentName();
+            if (isNumeric(countryId))
+            {
+                int countryCode = Integer.parseInt(countryId);
+                parseCountryObject(jsonParser, countryCode);
+            }
+        }
+    }
+
+    private void parseCountryObject(JsonParser jsonParser, int countryCode) throws IOException
+    {
+        while (jsonParser.nextToken() != JsonToken.END_OBJECT)
+        {
+            String fieldname = jsonParser.getCurrentName();
+            if ("url".equals(fieldname))
+            {
+                jsonParser.nextToken();
+                String url = jsonParser.getText();
+                countryConsumer.accept(new Country(countryCode, url));
+            }
+
+            if ("bounds".equals(fieldname))
+            {
+
+                ignoreArray(jsonParser);
+            }
+        }
+    }
+
+    private static void ignoreObject(JsonParser jsonParser) throws IOException
+    {
+        while (jsonParser.nextToken() != JsonToken.END_OBJECT)
+        {
+        }
+    }
+
+    private static void ignoreArray(JsonParser jsonParser) throws IOException
+    {
+        while (jsonParser.nextToken() != JsonToken.END_ARRAY)
+        {
+        }
+    }
+
+    public static boolean isNumeric(String strNum)
+    {
+        if (strNum == null)
+        {
+            return false;
+        }
+        try
+        {
+            double d = Double.parseDouble(strNum);
+        }
+        catch (NumberFormatException nfe)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public static class Builder
+    {
+        private final Supplier<InputStream> inputStreamSupplier;
+        private Consumer<Country> countryConsumer = c -> {};
+        private Consumer<Course> eventConsumer = e -> {};
+
+        public Builder(Supplier<InputStream> inputStreamSupplier)
+        {
+            this.inputStreamSupplier = inputStreamSupplier;
+        }
+
+        public EventsJsonFileReader build()
+        {
+            return new EventsJsonFileReader(
+                    inputStreamSupplier,
+                    countryConsumer,
+                    eventConsumer);
+        }
+
+        public Builder forEachCountry(Consumer<Country> countryConsumer)
+        {
+            this.countryConsumer = countryConsumer;
+            return this;
+        }
+
+        public Builder forEachEvent(Consumer<Course> eventConsumer)
+        {
+            this.eventConsumer = eventConsumer;
+            return this;
+        }
+    }
+}
