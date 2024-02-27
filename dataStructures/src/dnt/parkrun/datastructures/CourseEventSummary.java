@@ -2,9 +2,9 @@ package dnt.parkrun.datastructures;
 
 public class CourseEventSummary
 {
-    private final int eventNumber;
-    private final Athlete firstMale;
-    private final Athlete firstFemale;
+    public final int eventNumber;
+    public final Athlete firstMale;
+    public final Athlete firstFemale;
 
     @Override
     public String toString()

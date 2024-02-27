@@ -12,6 +12,7 @@
     <orderEntry type="module" module-name="courses" />
     <orderEntry type="module" module-name="athleteCourseSummary" />
     <orderEntry type="module" module-name="courseEventSummary" />
+    <orderEntry type="module" module-name="courseEvent" />
     <orderEntry type="library" name="assertj.core" level="project" />
     <orderEntry type="library" scope="TEST" name="junit" level="project" />
   </component>
