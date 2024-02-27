@@ -1,4 +1,4 @@
-package dnt.parkrun.event;
+package dnt.parkrun.courseevent;
 
 import org.junit.Test;
 

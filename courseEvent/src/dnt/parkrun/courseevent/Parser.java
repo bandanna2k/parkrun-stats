@@ -1,7 +1,6 @@
-package dnt.parkrun.event;
+package dnt.parkrun.courseevent;
 
 import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.datastructures.Time;
 import org.jsoup.Jsoup;
