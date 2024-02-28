@@ -3,7 +3,6 @@ package dnt.parkrun.datastructures;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Predicate;
 
 public class CourseRepository
 {
@@ -30,13 +29,22 @@ public class CourseRepository
         return courseNameToCourse.get(courseName);
     }
 
-    public void removeIf(Predicate<? super String> predicate)
+    public void filterByCountryCode(int countryCode)
     {
-        courseNameToCourse.keySet().removeIf(predicate);
+        courseNameToCourse.entrySet().removeIf(entry -> entry.getValue().countryCode == countryCode);
     }
 
     public Collection<Course> getCourses()
     {
         return courseNameToCourse.values();
+    }
+
+    @Override
+    public String toString()
+    {
+        return "CourseRepository{" +
+                "countryCodeToCountry=" + countryCodeToCountry +
+                ", courseNameToCourse=" + courseNameToCourse +
+                '}';
     }
 }

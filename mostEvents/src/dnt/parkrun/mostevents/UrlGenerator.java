@@ -2,9 +2,12 @@ package dnt.parkrun.mostevents;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Random;
 
 public class UrlGenerator
 {
+    private final Random random = new Random();
+
     public URL generateCourseEventSummaryUrl(String countryBaseUrl, String courseName)
     {
         try
@@ -22,7 +25,7 @@ public class UrlGenerator
     {
         try
         {
-            Thread.sleep(1000);
+            Thread.sleep(1000 + random.nextInt(5000));
         }
         catch (InterruptedException e)
         {

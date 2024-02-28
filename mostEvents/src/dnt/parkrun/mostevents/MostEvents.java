@@ -2,8 +2,12 @@ package dnt.parkrun.mostevents;
 
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.courseeventsummary.Parser;
+import dnt.parkrun.courses.CountryEnum;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
-import dnt.parkrun.datastructures.*;
+import dnt.parkrun.datastructures.Country;
+import dnt.parkrun.datastructures.Course;
+import dnt.parkrun.datastructures.CourseEventSummary;
+import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.mostevents.dao.AthleteDao;
 import dnt.parkrun.mostevents.dao.CourseEventSummaryDao;
 import dnt.parkrun.mostevents.dao.ResultDao;
@@ -13,12 +17,13 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MostEvents
 {
     private final UrlGenerator urlGenerator;
-    private final Map<Long, Record> athleteIdToMostEventRecord = new HashMap<>();
     private final CourseRepository courseRepository;
 
     private final AthleteDao athleteDao;
@@ -55,8 +60,9 @@ public class MostEvents
     public void collectMostEventRecords() throws IOException
     {
         System.out.println("* Filter courses *");
-        Set<String> coursesToScan = new HashSet<>() {{ add("cornwall"); add("lowerhutt"); }};
-        courseRepository.removeIf(c -> !coursesToScan.contains(c));
+        Arrays.stream(CountryEnum.values())
+                .filter(e -> e != CountryEnum.NZ)
+                .forEach(e -> courseRepository.filterByCountryCode(e.getCountryCode()));
 
         System.out.println("* Get course summaries from DAO *");
         List<CourseEventSummary> courseEventSummariesFromDao = courseEventSummaryDao.getCourseEventSummaries();
@@ -66,9 +72,9 @@ public class MostEvents
         List<CourseEventSummary> courseEventSummariesFromWeb = getCourseEventSummariesFromWeb();
         // TODO Polution System.out.println(courseEventSummariesFromWeb);
 
-        System.out.println("* Filtering by event number temporarily"); // TODO Remove
-        courseEventSummariesFromWeb.removeIf(ces -> ces.eventNumber > 2);
-
+//        System.out.println("* Filtering by event number temporarily"); // TODO Remove
+//        courseEventSummariesFromWeb.removeIf(ces -> ces.eventNumber > 2);
+//
         System.out.println("* Filtering existing course event summaries *");
         courseEventSummariesFromWeb.removeAll(courseEventSummariesFromDao);
         System.out.println(courseEventSummariesFromWeb);
@@ -88,10 +94,6 @@ public class MostEvents
                     .build();
             parser.parse();
         }
-
-        athleteIdToMostEventRecord.forEach((athleteId, record) -> {
-            System.out.println(record);
-        });
     }
 
     private List<CourseEventSummary> getCourseEventSummariesFromWeb() throws IOException
@@ -110,64 +112,5 @@ public class MostEvents
             courseEventSummaryParser.parse();
         }
         return results;
-    }
-
-    private void XprocessResult(Result result)
-    {
-        athleteIdToMostEventRecord.compute(result.athlete.athleteId, (athleteId, record) ->
-        {
-            if(record == null)
-            {
-                record = new Record(result.athlete);
-            }
-            record.incrementTotalEventsCount();
-            record.incrementDifferentEventsCount(result.courseName);
-            return record;
-        });
-    }
-
-    private class Record
-    {
-        private final Athlete athlete;
-        private int totalEventsCount = 0;
-        private Map<String, Integer> courseNameToCount = new HashMap<>();
-
-        private Record(Athlete athlete)
-        {
-            this.athlete = athlete;
-            this.totalEventsCount = totalEventsCount;
-        }
-
-        public int getTotalEventsCount()
-        {
-            return totalEventsCount;
-        }
-
-        public Athlete getAthlete()
-        {
-            return athlete;
-        }
-
-        public Record incrementTotalEventsCount()
-        {
-            totalEventsCount++;
-            return this;
-        }
-
-        public Record incrementDifferentEventsCount(String courseName)
-        {
-            courseNameToCount.compute(courseName, (courseName1, count) -> count == null ? 1 : count + 1);
-            return this;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "Record{" +
-                    "athlete=" + athlete +
-                    ", totalEventsCount=" + totalEventsCount +
-                    ", courseNameToCount=" + courseNameToCount +
-                    '}';
-        }
     }
 }
