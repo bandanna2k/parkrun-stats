@@ -50,35 +50,51 @@ public class Parser
 //                System.out.print(date);
 //                System.out.print("\t");
 
-                String firstMaleLink = row
-                        .childNode(1) // td
-                        .childNode(1) // div details
-                        .childNode(0) // div 2 (male)
-                        .childNode(0) // a
-                        .attr("href");
-                Node firstMaleName = row
-                        .childNode(1) // td
-                        .childNode(1) // div details
-                        .childNode(0) // div 2 (male)
-                        .childNode(0) // a
-                        .childNode(0); // a value;
-                Athlete maleFirstFinisher = Athlete.fromAthleteHistoryAtEventLink(firstMaleName.toString(), firstMaleLink);
+                Athlete maleFirstFinisher = null;
+                try
+                {
+                    String firstMaleLink = row
+                            .childNode(1) // td
+                            .childNode(1) // div details
+                            .childNode(0) // div 2 (male)
+                            .childNode(0) // a
+                            .attr("href");
+                    Node firstMaleName = row
+                            .childNode(1) // td
+                            .childNode(1) // div details
+                            .childNode(0) // div 2 (male)
+                            .childNode(0) // a
+                            .childNode(0); // a value;
+                    maleFirstFinisher = Athlete.fromAthleteHistoryAtEventLink(firstMaleName.toString(), firstMaleLink);
+                }
+                catch (Exception ex)
+                {
+                    System.out.printf("WARN: No first male finisher. Course: %s, Event: %s, ", course, eventNumber);
+                }
 //                System.out.print(maleFirstFinisher);
 //                System.out.print("\t");
 
-                String firstFemaleLink = row
-                        .childNode(1) // td
-                        .childNode(1) // div details
-                        .childNode(1) // div 2 (female)
-                        .childNode(0) // a
-                        .attr("href");
-                Node firstFemaleName = row
-                        .childNode(1) // td
-                        .childNode(1) // div details
-                        .childNode(1) // div 2 (female)
-                        .childNode(0) // a
-                        .childNode(0); // a value;
-                Athlete femaleFirstFinisher = Athlete.fromAthleteHistoryAtEventLink(firstFemaleName.toString(), firstFemaleLink);
+                Athlete femaleFirstFinisher = null;
+                try
+                {
+                    String firstFemaleLink = row
+                            .childNode(1) // td
+                            .childNode(1) // div details
+                            .childNode(1) // div 2 (female)
+                            .childNode(0) // a
+                            .attr("href");
+                    Node firstFemaleName = row
+                            .childNode(1) // td
+                            .childNode(1) // div details
+                            .childNode(1) // div 2 (female)
+                            .childNode(0) // a
+                            .childNode(0); // a value;
+                    femaleFirstFinisher = Athlete.fromAthleteHistoryAtEventLink(firstFemaleName.toString(), firstFemaleLink);
+                }
+                catch(Exception ex)
+                {
+                    System.out.printf("WARN: No first female finisher. Course: %s, Event: %s, ", course, eventNumber);
+                }
 //                System.out.print(femaleFirstFinisher);
 //                System.out.print("\t");
 

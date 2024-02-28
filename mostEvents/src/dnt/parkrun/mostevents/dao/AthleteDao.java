@@ -54,7 +54,7 @@ public class AthleteDao
         }
         catch (DuplicateKeyException ex)
         {
-            System.out.println("WARN: Duplicate key for athlete: " + athlete);
+            // System.out.println("DEBUG: Duplicate key for athlete: " + athlete);
         }
     }
 

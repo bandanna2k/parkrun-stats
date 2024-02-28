@@ -3,6 +3,7 @@ package dnt.parkrun.courseevent;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.datastructures.Time;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -99,7 +100,8 @@ public class Parser
 
         public Builder url(URL url) throws IOException
         {
-            this.doc = Jsoup.parse(url, 5000);
+            Connection connection = Jsoup.connect(url.toString()).followRedirects(false).timeout(5000);
+            this.doc = connection.get();
             return this;
         }
 

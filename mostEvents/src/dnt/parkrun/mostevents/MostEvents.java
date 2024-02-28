@@ -66,7 +66,7 @@ public class MostEvents
 
         System.out.println("* Get course summaries from DAO *");
         List<CourseEventSummary> courseEventSummariesFromDao = courseEventSummaryDao.getCourseEventSummaries();
-        System.out.println(courseEventSummariesFromDao);
+        System.out.println("Count: " + courseEventSummariesFromDao.size());
 
         System.out.println("* Get course summaries from Web *");
         List<CourseEventSummary> courseEventSummariesFromWeb = getCourseEventSummariesFromWeb();
@@ -77,7 +77,7 @@ public class MostEvents
 //
         System.out.println("* Filtering existing course event summaries *");
         courseEventSummariesFromWeb.removeAll(courseEventSummariesFromDao);
-        System.out.println(courseEventSummariesFromWeb);
+        System.out.println("Count: " + courseEventSummariesFromWeb.size());
 
         System.out.println("* Get all course event summaries *");
         for (CourseEventSummary ces : courseEventSummariesFromWeb)
