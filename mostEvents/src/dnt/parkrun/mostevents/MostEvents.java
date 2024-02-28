@@ -92,7 +92,6 @@ public class MostEvents
         for (CourseEventSummary ces : courseEventSummariesToGet)
         {
             System.out.printf("* Processing %s *\n", ces);
-            courseEventSummaryDao.insert(ces);
 
             Country courseCountry = courseRepository.getCountry(ces.course.countryCode);
             dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder()
@@ -102,6 +101,8 @@ public class MostEvents
                     .forEachResult(resultDao::insert)
                     .build();
             parser.parse();
+
+            courseEventSummaryDao.insert(ces);
         }
     }
 
