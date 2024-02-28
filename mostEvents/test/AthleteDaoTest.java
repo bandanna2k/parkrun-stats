@@ -19,7 +19,6 @@ public class AthleteDaoTest
 
     public AthleteDaoTest()
     {
-
     }
 
     @Before
