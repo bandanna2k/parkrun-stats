@@ -6,7 +6,7 @@ CREATE TABLE
 IF NOT EXISTS
 parkrun_stats.athlete (
     athlete_id      BIGINT              NOT NULL        PRIMARY KEY,
-    name            VARCHAR(255)        NOT NULL,
+    name            VARCHAR(255)            NULL,
 
     INDEX athlete_index (athlete_id),
     INDEX name_index    (name)
@@ -16,14 +16,13 @@ parkrun_stats.athlete (
 CREATE TABLE
 IF NOT EXISTS
 parkrun_stats.result (
-    id              BIGINT              NOT NULL    AUTO_INCREMENT      PRIMARY KEY,
-    athlete_id      BIGINT              NOT NULL,
     course_name     VARCHAR(255)        NOT NULL,
     event_number    INT                 NOT NULL,
     position        INT                 NOT NULL,
+    athlete_id      BIGINT              NOT NULL,
     time            VARCHAR(8)          NOT NULL,
 
-    UNIQUE KEY (athlete_id, course_name, event_number)
+    UNIQUE KEY (course_name, event_number, position)
 
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -35,6 +34,6 @@ parkrun_stats.course_event_summary (
     first_male_athlete_id   BIGINT              NOT NULL,
     first_female_athlete_id BIGINT              NOT NULL,
 
-    PRIMARY KEY (course_name, event_number)
+    UNIQUE KEY (course_name, event_number)
 
 ) DEFAULT CHARSET=utf8mb4;

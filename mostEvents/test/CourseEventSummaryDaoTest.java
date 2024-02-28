@@ -1,6 +1,7 @@
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.datastructures.*;
 import dnt.parkrun.mostevents.dao.CourseEventSummaryDao;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
@@ -14,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CourseEventSummaryDaoTest
 {
     private CourseEventSummaryDao dao;
+    private NamedParameterJdbcTemplate jdbc;
 
     @Before
     public void setUp() throws Exception
@@ -26,7 +28,11 @@ public class CourseEventSummaryDaoTest
                 "jdbc:mysql://localhost", "dao", "daoFractaldao");
         dao = new CourseEventSummaryDao(dataSource, courseRepository);
 
-        NamedParameterJdbcTemplate jdbc = new NamedParameterJdbcTemplate(dataSource);
+        jdbc = new NamedParameterJdbcTemplate(dataSource);
+    }
+    @After
+    public void tearDown()
+    {
         jdbc.update("delete from parkrun_stats.course_event_summary", EmptySqlParameterSource.INSTANCE);
     }
 

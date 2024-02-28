@@ -19,17 +19,29 @@ public class Parser
 {
     private final Document doc;
     private final String courseName;
-    private final Consumer<Result> consumer;
+    private final Consumer<Athlete> athleteConsumer;
+    private final Consumer<Result> resultConsumer;
 
-    public Parser(Document doc, String courseName, Consumer<Result> consumer)
+    public Parser(Document doc,
+                  String courseName,
+                  Consumer<Athlete> athleteConsumer,
+                  Consumer<Result> resultConsumer)
     {
         this.doc = doc;
         this.courseName = courseName;
-        this.consumer = consumer;
+        this.athleteConsumer = athleteConsumer;
+        this.resultConsumer = resultConsumer;
     }
 
     public void parse()
     {
+        Elements resultsHeader = doc.getElementsByClass("Results-header");
+        Node eventNumberNode = resultsHeader.get(0)
+                .childNode(1)   // h3
+                .childNode(2)   // span
+                .childNode(0);
+        int eventNumber = Integer.parseInt(eventNumberNode.toString().replace("#", ""));
+
         Elements tableElements = doc.getElementsByClass("Results-table");
 
         Element firstTable = tableElements.get(0);
@@ -51,6 +63,7 @@ public class Parser
                         .childNode(0)  // a
                         .childNode(0);  // div
                 Athlete athlete = Athlete.fromAthleteAtCourseLink(name, athleteAtEventLink.attr("href"));
+                athleteConsumer.accept(athlete);
 
                 Node timeDiv = row
                         .childNode(5)   // td
@@ -62,11 +75,11 @@ public class Parser
                             .childNode(0)   // div compact
                             .childNode(0);  // value
                     Time time = Time.fromString(timeNode.toString());
-                    consumer.accept(new Result(courseName, position, athlete, time));
+                    resultConsumer.accept(new Result(courseName, eventNumber, position, athlete, time));
                 }
                 else
                 {
-                    consumer.accept(new Result(courseName, position, athlete, Time.NO_TIME));
+                    resultConsumer.accept(new Result(courseName, eventNumber, position, athlete, Time.NO_TIME));
                 }
             }
         }
@@ -75,12 +88,13 @@ public class Parser
     public static class Builder
     {
         private Document doc;
+        private Consumer<Athlete> athleteConsumer = r -> {};
         private Consumer<Result> resultConsumer = r -> {};
         private String courseName;
 
         public Parser build() throws IOException
         {
-            return new Parser(doc, courseName, resultConsumer);
+            return new Parser(doc, courseName, athleteConsumer, resultConsumer);
         }
 
         public Builder url(URL url) throws IOException
@@ -95,9 +109,15 @@ public class Parser
             return this;
         }
 
-        public Builder forEachResult(Consumer<Result> resultConsumer)
+        public Builder forEachAthlete(Consumer<Athlete> consumer)
         {
-            this.resultConsumer = resultConsumer;
+            this.athleteConsumer = consumer;
+            return this;
+        }
+
+        public Builder forEachResult(Consumer<Result> consumer)
+        {
+            this.resultConsumer = consumer;
             return this;
         }
 

@@ -1,6 +1,7 @@
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.mostevents.dao.AthleteDao;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
@@ -14,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AthleteDaoTest
 {
     private AthleteDao athleteDao;
+    private NamedParameterJdbcTemplate jdbc;
 
     public AthleteDaoTest()
     {
@@ -27,7 +29,11 @@ public class AthleteDaoTest
                 "jdbc:mysql://localhost", "dao", "daoFractaldao");
         athleteDao = new AthleteDao(dataSource);
 
-        NamedParameterJdbcTemplate jdbc = new NamedParameterJdbcTemplate(dataSource);
+        jdbc = new NamedParameterJdbcTemplate(dataSource);
+    }
+    @After
+    public void tearDown()
+    {
         jdbc.update("delete from parkrun_stats.athlete", EmptySqlParameterSource.INSTANCE);
     }
 

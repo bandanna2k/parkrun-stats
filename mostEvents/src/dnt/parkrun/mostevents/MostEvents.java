@@ -4,7 +4,9 @@ import com.mysql.jdbc.Driver;
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
 import dnt.parkrun.datastructures.*;
+import dnt.parkrun.mostevents.dao.AthleteDao;
 import dnt.parkrun.mostevents.dao.CourseEventSummaryDao;
+import dnt.parkrun.mostevents.dao.ResultDao;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
@@ -18,13 +20,19 @@ public class MostEvents
     private final UrlGenerator urlGenerator;
     private final Map<Long, Record> athleteIdToMostEventRecord = new HashMap<>();
     private final CourseRepository courseRepository;
+
+    private final AthleteDao athleteDao;
     private final CourseEventSummaryDao courseEventSummaryDao;
+    private final ResultDao resultDao;
 
     private MostEvents(CourseRepository courseRepository, DataSource dataSource) throws SQLException
     {
         this.courseRepository = courseRepository;
         this.urlGenerator = new UrlGenerator();
+
+        this.athleteDao = new AthleteDao(dataSource);
         this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
+        this.resultDao = new ResultDao(dataSource);
     }
 
     public static MostEvents newInstance() throws SQLException, IOException
@@ -75,7 +83,8 @@ public class MostEvents
             dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder()
                     .courseName(ces.course.name)
                     .url(urlGenerator.generateCourseEventUrl(courseCountry.url, ces.course.name, ces.eventNumber))
-                    .forEachResult(r -> processResult(r))
+                    .forEachAthlete(athleteDao::insert)
+                    .forEachResult(resultDao::insert)
                     .build();
             parser.parse();
         }
@@ -103,7 +112,7 @@ public class MostEvents
         return results;
     }
 
-    private void processResult(Result result)
+    private void XprocessResult(Result result)
     {
         athleteIdToMostEventRecord.compute(result.athlete.athleteId, (athleteId, record) ->
         {

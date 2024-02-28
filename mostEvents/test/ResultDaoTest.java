@@ -4,6 +4,7 @@ import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.datastructures.Time;
 import dnt.parkrun.mostevents.dao.AthleteDao;
 import dnt.parkrun.mostevents.dao.ResultDao;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
@@ -19,6 +20,7 @@ public class ResultDaoTest
 {
     private ResultDao resultDao;
     private AthleteDao athleteDao;
+    private NamedParameterJdbcTemplate jdbc;
 
     @Before
     public void setUp() throws Exception
@@ -28,7 +30,11 @@ public class ResultDaoTest
         resultDao = new ResultDao(dataSource);
         athleteDao = new AthleteDao(dataSource);
 
-        NamedParameterJdbcTemplate jdbc = new NamedParameterJdbcTemplate(dataSource);
+        jdbc = new NamedParameterJdbcTemplate(dataSource);
+    }
+    @After
+    public void tearDown()
+    {
         jdbc.update("delete from parkrun_stats.result", EmptySqlParameterSource.INSTANCE);
         jdbc.update("delete from parkrun_stats.athlete", EmptySqlParameterSource.INSTANCE);
     }
@@ -39,7 +45,7 @@ public class ResultDaoTest
         Athlete athlete = Athlete.fromAthleteSummaryLink("Davey JONES", "https://www.parkrun.co.nz/parkrunner/902393/");
         athleteDao.insert(athlete);
 
-        Result result = new Result("test", 1, athlete, Time.fromString("1:30:02"));
+        Result result = new Result("test", 200, 1, athlete, Time.fromString("1:30:02"));
         resultDao.insert(result);
 
         List<Result> results = resultDao.getResults();

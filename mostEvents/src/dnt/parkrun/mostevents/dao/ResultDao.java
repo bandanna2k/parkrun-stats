@@ -9,14 +9,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.List;
 
 public class ResultDao
 {
     private final NamedParameterJdbcOperations jdbc;
 
-    public ResultDao(DataSource dataSource) throws SQLException
+    public ResultDao(DataSource dataSource)
     {
         jdbc = new NamedParameterJdbcTemplate(dataSource);
     }
@@ -28,6 +27,7 @@ public class ResultDao
         {
             return new Result(
                     rs.getString("course_name"),
+                    rs.getInt("event_number"),
                     rs.getInt("position"),
                     Athlete.fromDao(
                             rs.getString("name"),
@@ -49,7 +49,7 @@ public class ResultDao
         jdbc.update(sql, new MapSqlParameterSource()
                 .addValue("athleteId", result.athlete.athleteId)
                 .addValue("courseName", result.courseName)
-                .addValue("eventNumber", -1)
+                .addValue("eventNumber", result.eventNumber)
                 .addValue("position", result.position)
                 .addValue("time", result.time.toString())
         );
