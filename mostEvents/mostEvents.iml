@@ -12,5 +12,9 @@
     <orderEntry type="module" module-name="dataStructures" />
     <orderEntry type="module" module-name="courses" />
     <orderEntry type="module" module-name="courseEvent" />
+    <orderEntry type="library" name="mysql.connector.java" level="project" />
+    <orderEntry type="library" scope="TEST" name="junit" level="project" />
+    <orderEntry type="library" scope="TEST" name="assertj.core" level="project" />
+    <orderEntry type="library" name="springframework.spring.jdbc" level="project" />
   </component>
 </module>
