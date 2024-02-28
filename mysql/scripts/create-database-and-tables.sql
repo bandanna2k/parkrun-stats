@@ -26,3 +26,15 @@ parkrun_stats.result (
     UNIQUE KEY (athlete_id, course_name, event_number)
 
 ) DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE
+IF NOT EXISTS
+parkrun_stats.course_event_summary (
+    course_name             VARCHAR(255)        NOT NULL,
+    event_number            INT                 NOT NULL,
+    first_male_athlete_id   BIGINT              NOT NULL,
+    first_female_athlete_id BIGINT              NOT NULL,
+
+    PRIMARY KEY (course_name, event_number)
+
+) DEFAULT CHARSET=utf8mb4;

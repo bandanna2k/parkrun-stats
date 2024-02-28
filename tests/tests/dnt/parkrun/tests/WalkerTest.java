@@ -1,8 +1,8 @@
 package dnt.parkrun.tests;
 
 import dnt.parkrun.courseeventsummary.Parser;
-import dnt.parkrun.courses.Country;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
+import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.Result;

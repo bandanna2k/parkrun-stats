@@ -3,6 +3,7 @@ package dnt.parkrun.datastructures;
 public class Athlete
 {
     public static final long NO_ATHLETE_ID = Long.MIN_VALUE;
+    public static final Athlete NO_ATHLETE = Athlete.fromDao(null, NO_ATHLETE_ID);
 
     public final String name;
     public final long athleteId;

@@ -1,4 +1,4 @@
-package dnt.parkrun.courses;
+package dnt.parkrun.datastructures;
 
 public class Country
 {

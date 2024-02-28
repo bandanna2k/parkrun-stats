@@ -1,8 +1,8 @@
 package dnt.parkrun;
 
-import dnt.parkrun.courses.Country;
 import dnt.parkrun.courses.CountryEnum;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
+import dnt.parkrun.datastructures.Country;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 public class CountryTest

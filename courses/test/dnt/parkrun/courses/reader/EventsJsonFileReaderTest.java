@@ -1,6 +1,6 @@
 package dnt.parkrun.courses.reader;
 
-import dnt.parkrun.courses.Country;
+import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import org.junit.Before;
 import org.junit.Test;

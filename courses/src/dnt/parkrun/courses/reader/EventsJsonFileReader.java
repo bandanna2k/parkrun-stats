@@ -3,7 +3,7 @@ package dnt.parkrun.courses.reader;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import dnt.parkrun.courses.Country;
+import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 
 import java.io.IOException;

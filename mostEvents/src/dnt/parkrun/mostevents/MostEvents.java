@@ -1,69 +1,77 @@
 package dnt.parkrun.mostevents;
 
+import com.mysql.jdbc.Driver;
 import dnt.parkrun.courseeventsummary.Parser;
-import dnt.parkrun.courses.Country;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
-import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.Course;
-import dnt.parkrun.datastructures.CourseEventSummary;
-import dnt.parkrun.datastructures.Result;
+import dnt.parkrun.datastructures.*;
+import dnt.parkrun.mostevents.dao.CourseEventSummaryDao;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.*;
 
 public class MostEvents
 {
     private final UrlGenerator urlGenerator;
     private final Map<Long, Record> athleteIdToMostEventRecord = new HashMap<>();
+    private final CourseRepository courseRepository;
+    private final CourseEventSummaryDao courseEventSummaryDao;
 
-    public MostEvents()
+    private MostEvents(CourseRepository courseRepository, DataSource dataSource) throws SQLException
     {
+        this.courseRepository = courseRepository;
         this.urlGenerator = new UrlGenerator();
+        this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
+    }
+
+    public static MostEvents newInstance() throws SQLException, IOException
+    {
+        CourseRepository courseRepository = new CourseRepository();
+
+        InputStream inputStream = Course.class.getResourceAsStream("/events.json");
+        dnt.parkrun.courses.reader.EventsJsonFileReader reader = new EventsJsonFileReader.Builder(() -> inputStream)
+                .forEachCountry(courseRepository::addCountry)
+                .forEachCourse(courseRepository::addCourse)
+                .build();
+        reader.read();
+
+        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
+                "jdbc:mysql://localhost", "dao", "daoFractaldao");
+
+        return new MostEvents(courseRepository, dataSource);
     }
 
     public void collectMostEventRecords() throws IOException
     {
-        System.out.println("* Collecting *");
-        Map<String, Course> courseNameToCourse = new HashMap<>();
-        Map<Integer, Country> countryCodeToCountry = new HashMap<>();
-        InputStream inputStream = Course.class.getResourceAsStream("/events.json");
-        dnt.parkrun.courses.reader.EventsJsonFileReader reader = new EventsJsonFileReader.Builder(() -> inputStream)
-                .forEachCountry(c -> countryCodeToCountry.put(c.countryCode, c))
-                .forEachCourse(c -> courseNameToCourse.put(c.name, c))
-                .build();
-        reader.read();
-
         System.out.println("* Filter courses *");
         Set<String> coursesToScan = new HashSet<>() {{ add("cornwall"); add("lowerhutt"); }};
-        courseNameToCourse.keySet().removeIf(c -> !coursesToScan.contains(c));
-        assert courseNameToCourse.size() == 2;
+        courseRepository.removeIf(c -> !coursesToScan.contains(c));
 
-        System.out.println("* Get course summaries *");
-        List<CourseEventSummary> courseEventSummaries = new ArrayList<>();
-        for (Course course : courseNameToCourse.values())
-        {
-            System.out.printf("* Processing %s *\n", course);
+        System.out.println("* Get course summaries from DAO *");
+        List<CourseEventSummary> courseEventSummariesFromDao = courseEventSummaryDao.getCourseEventSummaries();
+        System.out.println(courseEventSummariesFromDao);
 
-            Country courseCountry = countryCodeToCountry.get(course.countryCode);
-            Parser courseEventSummaryParser = new Parser.Builder()
-                    .course(course)
-                    .url(urlGenerator.generateCourseEventSummaryUrl(courseCountry.url, course.name))
-                    .forEachCourseEvent(c -> courseEventSummaries.add(c))
-                    .build();
-            courseEventSummaryParser.parse();
-        }
+        System.out.println("* Get course summaries from Web *");
+        List<CourseEventSummary> courseEventSummariesFromWeb = getCourseEventSummariesFromWeb();
+        // TODO Polution System.out.println(courseEventSummariesFromWeb);
 
-        System.out.println("* Get all course results (currently just 2) *");
-        courseEventSummaries.removeIf(ces -> ces.eventNumber > 2);
-        assert courseEventSummaries.size() == 2;
+        System.out.println("* Filtering by event number temporarily"); // TODO Remove
+        courseEventSummariesFromWeb.removeIf(ces -> ces.eventNumber > 2);
 
-        System.out.println("* Get all results by all athletes *");
-        for (CourseEventSummary ces : courseEventSummaries)
+        System.out.println("* Filtering existing course event summaries *");
+        courseEventSummariesFromWeb.removeAll(courseEventSummariesFromDao);
+        System.out.println(courseEventSummariesFromWeb);
+
+        System.out.println("* Get all course event summaries *");
+        for (CourseEventSummary ces : courseEventSummariesFromWeb)
         {
             System.out.printf("* Processing %s *\n", ces);
+            courseEventSummaryDao.insert(ces);
 
-            Country courseCountry = countryCodeToCountry.get(ces.course.countryCode);
+            Country courseCountry = courseRepository.getCountry(ces.course.countryCode);
             dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder()
                     .courseName(ces.course.name)
                     .url(urlGenerator.generateCourseEventUrl(courseCountry.url, ces.course.name, ces.eventNumber))
@@ -75,6 +83,24 @@ public class MostEvents
         athleteIdToMostEventRecord.forEach((athleteId, record) -> {
             System.out.println(record);
         });
+    }
+
+    private List<CourseEventSummary> getCourseEventSummariesFromWeb() throws IOException
+    {
+        List<CourseEventSummary> results = new ArrayList<>();
+        for (Course course : courseRepository.getCourses())
+        {
+            System.out.printf("* Processing %s *\n", course);
+
+            Country courseCountry = courseRepository.getCountry(course.countryCode);
+            Parser courseEventSummaryParser = new Parser.Builder()
+                    .course(course)
+                    .url(urlGenerator.generateCourseEventSummaryUrl(courseCountry.url, course.name))
+                    .forEachCourseEvent(results::add)
+                    .build();
+            courseEventSummaryParser.parse();
+        }
+        return results;
     }
 
     private void processResult(Result result)
