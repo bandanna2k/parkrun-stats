@@ -59,7 +59,7 @@ public class CourseEventSummaryDao
         String sql = "insert into parkrun_stats.course_event_summary (" +
                 "course_name, event_number, first_male_athlete_id, first_female_athlete_id" +
                 ") values ( " +
-                ":courseName, :eventNumber, :firstMale, :firstFemale" +
+                ":courseName, :eventNumber, :firstMaleAthleteId, :firstFemaleAthleteId" +
                 ")";
         jdbc.update(sql, new MapSqlParameterSource()
                 .addValue("courseName", courseEventSummary.course.name)

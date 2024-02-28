@@ -113,7 +113,7 @@ public class MostEvents
 //            if(!course.name.equals("lake2laketrail"))
 //            if(!course.name.equals("gordonsprattreserve")) // DONE
             // cornwall
-            if(!course.name.equals("gordonsprattreserve")) // DONE
+            if(!course.name.equals("cornwall"))
             {
                 continue;
             }
