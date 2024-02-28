@@ -62,4 +62,9 @@ public class CourseEventSummaryDao
                 .addValue("eventNumber", courseEventSummary.eventNumber)
         );
     }
+
+    public List<CourseEventSummary> getCourseEventSummariesWithNoResults()
+    {
+        return null;
+    }
 }

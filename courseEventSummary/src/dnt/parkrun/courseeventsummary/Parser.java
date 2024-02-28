@@ -69,7 +69,7 @@ public class Parser
                 }
                 catch (Exception ex)
                 {
-                    System.out.printf("WARN: No first male finisher. Course: %s, Event: %s, ", course, eventNumber);
+                    System.out.printf("WARN: No first male finisher. Course: %s, Event: %s\n", course, eventNumber);
                 }
 //                System.out.print(maleFirstFinisher);
 //                System.out.print("\t");
@@ -93,7 +93,7 @@ public class Parser
                 }
                 catch(Exception ex)
                 {
-                    System.out.printf("WARN: No first female finisher. Course: %s, Event: %s, ", course, eventNumber);
+                    System.out.printf("WARN: No first female finisher. Course: %s, Event: %s\n", course, eventNumber);
                 }
 //                System.out.print(femaleFirstFinisher);
 //                System.out.print("\t");

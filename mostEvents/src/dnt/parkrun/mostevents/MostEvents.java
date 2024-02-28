@@ -64,23 +64,32 @@ public class MostEvents
                 .filter(e -> e != CountryEnum.NZ)
                 .forEach(e -> courseRepository.filterByCountryCode(e.getCountryCode()));
 
-        System.out.println("* Get course summaries from DAO *");
-        List<CourseEventSummary> courseEventSummariesFromDao = courseEventSummaryDao.getCourseEventSummaries();
-        System.out.println("Count: " + courseEventSummariesFromDao.size());
+        boolean getFromWeb = true;
+        List<CourseEventSummary> courseEventSummariesToGet = new ArrayList<>();
+        if(getFromWeb)
+        {
+            System.out.println("* Get course summaries from DAO *");
+            List<CourseEventSummary> courseEventSummariesFromDao = courseEventSummaryDao.getCourseEventSummaries();
+            System.out.println("Count: " + courseEventSummariesFromDao.size());
 
-        System.out.println("* Get course summaries from Web *");
-        List<CourseEventSummary> courseEventSummariesFromWeb = getCourseEventSummariesFromWeb();
-        // TODO Polution System.out.println(courseEventSummariesFromWeb);
+            System.out.println("* Get course summaries from Web *");
+            List<CourseEventSummary> courseEventSummariesFromWeb = getCourseEventSummariesFromWeb();
+            // TODO Pollution System.out.println(courseEventSummariesFromWeb);
 
-//        System.out.println("* Filtering by event number temporarily"); // TODO Remove
-//        courseEventSummariesFromWeb.removeIf(ces -> ces.eventNumber > 2);
-//
-        System.out.println("* Filtering existing course event summaries *");
-        courseEventSummariesFromWeb.removeAll(courseEventSummariesFromDao);
-        System.out.println("Count: " + courseEventSummariesFromWeb.size());
+            System.out.println("* Filtering existing course event summaries *");
+            courseEventSummariesFromWeb.removeAll(courseEventSummariesFromDao);
+
+            courseEventSummariesToGet.addAll(courseEventSummariesFromWeb);
+        }
+        else
+        {
+            System.out.println("* Get course summaries from DAO 2 *");
+            courseEventSummariesToGet = courseEventSummaryDao.getCourseEventSummariesWithNoResults();
+        }
+        System.out.println("Count: " + courseEventSummariesToGet.size());
 
         System.out.println("* Get all course event summaries *");
-        for (CourseEventSummary ces : courseEventSummariesFromWeb)
+        for (CourseEventSummary ces : courseEventSummariesToGet)
         {
             System.out.printf("* Processing %s *\n", ces);
             courseEventSummaryDao.insert(ces);

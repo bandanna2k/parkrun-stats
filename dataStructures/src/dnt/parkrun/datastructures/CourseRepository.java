@@ -32,7 +32,6 @@ public class CourseRepository
     public void filterByCountryCode(int countryCode)
     {
         courseNameToCourse.entrySet().removeIf(entry -> entry.getValue().countryCode == countryCode);
-        courseNameToCourse.entrySet().removeIf(entry -> !entry.getValue().name.equals("millwater"));
     }
 
     public Collection<Course> getCourses()
