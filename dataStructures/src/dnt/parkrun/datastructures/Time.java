@@ -9,21 +9,28 @@ public class Time
     public final int mins;
     public final int seconds;
 
-    private Time(int hours, int mins, int seconds)
+    Time(int hours, int mins, int seconds)
     {
+        if(hours < 0 || hours >= 100) throw new IllegalArgumentException();
+        if(mins < 0 || mins >= 60) throw new IllegalArgumentException();
+        if(seconds < 0 || seconds >= 60) throw new IllegalArgumentException();
         this.hours = hours;
         this.mins = mins;
         this.seconds = seconds;
+
     }
 
     @Override
     public String toString()
     {
-        return "Time{" +
-                "hours=" + hours +
-                ", mins=" + mins +
-                ", seconds=" + seconds +
-                '}';
+        if(hours > 0)
+        {
+            return String.format("%d:%02d:%02d", hours, mins, seconds);
+        }
+        else
+        {
+            return String.format("%02d:%02d", mins, seconds);
+        }
     }
 
     public static Time fromString(String time)

@@ -62,7 +62,7 @@ public class Parser
                         .childNode(0) // div 2 (male)
                         .childNode(0) // a
                         .childNode(0); // a value;
-                Athlete maleFirstFinisher = Athlete.fromSummaryLink(firstMaleName.toString(), firstMaleLink);
+                Athlete maleFirstFinisher = Athlete.fromAthleteHistoryAtEventLink(firstMaleName.toString(), firstMaleLink);
 //                System.out.print(maleFirstFinisher);
 //                System.out.print("\t");
 
@@ -78,7 +78,7 @@ public class Parser
                         .childNode(1) // div 2 (female)
                         .childNode(0) // a
                         .childNode(0); // a value;
-                Athlete femaleFirstFinisher = Athlete.fromSummaryLink(firstFemaleName.toString(), firstFemaleLink);
+                Athlete femaleFirstFinisher = Athlete.fromAthleteHistoryAtEventLink(firstFemaleName.toString(), firstFemaleLink);
 //                System.out.print(femaleFirstFinisher);
 //                System.out.print("\t");
 

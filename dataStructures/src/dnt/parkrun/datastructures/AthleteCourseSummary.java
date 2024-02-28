@@ -14,7 +14,7 @@ public class AthleteCourseSummary
         this.course = course;
         this.countOfRuns = countOfRuns;
         this.athleteAtEventUrl = athleteAtEventUrl;
-        this.athlete = Athlete.fromEventLink(name, athleteAtEventUrl.toString());
+        this.athlete = Athlete.fromAthleteAtCourseLink(name, athleteAtEventUrl.toString());
     }
 
     @Override

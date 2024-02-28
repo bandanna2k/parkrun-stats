@@ -50,7 +50,7 @@ public class Parser
                         .childNode(1)   // td
                         .childNode(0)  // a
                         .childNode(0);  // div
-                Athlete athlete = Athlete.fromEventLink(name, athleteAtEventLink.attr("href"));
+                Athlete athlete = Athlete.fromAthleteAtCourseLink(name, athleteAtEventLink.attr("href"));
 
                 Node timeDiv = row
                         .childNode(5)   // td

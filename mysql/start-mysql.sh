@@ -1,4 +1,6 @@
 
+mysql/stop-mysql-and-prune.sh
+
 DB_DIR=~/mysql/databases/parkrun-stats
 
 mkdir -p $DB_DIR
