@@ -1,5 +1,6 @@
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.datastructures.*;
+import dnt.parkrun.mostevents.dao.AthleteDao;
 import dnt.parkrun.mostevents.dao.CourseEventSummaryDao;
 import org.junit.After;
 import org.junit.Before;
@@ -16,6 +17,7 @@ public class CourseEventSummaryDaoTest
 {
     private CourseEventSummaryDao dao;
     private NamedParameterJdbcTemplate jdbc;
+    private AthleteDao athleteDao;
 
     @Before
     public void setUp() throws Exception
@@ -27,6 +29,7 @@ public class CourseEventSummaryDaoTest
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost", "dao", "daoFractaldao");
         dao = new CourseEventSummaryDao(dataSource, courseRepository);
+        athleteDao = new AthleteDao(dataSource);
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);
     }
@@ -39,8 +42,13 @@ public class CourseEventSummaryDaoTest
     @Test
     public void shouldInsertCourseEventSummary()
     {
+        Athlete firstMan = Athlete.fromAthleteSummaryLink("Davey JONES", "https://www.parkrun.co.nz/parkrunner/902393/");
+        Athlete firstWoman = Athlete.fromAthleteSummaryLink("Terry EVANS", "https://www.parkrun.co.nz/parkrunner/12345/");
+        athleteDao.insert(firstWoman);
+        athleteDao.insert(firstMan);
+
         Course course = new Course("cornwall", 1);
-        CourseEventSummary ces = new CourseEventSummary(course, 1, Athlete.NO_ATHLETE, Athlete.NO_ATHLETE);
+        CourseEventSummary ces = new CourseEventSummary(course, 1, firstMan, firstWoman);
         dao.insert(ces);
         System.out.println(ces);
         assertThat(dao.getCourseEventSummaries()).isNotEmpty();

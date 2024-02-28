@@ -110,6 +110,14 @@ public class MostEvents
         List<CourseEventSummary> results = new ArrayList<>();
         for (Course course : courseRepository.getCourses())
         {
+//            if(!course.name.equals("lake2laketrail"))
+//            if(!course.name.equals("gordonsprattreserve")) // DONE
+            // cornwall
+            if(!course.name.equals("gordonsprattreserve")) // DONE
+            {
+                continue;
+            }
+
             System.out.printf("* Processing %s *\n", course);
 
             Country courseCountry = courseRepository.getCountry(course.countryCode);

@@ -26,7 +26,12 @@ public class CourseEventSummaryDao
 
     public List<CourseEventSummary> getCourseEventSummaries()
     {
-        String sql = "select * from parkrun_stats.course_event_summary ";
+        String sql = "select course_name, event_number, " +
+                "fma.name as first_male_name, first_male_athlete_id, " +
+                "ffa.name as first_male_name, first_female_athlete_id " +
+                "from parkrun_stats.course_event_summary " +
+                "left join parkrun_stats.athlete fma on first_male_athlete_id = fma.athlete_id " +
+                "left join parkrun_stats.athlete ffa on first_female_athlete_id = ffa.athlete_id ";
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             String courseName = rs.getString("course_name");
@@ -39,13 +44,12 @@ public class CourseEventSummaryDao
                             countryForCourse
                     ),
                     rs.getInt("event_number"),
-                    Athlete.NO_ATHLETE, Athlete.NO_ATHLETE
-//                    Athlete.fromDao(
-//                            rs.getString("first_male_name"),
-//                            rs.getInt("first_male_athlete_id")),
-//                    Athlete.fromDao(
-//                            rs.getString("first_male_name"),
-//                            rs.getInt("first_male_athlete_id"))
+                    Athlete.fromDao(
+                            rs.getString("first_male_name"),
+                            rs.getInt("first_male_athlete_id")),
+                    Athlete.fromDao(
+                            rs.getString("first_male_name"),
+                            rs.getInt("first_male_athlete_id"))
             );
         });
     }
@@ -55,11 +59,13 @@ public class CourseEventSummaryDao
         String sql = "insert into parkrun_stats.course_event_summary (" +
                 "course_name, event_number, first_male_athlete_id, first_female_athlete_id" +
                 ") values ( " +
-                ":courseName, :eventNumber, 0, 0" +
+                ":courseName, :eventNumber, :firstMale, :firstFemale" +
                 ")";
         jdbc.update(sql, new MapSqlParameterSource()
                 .addValue("courseName", courseEventSummary.course.name)
                 .addValue("eventNumber", courseEventSummary.eventNumber)
+                .addValue("firstMaleAthleteId", courseEventSummary.firstMale.athleteId)
+                .addValue("firstFemaleAthleteId", courseEventSummary.firstFemale.athleteId)
         );
     }
 
