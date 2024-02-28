@@ -1,27 +1,21 @@
 package dnt.parkrun.datastructures;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 public class Athlete
 {
     public static final long NO_ATHLETE_ID = Long.MIN_VALUE;
 
     public final String name;
     public final long athleteId;
-    public final URL url;
 
-    private Athlete(String name, URL url, long athleteId)
+    private Athlete(String name, long athleteId)
     {
         if(athleteId == NO_ATHLETE_ID)
         {
-            this.url = url;
             this.name = null;
             this.athleteId = NO_ATHLETE_ID;
         }
         else
         {
-            this.url = url;
             this.name = name;
             this.athleteId = athleteId;
         }
@@ -33,7 +27,6 @@ public class Athlete
         return "Athlete{" +
                 "name='" + name + '\'' +
                 ", athleteId=" + athleteId +
-                ", url=" + url +
                 '}';
     }
 
@@ -42,16 +35,7 @@ public class Athlete
      */
     public static Athlete fromAthleteSummaryLink(String name, String link)
     {
-        URL url = null;
-        try
-        {
-            url = new URL(link);
-        }
-        catch (MalformedURLException e)
-        {
-            // Do nothing at present
-        }
-        return new Athlete(name, url, extractIdFromSummaryLink(link));
+        return new Athlete(name, extractIdFromSummaryLink(link));
     }
 
     /*
@@ -60,37 +44,19 @@ public class Athlete
 
     public static Athlete fromAthleteHistoryAtEventLink(String name, String link)
     {
-        URL url = null;
-        try
-        {
-            url = new URL(link);
-        }
-        catch (MalformedURLException e)
-        {
-            // Do nothing at present
-        }
-        return new Athlete(name, url, extractIdFromAthleteHistoryAtEventLink(link));
+        return new Athlete(name, extractIdFromAthleteHistoryAtEventLink(link));
     }
     /*
         https://www.parkrun.us/colermountainbikepreserve/parkrunner/9265263
      */
     public static Athlete fromAthleteAtCourseLink(String name, String link)
     {
-        URL url = null;
-        try
-        {
-            url = new URL(link);
-        }
-        catch (MalformedURLException e)
-        {
-            // Do nothing at present
-        }
-        return new Athlete(name, url, extractIdFromAthleteAtCourseLink(link));
+        return new Athlete(name, extractIdFromAthleteAtCourseLink(link));
     }
 
     public static Athlete fromDao(String name, long athleteId)
     {
-        return new Athlete(name, null, athleteId);
+        return new Athlete(name, athleteId);
     }
 
     static long extractIdFromAthleteHistoryAtEventLink(String href)
