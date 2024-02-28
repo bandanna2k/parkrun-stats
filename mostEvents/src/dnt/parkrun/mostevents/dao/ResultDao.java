@@ -1,5 +1,6 @@
 package dnt.parkrun.mostevents.dao;
 
+import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.datastructures.Time;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
@@ -13,7 +14,6 @@ import java.util.List;
 
 public class ResultDao
 {
-
     private final NamedParameterJdbcOperations jdbc;
 
     public ResultDao(DataSource dataSource) throws SQLException
@@ -23,12 +23,16 @@ public class ResultDao
 
     public List<Result> getResults()
     {
-        List<Result> query = jdbc.query("select * from parkrun_stats.result", EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
+        String sql = "select * from parkrun_stats.result right join parkrun_stats.athlete using (athlete_id)";
+        List<Result> query = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             return new Result(
                     rs.getString("course_name"),
                     rs.getInt("position"),
-                    null,
+                    Athlete.fromDao(
+                            rs.getString("name"),
+                            rs.getInt("athlete_id")
+                    ),
                     Time.fromString(rs.getString("time"))
             );
         });
