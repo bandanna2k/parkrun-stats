@@ -30,6 +30,12 @@ public class MostEvents
     private final CourseEventSummaryDao courseEventSummaryDao;
     private final ResultDao resultDao;
 
+    public static void main(String[] args) throws IOException, SQLException
+    {
+        MostEvents mostEvents = MostEvents.newInstance();
+        mostEvents.collectMostEventRecords();
+    }
+
     private MostEvents(CourseRepository courseRepository, DataSource dataSource) throws SQLException
     {
         this.courseRepository = courseRepository;
