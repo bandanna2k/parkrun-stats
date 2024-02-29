@@ -124,8 +124,8 @@ public class MostEvents
 //            if(!course.name.equals("cornwall"))           // DONE
 //            if(!course.name.equals("lowerhutt"))        // DONE
 // 5
-            if(!course.name.equals("hamiltonlake"))
-//            if(!course.name.equals("hamiltonpark"))
+//            if(!course.name.equals("hamiltonlake"))//DONE
+//            if(!course.name.equals("hamiltonpark"))//DONE
 //            if(!course.name.equals("dunedin"))
 //            if(!course.name.equals("millwater"))
 //            if(!course.name.equals("waitangi"))     // DONE
@@ -151,22 +151,22 @@ public class MostEvents
 //            if(!course.name.equals("tauranga"))
 //            if(!course.name.equals("whangerei"))
 //            if(!course.name.equals("owairaka"))//DONE
-//            if(!course.name.equals("greytown"))
+//            if(!course.name.equals("greytownwoodside"))
 //            if(!course.name.equals("araharakeke"))//DONE
 // 30
 //            if(!course.name.equals("kapiticoast"))
-//            if(!course.name.equals("russellpark"))
-//            if(!course.name.equals("eastend"))
+//            if(!course.name.equals("russellpark"))//DONE
+            if(!course.name.equals("eastend"))
 //            if(!course.name.equals("cambridge"))
 //            if(!course.name.equals("universityofwaikato"))
 // 35
-//            if(!course.name.equals("hagley"))
+//            if(!course.name.equals("hagley"))//DONE
 //            if(!course.name.equals("trenthammemorial"))
 //            if(!course.name.equals("whakatanegardens"))
 //            if(!course.name.equals("broadpark"))        // DONE
 //            if(!course.name.equals("palmerstonnorth"))
 // 40
-//            if(!course.name.equals("whanganui"))
+//            if(!course.name.equals("whanganuiriverbank"))
 //            if(!course.name.equals("sherwoodreserve"))
 //            if(!course.name.equals("hobsonvillepoint"))     // DONE
 // 43

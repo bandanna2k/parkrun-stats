@@ -2,7 +2,9 @@
 
 # TODO
 
-- Convert time to int
+- Convert time to int (java)
+
+- Convert time to int (db)
 
 # QUERIES
 
@@ -63,7 +65,7 @@ limit 20;
 
 ```
 select name, athlete_id, count(course_name) as count, athlete_id
-from (select distinct athlete_id, course_name from result) as sub1
+from (select distinct athlete_id, course_name from parkrun_stats.result) as sub1
 join athlete using (athlete_id)
 group by athlete_id
 having count > 3
