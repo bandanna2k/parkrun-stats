@@ -23,6 +23,12 @@ import java.util.List;
 
 public class MostEvents
 {
+    public static void main(String[] args) throws SQLException, IOException
+    {
+        MostEvents mostEvents = MostEvents.newInstance();
+        mostEvents.collectMostEventRecords();
+    }
+
     private final UrlGenerator urlGenerator;
     private final CourseRepository courseRepository;
 
@@ -112,7 +118,7 @@ public class MostEvents
         List<CourseEventSummary> results = new ArrayList<>();
         for (Course course : courseRepository.getCourses())
         {
-//            if(!course.name.equals("lake2laketrail"))
+            if(!course.name.equals("lake2laketrail"))
 //            if(!course.name.equals("gordonsprattreserve")) // DONE
 //            if(!course.name.equals("northernpathway"))        // DONE
 //            if(!course.name.equals("cornwall"))           // DONE
@@ -122,7 +128,7 @@ public class MostEvents
 //            if(!course.name.equals("hamiltonpark"))
 //            if(!course.name.equals("dunedin"))
 //            if(!course.name.equals("millwater"))
-//            if(!course.name.equals("waitangipark"))
+//            if(!course.name.equals("waitangi"))     // DONE
 // 10
 //            if(!course.name.equals("westernsprings"))
 //            if(!course.name.equals("barrycurtis"))
@@ -157,12 +163,12 @@ public class MostEvents
 //            if(!course.name.equals("hagley"))
 //            if(!course.name.equals("trenthammemorial"))
 //            if(!course.name.equals("whakatanegardens"))
-//            if(!course.name.equals("broadpark"))
+//            if(!course.name.equals("broadpark"))        // DONE
 //            if(!course.name.equals("palmerstonnorth"))
 // 40
 //            if(!course.name.equals("whanganui"))
 //            if(!course.name.equals("sherwoodreserve"))
-            if(!course.name.equals("hobsonvillepoint"))
+//            if(!course.name.equals("hobsonvillepoint"))     // DONE
 // 43
 
             {

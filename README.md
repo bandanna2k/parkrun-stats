@@ -69,5 +69,6 @@ select athlete_id, course_name, count(course_name) as count
 from athlete
 left join result using (athlete_id)
 group by athlete_id, course_name
-having athlete_id = 414811;
+having athlete_id = 414811
+order by count desc;
 ```

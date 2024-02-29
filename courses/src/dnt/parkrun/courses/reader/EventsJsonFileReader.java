@@ -17,6 +17,7 @@ public class EventsJsonFileReader
     private final Supplier<InputStream> inputStreamSupplier;
     private final Consumer<Country> countryConsumer;
     private final Consumer<Course> eventConsumer;
+    private final Supplier<Course.Status> statusSupplier;
 
     private EventsJsonFileReader(
             Supplier<InputStream> inputStreamSupplier,
@@ -27,6 +28,7 @@ public class EventsJsonFileReader
         this.inputStreamSupplier = inputStreamSupplier;
         this.countryConsumer = countryConsumer;
         this.eventConsumer = eventConsumer;
+        this.statusSupplier = statusSupplier;
     }
 
     public void read() throws IOException
@@ -125,12 +127,12 @@ public class EventsJsonFileReader
             {
                 jsonParser.nextToken();
                 builder.longName(jsonParser.getText());
-                eventConsumer.accept(builder.build());
             }
             if ("countrycode".equals(fieldname))
             {
                 jsonParser.nextToken();
                 builder.countryCode(jsonParser.getIntValue());
+                builder.status(statusSupplier.get());
                 eventConsumer.accept(builder.build());
             }
         }

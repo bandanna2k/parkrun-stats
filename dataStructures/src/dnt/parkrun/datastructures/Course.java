@@ -73,6 +73,12 @@ public class Course
             this.countryCode = countryCode;
             return this;
         }
+
+        public Builder status(Status status)
+        {
+            this.status = status;
+            return this;
+        }
     }
 
     @Override
