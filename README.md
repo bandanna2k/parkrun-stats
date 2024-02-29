@@ -25,3 +25,13 @@ having count > 3
 order by count desc, athlete_id desc 
 limit 20;
 ```
+
+### Get athlete history
+
+```
+select athlete_id, course_name, min(position) as best_position
+from athlete
+left join result using (athlete_id)
+group by athlete_id, course_name
+having athlete_id = 414811;
+```
