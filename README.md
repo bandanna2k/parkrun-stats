@@ -3,7 +3,6 @@
 # TODO
 
 - Convert time to int
-- Add date to CES DAO
 
 # QUERIES
 
