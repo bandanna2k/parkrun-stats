@@ -120,6 +120,12 @@ public class EventsJsonFileReader
                 jsonParser.nextToken();
                 builder.name(jsonParser.getText());
             }
+            if ("EventLongName".equals(fieldname))
+            {
+                jsonParser.nextToken();
+                builder.longName(jsonParser.getText());
+                eventConsumer.accept(builder.build());
+            }
             if ("countrycode".equals(fieldname))
             {
                 jsonParser.nextToken();

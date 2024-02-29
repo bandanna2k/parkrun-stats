@@ -6,11 +6,13 @@ public class Course
 {
     public final String name;
     public final int countryCode;
+    public final String longName;
 
-    public Course(String name, int countryCode)
+    public Course(String name, int countryCode, String longName)
     {
         this.name = name;
         this.countryCode = countryCode;
+        this.longName = longName;
     }
 
     @Override
@@ -36,17 +38,24 @@ public class Course
 
     public static class Builder
     {
-
         private int countryCode;
         private String name;
+        private String longName;
+
         public Course build()
         {
-            return new Course(name, countryCode);
+            return new Course(name, countryCode, longName);
         }
 
         public Builder name(String name)
         {
             this.name = name;
+            return this;
+        }
+
+        public Builder longName(String longName)
+        {
+            this.longName = longName;
             return this;
         }
 
@@ -63,6 +72,7 @@ public class Course
         return "Course{" +
                 "name='" + name + '\'' +
                 ", countryCode=" + countryCode +
+                ", longName='" + longName + '\'' +
                 '}';
     }
 }

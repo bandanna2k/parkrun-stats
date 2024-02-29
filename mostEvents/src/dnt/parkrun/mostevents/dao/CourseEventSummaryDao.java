@@ -37,12 +37,8 @@ public class CourseEventSummaryDao
             String courseName = rs.getString("course_name");
             Course course = courseRepository.getCourse(courseName);
             assert course != null : "Could not find " + courseName;
-            int countryForCourse = course.countryCode;
             return new CourseEventSummary(
-                    new Course(
-                            courseName,
-                            countryForCourse
-                    ),
+                    course,
                     rs.getInt("event_number"),
                     Athlete.fromDao(
                             rs.getString("first_male_name"),

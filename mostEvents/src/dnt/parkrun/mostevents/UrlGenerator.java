@@ -25,7 +25,7 @@ public class UrlGenerator
     {
         try
         {
-            Thread.sleep(50000 + random.nextInt(5000));
+            Thread.sleep(1000 + random.nextInt(5000));
         }
         catch (InterruptedException e)
         {

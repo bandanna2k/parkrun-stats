@@ -24,7 +24,7 @@ public class CourseEventSummaryDaoTest
     {
         CourseRepository courseRepository = new CourseRepository();
         courseRepository.addCountry(new Country(1, null));
-        courseRepository.addCourse(new Course("cornwall", 1));
+        courseRepository.addCourse(new Course("cornwall", 1, longName));
 
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost", "dao", "daoFractaldao");
@@ -47,7 +47,7 @@ public class CourseEventSummaryDaoTest
         athleteDao.insert(firstWoman);
         athleteDao.insert(firstMan);
 
-        Course course = new Course("cornwall", 1);
+        Course course = new Course("cornwall", 1, longName);
         CourseEventSummary ces = new CourseEventSummary(course, 1, firstMan, firstWoman);
         dao.insert(ces);
         System.out.println(ces);
