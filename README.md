@@ -52,10 +52,20 @@ order by count desc, athlete_id asc
 limit 20;
 ```
 
-### Get athlete history
+### Best position at course athlete history
 
 ```
 select athlete_id, course_name, min(position) as best_position
+from athlete
+left join result using (athlete_id)
+group by athlete_id, course_name
+having athlete_id = 414811;
+```
+
+### Count of runs at courses
+
+```
+select athlete_id, course_name, count(course_name) as count
 from athlete
 left join result using (athlete_id)
 group by athlete_id, course_name

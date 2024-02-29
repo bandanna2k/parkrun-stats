@@ -1,18 +1,21 @@
 package dnt.parkrun.datastructures;
 
+import java.util.Date;
 import java.util.Objects;
 
 public class CourseEventSummary
 {
     public final Course course;
     public final int eventNumber;
+    public final Date date;
     public final Athlete firstMale;
     public final Athlete firstFemale;
 
-    public CourseEventSummary(Course course, int eventNumber, Athlete firstMale, Athlete firstFemale)
+    public CourseEventSummary(Course course, int eventNumber, Date date, Athlete firstMale, Athlete firstFemale)
     {
         this.course = course;
         this.eventNumber = eventNumber;
+        this.date = date;
         this.firstMale = firstMale;
         this.firstFemale = firstFemale;
     }
@@ -41,8 +44,10 @@ public class CourseEventSummary
     @Override
     public String toString()
     {
-        return "CourseEvent{" +
-                "eventNumber=" + eventNumber +
+        return "CourseEventSummary{" +
+                "course=" + course +
+                ", eventNumber=" + eventNumber +
+                ", date=" + date +
                 ", firstMale=" + firstMale +
                 ", firstFemale=" + firstFemale +
                 '}';

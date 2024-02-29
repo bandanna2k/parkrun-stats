@@ -7,12 +7,14 @@ public class Course
     public final String name;
     public final int countryCode;
     public final String longName;
+    private final Status status;
 
-    public Course(String name, int countryCode, String longName)
+    public Course(String name, int countryCode, String longName, Status status)
     {
         this.name = name;
         this.countryCode = countryCode;
         this.longName = longName;
+        this.status = status;
     }
 
     @Override
@@ -36,15 +38,22 @@ public class Course
         return Objects.hash(name, countryCode);
     }
 
+    public enum Status
+    {
+        RUNNING,
+        STOPPED
+    }
+
     public static class Builder
     {
         private int countryCode;
         private String name;
         private String longName;
+        private Status status;
 
         public Course build()
         {
-            return new Course(name, countryCode, longName);
+            return new Course(name, countryCode, longName, status);
         }
 
         public Builder name(String name)
@@ -73,6 +82,7 @@ public class Course
                 "name='" + name + '\'' +
                 ", countryCode=" + countryCode +
                 ", longName='" + longName + '\'' +
+                ", status=" + status +
                 '}';
     }
 }

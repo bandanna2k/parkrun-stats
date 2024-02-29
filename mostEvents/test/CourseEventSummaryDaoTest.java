@@ -10,6 +10,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
+import java.time.Instant;
+import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,7 +26,7 @@ public class CourseEventSummaryDaoTest
     {
         CourseRepository courseRepository = new CourseRepository();
         courseRepository.addCountry(new Country(1, null));
-        courseRepository.addCourse(new Course("cornwall", 1, null));
+        courseRepository.addCourse(new Course("cornwall", 1, null, status));
 
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost", "dao", "daoFractaldao");
@@ -47,8 +49,8 @@ public class CourseEventSummaryDaoTest
         athleteDao.insert(firstWoman);
         athleteDao.insert(firstMan);
 
-        Course course = new Course("cornwall", 1, null);
-        CourseEventSummary ces = new CourseEventSummary(course, 1, firstMan, firstWoman);
+        Course course = new Course("cornwall", 1, null, status);
+        CourseEventSummary ces = new CourseEventSummary(course, 1, Date.from(Instant.now()), firstMan, firstWoman);
         dao.insert(ces);
         System.out.println(ces);
         assertThat(dao.getCourseEventSummaries()).isNotEmpty();

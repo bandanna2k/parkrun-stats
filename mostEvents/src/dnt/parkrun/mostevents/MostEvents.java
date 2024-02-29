@@ -54,6 +54,7 @@ public class MostEvents
         dnt.parkrun.courses.reader.EventsJsonFileReader reader = new EventsJsonFileReader.Builder(() -> inputStream)
                 .forEachCountry(courseRepository::addCountry)
                 .forEachCourse(courseRepository::addCourse)
+                .statusSupplier(() -> Course.Status.RUNNING)
                 .build();
         reader.read();
 
@@ -121,7 +122,7 @@ public class MostEvents
 //            if(!course.name.equals("gordonsprattreserve")) // DONE
 //            if(!course.name.equals("northernpathway"))        // DONE
 //            if(!course.name.equals("cornwall"))           // DONE
-            if(!course.name.equals("lowerhutt"))
+//            if(!course.name.equals("lowerhutt"))        // DONE
 // 5
 //            if(!course.name.equals("hamiltonlake"))
 //            if(!course.name.equals("hamiltonpark"))
@@ -133,7 +134,7 @@ public class MostEvents
 //            if(!course.name.equals("barrycurtis"))
 //            if(!course.name.equals("purenga"))
 //            if(!course.name.equals("taupo"))
-//            if(!course.name.equals("otakiriver"))
+//            if(!course.name.equals("otakiriver"))       // DONE
 // 15
 //            if(!course.name.equals("queenstown"))
 //            if(!course.name.equals("wanaka"))
@@ -167,7 +168,7 @@ public class MostEvents
 // 40
 //            if(!course.name.equals("whanganui"))
 //            if(!course.name.equals("sherwoodreserve"))
-//            if(!course.name.equals("hobsonvillepoint"))
+            if(!course.name.equals("hobsonvillepoint"))
 // 43
 
             {

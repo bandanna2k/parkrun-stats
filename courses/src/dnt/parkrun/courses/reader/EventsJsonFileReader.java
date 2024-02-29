@@ -21,7 +21,8 @@ public class EventsJsonFileReader
     private EventsJsonFileReader(
             Supplier<InputStream> inputStreamSupplier,
             Consumer<Country> countryConsumer,
-            Consumer<Course> eventConsumer)
+            Consumer<Course> eventConsumer,
+            Supplier<Course.Status> statusSupplier)
     {
         this.inputStreamSupplier = inputStreamSupplier;
         this.countryConsumer = countryConsumer;
@@ -204,6 +205,7 @@ public class EventsJsonFileReader
         private final Supplier<InputStream> inputStreamSupplier;
         private Consumer<Country> countryConsumer = c -> {};
         private Consumer<Course> eventConsumer = e -> {};
+        private Supplier<Course.Status> statusSupplier = () -> Course.Status.RUNNING;
 
         public Builder(Supplier<InputStream> inputStreamSupplier)
         {
@@ -215,7 +217,8 @@ public class EventsJsonFileReader
             return new EventsJsonFileReader(
                     inputStreamSupplier,
                     countryConsumer,
-                    eventConsumer);
+                    eventConsumer,
+                    statusSupplier);
         }
 
         public Builder forEachCountry(Consumer<Country> countryConsumer)
@@ -227,6 +230,12 @@ public class EventsJsonFileReader
         public Builder forEachCourse(Consumer<Course> eventConsumer)
         {
             this.eventConsumer = eventConsumer;
+            return this;
+        }
+
+        public Builder statusSupplier(Supplier<Course.Status> statusSupplier)
+        {
+            this.statusSupplier = statusSupplier;
             return this;
         }
     }

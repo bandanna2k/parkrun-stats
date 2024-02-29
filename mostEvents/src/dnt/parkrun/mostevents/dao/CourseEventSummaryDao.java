@@ -40,6 +40,7 @@ public class CourseEventSummaryDao
             return new CourseEventSummary(
                     course,
                     rs.getInt("event_number"),
+                    null,
                     Athlete.fromDao(
                             rs.getString("first_male_name"),
                             rs.getInt("first_male_athlete_id")),
