@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import java.time.Instant;
 import java.util.Date;
 
+import static dnt.parkrun.datastructures.Course.Status.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CourseEventSummaryDaoTest
@@ -26,7 +27,7 @@ public class CourseEventSummaryDaoTest
     {
         CourseRepository courseRepository = new CourseRepository();
         courseRepository.addCountry(new Country(1, null));
-        courseRepository.addCourse(new Course("cornwall", 1, null, status));
+        courseRepository.addCourse(new Course("cornwall", 1, null, RUNNING));
 
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost", "dao", "daoFractaldao");
@@ -49,7 +50,7 @@ public class CourseEventSummaryDaoTest
         athleteDao.insert(firstWoman);
         athleteDao.insert(firstMan);
 
-        Course course = new Course("cornwall", 1, null, status);
+        Course course = new Course("cornwall", 1, null, RUNNING);
         CourseEventSummary ces = new CourseEventSummary(course, 1, Date.from(Instant.now()), firstMan, firstWoman);
         dao.insert(ces);
         System.out.println(ces);
