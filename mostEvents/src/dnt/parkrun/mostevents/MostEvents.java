@@ -120,8 +120,56 @@ public class MostEvents
 //            if(!course.name.equals("lake2laketrail"))
 //            if(!course.name.equals("gordonsprattreserve")) // DONE
 //            if(!course.name.equals("northernpathway"))        // DONE
-            // cornwall
+//            if(!course.name.equals("cornwall"))           // DONE
             if(!course.name.equals("lowerhutt"))
+// 5
+//            if(!course.name.equals("hamiltonlake"))
+//            if(!course.name.equals("hamiltonpark"))
+//            if(!course.name.equals("dunedin"))
+//            if(!course.name.equals("millwater"))
+//            if(!course.name.equals("waitangipark"))
+// 10
+//            if(!course.name.equals("westernsprings"))
+//            if(!course.name.equals("barrycurtis"))
+//            if(!course.name.equals("purenga"))
+//            if(!course.name.equals("taupo"))
+//            if(!course.name.equals("otakiriver"))
+// 15
+//            if(!course.name.equals("queenstown"))
+//            if(!course.name.equals("wanaka"))
+//            if(!course.name.equals("invercargill"))
+//            if(!course.name.equals("balclutha"))
+//            if(!course.name.equals("blenheim"))
+// 20
+//            if(!course.name.equals("gisbourne"))
+//            if(!course.name.equals("andersonpark"))
+//            if(!course.name.equals("flaxmere"))
+//            if(!course.name.equals("fosterpark"))
+//            if(!course.name.equals("pegasus"))
+// 25
+//            if(!course.name.equals("tauranga"))
+//            if(!course.name.equals("whangerei"))
+//            if(!course.name.equals("owairaka"))
+//            if(!course.name.equals("greytown"))
+//            if(!course.name.equals("araharakehe"))
+// 30
+//            if(!course.name.equals("kapiticoast"))
+//            if(!course.name.equals("russellpark"))
+//            if(!course.name.equals("eastend"))
+//            if(!course.name.equals("cambridge"))
+//            if(!course.name.equals("universityofwaikato"))
+// 35
+//            if(!course.name.equals("hagley"))
+//            if(!course.name.equals("trenthammemorial"))
+//            if(!course.name.equals("whakatanegardens"))
+//            if(!course.name.equals("broadpark"))
+//            if(!course.name.equals("palmerstonnorth"))
+// 40
+//            if(!course.name.equals("whanganui"))
+//            if(!course.name.equals("sherwoodreserve"))
+//            if(!course.name.equals("hobsonvillepoint"))
+// 43
+
             {
                 continue;
             }
