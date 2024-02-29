@@ -118,13 +118,13 @@ public class MostEvents
         List<CourseEventSummary> results = new ArrayList<>();
         for (Course course : courseRepository.getCourses())
         {
-            if(!course.name.equals("lake2laketrail"))
+//            if(!course.name.equals("lake2laketrail"))//DONE
 //            if(!course.name.equals("gordonsprattreserve")) // DONE
 //            if(!course.name.equals("northernpathway"))        // DONE
 //            if(!course.name.equals("cornwall"))           // DONE
 //            if(!course.name.equals("lowerhutt"))        // DONE
 // 5
-//            if(!course.name.equals("hamiltonlake"))
+            if(!course.name.equals("hamiltonlake"))
 //            if(!course.name.equals("hamiltonpark"))
 //            if(!course.name.equals("dunedin"))
 //            if(!course.name.equals("millwater"))
@@ -150,9 +150,9 @@ public class MostEvents
 // 25
 //            if(!course.name.equals("tauranga"))
 //            if(!course.name.equals("whangerei"))
-//            if(!course.name.equals("owairaka"))
+//            if(!course.name.equals("owairaka"))//DONE
 //            if(!course.name.equals("greytown"))
-//            if(!course.name.equals("araharakehe"))
+//            if(!course.name.equals("araharakeke"))//DONE
 // 30
 //            if(!course.name.equals("kapiticoast"))
 //            if(!course.name.equals("russellpark"))

@@ -1,6 +1,26 @@
 # parkrun-stats
 
+# TODO
+
+- Convert time to int
+- Add date to CES DAO
+
 # QUERIES
+
+## Runners with X runs (e.g. how many runners with just 1 run)
+
+```
+select count as total_runs_count, count(athlete_id) as athlete_count
+from
+( 
+select distinct athlete_id, count(concat(course_name, event_number)) as count
+from result 
+group by athlete_id 
+order by count desc
+) as athlete_course_count
+group by count
+order by total_runs_count desc;
+```
 
 ## Delete from all tables
 
