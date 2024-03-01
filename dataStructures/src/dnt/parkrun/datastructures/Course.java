@@ -5,14 +5,14 @@ import java.util.Objects;
 public class Course
 {
     public final String name;
-    public final int countryCode;
+    public final Country country;
     public final String longName;
     private final Status status;
 
-    public Course(String name, int countryCode, String longName, Status status)
+    public Course(String name, Country country, String longName, Status status)
     {
         this.name = name;
-        this.countryCode = countryCode;
+        this.country = country;
         this.longName = longName;
         this.status = status;
     }
@@ -29,31 +29,48 @@ public class Course
             return false;
         }
         Course course = (Course) o;
-        return countryCode == course.countryCode && Objects.equals(name, course.name);
+        return country == course.country && Objects.equals(name, course.name);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(name, countryCode);
+        return Objects.hash(name, country);
+    }
+
+    public String getStatusForDb()
+    {
+        return status.getStatusForDb();
     }
 
     public enum Status
     {
-        RUNNING,
-        STOPPED
+        RUNNING("R"),
+        STOPPED("S");
+
+        private final String dbCode;
+
+        Status(String dbCode)
+        {
+            this.dbCode = dbCode;
+        }
+
+        public String getStatusForDb()
+        {
+            return dbCode;
+        }
     }
 
     public static class Builder
     {
-        private int countryCode;
+        private Country country;
         private String name;
         private String longName;
         private Status status;
 
         public Course build()
         {
-            return new Course(name, countryCode, longName, status);
+            return new Course(name, country, longName, status);
         }
 
         public Builder name(String name)
@@ -68,9 +85,9 @@ public class Course
             return this;
         }
 
-        public Builder countryCode(int countryCode)
+        public Builder country(Country country)
         {
-            this.countryCode = countryCode;
+            this.country = country;
             return this;
         }
 
@@ -86,7 +103,7 @@ public class Course
     {
         return "Course{" +
                 "name='" + name + '\'' +
-                ", countryCode=" + countryCode +
+                ", country=" + country +
                 ", longName='" + longName + '\'' +
                 ", status=" + status +
                 '}';

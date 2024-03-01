@@ -4,10 +4,13 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import dnt.parkrun.datastructures.Country;
+import dnt.parkrun.datastructures.CountryEnum;
 import dnt.parkrun.datastructures.Course;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -18,6 +21,7 @@ public class EventsJsonFileReader
     private final Consumer<Country> countryConsumer;
     private final Consumer<Course> eventConsumer;
     private final Supplier<Course.Status> statusSupplier;
+    private final Map<Integer, Country> countryCodeToCountry = new HashMap<>();
 
     private EventsJsonFileReader(
             Supplier<InputStream> inputStreamSupplier,
@@ -131,7 +135,8 @@ public class EventsJsonFileReader
             if ("countrycode".equals(fieldname))
             {
                 jsonParser.nextToken();
-                builder.countryCode(jsonParser.getIntValue());
+                int countryCode = jsonParser.getIntValue();
+                builder.country(countryCodeToCountry.get(countryCode));
                 builder.status(statusSupplier.get());
                 eventConsumer.accept(builder.build());
             }
@@ -142,16 +147,17 @@ public class EventsJsonFileReader
     {
         while (jsonParser.nextToken() != JsonToken.END_OBJECT)
         {
-            String countryId = jsonParser.getCurrentName();
-            if (isNumeric(countryId))
+            String country = jsonParser.getCurrentName();
+            if (isNumeric(country))
             {
-                int countryCode = Integer.parseInt(countryId);
+                int countryId = Integer.parseInt(country);
+                CountryEnum countryCode = CountryEnum.valueOf(countryId);
                 parseCountryObject(jsonParser, countryCode);
             }
         }
     }
 
-    private void parseCountryObject(JsonParser jsonParser, int countryCode) throws IOException
+    private void parseCountryObject(JsonParser jsonParser, CountryEnum countryCode) throws IOException
     {
         while (jsonParser.nextToken() != JsonToken.END_OBJECT)
         {
@@ -160,7 +166,9 @@ public class EventsJsonFileReader
             {
                 jsonParser.nextToken();
                 String url = jsonParser.getText();
-                countryConsumer.accept(new Country(countryCode, url));
+                Country country = new Country(countryCode, url);
+                countryCodeToCountry.put(country.countryEnum.getCountryCode(), country);
+                countryConsumer.accept(country);
             }
 
             if ("bounds".equals(fieldname))

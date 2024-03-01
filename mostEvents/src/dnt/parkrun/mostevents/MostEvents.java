@@ -2,13 +2,10 @@ package dnt.parkrun.mostevents;
 
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.courseeventsummary.Parser;
-import dnt.parkrun.courses.CountryEnum;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
-import dnt.parkrun.datastructures.Country;
-import dnt.parkrun.datastructures.Course;
-import dnt.parkrun.datastructures.CourseEventSummary;
-import dnt.parkrun.datastructures.CourseRepository;
+import dnt.parkrun.datastructures.*;
 import dnt.parkrun.mostevents.dao.AthleteDao;
+import dnt.parkrun.mostevents.dao.CourseDao;
 import dnt.parkrun.mostevents.dao.CourseEventSummaryDao;
 import dnt.parkrun.mostevents.dao.ResultDao;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -33,39 +30,46 @@ public class MostEvents
     private final CourseRepository courseRepository;
 
     private final AthleteDao athleteDao;
+    private final CourseDao courseDao;
     private final CourseEventSummaryDao courseEventSummaryDao;
     private final ResultDao resultDao;
 
-    private MostEvents(CourseRepository courseRepository, DataSource dataSource) throws SQLException
+    private MostEvents(DataSource dataSource) throws SQLException
     {
-        this.courseRepository = courseRepository;
         this.urlGenerator = new UrlGenerator();
 
+        this.courseRepository = new CourseRepository();
         this.athleteDao = new AthleteDao(dataSource);
         this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
         this.resultDao = new ResultDao(dataSource);
+        this.courseDao = new CourseDao(dataSource);
     }
 
-    public static MostEvents newInstance() throws SQLException, IOException
+    public static MostEvents newInstance() throws SQLException
     {
-        CourseRepository courseRepository = new CourseRepository();
-
-        InputStream inputStream = Course.class.getResourceAsStream("/events.json");
-        dnt.parkrun.courses.reader.EventsJsonFileReader reader = new EventsJsonFileReader.Builder(() -> inputStream)
-                .forEachCountry(courseRepository::addCountry)
-                .forEachCourse(courseRepository::addCourse)
-                .statusSupplier(() -> Course.Status.RUNNING)
-                .build();
-        reader.read();
-
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost", "dao", "daoFractaldao");
-
-        return new MostEvents(courseRepository, dataSource);
+        return new MostEvents(dataSource);
     }
 
     public void collectMostEventRecords() throws IOException
     {
+        System.out.println("* Adding courses *");
+        InputStream inputStream = Course.class.getResourceAsStream("/events.json");
+        dnt.parkrun.courses.reader.EventsJsonFileReader reader = new EventsJsonFileReader.Builder(() -> inputStream)
+                .forEachCountry(courseRepository::addCountry)
+                .forEachCourse(course ->
+                {
+                    if(course.country.countryEnum == CountryEnum.NZ)
+                    {
+                        courseDao.insert(course);
+                        courseRepository.addCourse(course);
+                    }
+                })
+                .statusSupplier(() -> Course.Status.RUNNING)
+                .build();
+        reader.read();
+
         System.out.println("* Filter courses *");
         Arrays.stream(CountryEnum.values())
                 .filter(e -> e != CountryEnum.NZ)
@@ -100,7 +104,7 @@ public class MostEvents
         {
             System.out.printf("* Processing %s *\n", ces);
 
-            Country courseCountry = courseRepository.getCountry(ces.course.countryCode);
+            Country courseCountry = courseRepository.getCountry(ces.course.country.countryEnum.getCountryCode());
             dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder()
                     .courseName(ces.course.name)
                     .url(urlGenerator.generateCourseEventUrl(courseCountry.url, ces.course.name, ces.eventNumber))
@@ -143,10 +147,10 @@ public class MostEvents
 //            if(!course.name.equals("blenheim"))
 // 20
 //            if(!course.name.equals("gisbourne"))
-//            if(!course.name.equals("andersonpark"))
-//            if(!course.name.equals("flaxmere"))
+//            if(!course.name.equals("anderson"))//DONE
+//            if(!course.name.equals("flaxmere"))//DONE
 //            if(!course.name.equals("fosterpark"))
-//            if(!course.name.equals("pegasus"))
+            if(!course.name.equals("pegasus"))
 // 25
 //            if(!course.name.equals("tauranga"))
 //            if(!course.name.equals("whangerei"))
@@ -156,7 +160,7 @@ public class MostEvents
 // 30
 //            if(!course.name.equals("kapiticoast"))
 //            if(!course.name.equals("russellpark"))//DONE
-            if(!course.name.equals("eastend"))
+//            if(!course.name.equals("eastend"))//DONE
 //            if(!course.name.equals("cambridge"))
 //            if(!course.name.equals("universityofwaikato"))
 // 35
@@ -177,7 +181,7 @@ public class MostEvents
 
             System.out.printf("* Processing %s *\n", course);
 
-            Country courseCountry = courseRepository.getCountry(course.countryCode);
+            Country courseCountry = courseRepository.getCountry(course.country.getCountryCode());
             Parser courseEventSummaryParser = new Parser.Builder()
                     .course(course)
                     .url(urlGenerator.generateCourseEventSummaryUrl(courseCountry.url, course.name))

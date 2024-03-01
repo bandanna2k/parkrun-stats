@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static dnt.parkrun.courses.CountryEnum.NZ;
+import static dnt.parkrun.datastructures.CountryEnum.NZ;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class EventsJsonFileReaderTest
@@ -48,7 +48,7 @@ public class EventsJsonFileReaderTest
     public void shouldReadNzEvents()
     {
         assertThat(eventList.stream()
-                .filter(course -> course.countryCode == NZ.getCountryCode())
+                .filter(course -> course.country.countryEnum == NZ)
                 .count()).isEqualTo(43);
     }
 }

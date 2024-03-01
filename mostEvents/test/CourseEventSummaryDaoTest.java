@@ -18,6 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CourseEventSummaryDaoTest
 {
+    private static final Country NZ = new Country(CountryEnum.NZ, null);
+
     private CourseEventSummaryDao dao;
     private NamedParameterJdbcTemplate jdbc;
     private AthleteDao athleteDao;
@@ -26,8 +28,8 @@ public class CourseEventSummaryDaoTest
     public void setUp() throws Exception
     {
         CourseRepository courseRepository = new CourseRepository();
-        courseRepository.addCountry(new Country(1, null));
-        courseRepository.addCourse(new Course("cornwall", 1, null, RUNNING));
+        courseRepository.addCountry(NZ);
+        courseRepository.addCourse(new Course("cornwall", NZ, null, RUNNING));
 
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost", "dao", "daoFractaldao");
@@ -50,7 +52,7 @@ public class CourseEventSummaryDaoTest
         athleteDao.insert(firstWoman);
         athleteDao.insert(firstMan);
 
-        Course course = new Course("cornwall", 1, null, RUNNING);
+        Course course = new Course("cornwall", NZ, null, RUNNING);
         CourseEventSummary ces = new CourseEventSummary(course, 1, Date.from(Instant.now()), firstMan, firstWoman);
         dao.insert(ces);
         System.out.println(ces);

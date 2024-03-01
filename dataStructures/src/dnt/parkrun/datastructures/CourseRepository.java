@@ -11,7 +11,7 @@ public class CourseRepository
 
     public void addCountry(Country country)
     {
-        countryCodeToCountry.put(country.countryCode, country);
+        countryCodeToCountry.put(country.countryEnum.getCountryCode(), country);
     }
 
     public Country getCountry(int countryCode)
@@ -31,7 +31,7 @@ public class CourseRepository
 
     public void filterByCountryCode(int countryCode)
     {
-        courseNameToCourse.entrySet().removeIf(entry -> entry.getValue().countryCode == countryCode);
+        courseNameToCourse.entrySet().removeIf(entry -> entry.getValue().country.countryEnum.getCountryCode() == countryCode);
     }
 
     public Collection<Course> getCourses()

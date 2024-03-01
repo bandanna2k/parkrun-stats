@@ -2,12 +2,12 @@ package dnt.parkrun.datastructures;
 
 public class Country
 {
-    public final int countryCode;
+    public final CountryEnum countryEnum;
     public final String url;
 
-    public Country(int countryCode, String url)
+    public Country(CountryEnum countryEnum, String url)
     {
-        this.countryCode = countryCode;
+        this.countryEnum = countryEnum;
         this.url = url;
     }
 
@@ -15,8 +15,18 @@ public class Country
     public String toString()
     {
         return "Country{" +
-                "countryCode=" + countryCode +
+                "countryCode=" + countryEnum +
                 ", url='" + url + '\'' +
                 '}';
+    }
+
+    public Object getCountryCodeForDb()
+    {
+        return countryEnum.getCountryCodeForDb();
+    }
+
+    public int getCountryCode()
+    {
+        return countryEnum.getCountryCode();
     }
 }

@@ -23,10 +23,10 @@ public class WalkerTest
 
         // Get all countries and course
         List<Course> courses = new ArrayList<>();
-        Map<Integer, Country> countries = new HashMap<>();
+        Map<Integer, Country> countryCodeToCountry = new HashMap<>();
         Supplier<InputStream> supplier = () -> EventsJsonFileReader.class.getResourceAsStream("/events.json");
         EventsJsonFileReader reader = new EventsJsonFileReader.Builder(supplier)
-                .forEachCountry(c -> countries.put(c.countryCode, c))
+                .forEachCountry(c -> countryCodeToCountry.put(c.countryEnum.getCountryCode(), c))
                 .forEachCourse(courses::add)
                 .build();
         reader.read();
@@ -41,7 +41,7 @@ public class WalkerTest
         // https://www.parkrun.org.uk/bushy/results/eventhistory/
         // Get course events
         List<CourseEventSummary> events = new ArrayList<>();
-        Country country = countries.get(course.countryCode);
+        Country country = countryCodeToCountry.get(course.country.getCountryCode());
         URL courseEventSummaryUrl = new URL("https://" + country.url + "/" + course.name + "/results/eventhistory/");
         Parser courseEventSummaryParser = new Parser.Builder()
                 .course(course)
