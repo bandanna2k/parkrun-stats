@@ -50,7 +50,7 @@ public class CourseDao
                 (rs, rowNum) ->
                         Athlete.fromDao(
                                 rs.getString("name"),
-                                rs.getLong("athlete_id")
+                                rs.getInt("athlete_id")
                         ));
         return athlete;
     }

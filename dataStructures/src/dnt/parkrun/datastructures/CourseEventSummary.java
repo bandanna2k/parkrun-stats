@@ -2,6 +2,7 @@ package dnt.parkrun.datastructures;
 
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 
 public class CourseEventSummary
 {
@@ -9,15 +10,15 @@ public class CourseEventSummary
     public final int eventNumber;
     public final Date date;
     public final int finishers;
-    public final Athlete firstMale;
-    public final Athlete firstFemale;
+    public final Optional<Athlete> firstMale;
+    public final Optional<Athlete> firstFemale;
 
     public CourseEventSummary(Course course,
                               int eventNumber,
                               Date date,
                               int finishers,
-                              Athlete firstMale,
-                              Athlete firstFemale)
+                              Optional<Athlete> firstMale,
+                              Optional<Athlete> firstFemale)
     {
         this.finishers = finishers;
         this.course = course;

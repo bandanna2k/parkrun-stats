@@ -2,13 +2,13 @@ package dnt.parkrun.datastructures;
 
 public class Athlete
 {
-    public static final long NO_ATHLETE_ID = Long.MIN_VALUE;
+    public static final int NO_ATHLETE_ID = Integer.MIN_VALUE;
     public static final Athlete NO_ATHLETE = Athlete.fromDao(null, NO_ATHLETE_ID);
 
     public final String name;
-    public final long athleteId;
+    public final int athleteId;
 
-    private Athlete(String name, long athleteId)
+    private Athlete(String name, int athleteId)
     {
         if(athleteId == NO_ATHLETE_ID)
         {
@@ -55,12 +55,12 @@ public class Athlete
         return new Athlete(name, extractIdFromAthleteAtCourseLink(link));
     }
 
-    public static Athlete fromDao(String name, long athleteId)
+    public static Athlete fromDao(String name, int athleteId)
     {
         return new Athlete(name, athleteId);
     }
 
-    static long extractIdFromAthleteHistoryAtEventLink(String href)
+    static int extractIdFromAthleteHistoryAtEventLink(String href)
     {
         if(href == null)
         {
@@ -71,7 +71,7 @@ public class Athlete
         {
             try
             {
-                return Long.parseLong(href.substring(lastIndexOf + 1));
+                return Integer.parseInt(href.substring(lastIndexOf + 1));
             }
             catch (NumberFormatException ex)
             {
@@ -81,7 +81,7 @@ public class Athlete
         return NO_ATHLETE_ID;
     }
 
-    static long extractIdFromAthleteAtCourseLink(String href)
+    static int extractIdFromAthleteAtCourseLink(String href)
     {
         if(href == null)
         {
@@ -92,7 +92,7 @@ public class Athlete
         {
             try
             {
-                return Long.parseLong(href.substring(lastIndexOf + 1));
+                return Integer.parseInt(href.substring(lastIndexOf + 1));
             }
             catch (NumberFormatException ex)
             {
@@ -105,7 +105,7 @@ public class Athlete
     /*
             https://www.parkrun.co.nz/parkrunner/414811/all/
      */
-    private static long extractIdFromSummaryLink(String href)
+    private static int extractIdFromSummaryLink(String href)
     {
         if(href == null)
         {
@@ -118,7 +118,7 @@ public class Athlete
             int indexOfParkrunner = href.indexOf(parkrunner);
             String href2 = href.substring(indexOfParkrunner + parkrunner.length());
             String href3 = href2.replace("all", "").replace("/", "");
-            return Long.parseLong(href3);
+            return Integer.parseInt(href3);
         }
         catch (NumberFormatException | StringIndexOutOfBoundsException ex)
         {

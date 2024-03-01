@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class Parser
@@ -115,8 +116,8 @@ public class Parser
                         Integer.parseInt(eventNumber.toString()),
                         date,
                         Integer.parseInt(finishers.toString()),
-                        maleFirstFinisher,
-                        femaleFirstFinisher);
+                        Optional.ofNullable(maleFirstFinisher),
+                        Optional.ofNullable(femaleFirstFinisher));
                 consumer.accept(eventSummary);
             }
         }

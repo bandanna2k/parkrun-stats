@@ -58,14 +58,14 @@ public class AthleteDao
         }
     }
 
-    public Athlete getAthlete(long athleteId)
+    public Athlete getAthlete(int athleteId)
     {
         Athlete athlete = jdbc.queryForObject("select * from parkrun_stats.athlete",
                 new MapSqlParameterSource("athleteId", athleteId),
                 (rs, rowNum) ->
                         Athlete.fromDao(
                                 rs.getString("name"),
-                                rs.getLong("athlete_id")
+                                rs.getInt("athlete_id")
                         ));
         return athlete;
     }

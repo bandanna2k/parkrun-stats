@@ -12,6 +12,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
+
+import static dnt.parkrun.datastructures.Athlete.NO_ATHLETE_ID;
 
 public class CourseEventSummaryDao
 {
@@ -28,7 +31,7 @@ public class CourseEventSummaryDao
     {
         String sql = "select course_name, event_number, date, finishers," +
                 "fma.name as first_male_name, first_male_athlete_id, " +
-                "ffa.name as first_male_name, first_female_athlete_id " +
+                "ffa.name as first_female_name, first_female_athlete_id " +
                 "from parkrun_stats.course_event_summary " +
                 "left join parkrun_stats.athlete fma on first_male_athlete_id = fma.athlete_id " +
                 "left join parkrun_stats.athlete ffa on first_female_athlete_id = ffa.athlete_id ";
@@ -37,17 +40,20 @@ public class CourseEventSummaryDao
             String courseName = rs.getString("course_name");
             Course course = courseRepository.getCourse(courseName);
             assert course != null : "Could not find " + courseName;
+
+            int firstMaleAthleteId = rs.getInt("first_male_athlete_id");
+            int firstFemaleAthleteId = rs.getInt("first_female_athlete_id");
+            Optional<Athlete> firstMale = Optional.ofNullable(
+                    firstMaleAthleteId == NO_ATHLETE_ID ? null : Athlete.fromDao(rs.getString("first_male_name"), firstMaleAthleteId));
+            Optional<Athlete> firstFemale = Optional.ofNullable(
+                    firstFemaleAthleteId == NO_ATHLETE_ID ? null : Athlete.fromDao(rs.getString("first_female_name"), firstFemaleAthleteId));
             return new CourseEventSummary(
                     course,
                     rs.getInt("event_number"),
                     rs.getDate("date"),
                     rs.getInt("finishers"),
-                    Athlete.fromDao(
-                            rs.getString("first_male_name"),
-                            rs.getInt("first_male_athlete_id")),
-                    Athlete.fromDao(
-                            rs.getString("first_male_name"),
-                            rs.getInt("first_male_athlete_id"))
+                    firstMale,
+                    firstFemale
             );
         });
     }
@@ -64,8 +70,8 @@ public class CourseEventSummaryDao
                 .addValue("eventNumber", courseEventSummary.eventNumber)
                 .addValue("date", courseEventSummary.date)
                 .addValue("finishers", courseEventSummary.finishers)
-                .addValue("firstMaleAthleteId", courseEventSummary.firstMale.athleteId)
-                .addValue("firstFemaleAthleteId", courseEventSummary.firstFemale.athleteId)
+                .addValue("firstMaleAthleteId", courseEventSummary.firstMale.map(a -> a.athleteId).orElse(NO_ATHLETE_ID))
+                .addValue("firstFemaleAthleteId", courseEventSummary.firstFemale.map(a -> a.athleteId).orElse(NO_ATHLETE_ID))
         );
     }
 
