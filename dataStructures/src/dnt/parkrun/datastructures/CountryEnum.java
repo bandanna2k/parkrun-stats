@@ -57,7 +57,7 @@ public enum CountryEnum
         return countryCode;
     }
 
-    public String getCountryCodeForDb()
+    public String getCountryDbCode()
     {
         return countryCodeForDb;
     }

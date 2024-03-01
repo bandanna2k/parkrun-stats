@@ -25,15 +25,16 @@ public class CourseDao
         try
         {
             String sql = "insert ignore into parkrun_stats.course (" +
-                    "course_name, course_long_name, country_code, status " +
+                    "course_name, course_long_name, country_code, country, status " +
                     ") values ( " +
-                    ":courseName, :courseLongName, :countryCode, :status" +
+                    ":courseName, :courseLongName, :countryCode, :country, :status" +
                     ")";
             jdbc.update(sql, new MapSqlParameterSource()
                     .addValue("courseName", course.name)
                     .addValue("courseLongName", course.longName)
-                    .addValue("countryCode", course.country.getCountryCodeForDb())
-                    .addValue("status", course.getStatusForDb())
+                    .addValue("countryCode", course.country.getCountryCode())
+                    .addValue("country", course.country.getCountryDbCode())
+                    .addValue("status", course.getStatusDbCode())
             );
         }
         catch (DuplicateKeyException ex)

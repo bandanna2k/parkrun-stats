@@ -7,7 +7,8 @@ IF NOT EXISTS
 parkrun_stats.course (
     course_name             VARCHAR(255)        NOT NULL,
     course_long_name        VARCHAR(255)        NOT NULL,
-    country_code            VARCHAR(2)          NOT NULL,
+    country_code            INT                 NOT NULL,
+    country                 VARCHAR(2)          NOT NULL,
     status                  CHAR(1)             NOT NULL,
 
     PRIMARY KEY (course_name)

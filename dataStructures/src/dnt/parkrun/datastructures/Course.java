@@ -38,7 +38,7 @@ public class Course
         return Objects.hash(name, country);
     }
 
-    public String getStatusForDb()
+    public String getStatusDbCode()
     {
         return status.getStatusForDb();
     }

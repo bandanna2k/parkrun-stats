@@ -15,14 +15,14 @@ public class Country
     public String toString()
     {
         return "Country{" +
-                "countryCode=" + countryEnum +
+                "countryEnum=" + countryEnum +
                 ", url='" + url + '\'' +
                 '}';
     }
 
-    public Object getCountryCodeForDb()
+    public Object getCountryDbCode()
     {
-        return countryEnum.getCountryCodeForDb();
+        return countryEnum.getCountryDbCode();
     }
 
     public int getCountryCode()

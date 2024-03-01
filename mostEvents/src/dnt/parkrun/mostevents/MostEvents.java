@@ -155,7 +155,7 @@ public class MostEvents
 //            if(!course.name.equals("tauranga"))
 //            if(!course.name.equals("whangerei"))
 //            if(!course.name.equals("owairaka"))//DONE
-//            if(!course.name.equals("greytownwoodside"))
+//            if(!course.name.equals("greytownwoodsidetrail"))
 //            if(!course.name.equals("araharakeke"))//DONE
 // 30
 //            if(!course.name.equals("kapiticoast"))
