@@ -26,7 +26,7 @@ public class CourseEventSummaryDao
 
     public List<CourseEventSummary> getCourseEventSummaries()
     {
-        String sql = "select course_name, event_number, date, " +
+        String sql = "select course_name, event_number, date, finishers," +
                 "fma.name as first_male_name, first_male_athlete_id, " +
                 "ffa.name as first_male_name, first_female_athlete_id " +
                 "from parkrun_stats.course_event_summary " +
@@ -41,6 +41,7 @@ public class CourseEventSummaryDao
                     course,
                     rs.getInt("event_number"),
                     rs.getDate("date"),
+                    rs.getInt("finishers"),
                     Athlete.fromDao(
                             rs.getString("first_male_name"),
                             rs.getInt("first_male_athlete_id")),
@@ -54,14 +55,15 @@ public class CourseEventSummaryDao
     public void insert(CourseEventSummary courseEventSummary)
     {
         String sql = "insert into parkrun_stats.course_event_summary (" +
-                "course_name, event_number, date, first_male_athlete_id, first_female_athlete_id" +
+                "course_name, event_number, date, finishers, first_male_athlete_id, first_female_athlete_id" +
                 ") values ( " +
-                ":courseName, :eventNumber, :date, :firstMaleAthleteId, :firstFemaleAthleteId" +
+                ":courseName, :eventNumber, :date, :finishers, :firstMaleAthleteId, :firstFemaleAthleteId" +
                 ")";
         jdbc.update(sql, new MapSqlParameterSource()
                 .addValue("courseName", courseEventSummary.course.name)
                 .addValue("eventNumber", courseEventSummary.eventNumber)
                 .addValue("date", courseEventSummary.date)
+                .addValue("finishers", courseEventSummary.finishers)
                 .addValue("firstMaleAthleteId", courseEventSummary.firstMale.athleteId)
                 .addValue("firstFemaleAthleteId", courseEventSummary.firstFemale.athleteId)
         );

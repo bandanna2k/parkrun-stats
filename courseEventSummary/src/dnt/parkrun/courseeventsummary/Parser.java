@@ -56,6 +56,10 @@ public class Parser
 //                System.out.print("\t");
                 Date date = parseWebsiteDate(dateNode.toString());
 
+                Node finishers = row.childNode(2).childNode(0);
+//                System.out.print(date);
+//                System.out.print("\t");
+
                 Athlete maleFirstFinisher = null;
                 try
                 {
@@ -110,6 +114,7 @@ public class Parser
                         course,
                         Integer.parseInt(eventNumber.toString()),
                         date,
+                        Integer.parseInt(finishers.toString()),
                         maleFirstFinisher,
                         femaleFirstFinisher);
                 consumer.accept(eventSummary);

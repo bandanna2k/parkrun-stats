@@ -130,48 +130,48 @@ public class MostEvents
 // 5
 //            if(!course.name.equals("hamiltonlake"))//DONE
 //            if(!course.name.equals("hamiltonpark"))//DONE
-//            if(!course.name.equals("dunedin"))
-//            if(!course.name.equals("millwater"))
+//            if(!course.name.equals("otakiriver"))       // DONE
+//            if(!course.name.equals("anderson"))//DONE
 //            if(!course.name.equals("waitangi"))     // DONE
 // 10
-//            if(!course.name.equals("westernsprings"))
-//            if(!course.name.equals("barrycurtis"))
-//            if(!course.name.equals("purenga"))
-//            if(!course.name.equals("taupo"))
-//            if(!course.name.equals("otakiriver"))       // DONE
+//            if(!course.name.equals("flaxmere"))//DONE
+//            if(!course.name.equals("foster"))//DONE
+//            if(!course.name.equals("hagley"))//DONE
+//            if(!course.name.equals("broadpark"))        // DONE
+//            if(!course.name.equals("palmerstonnorth"))//DONE
 // 15
+//            if(!course.name.equals("russellpark"))//DONE
+//            if(!course.name.equals("eastend"))//DONE
+//            if(!course.name.equals("owairaka"))//DONE
+//            if(!course.name.equals("greytownwoodsidetrail"))
+//            if(!course.name.equals("araharakeke"))//DONE
+// 20
+            if(!course.name.equals("gisborne"))
+//            if(!course.name.equals("millwater"))
+//            if(!course.name.equals("trenthammemorial"))
+//            if(!course.name.equals("whakatanegardens"))
+//            if(!course.name.equals("pegasus"))//DONE
+// 25
 //            if(!course.name.equals("queenstown"))
 //            if(!course.name.equals("wanaka"))
 //            if(!course.name.equals("invercargill"))
 //            if(!course.name.equals("balclutha"))
 //            if(!course.name.equals("blenheim"))
-// 20
-//            if(!course.name.equals("gisbourne"))
-//            if(!course.name.equals("anderson"))//DONE
-//            if(!course.name.equals("flaxmere"))//DONE
-//            if(!course.name.equals("fosterpark"))
-            if(!course.name.equals("pegasus"))
-// 25
+// 30
 //            if(!course.name.equals("tauranga"))
 //            if(!course.name.equals("whangerei"))
-//            if(!course.name.equals("owairaka"))//DONE
-//            if(!course.name.equals("greytownwoodsidetrail"))
-//            if(!course.name.equals("araharakeke"))//DONE
-// 30
 //            if(!course.name.equals("kapiticoast"))
-//            if(!course.name.equals("russellpark"))//DONE
-//            if(!course.name.equals("eastend"))//DONE
-//            if(!course.name.equals("cambridge"))
+//            if(!course.name.equals("cambridgenz"))
 //            if(!course.name.equals("universityofwaikato"))
 // 35
-//            if(!course.name.equals("hagley"))//DONE
-//            if(!course.name.equals("trenthammemorial"))
-//            if(!course.name.equals("whakatanegardens"))
-//            if(!course.name.equals("broadpark"))        // DONE
-//            if(!course.name.equals("palmerstonnorth"))
+//            if(!course.name.equals("westernsprings"))
+//            if(!course.name.equals("barrycurtis"))
+//            if(!course.name.equals("dunedin"))
+//            if(!course.name.equals("purenga"))
+//            if(!course.name.equals("taupo"))
 // 40
-//            if(!course.name.equals("whanganuiriverbank"))
-//            if(!course.name.equals("sherwoodreserve"))
+//            if(!course.name.equals("whanganuiriverbank"))//DONE
+//            if(!course.name.equals("sherwoodreserve"))//DONE
 //            if(!course.name.equals("hobsonvillepoint"))     // DONE
 // 43
 

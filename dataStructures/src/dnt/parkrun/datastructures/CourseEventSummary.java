@@ -8,11 +8,18 @@ public class CourseEventSummary
     public final Course course;
     public final int eventNumber;
     public final Date date;
+    public final int finishers;
     public final Athlete firstMale;
     public final Athlete firstFemale;
 
-    public CourseEventSummary(Course course, int eventNumber, Date date, Athlete firstMale, Athlete firstFemale)
+    public CourseEventSummary(Course course,
+                              int eventNumber,
+                              Date date,
+                              int finishers,
+                              Athlete firstMale,
+                              Athlete firstFemale)
     {
+        this.finishers = finishers;
         this.course = course;
         this.eventNumber = eventNumber;
         this.date = date;
@@ -48,6 +55,7 @@ public class CourseEventSummary
                 "course=" + course +
                 ", eventNumber=" + eventNumber +
                 ", date=" + date +
+                ", finishers=" + finishers +
                 ", firstMale=" + firstMale +
                 ", firstFemale=" + firstFemale +
                 '}';

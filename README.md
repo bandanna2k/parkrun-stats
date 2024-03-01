@@ -6,7 +6,15 @@
 
 - Convert time to int (db)
 
+- Invariant test for results against attendance
+
 # QUERIES
+
+## How many athletes have finished a run (in the database)
+
+```
+select count(1) from athlete where athlete_id > 0;
+```
 
 ## Runners with X runs (e.g. how many runners with just 1 run)
 
@@ -92,4 +100,29 @@ left join result using (athlete_id)
 group by athlete_id, course_name
 having athlete_id = 414811
 order by count desc;
+```
+
+# INVARIANTS
+
+## Course Event Summary with finishers not entered
+```
+select count(1) from course_event_summary where finishers is null;
+```
+## Course Event Summary with first finishers not entered
+```
+select count(1) from course_event_summary 
+where 
+    first_male_athlete_id = 0 and 
+    first_female_athlete_id = 0;
+```
+## First female finishers do not match (Query not as expected)
+```
+select * from course_event_summary ces
+left join result r 
+on  ces.course_name = r.course_name and 
+    ces.event_number = r.event_number and
+    ces.first_female_athlete_id = r.athlete_id
+where
+    ces.first_female_athlete_id <> 0 
+    and r.athlete_id is null;
 ```
