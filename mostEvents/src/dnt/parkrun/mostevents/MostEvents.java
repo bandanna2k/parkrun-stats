@@ -147,19 +147,19 @@ public class MostEvents
 //            if(!course.name.equals("araharakeke"))//DONE
 // 20
 //            if(!course.name.equals("gisborne"))//DONE
-            if(!course.name.equals("millwater"))
+//            if(!course.name.equals("millwater"))// DONE
 //            if(!course.name.equals("trenthammemorial"))
-//            if(!course.name.equals("whakatanegardens"))
+//            if(!course.name.equals("whakatanegardens"))//DONE
 //            if(!course.name.equals("pegasus"))//DONE
 // 25
-//            if(!course.name.equals("queenstown"))
-//            if(!course.name.equals("wanaka"))
-//            if(!course.name.equals("invercargill"))
-//            if(!course.name.equals("balclutha"))
-//            if(!course.name.equals("blenheim"))
+//            if(!course.name.equals("queenstown"))//DONE
+//            if(!course.name.equals("whanganuiriverbank"))//DONE
+//            if(!course.name.equals("sherwoodreserve"))//DONE
+//            if(!course.name.equals("hobsonvillepoint"))     // DONE
+//            if(!course.name.equals("blenheim"))//DONE
 // 30
-//            if(!course.name.equals("tauranga"))
-//            if(!course.name.equals("whangerei"))
+//            if(!course.name.equals("tauranga"))//DONE
+            if(!course.name.equals("whangarei"))
 //            if(!course.name.equals("kapiticoast"))
 //            if(!course.name.equals("cambridgenz"))
 //            if(!course.name.equals("universityofwaikato"))
@@ -170,9 +170,9 @@ public class MostEvents
 //            if(!course.name.equals("purenga"))
 //            if(!course.name.equals("taupo"))
 // 40
-//            if(!course.name.equals("whanganuiriverbank"))//DONE
-//            if(!course.name.equals("sherwoodreserve"))//DONE
-//            if(!course.name.equals("hobsonvillepoint"))     // DONE
+//            if(!course.name.equals("wanaka"))
+//            if(!course.name.equals("invercargill"))
+//            if(!course.name.equals("balclutha"))
 // 43
 
             {

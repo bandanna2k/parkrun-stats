@@ -139,3 +139,7 @@ where
     ces.first_female_athlete_id <> 0 
     and r.athlete_id is null;
 ```
+# No runner with 2 results on the same day
+
+# No runner with 2 results in the same event
+
