@@ -33,7 +33,7 @@ public class ResultDao
                             rs.getString("name"),
                             rs.getInt("athlete_id")
                     ),
-                    Time.fromString(rs.getString("time"))
+                    Time.from(rs.getString("time"))     // TODO Needs converting to int
             );
         });
         return query;
@@ -42,9 +42,9 @@ public class ResultDao
     public void insert(Result result)
     {
         String sql = "insert into parkrun_stats.result (" +
-                "athlete_id, course_name, event_number, position, time" +
+                "athlete_id, course_name, event_number, position, time, time_seconds" +
                 ") values ( " +
-                ":athleteId, :courseName, :eventNumber, :position, :time" +
+                ":athleteId, :courseName, :eventNumber, :position, :time, :time_seconds" +
                 ")";
         jdbc.update(sql, new MapSqlParameterSource()
                 .addValue("athleteId", result.athlete.athleteId)
@@ -52,6 +52,7 @@ public class ResultDao
                 .addValue("eventNumber", result.eventNumber)
                 .addValue("position", result.position)
                 .addValue("time", result.time.toString())
+                .addValue("time_seconds", result.time.getTotalSeconds())
         );
     }
 }

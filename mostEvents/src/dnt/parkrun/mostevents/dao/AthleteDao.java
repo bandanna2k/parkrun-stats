@@ -32,7 +32,7 @@ public class AthleteDao
                     rs.getInt("event_number"),
                     rs.getInt("position"),
                     null,
-                    Time.fromString(rs.getString("time"))
+                    Time.from(rs.getString("time"))
             );
         });
         return query;

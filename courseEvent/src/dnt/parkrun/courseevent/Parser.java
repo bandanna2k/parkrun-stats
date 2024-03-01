@@ -75,7 +75,7 @@ public class Parser
                             .childNode(5)   // td
                             .childNode(0)   // div compact
                             .childNode(0);  // value
-                    Time time = Time.fromString(timeNode.toString());
+                    Time time = Time.from(timeNode.toString());
                     resultConsumer.accept(new Result(courseName, eventNumber, position, athlete, time));
                 }
                 else

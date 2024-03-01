@@ -45,7 +45,7 @@ public class ResultDaoTest
         Athlete athlete = Athlete.fromAthleteSummaryLink("Davey JONES", "https://www.parkrun.co.nz/parkrunner/902393/");
         athleteDao.insert(athlete);
 
-        Result result = new Result("test", 200, 1, athlete, Time.fromString("1:30:02"));
+        Result result = new Result("test", 200, 1, athlete, Time.from("1:30:02"));
         resultDao.insert(result);
 
         List<Result> results = resultDao.getResults();

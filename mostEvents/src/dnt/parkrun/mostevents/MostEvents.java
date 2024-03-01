@@ -146,8 +146,8 @@ public class MostEvents
 //            if(!course.name.equals("greytownwoodsidetrail"))
 //            if(!course.name.equals("araharakeke"))//DONE
 // 20
-            if(!course.name.equals("gisborne"))
-//            if(!course.name.equals("millwater"))
+//            if(!course.name.equals("gisborne"))//DONE
+            if(!course.name.equals("millwater"))
 //            if(!course.name.equals("trenthammemorial"))
 //            if(!course.name.equals("whakatanegardens"))
 //            if(!course.name.equals("pegasus"))//DONE

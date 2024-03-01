@@ -17,7 +17,6 @@ public class Time
         this.hours = hours;
         this.mins = mins;
         this.seconds = seconds;
-
     }
 
     @Override
@@ -33,7 +32,17 @@ public class Time
         }
     }
 
-    public static Time fromString(String time)
+    public static Time from(final int totalSeconds)
+    {
+        int runningTotalSeconds = totalSeconds;
+        int hours = runningTotalSeconds / 3600;
+        runningTotalSeconds -= (hours * 3600);
+        int mins = runningTotalSeconds / 60;
+        runningTotalSeconds -= (mins * 60);
+        return new Time(hours, mins, runningTotalSeconds);
+    }
+
+    public static Time from(String time)
     {
         if(null == time)
         {

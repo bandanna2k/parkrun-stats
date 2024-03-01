@@ -9,19 +9,37 @@ import static org.junit.Assert.assertThrows;
 public class TimeTest
 {
     @Test
+    public void testFromInt()
+    {
+        assertThat(Time.from(1).toString()).isEqualTo("00:01");
+        assertThat(Time.from(61).toString()).isEqualTo("01:01");
+        assertThat(Time.from(3601).toString()).isEqualTo("1:00:01");
+        assertThat(Time.from(3661).toString()).isEqualTo("1:01:01");
+    }
+
+    @Test
+    public void testTotalSeconds()
+    {
+        assertThat(Time.from(1).getTotalSeconds()).isEqualTo(1);
+        assertThat(Time.from(61).getTotalSeconds()).isEqualTo(61);
+        assertThat(Time.from(3601).getTotalSeconds()).isEqualTo(3601);
+        assertThat(Time.from(3661).getTotalSeconds()).isEqualTo(3661);
+    }
+
+    @Test
     public void testFromString()
     {
-        assertThat(Time.fromString(null).getTotalSeconds()).isEqualTo(NO_TIME_SECONDS);
-        assertThat(Time.fromString("").getTotalSeconds()).isEqualTo(NO_TIME_SECONDS);
-        assertThat(Time.fromString("1:02:03").getTotalSeconds()).isEqualTo(3600 + 120 + 3);
-        assertThat(Time.fromString("1:19:50").getTotalSeconds()).isEqualTo(3600 + 1190);
-        assertThat(Time.fromString("24:22:03").getTotalSeconds()).isEqualTo(87723);
-        assertThat(Time.fromString("19:50").getTotalSeconds()).isEqualTo(1190);
-        assertThat(Time.fromString(" 19:50").getTotalSeconds()).isEqualTo(1190);
-        assertThat(Time.fromString("19:50 ").getTotalSeconds()).isEqualTo(1190);
-        assertThat(Time.fromString(" 19:50 ").getTotalSeconds()).isEqualTo(1190);
-        assertThat(Time.fromString("59:59").getTotalSeconds()).isEqualTo(3599);
-        assertThat(Time.fromString("0:0").getTotalSeconds()).isEqualTo(NO_TIME_SECONDS);
+        assertThat(Time.from(null).getTotalSeconds()).isEqualTo(NO_TIME_SECONDS);
+        assertThat(Time.from("").getTotalSeconds()).isEqualTo(NO_TIME_SECONDS);
+        assertThat(Time.from("1:02:03").getTotalSeconds()).isEqualTo(3600 + 120 + 3);
+        assertThat(Time.from("1:19:50").getTotalSeconds()).isEqualTo(3600 + 1190);
+        assertThat(Time.from("24:22:03").getTotalSeconds()).isEqualTo(87723);
+        assertThat(Time.from("19:50").getTotalSeconds()).isEqualTo(1190);
+        assertThat(Time.from(" 19:50").getTotalSeconds()).isEqualTo(1190);
+        assertThat(Time.from("19:50 ").getTotalSeconds()).isEqualTo(1190);
+        assertThat(Time.from(" 19:50 ").getTotalSeconds()).isEqualTo(1190);
+        assertThat(Time.from("59:59").getTotalSeconds()).isEqualTo(3599);
+        assertThat(Time.from("0:0").getTotalSeconds()).isEqualTo(NO_TIME_SECONDS);
     }
 
     @Test

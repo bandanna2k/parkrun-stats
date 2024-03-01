@@ -104,6 +104,19 @@ order by count desc;
 
 # INVARIANTS
 
+## Finishers does not match results (needs testing)
+```
+select ces.course_name, ces.event_number, ces.finishers, count(r.athlete_id) as result_count
+from course_event_summary ces
+left join result r on 
+    ces.course_name = r.course_name and
+    ces.event_number = r.event_number
+group by ces.course_name, ces.event_number
+having 
+    ces.finishers <> result_count
+limit 10;
+```
+
 ## Course Event Summary with finishers not entered
 ```
 select count(1) from course_event_summary where finishers is null;
