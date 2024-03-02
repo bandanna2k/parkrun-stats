@@ -7,6 +7,19 @@ import java.util.Random;
 public class UrlGenerator
 {
     private final Random random = new Random();
+    private final int fixedSleep;
+    private final int randomSleep;
+
+    public UrlGenerator(int fixedSleep, int randomSleep)
+    {
+        this.fixedSleep = fixedSleep;
+        this.randomSleep = randomSleep;
+    }
+
+    public UrlGenerator()
+    {
+        this(3000, 1000);
+    }
 
     public URL generateCourseEventSummaryUrl(String countryBaseUrl, String courseName)
     {
@@ -25,7 +38,7 @@ public class UrlGenerator
     {
         try
         {
-            Thread.sleep(3000 + random.nextInt(1000));
+            Thread.sleep(fixedSleep + random.nextInt(randomSleep));
         }
         catch (InterruptedException e)
         {
@@ -46,12 +59,25 @@ public class UrlGenerator
         }
     }
 
-    public URL generateAthleteEventUrl(String countryUrl, int athleteId)
+    public URL generateAthleteEventSummaryUrl(String countryBaseUrl, int athleteId)
     {
         sleep();
         try
         {
-            return new URL("https://" + countryUrl + "/parkrunner/" + athleteId + "/");
+            return new URL("https://" + countryBaseUrl + "/" + "/parkrunner/" + athleteId + "/");
+        }
+        catch (MalformedURLException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public URL generateAthleteEventUrl(String countryBaseUrl, String countryUrl, int athleteId)
+    {
+        sleep();
+        try
+        {
+            return new URL("https://" + countryBaseUrl + "/" + countryUrl + "/parkrunner/" + athleteId + "/");
         }
         catch (MalformedURLException e)
         {

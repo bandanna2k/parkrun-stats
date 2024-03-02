@@ -16,8 +16,9 @@ import java.util.stream.Collectors;
 
 public class AddAthleteEvents
 {
-    public static final String PARKRUN_CO_NZ = "parkrun.co.nz";
-    private UrlGenerator urlGenerator = new UrlGenerator();
+    private static final String PARKRUN_CO_NZ = "parkrun.co.nz";
+
+    private final UrlGenerator urlGenerator = new UrlGenerator(1, 2);
 
 
     public static void main(String[] args) throws IOException
@@ -54,9 +55,8 @@ public class AddAthleteEvents
         List<AthleteCourseSummary> courseSummaries = new ArrayList<>();
         for (Integer athleteId : athletes)
         {
-            urlGenerator = new UrlGenerator();
             Parser parser = new Parser.Builder()
-                    .url(urlGenerator.generateAthleteEventUrl(PARKRUN_CO_NZ, athleteId))
+                    .url(urlGenerator.generateAthleteEventSummaryUrl(PARKRUN_CO_NZ, athleteId))
                     .forEachAthleteCourseSummary(courseSummaries::add)
                     .build();
             parser.parse();
@@ -64,7 +64,7 @@ public class AddAthleteEvents
 
         courseSummaries.forEach(acs -> {
             Course course = courseRepository.getCourseFromLongName(acs.courseLongName);
-            System.out.println(course);
+            System.out.println(urlGenerator.generateAthleteEventUrl(course.country.url, course.name, acs.athlete.athleteId));
         });
 
 //        dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder()
