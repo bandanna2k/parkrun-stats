@@ -86,6 +86,11 @@ limit 20
 ) as sub\G;
 ```
 
+## Get Most Different Events with Total NZ Events (WIP)
+
+```
+```
+
 ### Best position at course athlete history
 
 ```

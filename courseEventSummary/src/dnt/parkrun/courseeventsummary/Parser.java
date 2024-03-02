@@ -1,5 +1,6 @@
 package dnt.parkrun.courseeventsummary;
 
+import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
@@ -12,8 +13,6 @@ import org.jsoup.select.Elements;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +20,6 @@ import java.util.function.Consumer;
 
 public class Parser
 {
-    private static final SimpleDateFormat WEBSITE_DATE_PARSER = new SimpleDateFormat("dd/MM/yyyy");
-
     private final Document doc;
     private final Course course;
     private final Consumer<CourseEventSummary> consumer;
@@ -55,7 +52,7 @@ public class Parser
                 Node dateNode = row.childNode(1).childNode(0).childNode(0).childNode(0).childNode(0);
 //                System.out.print(date);
 //                System.out.print("\t");
-                Date date = parseWebsiteDate(dateNode.toString());
+                Date date = DateConverter.parseWebsiteDate(dateNode.toString());
 
                 Node finishers = row.childNode(2).childNode(0);
 //                System.out.print(date);
@@ -123,18 +120,6 @@ public class Parser
         }
     }
 
-    private static Date parseWebsiteDate(String date)
-    {
-        try
-        {
-            return WEBSITE_DATE_PARSER.parse(date);
-        }
-        catch (ParseException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static class Builder
     {
         private Document doc;
@@ -148,7 +133,27 @@ public class Parser
 
         public Builder url(URL url) throws IOException
         {
-            this.doc = Jsoup.parse(url, 5000);
+            int counter = 1;
+            while(this.doc == null && counter > 0)
+            {
+                counter--;
+                try
+                {
+                    this.doc = Jsoup.parse(url, 5000);
+                }
+                catch(Exception ex)
+                {
+                    ex.printStackTrace();
+                    try
+                    {
+                        Thread.sleep(5000);
+                    }
+                    catch (InterruptedException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
             return this;
         }
 
