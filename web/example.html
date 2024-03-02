@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Results</title>
+    <link href="css/cool.css" rel="stylesheet" />
+    <script src="library/gridjs.umd.js"></script>
+</head>
+<body>
+<div id="table1"></div>
+<script>
+    new gridjs.Grid(
+    {
+        columns: [{
+        id: 'name',
+        name: 'Name'
+    },
+    {
+        id: 'count',
+        name: 'Different Courses'
+    }],
+        data: [{"name": null, "count": 37}, {"name": "Nneka OKONTA", "count": 37}, {"name": "Martin O'SULLIVAN", "count": 37}, {"name": "Trent David OSULLIVAN", "count": 37}, {"name": "Rebecca EDGECOMBE", "count": 37}, {"name": "Gina FOSTER", "count": 37}, {"name": "Brent FOSTER", "count": 37}, {"name": "James OSULLIVAN", "count": 37}, {"name": "Gary HOLFORD", "count": 37}, {"name": "Paul GREENWOOD", "count": 37}, {"name": "Mark BOUWMAN", "count": 37}, {"name": "Liz NEILL", "count": 37}, {"name": "Graeme TINDALL", "count": 37}, {"name": "Robyn RICHARDS", "count": 37}, {"name": "Andy MEARS", "count": 37}, {"name": "Wendy HARE", "count": 37}, {"name": "Kirsty PETERSON", "count": 37}, {"name": "Peet OOSTHUIZEN", "count": 37}, {"name": "Elise HEYNS", "count": 37}, {"name": "Dan JOE", "count": 37}],
+        className: {
+            td: 'my-td',
+            table: 'my-table'
+        }
+    }).render(document.getElementById("table1"));
+</script>
+
+<hr>
+
+<div id="table2"></div>
+<script>
+    new gridjs.Grid(
+    {
+        columns: [{
+        id: 'count',
+        name: 'Count'
+    },
+    {
+        id: 'course_name',
+        name: 'Course'
+    }],
+        data: [{"count": 415, "course_name": "cornwall"}, {"count": 17, "course_name": "hobsonvillepoint"}, {"count": 6, "course_name": "westernsprings"}, {"count": 3, "course_name": "millwater"}, {"count": 2, "course_name": "sherwoodreserve"}, {"count": 2, "course_name": "owairaka"}, {"count": 2, "course_name": "northernpathway"}, {"count": 2, "course_name": "hamiltonlake"}, {"count": 2, "course_name": "cambridgenz"}, {"count": 2, "course_name": "whangarei"}, {"count": 1, "course_name": "universityofwaikato"}, {"count": 1, "course_name": "tauranga"}, {"count": 1, "course_name": "lowerhutt"}, {"count": 1, "course_name": "russellpark"}, {"count": 1, "course_name": "waitangi"}, {"count": 1, "course_name": "queenstown"}, {"count": 1, "course_name": "puarenga"}, {"count": 1, "course_name": "pegasus"}, {"count": 1, "course_name": "palmerstonnorth"}, {"count": 1, "course_name": "whakatanegardens"}, {"count": 1, "course_name": "whanganuiriverbank"}, {"count": 1, "course_name": "otakiriver"}, {"count": 1, "course_name": "anderson"}, {"count": 1, "course_name": "lake2laketrail"}, {"count": 1, "course_name": "kapiticoast"}, {"count": 1, "course_name": "hamiltonpark"}, {"count": 1, "course_name": "hagley"}, {"count": 1, "course_name": "gordonsprattreserve"}, {"count": 1, "course_name": "gisborne"}, {"count": 1, "course_name": "foster"}, {"count": 1, "course_name": "flaxmere"}, {"count": 1, "course_name": "eastend"}, {"count": 1, "course_name": "broadpark"}, {"count": 1, "course_name": "blenheim"}, {"count": 1, "course_name": "araharakeke"}],
+        className: {
+            td: 'my-td',
+            table: 'my-table'
+        }
+    }).render(document.getElementById("table2"));
+</script>
+
+</body>
+</html>
