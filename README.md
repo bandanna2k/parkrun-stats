@@ -86,6 +86,43 @@ limit 50
 ) as sub\G;
 ```
 
+## Get Most Different Events along With Total NZ runs (WIP) and Total World Runs
+
+```
+select a.name, sub1.count as different_events, sub2.count as total_runs, sub3.count as nz_runs
+from athlete a
+join  
+(
+    select athlete_id, count(course_name) as count
+    from (select distinct athlete_id, course_name from parkrun_stats.result) as sub1a
+    group by athlete_id
+    having count > 40
+    order by count desc, athlete_id asc 
+) as sub1 on sub1.athlete_id = a.athlete_id
+join
+(
+    select athlete_id, count(concat) as count
+    from (select athlete_id, concat(athlete_id, course_name, event_number, '-', position) as concat from result) as sub2a
+    group by athlete_id
+    order by count desc, athlete_id asc 
+) as sub2 on sub2.athlete_id = a.athlete_id
+left join
+(
+    select athlete_id, count(concat) as count
+    from 
+    (
+        select athlete_id, concat(athlete_id, course_name, event_number, '-', position) as concat 
+        from result r
+        join course c using (course_name)
+        where c.country_code = 65
+    ) as sub3a
+    group by athlete_id
+    order by count desc, athlete_id asc 
+) as sub3 on sub3.athlete_id = a.athlete_id
+order by different_events desc, total_runs desc, a.athlete_id desc
+limit 50;
+```
+
 ## Get Most Different Events with Total NZ Events (WIP)
 
 ```
