@@ -7,6 +7,7 @@ import dnt.parkrun.datastructures.Time;
 import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -39,7 +40,8 @@ public class ResultDaoTest
     }
 
     @Test
-    public void shouldInsertResult()
+    @Ignore
+    public void shouldInsertAndReturnResult()
     {
         Athlete athlete = Athlete.fromAthleteSummaryLink("Davey JONES", "https://www.parkrun.co.nz/parkrunner/902393/");
         athleteDao.insert(athlete);

@@ -2,11 +2,11 @@
 
 # TODO
 
-- Convert time to int (java)
-
-- Convert time to int (db)
+- Backup / Migrate time / invariant / backup / drop column
 
 - Invariant test for results against attendance
+
+- DB Isolation
 
 # QUERIES
 
@@ -66,7 +66,7 @@ from (select athlete_id, concat(athlete_id, course_name, event_number, '-', posi
 join athlete using (athlete_id)
 group by athlete_id
 order by count desc, athlete_id asc 
-limit 20;
+limit 40;
 ```
 
 ## Get Most Different Events
@@ -81,7 +81,7 @@ join athlete using (athlete_id)
 group by athlete_id
 having count > 30
 order by count desc, athlete_id asc 
-limit 20
+limit 50
 
 ) as sub\G;
 ```
@@ -133,7 +133,7 @@ having
 limit 10;
 ```
 
-## Course Event Summary with finishers not entered
+## Course Event Summary with finishers not entered (needs back filling)
 ```
 select count(1) from course_event_summary where finishers is null;
 ```
@@ -158,16 +158,3 @@ where
 # No runner with 2 results on the same day
 
 # No runner with 2 results in the same event
-
-const grid = new Grid(
-{
-columns: [{
-id: 'count',
-name: 'Count'
-},
-{
-id: 'course_name',
-name: 'Course'
-}],
-data: [{"count": 415, "course_name": "cornwall"}, {"count": 17, "course_name": "hobsonvillepoint"}, {"count": 6, "course_name": "westernsprings"}, {"count": 3, "course_name": "millwater"}, {"count": 2, "course_name": "sherwoodreserve"}, {"count": 2, "course_name": "owairaka"}, {"count": 2, "course_name": "northernpathway"}, {"count": 2, "course_name": "hamiltonlake"}, {"count": 2, "course_name": "cambridgenz"}, {"count": 2, "course_name": "whangarei"}, {"count": 1, "course_name": "universityofwaikato"}, {"count": 1, "course_name": "tauranga"}, {"count": 1, "course_name": "lowerhutt"}, {"count": 1, "course_name": "russellpark"}, {"count": 1, "course_name": "waitangi"}, {"count": 1, "course_name": "queenstown"}, {"count": 1, "course_name": "puarenga"}, {"count": 1, "course_name": "pegasus"}, {"count": 1, "course_name": "palmerstonnorth"}, {"count": 1, "course_name": "whakatanegardens"}, {"count": 1, "course_name": "whanganuiriverbank"}, {"count": 1, "course_name": "otakiriver"}, {"count": 1, "course_name": "anderson"}, {"count": 1, "course_name": "lake2laketrail"}, {"count": 1, "course_name": "kapiticoast"}, {"count": 1, "course_name": "hamiltonpark"}, {"count": 1, "course_name": "hagley"}, {"count": 1, "course_name": "gordonsprattreserve"}, {"count": 1, "course_name": "gisborne"}, {"count": 1, "course_name": "foster"}, {"count": 1, "course_name": "flaxmere"}, {"count": 1, "course_name": "eastend"}, {"count": 1, "course_name": "broadpark"}, {"count": 1, "course_name": "blenheim"}, {"count": 1, "course_name": "araharakeke"}]
-});

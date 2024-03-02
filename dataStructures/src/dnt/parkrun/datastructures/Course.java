@@ -55,6 +55,13 @@ public class Course
             this.dbCode = dbCode;
         }
 
+        public static Status fromDb(String status)
+        {
+            if(status.equals(RUNNING.dbCode)) return RUNNING;
+            if(status.equals(STOPPED.dbCode)) return STOPPED;
+            return null;
+        }
+
         public String getStatusForDb()
         {
             return dbCode;

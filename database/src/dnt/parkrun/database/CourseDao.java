@@ -1,6 +1,5 @@
 package dnt.parkrun.database;
 
-import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Course;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -43,15 +42,15 @@ public class CourseDao
         }
     }
 
-    public Athlete getAthlete(long athleteId)
+    public Course getCourse(String courseName)
     {
-        Athlete athlete = jdbc.queryForObject("select * from parkrun_stats.athlete",
-                new MapSqlParameterSource("athleteId", athleteId),
+        return jdbc.queryForObject("select * from parkrun_stats.course where course_name = :courseName",
+                new MapSqlParameterSource("courseName", courseName),
                 (rs, rowNum) ->
-                        Athlete.from(
-                                rs.getString("name"),
-                                rs.getInt("athlete_id")
-                        ));
-        return athlete;
+                        new Course(rs.getString("course_name"),
+                                null,
+                                rs.getString("course_long_name"),
+                                Course.Status.fromDb(rs.getString("status"))
+        ));
     }
 }
