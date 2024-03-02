@@ -195,3 +195,19 @@ where
 # No runner with 2 results on the same day
 
 # No runner with 2 results in the same event
+
+# Course with no results for a given day
+
+E.g. 2022-03-19 When only a few South Island courses were available.
+
+```
+select course_long_name, sub1.date
+from course c 
+left join (
+    select course_name, date from course_event_summary 
+    where date = '2024-03-02'
+) as sub1 on sub1.course_name = c.course_name
+where 
+    country = 'NZ' and
+    status = 'R';    
+```
