@@ -36,7 +36,7 @@ public class CourseEventSummaryDao
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             String courseName = rs.getString("course_name");
-            Course course = courseRepository.getCourse(courseName);
+            Course course = courseRepository.getCourseFromName(courseName);
             assert course != null : "Could not find " + courseName;
 
             int firstMaleAthleteId = rs.getInt("first_male_athlete_id");

@@ -2,9 +2,13 @@ package dnt.parkrun.addathleteevents;
 
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.UrlGenerator;
+import dnt.parkrun.courses.reader.EventsJsonFileReader;
 import dnt.parkrun.datastructures.AthleteCourseSummary;
+import dnt.parkrun.datastructures.Course;
+import dnt.parkrun.datastructures.CourseRepository;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +27,28 @@ public class AddAthleteEvents
 
     private void go(List<Integer> athletes) throws IOException
     {
+        CourseRepository courseRepository = new CourseRepository();
+
+        {
+            System.out.println("* Adding courses (Running) *");
+            InputStream inputStream = Course.class.getResourceAsStream("/events.json");
+            EventsJsonFileReader reader = new EventsJsonFileReader.Builder(() -> inputStream)
+                    .forEachCountry(courseRepository::addCountry)
+                    .forEachCourse(courseRepository::addCourse)
+                    .statusSupplier(() -> Course.Status.RUNNING)
+                    .build();
+            reader.read();
+        }
+        {
+            System.out.println("* Adding courses (Old) *");
+            InputStream inputStream = Course.class.getResourceAsStream("/events.missing.json");
+            EventsJsonFileReader reader = new EventsJsonFileReader.Builder(() -> inputStream)
+                    .forEachCourse(courseRepository::addCourse)
+                    .statusSupplier(() -> Course.Status.STOPPED)
+                    .build();
+            reader.read();
+        }
+
         System.out.println(athletes);
 
         List<AthleteCourseSummary> courseSummaries = new ArrayList<>();
@@ -36,13 +62,16 @@ public class AddAthleteEvents
             parser.parse();
         }
 
-        AthleteCourseSummary acs = courseSummaries.get(0);
+        courseSummaries.forEach(acs -> {
+            Course course = courseRepository.getCourseFromLongName(acs.courseLongName);
+            System.out.println(course);
+        });
 
-        dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder()
-                .url(urlGenerator.generateCourseEventUrl(PARKRUN_CO_NZ, acs.course, 99999))
-                .forEachResult(result -> {
-                    System.out.println(result);
-                })
-                .build();
+//        dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder()
+//                .url(urlGenerator.generateCourseEventUrl(PARKRUN_CO_NZ, acs.course, 99999))
+//                .forEachResult(result -> {
+//                    System.out.println(result);
+//                })
+//                .build();
     }
 }

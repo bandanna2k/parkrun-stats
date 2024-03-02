@@ -17,5 +17,6 @@
     <orderEntry type="library" scope="TEST" name="assertj.core" level="project" />
     <orderEntry type="library" name="springframework.spring.jdbc" level="project" />
     <orderEntry type="module" module-name="database" />
+    <orderEntry type="module" module-name="common" />
   </component>
 </module>

@@ -4,14 +4,14 @@ import java.net.URL;
 
 public class AthleteCourseSummary
 {
-    public final String course;
+    public final String courseLongName;
     public final int countOfRuns;
     public final URL athleteAtEventUrl;
     public final Athlete athlete;
 
-    public AthleteCourseSummary(String name, String course, int countOfRuns, URL athleteAtEventUrl)
+    public AthleteCourseSummary(String name, String courseLongName, int countOfRuns, URL athleteAtEventUrl)
     {
-        this.course = course;
+        this.courseLongName = courseLongName;
         this.countOfRuns = countOfRuns;
         this.athleteAtEventUrl = athleteAtEventUrl;
         this.athlete = Athlete.fromAthleteAtCourseLink(name, athleteAtEventUrl.toString());
@@ -20,8 +20,8 @@ public class AthleteCourseSummary
     @Override
     public String toString()
     {
-        return "AthleteAtEventSummary{" +
-                "course='" + course + '\'' +
+        return "AthleteCourseSummary{" +
+                "courseLongName='" + courseLongName + '\'' +
                 ", countOfRuns=" + countOfRuns +
                 ", athleteAtEventUrl=" + athleteAtEventUrl +
                 ", athlete=" + athlete +

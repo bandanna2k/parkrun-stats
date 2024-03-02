@@ -6,8 +6,9 @@ import java.util.Map;
 
 public class CourseRepository
 {
-    private Map<Integer, Country> countryCodeToCountry = new HashMap<>();
-    private Map<String, Course> courseNameToCourse = new HashMap<>();
+    private final Map<Integer, Country> countryCodeToCountry = new HashMap<>();
+    private final Map<String, Course> courseNameToCourse = new HashMap<>();
+    private final Map<String, Course> courseLongNameToCourse = new HashMap<>();
 
     public void addCountry(Country country)
     {
@@ -22,11 +23,17 @@ public class CourseRepository
     public void addCourse(Course course)
     {
         courseNameToCourse.put(course.name, course);
+        courseLongNameToCourse.put(course.longName, course);
     }
 
-    public Course getCourse(String courseName)
+    public Course getCourseFromName(String courseName)
     {
         return courseNameToCourse.get(courseName);
+    }
+
+    public Course getCourseFromLongName(String courseLongName)
+    {
+        return courseLongNameToCourse.get(courseLongName);
     }
 
     public void filterByCountryCode(int countryCode)

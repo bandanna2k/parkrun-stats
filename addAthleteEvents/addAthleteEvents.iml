@@ -14,5 +14,6 @@
     <orderEntry type="module" module-name="common" />
     <orderEntry type="module" module-name="dataStructures" />
     <orderEntry type="module" module-name="courseEvent" />
+    <orderEntry type="module" module-name="courses" />
   </component>
 </module>
