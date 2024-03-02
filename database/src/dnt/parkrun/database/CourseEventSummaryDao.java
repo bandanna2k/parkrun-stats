@@ -1,4 +1,4 @@
-package dnt.parkrun.mostevents.dao;
+package dnt.parkrun.database;
 
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Course;
@@ -13,8 +13,6 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-
-import static dnt.parkrun.datastructures.Athlete.NO_ATHLETE_ID;
 
 public class CourseEventSummaryDao
 {
@@ -44,9 +42,9 @@ public class CourseEventSummaryDao
             int firstMaleAthleteId = rs.getInt("first_male_athlete_id");
             int firstFemaleAthleteId = rs.getInt("first_female_athlete_id");
             Optional<Athlete> firstMale = Optional.ofNullable(
-                    firstMaleAthleteId == NO_ATHLETE_ID ? null : Athlete.fromDao(rs.getString("first_male_name"), firstMaleAthleteId));
+                    firstMaleAthleteId == Athlete.NO_ATHLETE_ID ? null : Athlete.fromDao(rs.getString("first_male_name"), firstMaleAthleteId));
             Optional<Athlete> firstFemale = Optional.ofNullable(
-                    firstFemaleAthleteId == NO_ATHLETE_ID ? null : Athlete.fromDao(rs.getString("first_female_name"), firstFemaleAthleteId));
+                    firstFemaleAthleteId == Athlete.NO_ATHLETE_ID ? null : Athlete.fromDao(rs.getString("first_female_name"), firstFemaleAthleteId));
             return new CourseEventSummary(
                     course,
                     rs.getInt("event_number"),
@@ -70,8 +68,8 @@ public class CourseEventSummaryDao
                 .addValue("eventNumber", courseEventSummary.eventNumber)
                 .addValue("date", courseEventSummary.date)
                 .addValue("finishers", courseEventSummary.finishers)
-                .addValue("firstMaleAthleteId", courseEventSummary.firstMale.map(a -> a.athleteId).orElse(NO_ATHLETE_ID))
-                .addValue("firstFemaleAthleteId", courseEventSummary.firstFemale.map(a -> a.athleteId).orElse(NO_ATHLETE_ID))
+                .addValue("firstMaleAthleteId", courseEventSummary.firstMale.map(a -> a.athleteId).orElse(Athlete.NO_ATHLETE_ID))
+                .addValue("firstFemaleAthleteId", courseEventSummary.firstFemale.map(a -> a.athleteId).orElse(Athlete.NO_ATHLETE_ID))
         );
     }
 

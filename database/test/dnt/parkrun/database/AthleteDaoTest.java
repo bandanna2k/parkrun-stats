@@ -1,6 +1,7 @@
+package dnt.parkrun.database;
+
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.mostevents.dao.AthleteDao;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

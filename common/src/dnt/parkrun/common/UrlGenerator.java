@@ -1,4 +1,4 @@
-package dnt.parkrun.mostevents;
+package dnt.parkrun.common;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -39,6 +39,19 @@ public class UrlGenerator
         try
         {
             return new URL("https://" + countryUrl + "/" + courseName + "/results/" + eventNumber + "/");
+        }
+        catch (MalformedURLException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public URL generateAthleteEventUrl(String countryUrl, int athleteId)
+    {
+        sleep();
+        try
+        {
+            return new URL("https://" + countryUrl + "/parkrunner/" + athleteId + "/");
         }
         catch (MalformedURLException e)
         {

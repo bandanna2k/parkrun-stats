@@ -1,9 +1,10 @@
+package dnt.parkrun.database;
+
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.datastructures.Time;
-import dnt.parkrun.mostevents.dao.AthleteDao;
-import dnt.parkrun.mostevents.dao.ResultDao;
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,8 +14,6 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class ResultDaoTest
 {
@@ -49,7 +48,7 @@ public class ResultDaoTest
         resultDao.insert(result);
 
         List<Result> results = resultDao.getResults();
-        assertThat(results).isNotEmpty();
+        Assertions.assertThat(results).isNotEmpty();
         System.out.println(results);
     }
 }

@@ -3,11 +3,11 @@ package dnt.parkrun.mostevents;
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
+import dnt.parkrun.database.AthleteDao;
+import dnt.parkrun.database.CourseDao;
+import dnt.parkrun.database.CourseEventSummaryDao;
+import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.datastructures.*;
-import dnt.parkrun.mostevents.dao.AthleteDao;
-import dnt.parkrun.mostevents.dao.CourseDao;
-import dnt.parkrun.mostevents.dao.CourseEventSummaryDao;
-import dnt.parkrun.mostevents.dao.ResultDao;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;

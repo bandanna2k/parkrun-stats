@@ -1,40 +1,55 @@
-package dnt.parkrun.mostevents.dao;
+package dnt.parkrun.database;
 
 import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.Course;
+import dnt.parkrun.datastructures.Result;
+import dnt.parkrun.datastructures.Time;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.List;
 
-public class CourseDao
+public class AthleteDao
 {
 
     private final NamedParameterJdbcOperations jdbc;
 
-    public CourseDao(DataSource dataSource) throws SQLException
+    public AthleteDao(DataSource dataSource) throws SQLException
     {
         jdbc = new NamedParameterJdbcTemplate(dataSource);
     }
 
-    public void insert(Course course)
+    public List<Result> getResults()
+    {
+        List<Result> query = jdbc.query("select * from parkrun_stats.result", EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
+        {
+            return new Result(
+                    rs.getString("course_name"),
+                    rs.getInt("event_number"),
+                    rs.getInt("position"),
+                    null,
+                    Time.from(rs.getString("time"))
+            );
+        });
+        return query;
+    }
+
+    public void insert(Athlete athlete)
     {
         try
         {
-            String sql = "insert ignore into parkrun_stats.course (" +
-                    "course_name, course_long_name, country_code, country, status " +
+            String sql = "insert into parkrun_stats.athlete (" +
+                    "athlete_id, name" +
                     ") values ( " +
-                    ":courseName, :courseLongName, :countryCode, :country, :status" +
+                    ":athleteId, :name" +
                     ")";
             jdbc.update(sql, new MapSqlParameterSource()
-                    .addValue("courseName", course.name)
-                    .addValue("courseLongName", course.longName)
-                    .addValue("countryCode", course.country.getCountryCode())
-                    .addValue("country", course.country.getCountryDbCode())
-                    .addValue("status", course.getStatusDbCode())
+                    .addValue("athleteId", athlete.athleteId)
+                    .addValue("name", athlete.name)
             );
         }
         catch (DuplicateKeyException ex)
@@ -43,7 +58,7 @@ public class CourseDao
         }
     }
 
-    public Athlete getAthlete(long athleteId)
+    public Athlete getAthlete(int athleteId)
     {
         Athlete athlete = jdbc.queryForObject("select * from parkrun_stats.athlete",
                 new MapSqlParameterSource("athleteId", athleteId),

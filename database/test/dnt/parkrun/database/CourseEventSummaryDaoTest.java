@@ -1,7 +1,9 @@
+package dnt.parkrun.database;
+
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.datastructures.*;
-import dnt.parkrun.mostevents.dao.AthleteDao;
-import dnt.parkrun.mostevents.dao.CourseEventSummaryDao;
+import dnt.parkrun.datastructures.Course.Status;
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,9 +14,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import java.time.Instant;
 import java.util.Date;
-
-import static dnt.parkrun.datastructures.Course.Status.RUNNING;
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Optional;
 
 public class CourseEventSummaryDaoTest
 {
@@ -29,7 +29,7 @@ public class CourseEventSummaryDaoTest
     {
         CourseRepository courseRepository = new CourseRepository();
         courseRepository.addCountry(NZ);
-        courseRepository.addCourse(new Course("cornwall", NZ, null, RUNNING));
+        courseRepository.addCourse(new Course("cornwall", NZ, null, Status.RUNNING));
 
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost", "dao", "daoFractaldao");
@@ -52,10 +52,11 @@ public class CourseEventSummaryDaoTest
         athleteDao.insert(firstWoman);
         athleteDao.insert(firstMan);
 
-        Course course = new Course("cornwall", NZ, null, RUNNING);
-        CourseEventSummary ces = new CourseEventSummary(course, 1, Date.from(Instant.now()), firstMan, firstWoman);
+        Course course = new Course("cornwall", NZ, null, Status.RUNNING);
+        CourseEventSummary ces = new CourseEventSummary(
+                course, 1, Date.from(Instant.now()), 1234, Optional.of(firstMan), Optional.of(firstWoman));
         dao.insert(ces);
         System.out.println(ces);
-        assertThat(dao.getCourseEventSummaries()).isNotEmpty();
+        Assertions.assertThat(dao.getCourseEventSummaries()).isNotEmpty();
     }
 }

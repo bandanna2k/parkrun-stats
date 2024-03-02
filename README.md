@@ -102,9 +102,10 @@ having athlete_id = 414811;
 select json_arrayagg(json_object('course_name', course_name, 'count', count)) as json
 from (
 
-select course_name, count(course_name) as count
+select course_long_name, count(course_name) as count
 from athlete
 left join result using (athlete_id)
+left join course using (course_name)
 group by athlete_id, course_name
 having athlete_id = 414811
 order by count desc

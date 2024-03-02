@@ -1,4 +1,4 @@
-package dnt.parkrun.mostevents.dao;
+package dnt.parkrun.database;
 
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Result;
