@@ -75,28 +75,20 @@ public class MostEvents
                 .filter(e -> e != CountryEnum.NZ)
                 .forEach(e -> courseRepository.filterByCountryCode(e.getCountryCode()));
 
-        boolean getFromWeb = true;
         List<CourseEventSummary> courseEventSummariesToGet = new ArrayList<>();
-        if(getFromWeb)
-        {
-            System.out.println("* Get course summaries from DAO *");
-            List<CourseEventSummary> courseEventSummariesFromDao = courseEventSummaryDao.getCourseEventSummaries();
-            System.out.println("Count: " + courseEventSummariesFromDao.size());
 
-            System.out.println("* Get course summaries from Web *");
-            List<CourseEventSummary> courseEventSummariesFromWeb = getCourseEventSummariesFromWeb();
-            // TODO Pollution System.out.println(courseEventSummariesFromWeb);
+        System.out.println("* Get course summaries from DAO *");
+        List<CourseEventSummary> courseEventSummariesFromDao = courseEventSummaryDao.getCourseEventSummaries();
+        System.out.println("Count: " + courseEventSummariesFromDao.size());
 
-            System.out.println("* Filtering existing course event summaries *");
-            courseEventSummariesFromWeb.removeAll(courseEventSummariesFromDao);
+        System.out.println("* Get course summaries from Web *");
+        List<CourseEventSummary> courseEventSummariesFromWeb = getCourseEventSummariesFromWeb();
+        // System.out.println(courseEventSummariesFromWeb); // Pollutes the logs
 
-            courseEventSummariesToGet.addAll(courseEventSummariesFromWeb);
-        }
-        else
-        {
-            System.out.println("* Get course summaries from DAO 2 *");
-            courseEventSummariesToGet = courseEventSummaryDao.getCourseEventSummariesWithNoResults();
-        }
+        System.out.println("* Filtering existing course event summaries *");
+        courseEventSummariesFromWeb.removeAll(courseEventSummariesFromDao);
+
+        courseEventSummariesToGet.addAll(courseEventSummariesFromWeb);
         System.out.println("Count: " + courseEventSummariesToGet.size());
 
         System.out.println("* Get all course event summaries *");
@@ -105,15 +97,34 @@ public class MostEvents
             System.out.printf("* Processing %s *\n", ces);
 
             Country courseCountry = courseRepository.getCountry(ces.course.country.countryEnum.getCountryCode());
-            dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder()
-                    .courseName(ces.course.name)
-                    .url(urlGenerator.generateCourseEventUrl(courseCountry.url, ces.course.name, ces.eventNumber))
-                    .forEachAthlete(athleteDao::insert)
-                    .forEachResult(resultDao::insert)
-                    .build();
-            parser.parse();
+            while(true)
+            {
+                try
+                {
+                    dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder()
+                            .courseName(ces.course.name)
+                            .url(urlGenerator.generateCourseEventUrl(courseCountry.url, ces.course.name, ces.eventNumber))
+                            .forEachAthlete(athleteDao::insert)
+                            .forEachResult(resultDao::insert)
+                            .build();
+                    parser.parse();
 
-            courseEventSummaryDao.insert(ces);
+                    courseEventSummaryDao.insert(ces);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    ex.printStackTrace();
+                    try
+                    {
+                        Thread.sleep(5000);
+                    }
+                    catch (InterruptedException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
         }
     }
 
@@ -122,63 +133,6 @@ public class MostEvents
         List<CourseEventSummary> results = new ArrayList<>();
         for (Course course : courseRepository.getCourses())
         {
-//            if(!course.name.equals("lake2laketrail"))//DONE
-//            if(!course.name.equals("gordonsprattreserve")) // DONE
-//            if(!course.name.equals("northernpathway"))        // DONE
-//            if(!course.name.equals("cornwall"))           // DONE
-//            if(!course.name.equals("lowerhutt"))        // DONE
-// 5
-//            if(!course.name.equals("hamiltonlake"))//DONE
-//            if(!course.name.equals("hamiltonpark"))//DONE
-//            if(!course.name.equals("otakiriver"))       // DONE
-//            if(!course.name.equals("anderson"))//DONE
-//            if(!course.name.equals("waitangi"))     // DONE
-// 10
-//            if(!course.name.equals("flaxmere"))//DONE
-//            if(!course.name.equals("foster"))//DONE
-//            if(!course.name.equals("hagley"))//DONE
-//            if(!course.name.equals("broadpark"))        // DONE
-//            if(!course.name.equals("palmerstonnorth"))//DONE
-// 15
-//            if(!course.name.equals("russellpark"))//DONE
-//            if(!course.name.equals("eastend"))//DONE
-//            if(!course.name.equals("owairaka"))//DONE
-//            if(!course.name.equals("greytownwoodsidetrail"))
-//            if(!course.name.equals("araharakeke"))//DONE
-// 20
-//            if(!course.name.equals("gisborne"))//DONE
-//            if(!course.name.equals("millwater"))// DONE
-//            if(!course.name.equals("trenthammemorial"))
-//            if(!course.name.equals("whakatanegardens"))//DONE
-//            if(!course.name.equals("pegasus"))//DONE
-// 25
-//            if(!course.name.equals("queenstown"))//DONE
-//            if(!course.name.equals("whanganuiriverbank"))//DONE
-//            if(!course.name.equals("sherwoodreserve"))//DONE
-//            if(!course.name.equals("hobsonvillepoint"))     // DONE
-//            if(!course.name.equals("blenheim"))//DONE
-// 30
-//            if(!course.name.equals("tauranga"))//DONE
-            if(!course.name.equals("whangarei"))
-//            if(!course.name.equals("kapiticoast"))
-//            if(!course.name.equals("cambridgenz"))
-//            if(!course.name.equals("universityofwaikato"))
-// 35
-//            if(!course.name.equals("westernsprings"))
-//            if(!course.name.equals("barrycurtis"))
-//            if(!course.name.equals("dunedin"))
-//            if(!course.name.equals("purenga"))
-//            if(!course.name.equals("taupo"))
-// 40
-//            if(!course.name.equals("wanaka"))
-//            if(!course.name.equals("invercargill"))
-//            if(!course.name.equals("balclutha"))
-// 43
-
-            {
-                continue;
-            }
-
             System.out.printf("* Processing %s *\n", course);
 
             Country courseCountry = courseRepository.getCountry(course.country.getCountryCode());
