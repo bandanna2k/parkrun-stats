@@ -29,7 +29,7 @@ public class Parser
     public void parse() throws MalformedURLException
     {
         Elements nameElements = doc.getElementsByTag("h2");
-        String name = extractName(nameElements);
+        String name = extractName(nameElements.text());
 
         Elements summaries = doc.getElementById("event-summary").parents();
         Elements tableElements = summaries.select("table");
@@ -62,9 +62,8 @@ public class Parser
         }
     }
 
-    private static String extractName(Elements nameElements)
+    private static String extractName(String nameWithId)
     {
-        String nameWithId = nameElements.eachText().get(0);
         int indexOf = nameWithId.indexOf("(");
         String nameUntrimmed = nameWithId.substring(0, indexOf);
         return nameUntrimmed.trim();

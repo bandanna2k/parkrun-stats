@@ -7,7 +7,7 @@ public class Course
     public final String name;
     public final Country country;
     public final String longName;
-    private final Status status;
+    public final Status status;
 
     public Course(String name, Country country, String longName, Status status)
     {

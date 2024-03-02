@@ -3,7 +3,7 @@ package dnt.parkrun.datastructures;
 public class Athlete
 {
     public static final int NO_ATHLETE_ID = Integer.MIN_VALUE;
-    public static final Athlete NO_ATHLETE = Athlete.fromDao(null, NO_ATHLETE_ID);
+    public static final Athlete NO_ATHLETE = Athlete.from(null, NO_ATHLETE_ID);
 
     public final String name;
     public final int athleteId;
@@ -55,7 +55,7 @@ public class Athlete
         return new Athlete(name, extractIdFromAthleteAtCourseLink(link));
     }
 
-    public static Athlete fromDao(String name, int athleteId)
+    public static Athlete from(String name, int athleteId)
     {
         return new Athlete(name, athleteId);
     }

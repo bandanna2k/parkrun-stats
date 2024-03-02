@@ -1,26 +1,27 @@
 package dnt.parkrun.athletecourseevents;
 
+import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Time;
 
 import java.util.Date;
 
 public class AthleteCourseEvent
 {
-    private final int athleteId;
-    private final String courseName;
-    private final Date date;
-    private final int eventNumber;
-    private final int position;
-    private final Time time;
+    public final Athlete athlete;
+    public final String courseName;
+    public final Date date;
+    public final int eventNumber;
+    public final int position;
+    public final Time time;
 
-    public AthleteCourseEvent(int athleteId,
+    public AthleteCourseEvent(Athlete athlete,
                               String courseName,
                               Date date,
                               int eventNumber,
                               int position,
                               Time time)
     {
-        this.athleteId = athleteId;
+        this.athlete = athlete;
         this.courseName = courseName;
         this.date = date;
         this.eventNumber = eventNumber;
@@ -32,7 +33,7 @@ public class AthleteCourseEvent
     public String toString()
     {
         return "AthleteCourseEvent{" +
-                "athleteId=" + athleteId +
+                "athlete=" + athlete +
                 ", courseName='" + courseName + '\'' +
                 ", date=" + date +
                 ", eventNumber=" + eventNumber +

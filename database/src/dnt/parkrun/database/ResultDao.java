@@ -29,7 +29,7 @@ public class ResultDao
                     rs.getString("course_name"),
                     rs.getInt("event_number"),
                     rs.getInt("position"),
-                    Athlete.fromDao(
+                    Athlete.from(
                             rs.getString("name"),
                             rs.getInt("athlete_id")
                     ),

@@ -2,6 +2,7 @@ package dnt.parkrun.athletecourseevents;
 
 
 import dnt.parkrun.common.DateConverter;
+import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Time;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -49,36 +50,37 @@ public class Parser
                         .childNode(0)   // a
                         .attr("href");
                 String courseName = extractCourseFromUrl(courseLink);
-                System.out.println(courseName);
-                System.out.println(courseLink);
+//                System.out.println(courseName);
+//                System.out.println(courseLink);
 
                 Node dateNode = row
                         .childNode(0)   // td
                         .childNode(0)   // a
                         .childNode(0);
                 Date date = DateConverter.parseWebsiteDate(dateNode.toString());
-                System.out.println(date);
+//                System.out.println(date);
 
                 Node eventNumberNode = row
                         .childNode(1)   // td
                         .childNode(0)   // a
                         .childNode(0);
                 int eventNumber = Integer.parseInt(eventNumberNode.toString());
-                System.out.println(eventNumber);
+//                System.out.println(eventNumber);
 
                 Node positionNode = row
                         .childNode(2)   // td
                         .childNode(0);
                 int position = Integer.parseInt(positionNode.toString());
-                System.out.println(position);
+//                System.out.println(position);
 
                 Node timeNode = row
-                        .childNode(2)   // td
+                        .childNode(3)   // td
                         .childNode(0);
                 Time time = Time.from(timeNode.toString());
-                System.out.println(time);
+//                System.out.println(time);
 
-                consumer.accept(new AthleteCourseEvent(athleteId, courseName, date, eventNumber, position, time));
+                Athlete athlete = Athlete.from(name, athleteId);
+                consumer.accept(new AthleteCourseEvent(athlete, courseName, date, eventNumber, position, time));
             }
         }
     }

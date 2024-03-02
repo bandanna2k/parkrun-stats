@@ -42,9 +42,9 @@ public class CourseEventSummaryDao
             int firstMaleAthleteId = rs.getInt("first_male_athlete_id");
             int firstFemaleAthleteId = rs.getInt("first_female_athlete_id");
             Optional<Athlete> firstMale = Optional.ofNullable(
-                    firstMaleAthleteId == Athlete.NO_ATHLETE_ID ? null : Athlete.fromDao(rs.getString("first_male_name"), firstMaleAthleteId));
+                    firstMaleAthleteId == Athlete.NO_ATHLETE_ID ? null : Athlete.from(rs.getString("first_male_name"), firstMaleAthleteId));
             Optional<Athlete> firstFemale = Optional.ofNullable(
-                    firstFemaleAthleteId == Athlete.NO_ATHLETE_ID ? null : Athlete.fromDao(rs.getString("first_female_name"), firstFemaleAthleteId));
+                    firstFemaleAthleteId == Athlete.NO_ATHLETE_ID ? null : Athlete.from(rs.getString("first_female_name"), firstFemaleAthleteId));
             return new CourseEventSummary(
                     course,
                     rs.getInt("event_number"),

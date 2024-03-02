@@ -1,35 +1,60 @@
 package dnt.parkrun.addathleteevents;
 
+import com.mysql.jdbc.Driver;
+import dnt.parkrun.athletecourseevents.AthleteCourseEvent;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
-import dnt.parkrun.datastructures.AthleteCourseSummary;
-import dnt.parkrun.datastructures.Course;
-import dnt.parkrun.datastructures.CourseRepository;
+import dnt.parkrun.database.CourseEventSummaryDao;
+import dnt.parkrun.database.ResultDao;
+import dnt.parkrun.datastructures.*;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Optional.empty;
+
 public class AddAthleteEvents
 {
     private static final String PARKRUN_CO_NZ = "parkrun.co.nz";
 
-    private final UrlGenerator urlGenerator = new UrlGenerator(1, 2);
+    private final UrlGenerator urlGenerator;
+    private final CourseRepository courseRepository;
+    private final CourseEventSummaryDao courseEventSummaryDao;
+    private final ResultDao resultDao;
 
 
-    public static void main(String[] args) throws IOException
+    public static void main(String[] args) throws IOException, SQLException
     {
-        new AddAthleteEvents().go(Arrays.stream(args).map(Integer::parseInt).collect(Collectors.toList()));
+        AddAthleteEvents addAthleteEvents = AddAthleteEvents.newInstance();
+        addAthleteEvents.go(Arrays.stream(args).map(Integer::parseInt).collect(Collectors.toList()));
+    }
+
+    private AddAthleteEvents(DataSource dataSource) throws SQLException
+    {
+        this.urlGenerator = new UrlGenerator();
+
+        this.courseRepository = new CourseRepository();
+        this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
+        this.resultDao = new ResultDao(dataSource);
+    }
+
+    public static AddAthleteEvents newInstance() throws SQLException
+    {
+        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
+                "jdbc:mysql://localhost", "dao", "daoFractaldao");
+        return new AddAthleteEvents(dataSource);
     }
 
     private void go(List<Integer> athletes) throws IOException
     {
-        CourseRepository courseRepository = new CourseRepository();
-
         {
             System.out.println("* Adding courses (Running) *");
             InputStream inputStream = Course.class.getResourceAsStream("/events.json");
@@ -50,8 +75,7 @@ public class AddAthleteEvents
             reader.read();
         }
 
-        System.out.println(athletes);
-
+        System.out.println("* Getting athlete course summaries *");
         List<AthleteCourseSummary> courseSummaries = new ArrayList<>();
         for (Integer athleteId : athletes)
         {
@@ -62,16 +86,43 @@ public class AddAthleteEvents
             parser.parse();
         }
 
-        courseSummaries.forEach(acs -> {
+        System.out.println("* Processing results *");
+        for (AthleteCourseSummary acs : courseSummaries)
+        {
             Course course = courseRepository.getCourseFromLongName(acs.courseLongName);
-            System.out.println(urlGenerator.generateAthleteEventUrl(course.country.url, course.name, acs.athlete.athleteId));
-        });
+            if(course.status == Course.Status.STOPPED)
+            {
+                // Still process
+            }
+            else if(course.country.countryEnum == CountryEnum.NZ)
+            {
+                continue;
+            }
 
-//        dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder()
-//                .url(urlGenerator.generateCourseEventUrl(PARKRUN_CO_NZ, acs.course, 99999))
-//                .forEachResult(result -> {
-//                    System.out.println(result);
-//                })
-//                .build();
+            for (Integer athlete : athletes)
+            {
+                dnt.parkrun.athletecourseevents.Parser parser = new dnt.parkrun.athletecourseevents.Parser.Builder()
+                        .url(urlGenerator.generateAthleteEventUrl(course.country.url, course.name, athlete))
+                        .forEachAthleteCourseEvent(this::processAthleteCourseEvent)
+                        .build();
+                parser.parse();
+            }
+        }
+    }
+
+    private void processAthleteCourseEvent(AthleteCourseEvent ace)
+    {
+        System.out.println();
+        System.out.println(ace);
+
+        Course course = courseRepository.getCourseFromName(ace.courseName);
+        System.out.println(course);
+
+        CourseEventSummary courseEventSummary = new CourseEventSummary(
+                course, ace.eventNumber, ace.date, 0, empty(), empty());
+        System.out.println(courseEventSummary);
+
+        Result result = new Result(ace.courseName, ace.eventNumber, ace.position, ace.athlete, ace.time);
+        System.out.println(result);
     }
 }

@@ -48,7 +48,7 @@ public class CourseDao
         Athlete athlete = jdbc.queryForObject("select * from parkrun_stats.athlete",
                 new MapSqlParameterSource("athleteId", athleteId),
                 (rs, rowNum) ->
-                        Athlete.fromDao(
+                        Athlete.from(
                                 rs.getString("name"),
                                 rs.getInt("athlete_id")
                         ));
