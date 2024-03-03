@@ -8,6 +8,8 @@
 
 - DB Isolation
 
+- Nicer way of retrying for a URL
+
 # QUERIES
 
 ## How many athletes have finished a run (in the database)

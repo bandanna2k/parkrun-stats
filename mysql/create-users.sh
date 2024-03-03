@@ -18,5 +18,5 @@ docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
   "CREATE USER 'stats'@'127.0.0.1' IDENTIFIED BY 'statsfractalstats';"
 
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
-  "GRANT CREATE, SELECT, INSERT ON *.* TO 'stats'@'127.0.0.1';"
+  "GRANT CREATE, UPDATE, SELECT, INSERT ON *.* TO 'stats'@'127.0.0.1';"
 

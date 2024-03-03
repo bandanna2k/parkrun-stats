@@ -8,21 +8,21 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 
-public class StatsProducerDaoTest
+public class StatsDaoTest
 {
-    private StatsProducerDao dao;
+    private StatsDao dao;
 
     @Before
     public void setUp() throws Exception
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats", "stats", "statsfractalstats");
-        dao = new StatsProducerDao(dataSource);
+        dao = new StatsDao(dataSource, DateConverter.parseWebsiteDate("02/03/2024"));
     }
 
     @Test
     public void shouldCreateAndIgnoreNextCreation()
     {
-        dao.produceStatsForDate(DateConverter.parseWebsiteDate("02/03/2024"));
+        dao.generateDifferentCourseCountTable();
     }
 }
