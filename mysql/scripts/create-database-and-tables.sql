@@ -2,6 +2,8 @@ CREATE DATABASE
 IF NOT EXISTS
 parkrun_stats;
 
+
+-- Course
 CREATE TABLE
 IF NOT EXISTS
 parkrun_stats.course (
@@ -15,6 +17,8 @@ parkrun_stats.course (
 
 ) DEFAULT CHARSET=utf8mb4;
 
+
+-- Athlete
 CREATE TABLE
 IF NOT EXISTS
 parkrun_stats.athlete (
@@ -28,6 +32,8 @@ parkrun_stats.athlete (
 
 ) DEFAULT CHARSET=utf8mb4;
 
+
+-- Result
 CREATE TABLE
 IF NOT EXISTS
 parkrun_stats.result (
@@ -35,12 +41,14 @@ parkrun_stats.result (
     event_number    INT                 NOT NULL,
     position        INT                 NOT NULL,
     athlete_id      BIGINT              NOT NULL,
-    time            VARCHAR(8)          NOT NULL,
+    time_seconds    INT                 NOT NULL,
 
     UNIQUE KEY (course_name, event_number, position)
 
 ) DEFAULT CHARSET=utf8mb4;
 
+
+-- Course Event Summary
 CREATE TABLE
 IF NOT EXISTS
 parkrun_stats.course_event_summary (
@@ -52,5 +60,40 @@ parkrun_stats.course_event_summary (
     first_female_athlete_id BIGINT              NOT NULL,
 
     UNIQUE KEY (course_name, event_number)
+
+) DEFAULT CHARSET=utf8mb4;
+
+
+-- ---------------------------------- --
+--         NON REGION TABLES
+-- ---------------------------------- --
+
+-- Course Event Summary
+CREATE TABLE
+IF NOT EXISTS
+parkrun_stats.course_event_summary_other (
+    course_name             VARCHAR(255)        NOT NULL,
+    event_number            INT                 NOT NULL,
+    date                    DATE                NOT NULL,
+    finishers               INT                 NOT NULL,
+    first_male_athlete_id   BIGINT              NOT NULL,
+    first_female_athlete_id BIGINT              NOT NULL,
+
+    UNIQUE KEY (course_name, event_number)
+
+) DEFAULT CHARSET=utf8mb4;
+
+
+-- Result
+CREATE TABLE
+IF NOT EXISTS
+parkrun_stats.result_other (
+    course_name     VARCHAR(255)        NOT NULL,
+    event_number    INT                 NOT NULL,
+    position        INT                 NOT NULL,
+    athlete_id      BIGINT              NOT NULL,
+    time_seconds    INT                 NOT NULL,
+
+    UNIQUE KEY (course_name, event_number, position)
 
 ) DEFAULT CHARSET=utf8mb4;

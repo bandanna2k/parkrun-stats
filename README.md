@@ -272,7 +272,7 @@ where
 
 
 
-
+JUNK
 
 select name, course_name as count
 from (select distinct athlete_id, course_name from parkrun_stats.result) as sub1
@@ -287,3 +287,10 @@ having count > 30
 order by count desc, athlete_id asc
 limit 50
 
+select athlete_id, course_name, event_number, time from
+(
+select athlete_id, course_name, event_number, time from result
+union
+select athlete_id, course_name, event_number, time from result2
+) as sub1
+where athlete_id = 414811 and course_name = 'wanaka';
