@@ -25,7 +25,7 @@ public class Stats
     private final StatsDao statsDao;
     private final UrlGenerator urlGenerator;
 
-    private Stats(DataSource dataSource, Date date) throws SQLException
+    private Stats(DataSource dataSource, Date date)
     {
         this.statsDao = new StatsDao(dataSource, date);
         this.urlGenerator = new UrlGenerator();
@@ -51,20 +51,23 @@ public class Stats
 
         for (StatsDao.DifferentCourseCount der : listOfDifferentEventRecords)
         {
-            AtomicInteger differentCourseCount = new AtomicInteger();
-            AtomicInteger totalRuns = new AtomicInteger();
-            Parser parser = new Parser.Builder()
-                    .url(urlGenerator.generateAthleteEventSummaryUrl("parkrun.co.nz", der.athleteId))
-                    .forEachAthleteCourseSummary(acs -> {
-                        differentCourseCount.incrementAndGet();
-                        totalRuns.addAndGet(acs.countOfRuns);
-                    })
-                    .build();
-            parser.parse();
+            if(der.differentCourseCount == 0 || der.totalRuns == 0)
+            {
+                AtomicInteger differentCourseCount = new AtomicInteger();
+                AtomicInteger totalRuns = new AtomicInteger();
+                Parser parser = new Parser.Builder()
+                        .url(urlGenerator.generateAthleteEventSummaryUrl("parkrun.co.nz", der.athleteId))
+                        .forEachAthleteCourseSummary(acs -> {
+                            differentCourseCount.incrementAndGet();
+                            totalRuns.addAndGet(acs.countOfRuns);
+                        })
+                        .build();
+                parser.parse();
 
-            TotalEventCountUpdate update = new TotalEventCountUpdate(der.athleteId, differentCourseCount.get(), totalRuns.get());
-            System.out.println(update);
-            statsDao.updateDifferentCourseRecord(update.athleteId, update.differentCourseCount, update.totalRuns);
+                TotalEventCountUpdate update = new TotalEventCountUpdate(der.athleteId, differentCourseCount.get(), totalRuns.get());
+                System.out.println(update);
+                statsDao.updateDifferentCourseRecord(update.athleteId, update.differentCourseCount, update.totalRuns);
+            }
         }
     }
 

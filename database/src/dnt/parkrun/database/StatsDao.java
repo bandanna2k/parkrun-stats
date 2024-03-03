@@ -23,25 +23,49 @@ public class StatsDao
 
     public void generateDifferentCourseCountTable()
     {
-        String sql =    "create table if not exists " + differentCourseCountTableName + " as " +
-                        "select name, athlete_id, count(course_name) as different_region_course_count, 0 as different_course_count, 0 as total_runs " +
-                        "from (select distinct athlete_id, course_name from parkrun_stats.result) as sub1 " +
-                        "join athlete using (athlete_id) " +
-                        "group by athlete_id " +
-                        "having different_region_course_count >= " + MIN_DIFFERENT_REGION_COURSE_COUNT + " and name is not null " +
-                        "order by different_region_course_count desc, athlete_id asc ";
+        String sql =
+                "create table if not exists " + differentCourseCountTableName + " as " +
+                "select a.name, a.athlete_id, " +
+                        "sub1.count as different_region_course_count, sub2.count as total_region_runs, " +
+                        "0 as different_course_count, 0 as total_runs " +
+                "from athlete a " +
+                "join   " +
+                "( " +
+                "    select athlete_id, count(course_name) as count " +
+                "    from (select distinct athlete_id, course_name from result) as sub1a " +
+                "    group by athlete_id " +
+                "    having count >= " + MIN_DIFFERENT_REGION_COURSE_COUNT +
+                "    order by count desc, athlete_id asc  " +
+                ") as sub1 on sub1.athlete_id = a.athlete_id " +
+                "join " +
+                "( " +
+                "    select athlete_id, count(concat) as count " +
+                "    from (select athlete_id, concat(athlete_id, course_name, event_number, '-', position) as concat from result) as sub2a " +
+                "    group by athlete_id " +
+                "    order by count desc, athlete_id asc  " +
+                ") as sub2 on sub2.athlete_id = a.athlete_id " +
+                "where a.name is not null " +
+                "order by different_region_course_count desc, total_region_runs desc, a.athlete_id desc ";
+
         jdbc.update(sql, EmptySqlParameterSource.INSTANCE);
     }
 
     public List<DifferentCourseCount> getDifferentCourseCount()
     {
         String sql =
-                "select name, athlete_id, different_region_course_count from " + differentCourseCountTableName;
+                "select name, athlete_id, " +
+                        "different_region_course_count, total_region_runs," +
+                        "different_course_count, total_runs " +
+                        "from " + differentCourseCountTableName;
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
                 new DifferentCourseCount(
                         rs.getString("name"),
                         rs.getInt("athlete_id"),
-                        rs.getInt("different_region_course_count")));
+                        rs.getInt("different_region_course_count"),
+                        rs.getInt("total_region_runs"),
+                        rs.getInt("different_course_count"),
+                        rs.getInt("total_runs")
+                ));
     }
 
     public void updateDifferentCourseRecord(int athleteId, int differentCourseCount, int totalRuns)
@@ -62,13 +86,24 @@ public class StatsDao
     {
         public final String name;
         public final int athleteId;
-        public final int differentEvents;
+        public final int differentRegionCourseCount;
+        public final int totalRegionRuns;
+        public final int differentCourseCount;
+        public final int totalRuns;
 
-        public DifferentCourseCount(String name, int athleteId, int differentEvents)
+        public DifferentCourseCount(String name,
+                                    int athleteId,
+                                    int differentRegionCourseCount,
+                                    int totalRegionRuns,
+                                    int differentCourseCount,
+                                    int totalRuns)
         {
             this.name = name;
             this.athleteId = athleteId;
-            this.differentEvents = differentEvents;
+            this.differentRegionCourseCount = differentRegionCourseCount;
+            this.totalRegionRuns = totalRegionRuns;
+            this.differentCourseCount = differentCourseCount;
+            this.totalRuns = totalRuns;
         }
 
         @Override
@@ -77,7 +112,10 @@ public class StatsDao
             return "DifferentCourseCount{" +
                     "name='" + name + '\'' +
                     ", athleteId=" + athleteId +
-                    ", differentEvents=" + differentEvents +
+                    ", differentRegionCourseCount=" + differentRegionCourseCount +
+                    ", totalRegionRuns=" + totalRegionRuns +
+                    ", differentCourseCount=" + differentCourseCount +
+                    ", totalRuns=" + totalRuns +
                     '}';
         }
     }
