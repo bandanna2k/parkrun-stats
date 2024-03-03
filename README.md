@@ -2,9 +2,9 @@
 
 # TODO
 
-- Backup / Migrate time / invariant / backup / drop column
+- Backup DONE / Migrate time DONE / invariant / backup / drop column
 
-- Invariant test for results against attendance
+- Invariant test for results against attendance NEEDS TESTING
 
 - DB Isolation
 
@@ -135,7 +135,8 @@ select athlete_id, course_name, min(position) as best_position
 from athlete
 left join result using (athlete_id)
 group by athlete_id, course_name
-having athlete_id = 414811;
+having athlete_id = 414811
+order by best_position desc;
 ```
 
 ### Count of runs at courses
@@ -211,3 +212,78 @@ where
     country = 'NZ' and
     status = 'R';    
 ```
+
+update result
+set
+    time_seconds = 
+(
+    select new_time from 
+    (
+        select from result
+        convert(substring(time, 1, 2), unsigned integer) as mins,
+        convert(substring(time, 4, 2), unsigned integer) as seconds,
+        (((select mins) * 60) + (select seconds)) as new_time
+    )
+)
+where
+    length(time) = 5
+    time_seconds is null 
+
+select 
+    *,
+    convert(substring(time, 1, 2), unsigned integer) as mins,
+    convert(substring(time, 4, 2), unsigned integer) as seconds,
+    (((select mins) * 60) + (select seconds)) as new_time
+from result 
+where 
+    length(time) = 5 and
+    time_seconds is null 
+limit 10;
+
+
+
+
+
+
+update result
+set
+    time_seconds =
+    (
+        (  
+            convert(substring(time, 1, 1), unsigned integer)  
+        ) * 3600
+    ) +
+    (
+        (  
+            convert(substring(time, 3, 2), unsigned integer)  
+        ) * 60
+    ) +
+    (
+        convert(substring(time, 6, 2), unsigned integer)
+    )
+where
+    length(time) = 7 and
+    time_seconds is null;
+
+
+    course_name = 'anderson' and
+    event_number = 1 and
+    position = 97;
+
+
+
+
+
+select name, course_name as count
+from (select distinct athlete_id, course_name from parkrun_stats.result) as sub1
+join athlete using (athlete_id)
+limit 10;
+
+select name, count(course_name) as count
+from (select distinct athlete_id, course_name from parkrun_stats.result) as sub1
+join athlete using (athlete_id)
+group by athlete_id
+having count > 30
+order by count desc, athlete_id asc
+limit 50
+
