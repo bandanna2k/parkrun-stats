@@ -10,6 +10,8 @@
 
 - Nicer way of retrying for a URL
 
+- Decent CSS
+
 # QUERIES
 
 ## How many athletes have finished a run (in the database)
