@@ -5,9 +5,14 @@ import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.StatsDao;
+import dnt.parkrun.datastructures.stats.MostEventsRecord;
+import dnt.parkrun.htmlwriter.HtmlWriter;
+import dnt.parkrun.htmlwriter.MostEventsTableHtmlWriter;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
+import javax.xml.stream.XMLStreamException;
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
@@ -16,19 +21,23 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Stats
 {
-    public static void main(String[] args) throws SQLException, IOException
+    public static void main(String[] args) throws SQLException, IOException, XMLStreamException
     {
         Stats stats = Stats.newInstance(DateConverter.parseWebsiteDate(args[0]));
         stats.generateStats();
     }
 
+
     private final StatsDao statsDao;
     private final UrlGenerator urlGenerator;
+
+    private final File htmlFile;
 
     private Stats(DataSource dataSource, Date date)
     {
         this.statsDao = new StatsDao(dataSource, date);
         this.urlGenerator = new UrlGenerator();
+        this.htmlFile = new File("most_events_" + DateConverter.formatDateForDbTable(date) + ".html");
     }
 
     public static Stats newInstance(Date date) throws SQLException
@@ -38,7 +47,7 @@ public class Stats
         return new Stats(dataSource, date);
     }
 
-    private void generateStats() throws IOException
+    private void generateStats() throws IOException, XMLStreamException
     {
         System.out.println("* Generating most events table *");
         statsDao.generateDifferentCourseCountTable();
@@ -49,26 +58,39 @@ public class Stats
             System.out.println(differentCourseCount);
         });
 
-        for (StatsDao.DifferentCourseCount der : listOfDifferentEventRecords)
+        try(HtmlWriter writer = HtmlWriter.newInstance(htmlFile))
         {
-            if(der.differentCourseCount == 0 || der.totalRuns == 0)
+            try(MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer))
             {
-                AtomicInteger differentCourseCount = new AtomicInteger();
-                AtomicInteger totalRuns = new AtomicInteger();
-                Parser parser = new Parser.Builder()
-                        .url(urlGenerator.generateAthleteEventSummaryUrl("parkrun.co.nz", der.athleteId))
-                        .forEachAthleteCourseSummary(acs -> {
-                            differentCourseCount.incrementAndGet();
-                            totalRuns.addAndGet(acs.countOfRuns);
-                        })
-                        .build();
-                parser.parse();
+                for (StatsDao.DifferentCourseCount der : listOfDifferentEventRecords)
+                {
+                    if (der.differentCourseCount == 0 || der.totalRuns == 0)
+                    {
+                        AtomicInteger differentCourseCount = new AtomicInteger();
+                        AtomicInteger totalRuns = new AtomicInteger();
+                        Parser parser = new Parser.Builder()
+                                .url(urlGenerator.generateAthleteEventSummaryUrl("parkrun.co.nz", der.athleteId))
+                                .forEachAthleteCourseSummary(acs ->
+                                {
+                                    differentCourseCount.incrementAndGet();
+                                    totalRuns.addAndGet(acs.countOfRuns);
+                                })
+                                .build();
+                        parser.parse();
 
-                TotalEventCountUpdate update = new TotalEventCountUpdate(der.athleteId, differentCourseCount.get(), totalRuns.get());
-                System.out.println(update);
-                statsDao.updateDifferentCourseRecord(update.athleteId, update.differentCourseCount, update.totalRuns);
+                        TotalEventCountUpdate update = new TotalEventCountUpdate(der.athleteId, differentCourseCount.get(), totalRuns.get());
+                        System.out.println(update);
+                        statsDao.updateDifferentCourseRecord(update.athleteId, update.differentCourseCount, update.totalRuns);
+
+                    }
+                    tableWriter.writeMostEventRecord(
+                            new MostEventsRecord(der.name, der.athleteId,
+                                    der.differentRegionCourseCount, der.totalRegionRuns,
+                                    der.differentCourseCount, der.totalRuns));
+                }
             }
         }
+        Process myProcess = new ProcessBuilder("xdg-open", htmlFile.getAbsolutePath()).start();
     }
 
     private static class TotalEventCountUpdate

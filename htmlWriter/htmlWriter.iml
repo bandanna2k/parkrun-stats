@@ -7,12 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="database" />
-    <orderEntry type="library" name="springframework.spring.jdbc" level="project" />
-    <orderEntry type="library" name="mysql.connector.java" level="project" />
-    <orderEntry type="module" module-name="common" />
-    <orderEntry type="module" module-name="athleteCourseSummary" />
     <orderEntry type="module" module-name="dataStructures" />
-    <orderEntry type="module" module-name="htmlWriter" />
+    <orderEntry type="module" module-name="common" />
   </component>
 </module>
