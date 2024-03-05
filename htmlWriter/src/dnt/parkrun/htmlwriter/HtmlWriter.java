@@ -67,6 +67,7 @@ public class HtmlWriter extends BaseWriter
                         "  white-space:nowrap;\n" +
                         "}\n" +
                         "td:first-child { " +
+                        "  font-weight:700;\n" +
                         "  text-align:left;\n" +
                         "}\n" +
                         "thead tr { \n" +

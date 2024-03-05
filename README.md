@@ -2,7 +2,7 @@
 
 # TODO
 
-- Backup DONE / Migrate time DONE / invariant / backup / drop column
+- Backup DONE / Migrate time DONE / invariant DONE / backup / drop column
 
 - Invariant test for results against attendance NEEDS TESTING
 
