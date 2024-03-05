@@ -14,8 +14,8 @@ table {
     margin:0 auto;
     position:relative;
 }
-table caption {
-    font-size:48px;
+summary {
+    font-size:32px;
     padding:20px;
 }
 table a {

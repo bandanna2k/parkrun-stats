@@ -147,9 +147,6 @@ order by count desc
 
 ) as sub\G;
 ```
-49817 | Ian ROSS |
-|     576589 | Ian ROSS |
-|    7892266
 
 # INVARIANTS
 

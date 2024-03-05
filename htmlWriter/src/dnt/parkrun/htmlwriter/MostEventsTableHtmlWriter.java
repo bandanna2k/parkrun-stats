@@ -23,11 +23,12 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
     {
         super(writer);
 
-        startElement("table");
-
-        startElement("caption");
+        startElement("details");
+        startElement("summary");
         writer.writeCharacters("Most Events (New Zealand)");
-        endElement("caption");
+        endElement("summary");
+
+        startElement("table");
 
         writeRecord(true, HEADER);
     }
@@ -37,6 +38,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
     {
         try
         {
+            endElement("details");
             endElement("table");
         }
         catch (XMLStreamException e)
