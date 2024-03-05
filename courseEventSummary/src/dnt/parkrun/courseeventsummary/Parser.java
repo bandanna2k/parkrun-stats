@@ -1,10 +1,10 @@
 package dnt.parkrun.courseeventsummary;
 
+import dnt.jsoupwrapper.JsoupWrapper;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -126,40 +126,20 @@ public class Parser
         private Consumer<CourseEventSummary> consumer = ehr -> {};
         private Course course;
 
-        public Parser build() throws IOException
+        public Parser build()
         {
             return new Parser(doc, course, consumer);
         }
 
         public Builder url(URL url) throws IOException
         {
-            int counter = 1;
-            while(this.doc == null && counter > 0)
-            {
-                counter--;
-                try
-                {
-                    this.doc = Jsoup.parse(url, 5000);
-                }
-                catch(Exception ex)
-                {
-                    ex.printStackTrace();
-                    try
-                    {
-                        Thread.sleep(5000);
-                    }
-                    catch (InterruptedException e)
-                    {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
+            this.doc = JsoupWrapper.newDocument(url);
             return this;
         }
 
-        public Builder file(File file) throws IOException
+        public Builder file(File file)
         {
-            this.doc = Jsoup.parse(file);
+            this.doc = JsoupWrapper.newDocument(file);
             return this;
         }
 

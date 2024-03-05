@@ -1,10 +1,9 @@
 package dnt.parkrun.courseevent;
 
+import dnt.jsoupwrapper.JsoupWrapper;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.datastructures.Time;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -100,14 +99,13 @@ public class Parser
 
         public Builder url(URL url) throws IOException
         {
-            Connection connection = Jsoup.connect(url.toString()).followRedirects(false).timeout(5000);
-            this.doc = connection.get();
+            this.doc = JsoupWrapper.newDocument(url);
             return this;
         }
 
-        public Builder file(File file) throws IOException
+        public Builder file(File file)
         {
-            this.doc = Jsoup.parse(file);
+            this.doc = JsoupWrapper.newDocument(file);
             return this;
         }
 

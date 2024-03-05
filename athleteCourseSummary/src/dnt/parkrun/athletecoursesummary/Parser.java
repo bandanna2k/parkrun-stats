@@ -1,8 +1,8 @@
 package dnt.parkrun.athletecoursesummary;
 
 
+import dnt.jsoupwrapper.JsoupWrapper;
 import dnt.parkrun.datastructures.AthleteCourseSummary;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -75,20 +75,20 @@ public class Parser
         private Document doc;
         private Consumer<AthleteCourseSummary> consumer = es -> {};
 
-        public Parser build() throws IOException
+        public Parser build()
         {
             return new Parser(doc, consumer);
         }
 
-        public Builder url(URL url) throws IOException
+        public Builder url(URL url)
         {
-            this.doc = Jsoup.parse(url, 5000);
+            this.doc = JsoupWrapper.newDocument(url);
             return this;
         }
 
         public Builder file(File file) throws IOException
         {
-            this.doc = Jsoup.parse(file);
+            this.doc = JsoupWrapper.newDocument(file);
             return this;
         }
 

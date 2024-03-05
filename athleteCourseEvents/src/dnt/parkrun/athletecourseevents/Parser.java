@@ -1,10 +1,10 @@
 package dnt.parkrun.athletecourseevents;
 
 
+import dnt.jsoupwrapper.JsoupWrapper;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Time;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -120,13 +120,13 @@ public class Parser
 
         public Builder url(URL url) throws IOException
         {
-            this.doc = Jsoup.parse(url, 5000);
+            this.doc = JsoupWrapper.newDocument(url);
             return this;
         }
 
         public Builder file(File file) throws IOException
         {
-            this.doc = Jsoup.parse(file);
+            this.doc = JsoupWrapper.newDocument(file);
             return this;
         }
 
