@@ -10,7 +10,9 @@
 
 - Nicer way of retrying for a URL
 
-- Decent CSS
+- Backfill finsihers in CES
+
+- Attendance records
 
 # QUERIES
 
@@ -204,6 +206,32 @@ where
     country = 'NZ' and
     status = 'R';    
 ```
+
+# Attendance records
+
+```
+select course_long_name, max, ces.date 
+from course c
+left join 
+(
+    select course_name, max(count) as max
+    from
+    (
+        select course_name, event_number, count(position) as count
+        from result
+        group by course_name, event_number
+    ) as sub1
+    group by course_name
+    order by course_name asc
+) as sub2 on c.course_name = sub2.course_name
+
+left join course_event_summary ces
+on c.course_name = ces.course_name
+and ces.finishers = sub2.max;
+```
+
+
+
 
 update result
 set

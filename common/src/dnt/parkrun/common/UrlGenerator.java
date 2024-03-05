@@ -52,4 +52,16 @@ public abstract class UrlGenerator
             throw new RuntimeException(e);
         }
     }
+
+    public static Object generateCourseUrl(String countryBaseUrl, String courseName)
+    {
+        try
+        {
+            return new URL("https://" + countryBaseUrl + "/" + courseName + "/");
+        }
+        catch (MalformedURLException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
 }

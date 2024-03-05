@@ -4,7 +4,9 @@ import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.StatsDao;
+import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import dnt.parkrun.datastructures.stats.MostEventsRecord;
+import dnt.parkrun.htmlwriter.AttendanceRecordsTableHtmlWriter;
 import dnt.parkrun.htmlwriter.HtmlWriter;
 import dnt.parkrun.htmlwriter.MostEventsTableHtmlWriter;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -35,7 +37,7 @@ public class Stats
     private Stats(DataSource dataSource, Date date)
     {
         this.statsDao = new StatsDao(dataSource, date);
-        this.htmlFile = new File("most_events_" + DateConverter.formatDateForDbTable(date) + ".html");
+        this.htmlFile = new File("stats_" + DateConverter.formatDateForDbTable(date) + ".html");
     }
 
     public static Stats newInstance(Date date) throws SQLException
@@ -50,11 +52,18 @@ public class Stats
         System.out.println("* Generating most events table *");
         statsDao.generateDifferentCourseCountTable();
 
-        System.out.println("* Displaying records *");
+        System.out.println("* Displaying most events table *");
         List<StatsDao.DifferentCourseCount> listOfDifferentEventRecords = statsDao.getDifferentCourseCount();
         listOfDifferentEventRecords.forEach(differentCourseCount -> {
             System.out.println(differentCourseCount);
         });
+
+        System.out.println("* Generating attendance record table *");
+        statsDao.generateAttendanceRecordTable();
+
+        System.out.println("* Displaying most events table *");
+        List<AttendanceRecord> listOfAttendanceRecords = statsDao.getAttendanceRecords();
+        listOfAttendanceRecords.forEach(System.out::println);
 
         try(HtmlWriter writer = HtmlWriter.newInstance(htmlFile))
         {
@@ -87,7 +96,17 @@ public class Stats
                                     der.differentCourseCount, der.totalRuns));
                 }
             }
+
+            // Read attendance records from, and write html table
+            try(AttendanceRecordsTableHtmlWriter tableWriter = new AttendanceRecordsTableHtmlWriter(writer.writer))
+            {
+                for (AttendanceRecord ar : listOfAttendanceRecords)
+                {
+                    tableWriter.writeAttendanceRecord(ar);
+                }
+            }
         }
+
         Process myProcess = new ProcessBuilder("xdg-open", htmlFile.getAbsolutePath()).start();
     }
 

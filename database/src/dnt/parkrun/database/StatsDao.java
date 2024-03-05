@@ -1,6 +1,7 @@
 package dnt.parkrun.database;
 
 import dnt.parkrun.common.DateConverter;
+import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -11,41 +12,44 @@ import java.util.List;
 
 public class StatsDao
 {
-    public static final String MIN_DIFFERENT_REGION_COURSE_COUNT = "20";
+    private static final String MIN_DIFFERENT_REGION_COURSE_COUNT = "20";
+
     private final NamedParameterJdbcTemplate jdbc;
     private final String differentCourseCountTableName;
+    private final String attendanceRecordTableName;
 
     public StatsDao(DataSource dataSource, Date date)
     {
         jdbc = new NamedParameterJdbcTemplate(dataSource);
         differentCourseCountTableName = "most_events_for_region_" + DateConverter.formatDateForDbTable(date);
+        attendanceRecordTableName = "attendance_records_for_region_" + DateConverter.formatDateForDbTable(date);
     }
 
     public void generateDifferentCourseCountTable()
     {
         String sql =
                 "create table if not exists " + differentCourseCountTableName + " as " +
-                "select a.name, a.athlete_id, " +
+                        "select a.name, a.athlete_id, " +
                         "sub1.count as different_region_course_count, sub2.count as total_region_runs, " +
                         "0 as different_course_count, 0 as total_runs " +
-                "from athlete a " +
-                "join   " +
-                "( " +
-                "    select athlete_id, count(course_name) as count " +
-                "    from (select distinct athlete_id, course_name from result) as sub1a " +
-                "    group by athlete_id " +
-                "    having count >= " + MIN_DIFFERENT_REGION_COURSE_COUNT +
-                "    order by count desc, athlete_id asc  " +
-                ") as sub1 on sub1.athlete_id = a.athlete_id " +
-                "join " +
-                "( " +
-                "    select athlete_id, count(concat) as count " +
-                "    from (select athlete_id, concat(athlete_id, course_name, event_number, '-', position) as concat from result) as sub2a " +
-                "    group by athlete_id " +
-                "    order by count desc, athlete_id asc  " +
-                ") as sub2 on sub2.athlete_id = a.athlete_id " +
-                "where a.name is not null " +
-                "order by different_region_course_count desc, total_region_runs desc, a.athlete_id desc ";
+                        "from athlete a " +
+                        "join   " +
+                        "( " +
+                        "    select athlete_id, count(course_name) as count " +
+                        "    from (select distinct athlete_id, course_name from result) as sub1a " +
+                        "    group by athlete_id " +
+                        "    having count >= " + MIN_DIFFERENT_REGION_COURSE_COUNT +
+                        "    order by count desc, athlete_id asc  " +
+                        ") as sub1 on sub1.athlete_id = a.athlete_id " +
+                        "join " +
+                        "( " +
+                        "    select athlete_id, count(concat) as count " +
+                        "    from (select athlete_id, concat(athlete_id, course_name, event_number, '-', position) as concat from result) as sub2a " +
+                        "    group by athlete_id " +
+                        "    order by count desc, athlete_id asc  " +
+                        ") as sub2 on sub2.athlete_id = a.athlete_id " +
+                        "where a.name is not null " +
+                        "order by different_region_course_count desc, total_region_runs desc, a.athlete_id desc ";
 
         jdbc.update(sql, EmptySqlParameterSource.INSTANCE);
     }
@@ -118,5 +122,45 @@ public class StatsDao
                     ", totalRuns=" + totalRuns +
                     '}';
         }
+    }
+
+    public void generateAttendanceRecordTable()
+    {
+        String sql =
+                "create table if not exists " + attendanceRecordTableName + " as " +
+                "select c.course_long_name, c.course_name, max, ces.date \n" +
+                "from course c\n" +
+                "left join \n" +
+                "(\n" +
+                "    select course_name, max(count) as max\n" +
+                "    from\n" +
+                "    (\n" +
+                "        select course_name, event_number, count(position) as count\n" +
+                "        from result\n" +
+                "        group by course_name, event_number\n" +
+                "    ) as sub1\n" +
+                "    group by course_name\n" +
+                "    order by course_name asc\n" +
+                ") as sub2 on c.course_name = sub2.course_name\n" +
+                "\n" +
+                "left join course_event_summary ces\n" +
+                "on c.course_name = ces.course_name\n" +
+                "and ces.finishers = sub2.max;\n";
+
+        jdbc.update(sql, EmptySqlParameterSource.INSTANCE);
+    }
+
+    public List<AttendanceRecord> getAttendanceRecords()
+    {
+        String sql = "select course_long_name, course_name, max, null as recent_attendance, date " +
+                        "from " + attendanceRecordTableName;
+        return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
+                new AttendanceRecord(
+                        rs.getString("course_long_name"),
+                        rs.getString("course_name"),
+                        String.valueOf(rs.getInt("max")),
+                        String.valueOf(rs.getInt("recent_attendance")),
+                        rs.getDate("date")
+                ));
     }
 }
