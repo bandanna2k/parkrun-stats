@@ -127,7 +127,7 @@ select athlete_id, course_name, min(position) as best_position
 from athlete
 left join result using (athlete_id)
 group by athlete_id, course_name
-having athlete_id = 414811
+having athlete_id = 49817
 order by best_position desc;
 ```
 
@@ -142,11 +142,14 @@ from athlete
 left join result using (athlete_id)
 left join course using (course_name)
 group by athlete_id, course_name
-having athlete_id = 414811
+having athlete_id = 7892266
 order by count desc
 
 ) as sub\G;
 ```
+49817 | Ian ROSS |
+|     576589 | Ian ROSS |
+|    7892266
 
 # INVARIANTS
 
