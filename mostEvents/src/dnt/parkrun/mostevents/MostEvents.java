@@ -1,7 +1,6 @@
 package dnt.parkrun.mostevents;
 
 import com.mysql.jdbc.Driver;
-import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
 import dnt.parkrun.database.AthleteDao;
@@ -19,6 +18,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static dnt.parkrun.common.UrlGenerator.generateCourseEventSummaryUrl;
+import static dnt.parkrun.common.UrlGenerator.generateCourseEventUrl;
+
 public class MostEvents
 {
     public static void main(String[] args) throws SQLException, IOException
@@ -27,7 +29,6 @@ public class MostEvents
         mostEvents.collectMostEventRecords();
     }
 
-    private final UrlGenerator urlGenerator;
     private final CourseRepository courseRepository;
 
     private final AthleteDao athleteDao;
@@ -37,8 +38,6 @@ public class MostEvents
 
     private MostEvents(DataSource dataSource) throws SQLException
     {
-        this.urlGenerator = new UrlGenerator();
-
         this.courseRepository = new CourseRepository();
         this.athleteDao = new AthleteDao(dataSource);
         this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
@@ -104,7 +103,7 @@ public class MostEvents
                 {
                     dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder()
                             .courseName(ces.course.name)
-                            .url(urlGenerator.generateCourseEventUrl(courseCountry.url, ces.course.name, ces.eventNumber))
+                            .url(generateCourseEventUrl(courseCountry.url, ces.course.name, ces.eventNumber))
                             .forEachAthlete(athleteDao::insert)
                             .forEachResult(resultDao::insert)
                             .build();
@@ -139,7 +138,7 @@ public class MostEvents
             Country courseCountry = courseRepository.getCountry(course.country.getCountryCode());
             Parser courseEventSummaryParser = new Parser.Builder()
                     .course(course)
-                    .url(urlGenerator.generateCourseEventSummaryUrl(courseCountry.url, course.name))
+                    .url(generateCourseEventSummaryUrl(courseCountry.url, course.name))
                     .forEachCourseEvent(results::add)
                     .build();
             courseEventSummaryParser.parse();

@@ -3,10 +3,7 @@ package dnt.parkrun.addathleteevents;
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecourseevents.AthleteCourseEvent;
 import dnt.parkrun.athletecoursesummary.Parser;
-import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
-import dnt.parkrun.database.CourseEventSummaryDao;
-import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.datastructures.*;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
@@ -19,16 +16,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
+import static dnt.parkrun.common.UrlGenerator.generateAthleteEventUrl;
 import static java.util.Optional.empty;
 
 public class AddAthleteEvents
 {
     private static final String PARKRUN_CO_NZ = "parkrun.co.nz";
 
-    private final UrlGenerator urlGenerator;
     private final CourseRepository courseRepository;
-    private final CourseEventSummaryDao courseEventSummaryDao;
-    private final ResultDao resultDao;
 
 
     public static void main(String[] args) throws IOException, SQLException
@@ -39,11 +35,7 @@ public class AddAthleteEvents
 
     private AddAthleteEvents(DataSource dataSource) throws SQLException
     {
-        this.urlGenerator = new UrlGenerator();
-
         this.courseRepository = new CourseRepository();
-        this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
-        this.resultDao = new ResultDao(dataSource);
     }
 
     public static AddAthleteEvents newInstance() throws SQLException
@@ -80,7 +72,7 @@ public class AddAthleteEvents
         for (Integer athleteId : athletes)
         {
             Parser parser = new Parser.Builder()
-                    .url(urlGenerator.generateAthleteEventSummaryUrl(PARKRUN_CO_NZ, athleteId))
+                    .url(generateAthleteEventSummaryUrl(PARKRUN_CO_NZ, athleteId))
                     .forEachAthleteCourseSummary(courseSummaries::add)
                     .build();
             parser.parse();
@@ -102,7 +94,7 @@ public class AddAthleteEvents
             for (Integer athlete : athletes)
             {
                 dnt.parkrun.athletecourseevents.Parser parser = new dnt.parkrun.athletecourseevents.Parser.Builder()
-                        .url(urlGenerator.generateAthleteEventUrl(course.country.url, course.name, athlete))
+                        .url(generateAthleteEventUrl(course.country.url, course.name, athlete))
                         .forEachAthleteCourseEvent(this::processAthleteCourseEvent)
                         .build();
                 parser.parse();

@@ -3,7 +3,6 @@ package dnt.parkrun.stats;
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.DateConverter;
-import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.StatsDao;
 import dnt.parkrun.datastructures.stats.MostEventsRecord;
 import dnt.parkrun.htmlwriter.HtmlWriter;
@@ -19,6 +18,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
+
 public class Stats
 {
     public static void main(String[] args) throws SQLException, IOException, XMLStreamException
@@ -29,14 +30,11 @@ public class Stats
 
 
     private final StatsDao statsDao;
-    private final UrlGenerator urlGenerator;
-
     private final File htmlFile;
 
     private Stats(DataSource dataSource, Date date)
     {
         this.statsDao = new StatsDao(dataSource, date);
-        this.urlGenerator = new UrlGenerator();
         this.htmlFile = new File("most_events_" + DateConverter.formatDateForDbTable(date) + ".html");
     }
 
@@ -69,7 +67,7 @@ public class Stats
                         AtomicInteger differentCourseCount = new AtomicInteger();
                         AtomicInteger totalRuns = new AtomicInteger();
                         Parser parser = new Parser.Builder()
-                                .url(urlGenerator.generateAthleteEventSummaryUrl("parkrun.co.nz", der.athleteId))
+                                .url(generateAthleteEventSummaryUrl("parkrun.co.nz", der.athleteId))
                                 .forEachAthleteCourseSummary(acs ->
                                 {
                                     differentCourseCount.incrementAndGet();

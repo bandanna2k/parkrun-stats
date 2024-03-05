@@ -1,12 +1,12 @@
 package dnt.parkrun.htmlwriter;
 
-import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.datastructures.stats.MostEventsRecord;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.Closeable;
 
+import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
 import static dnt.parkrun.datastructures.Athlete.NO_ATHLETE_ID;
 
 public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
@@ -17,7 +17,6 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             "Total Region Runs",
             "Worldwide Events",
             "Total Runs");
-    private UrlGenerator urlGenerator = new UrlGenerator(1, 1);
 
 
     public MostEventsTableHtmlWriter(XMLStreamWriter writer) throws XMLStreamException
@@ -67,7 +66,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         else
         {
             writer.writeStartElement("a");
-            writer.writeAttribute("href", urlGenerator.generateAthleteEventSummaryUrl("parkrun.co.nz", record.athleteId).toString());
+            writer.writeAttribute("href", generateAthleteEventSummaryUrl("parkrun.co.nz", record.athleteId).toString());
             writer.writeAttribute("target", String.valueOf(record.athleteId));
             writer.writeCharacters(record.name);
             endElement("a");
