@@ -55,20 +55,8 @@ public class MostEvents
     public void collectMostEventRecords() throws IOException
     {
         System.out.println("* Adding courses *");
-        InputStream inputStream = Course.class.getResourceAsStream("/events.json");
-        dnt.parkrun.courses.reader.EventsJsonFileReader reader = new EventsJsonFileReader.Builder(() -> inputStream)
-                .forEachCountry(courseRepository::addCountry)
-                .forEachCourse(course ->
-                {
-                    if(course.country.countryEnum == CountryEnum.NZ)
-                    {
-                        courseDao.insert(course);
-                        courseRepository.addCourse(course);
-                    }
-                })
-                .statusSupplier(() -> Course.Status.RUNNING)
-                .build();
-        reader.read();
+        addCourses("events.json", Course.Status.RUNNING);
+        addCourses("events.missing.json", Course.Status.STOPPED);
 
         System.out.println("* Filter courses *");
         Arrays.stream(CountryEnum.values())
@@ -126,6 +114,24 @@ public class MostEvents
                 }
             }
         }
+    }
+
+    private void addCourses(String filename, Course.Status status) throws IOException
+    {
+        InputStream inputStream = Course.class.getResourceAsStream("/" + filename);
+        EventsJsonFileReader reader = new EventsJsonFileReader.Builder(() -> inputStream)
+                .forEachCountry(courseRepository::addCountry)
+                .forEachCourse(course ->
+                {
+                    if(course.country.countryEnum == CountryEnum.NZ)
+                    {
+                        courseDao.insert(course);
+                        courseRepository.addCourse(course);
+                    }
+                })
+                .statusSupplier(() -> status)
+                .build();
+        reader.read();
     }
 
     private List<CourseEventSummary> getCourseEventSummariesFromWeb() throws IOException

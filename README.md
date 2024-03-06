@@ -1,6 +1,16 @@
 # parkrun-stats
 
+# What to run?
+
+Run MostEvents.main (this will fill a database with all region results from active parkruns)
+
+Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023 
+(this create a Most Events table, and an Attendance table, and output to HTML)
+
+
 # TODO
+
+- Poirua
 
 - Backup DONE / Migrate time DONE / invariant DONE / backup / drop column
 
