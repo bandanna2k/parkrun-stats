@@ -6,9 +6,12 @@ import org.jsoup.nodes.Document;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Random;
 
 public abstract class JsoupWrapper
 {
+    private static final Random RANDOM = new Random();
+
     public static Document newDocument(URL url)
     {
         int counter = 2;
@@ -18,8 +21,9 @@ public abstract class JsoupWrapper
             counter--;
             try
             {
-                System.out.print("Sleeping... ");
-                Thread.sleep(3000);
+                int sleepTime = 3000 + RANDOM.nextInt(3000);
+                System.out.print("Sleeping for " + sleepTime + " ... ");
+                Thread.sleep(sleepTime);
                 System.out.println("Loading URL");
                 document = Jsoup.parse(url, 5000);
             }
