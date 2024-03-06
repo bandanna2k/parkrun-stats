@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.sql.SQLException;
 
 @Deprecated
-public class BackfillFinishers
+public class BackfillCourseEventSummary
 {
     public static void main(String[] args) throws IOException, SQLException
     {
@@ -49,7 +49,7 @@ public class BackfillFinishers
                     .forEachCourseEvent(ces ->
                     {
                         System.out.println(ces);
-                        courseEventSummaryDao.backfillFinishers(course.name, ces.eventNumber, ces.finishers);
+                        courseEventSummaryDao.backfillFinishers(course.name, ces.eventNumber, ces.finishers, ces.date);
                     })
                     .build();
             parser.parse();

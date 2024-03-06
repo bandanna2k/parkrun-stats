@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,16 +75,17 @@ public class CourseEventSummaryDao
     }
 
     @Deprecated
-    public void backfillFinishers(String name, int eventNumber, int finishers)
+    public void backfillFinishers(String name, int eventNumber, int finishers, Date date)
     {
         int update = jdbc.update("update course_event_summary " +
-                        "set finishers = :finishers " +
+                        "set date = :date " +
                         "where course_name = :courseName and " +
                         " event_number = :eventNumber and " +
-                        " finishers is null",
+                        " date is null",
                 new MapSqlParameterSource()
                         .addValue("courseName", name)
                         .addValue("eventNumber", eventNumber)
+                        .addValue("date", date)
                         .addValue("finishers", finishers));
     }
 }
