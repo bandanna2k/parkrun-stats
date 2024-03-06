@@ -128,31 +128,43 @@ public class StatsDao
     {
         String sql =
                 "create table if not exists " + attendanceRecordTableName + " as " +
-                "select c.course_long_name, c.course_name, max, ces.date \n" +
-                "from course c\n" +
-                "left join \n" +
-                "(\n" +
-                "    select course_name, max(count) as max\n" +
-                "    from\n" +
-                "    (\n" +
-                "        select course_name, event_number, count(position) as count\n" +
-                "        from result\n" +
-                "        group by course_name, event_number\n" +
-                "    ) as sub1\n" +
-                "    group by course_name\n" +
-                "    order by course_name asc\n" +
-                ") as sub2 on c.course_name = sub2.course_name\n" +
-                "\n" +
-                "left join course_event_summary ces\n" +
-                "on c.course_name = ces.course_name\n" +
-                "and ces.finishers = sub2.max;\n";
+                "select course_long_name, c.course_name, " +
+                        "            max, ces.date, " +
+                        "            sub3.recent_event_finishers, sub3.recent_event_date " +
+                        "from course c " +
+                        "left join " +
+                        "(" +
+                        "    select course_name, max(count) as max" +
+                        "    from" +
+                        "    (" +
+                        "        select course_name, event_number, count(position) as count" +
+                        "        from result" +
+                        "        group by course_name, event_number" +
+                        "    ) as sub1" +
+                        "    group by course_name" +
+                        "    order by course_name asc" +
+                        ") as sub2 on c.course_name = sub2.course_name" +
+                        "left join course_event_summary ces " +
+                        "on c.course_name = ces.course_name " +
+                        "and ces.finishers = sub2.max " +
+                        "left join " +
+                        "( " +
+                        "    select ces.course_name, finishers as recent_event_finishers, recent_event_date " +
+                        "    from course_event_summary ces " +
+                        "    join " +
+                        "    ( " +
+                        "        select course_name, max(date) as recent_event_date " +
+                        "        from course_event_summary " +
+                        "        group by course_name " +
+                        "    ) as sub4 on ces.course_name = sub4.course_name and ces.date = sub4.recent_event_date " +
+                        ") as sub3 on c.course_name = sub3.course_name;";
 
         jdbc.update(sql, EmptySqlParameterSource.INSTANCE);
     }
 
     public List<AttendanceRecord> getAttendanceRecords()
     {
-        String sql = "select course_long_name, course_name, max, null as recent_attendance, date " +
+        String sql = "select course_long_name, course_name, max, recent_event_finishers as recent_attendance, recent_event_date " +
                         "from " + attendanceRecordTableName;
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
                 new AttendanceRecord(

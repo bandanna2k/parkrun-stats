@@ -222,7 +222,9 @@ where
 # Attendance records
 
 ```
-select course_long_name, max, ces.date 
+select course_long_name, c.course_name, 
+            max, ces.date, 
+            sub3.recent_event_finishers, sub3.recent_event_date 
 from course c
 left join 
 (
@@ -239,7 +241,19 @@ left join
 
 left join course_event_summary ces
 on c.course_name = ces.course_name
-and ces.finishers = sub2.max;
+and ces.finishers = sub2.max
+
+left join
+(
+    select ces.course_name, finishers as recent_event_finishers, recent_event_date
+    from course_event_summary ces
+    join
+    (
+        select course_name, max(date) as recent_event_date
+        from course_event_summary
+        group by course_name
+    ) as sub4 on ces.course_name = sub4.course_name and ces.date = sub4.recent_event_date
+) as sub3 on c.course_name = sub3.course_name;
 ```
 
 
