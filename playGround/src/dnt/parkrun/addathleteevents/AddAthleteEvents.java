@@ -20,6 +20,7 @@ import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
 import static dnt.parkrun.common.UrlGenerator.generateAthleteEventUrl;
 import static java.util.Optional.empty;
 
+@Deprecated // Wrong solution
 public class AddAthleteEvents
 {
     private static final String PARKRUN_CO_NZ = "parkrun.co.nz";

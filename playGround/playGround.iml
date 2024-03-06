@@ -19,5 +19,6 @@
     <orderEntry type="library" name="springframework.spring.jdbc" level="project" />
     <orderEntry type="library" name="mysql.connector.java" level="project" />
     <orderEntry type="module" module-name="database" />
+    <orderEntry type="module" module-name="courseEventSummary" />
   </component>
 </module>

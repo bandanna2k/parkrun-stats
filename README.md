@@ -14,6 +14,8 @@
 
 - Attendance records
 
+- Sort table
+
 # QUERIES
 
 ## How many athletes have finished a run (in the database)

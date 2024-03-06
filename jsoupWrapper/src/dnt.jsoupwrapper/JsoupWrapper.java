@@ -11,26 +11,21 @@ public abstract class JsoupWrapper
 {
     public static Document newDocument(URL url)
     {
-        int counter = 1;
+        int counter = 2;
         Document document = null;
         while(document == null && counter > 0)
         {
             counter--;
             try
             {
+                System.out.print("Sleeping... ");
+                Thread.sleep(3000);
+                System.out.println("Loading URL");
                 document = Jsoup.parse(url, 5000);
             }
             catch(Exception ex)
             {
                 ex.printStackTrace();
-                try
-                {
-                    Thread.sleep(5000);
-                }
-                catch (InterruptedException e)
-                {
-                    throw new RuntimeException(e);
-                }
             }
         }
         return document;

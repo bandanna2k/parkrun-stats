@@ -73,8 +73,17 @@ public class CourseEventSummaryDao
         );
     }
 
-    public List<CourseEventSummary> getCourseEventSummariesWithNoResults()
+    @Deprecated
+    public void backfillFinishers(String name, int eventNumber, int finishers)
     {
-        return null;
+        int update = jdbc.update("update course_event_summary " +
+                        "set finishers = :finishers " +
+                        "where course_name = :courseName and " +
+                        " event_number = :eventNumber and " +
+                        " finishers is null",
+                new MapSqlParameterSource()
+                        .addValue("courseName", name)
+                        .addValue("eventNumber", eventNumber)
+                        .addValue("finishers", finishers));
     }
 }
