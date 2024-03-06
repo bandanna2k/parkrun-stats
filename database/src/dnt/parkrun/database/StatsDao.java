@@ -12,7 +12,7 @@ import java.util.List;
 
 public class StatsDao
 {
-    private static final String MIN_DIFFERENT_REGION_COURSE_COUNT = "20";
+    private static final String MIN_DIFFERENT_REGION_COURSE_COUNT = "10";
 
     private final NamedParameterJdbcTemplate jdbc;
     private final String differentCourseCountTableName;
