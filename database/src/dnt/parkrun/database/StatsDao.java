@@ -12,7 +12,7 @@ import java.util.List;
 
 public class StatsDao
 {
-    private static final String MIN_DIFFERENT_REGION_COURSE_COUNT = "10";
+    private static final String MIN_DIFFERENT_REGION_COURSE_COUNT = "20";
 
     private final NamedParameterJdbcTemplate jdbc;
     private final String differentCourseCountTableName;
@@ -143,7 +143,7 @@ public class StatsDao
                         "    ) as sub1" +
                         "    group by course_name" +
                         "    order by course_name asc" +
-                        ") as sub2 on c.course_name = sub2.course_name" +
+                        ") as sub2 on c.course_name = sub2.course_name " +
                         "left join course_event_summary ces " +
                         "on c.course_name = ces.course_name " +
                         "and ces.finishers = sub2.max " +
@@ -164,15 +164,15 @@ public class StatsDao
 
     public List<AttendanceRecord> getAttendanceRecords()
     {
-        String sql = "select course_long_name, course_name, max, recent_event_finishers as recent_attendance, recent_event_date " +
+        String sql = "select course_long_name, course_name, recent_event_date, recent_event_finishers, date, max " +
                         "from " + attendanceRecordTableName;
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
                 new AttendanceRecord(
                         rs.getString("course_long_name"),
                         rs.getString("course_name"),
-                        String.valueOf(rs.getInt("max")),
-                        String.valueOf(rs.getInt("recent_attendance")),
-                        rs.getDate("date")
-                ));
+                        rs.getDate("recent_event_date"),
+                        String.valueOf(rs.getInt("recent_event_finishers")),
+                        rs.getDate("date"),
+                        String.valueOf(rs.getInt("max"))));
     }
 }
