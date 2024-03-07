@@ -10,8 +10,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 # TODO
 
-- Poirua
-
 - Backup DONE / Migrate time DONE / invariant DONE / backup / drop column
 
 - Invariant test for results against attendance NEEDS TESTING
@@ -19,8 +17,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 - DB Isolation
 
 - Nicer way of retrying for a URL
-
-- Backfill finsihers in CES
 
 - Attendance records
 

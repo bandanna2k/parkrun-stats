@@ -100,10 +100,12 @@ public class Stats
             // Read attendance records from, and write html table
             try(AttendanceRecordsTableHtmlWriter tableWriter = new AttendanceRecordsTableHtmlWriter(writer.writer))
             {
+                tableWriter.writer.writeStartElement("tbody");
                 for (AttendanceRecord ar : listOfAttendanceRecords)
                 {
                     tableWriter.writeAttendanceRecord(ar);
                 }
+                tableWriter.writer.writeEndElement(); // tbody
             }
         }
 

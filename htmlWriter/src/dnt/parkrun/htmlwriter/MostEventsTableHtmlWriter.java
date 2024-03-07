@@ -28,7 +28,8 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         writer.writeCharacters("Most Events (New Zealand)");
         endElement("summary");
 
-        startElement("table");
+        writer.writeStartElement("table");
+        writer.writeAttribute("class", "sortable");
 
         writeRecord(true, HEADER);
     }

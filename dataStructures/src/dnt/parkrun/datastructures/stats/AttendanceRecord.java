@@ -8,22 +8,30 @@ public class AttendanceRecord
 {
     public final String courseLongName;
     public final String courseName;
-    public final String maxAttendance;
     public final String recentAttendance;
-    public final String date;
+    public final String recentDate;
+    public final String maxAttendance;
+    public final String maxDate;
 
-    public AttendanceRecord(String courseLongName, String courseName, String maxAttendance, String recentAttendance, Date date)
+    public AttendanceRecord(String courseLongName, String courseName,
+                            Date recentDate, String recentAttendance,
+                            Date maxDate, String maxAttendance)
     {
-        this(courseLongName, courseName, maxAttendance, recentAttendance, DateConverter.formatDateForHtml(date));
+        this(courseLongName, courseName,
+                DateConverter.formatDateForHtml(recentDate), recentAttendance,
+                DateConverter.formatDateForHtml(maxDate), maxAttendance);
     }
 
-    public AttendanceRecord(String courseLongName, String courseName, String maxAttendance, String recentAttendance, String date)
+    public AttendanceRecord(String courseLongName, String courseName,
+                            String recentDate, String recentAttendance,
+                            String maxDate, String maxAttendance)
     {
         this.courseLongName = courseLongName;
         this.courseName = courseName;
-        this.maxAttendance = maxAttendance;
         this.recentAttendance = recentAttendance;
-        this.date = date;
+        this.recentDate = recentDate;
+        this.maxAttendance = maxAttendance;
+        this.maxDate = maxDate;
     }
 
     @Override
@@ -32,9 +40,10 @@ public class AttendanceRecord
         return "AttendanceRecord{" +
                 "courseLongName='" + courseLongName + '\'' +
                 ", courseName='" + courseName + '\'' +
-                ", maxAttendance='" + maxAttendance + '\'' +
                 ", recentAttendance='" + recentAttendance + '\'' +
-                ", date='" + date + '\'' +
+                ", recentDate='" + recentDate + '\'' +
+                ", maxAttendance='" + maxAttendance + '\'' +
+                ", maxDate='" + maxDate + '\'' +
                 '}';
     }
 }

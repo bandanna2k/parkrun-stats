@@ -8,21 +8,25 @@ import java.nio.charset.StandardCharsets;
 
 public class HtmlWriter extends BaseWriter
 {
+    private final OutputStreamWriter rawWriter;
+
     public static HtmlWriter newInstance(File file) throws IOException, XMLStreamException
     {
         FileOutputStream fos = new FileOutputStream(file);
 
+        OutputStreamWriter rawWriter = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
         XMLStreamWriter writer = XMLOutputFactory
                 .newInstance()
                 .createXMLStreamWriter(
-                        new OutputStreamWriter(fos, StandardCharsets.UTF_8));
+                        rawWriter);
 
-        return new HtmlWriter(writer);
+        return new HtmlWriter(writer, rawWriter);
     }
 
-    private HtmlWriter(XMLStreamWriter writer) throws XMLStreamException, IOException
+    private HtmlWriter(XMLStreamWriter writer, OutputStreamWriter rawWriter) throws XMLStreamException, IOException
     {
         super(writer);
+        this.rawWriter = rawWriter;
 
         startHtml();
     }
@@ -32,17 +36,21 @@ public class HtmlWriter extends BaseWriter
         writer.writeStartDocument();
 
         startElement("html");
-        startElement("style");
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(
+        writer.writeStartElement("style");
+        try(BufferedReader reader1 = new BufferedReader(new InputStreamReader(
                 this.getClass().getResourceAsStream("/css/most_events.css"))))
         {
-            String line;
-            while(null != (line = reader.readLine()))
+            String line1;
+            while(null != (line1 = reader1.readLine()))
             {
-                writer.writeCharacters(line + "\n");
+                writer.writeCharacters(line1 + "\n");
             }
         }
         endElement("style");
+
+        writer.writeStartElement("script");
+        writer.writeAttribute("src", "https://www.kryogenix.org/code/browser/sorttable/sorttable.js");
+        endElement("script");
 
         startElement("body");
     }

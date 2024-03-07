@@ -11,8 +11,8 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
 {
     private static final AttendanceRecord HEADER = new AttendanceRecord("Course",
             null,
-            "Max Attendance", "This Weeks Attendance" ,
-            "Date");
+            "Last Event Date", "Last Event Finishers",
+            "Record Event Date", "Record Event Finishers");
 
 
     public AttendanceRecordsTableHtmlWriter(XMLStreamWriter writer) throws XMLStreamException
@@ -24,9 +24,12 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         writer.writeCharacters("Attendance Records (New Zealand)");
         endElement("summary");
 
-        startElement("table");
+        writer.writeStartElement("table");
+        writer.writeAttribute("class", "sortable");
 
+        startElement("thead");
         writeRecord(true, HEADER);
+        endElement("thead");
     }
 
     @Override
@@ -50,10 +53,9 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
 
     private void writeRecord(boolean isHeader, AttendanceRecord record) throws XMLStreamException
     {
-        String trType = isHeader ? "thead" : "tr";
         String tdType = isHeader ? "th" : "td";
 
-        writer.writeStartElement(trType);
+        writer.writeStartElement("tr");
 
         // Name
         startElement(tdType);
@@ -71,9 +73,19 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         }
         endElement(tdType);
 
-        // This weeks attendance
+        // Date
+        startElement(tdType);
+        writer.writeCharacters(record.recentDate);
+        endElement(tdType);
+
+        // Max attendance
         startElement(tdType);
         writer.writeCharacters(record.recentAttendance);
+        endElement(tdType);
+
+        // Date
+        startElement(tdType);
+        writer.writeCharacters(record.maxDate);
         endElement(tdType);
 
         // Max attendance
@@ -81,11 +93,6 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         writer.writeCharacters(record.maxAttendance);
         endElement(tdType);
 
-        // Date
-        startElement(tdType);
-        writer.writeCharacters(record.date);
-        endElement(tdType);
-
-        endElement(trType);
+        endElement("tr");
     }
 }
