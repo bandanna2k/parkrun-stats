@@ -12,8 +12,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Invariant test for results against attendance NEEDS TESTING
 
-- DB Isolation
-
 - Replace course_name in ces and result with an id
 
 - Delta between 2 weeks.

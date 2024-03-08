@@ -17,12 +17,17 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
+import static dnt.parkrun.database.StatsDao.DifferentCourseCount;
 
 public class Stats
 {
+    /*
+            02/03/2024
+     */
     public static void main(String[] args) throws SQLException, IOException, XMLStreamException
     {
         Stats stats = Stats.newInstance(DateConverter.parseWebsiteDate(args[0]));
@@ -51,10 +56,16 @@ public class Stats
         statsDao.generateDifferentCourseCountTable();
 
         System.out.println("* Displaying most events table *");
-        List<StatsDao.DifferentCourseCount> listOfDifferentEventRecords = statsDao.getDifferentCourseCount();
-        listOfDifferentEventRecords.forEach(differentCourseCount -> {
+        List<DifferentCourseCount> differentEventRecords = statsDao.getDifferentCourseCount(date);
+        differentEventRecords.forEach(differentCourseCount -> {
             System.out.println(differentCourseCount);
         });
+
+        System.out.println("* Calculate table position deltas *");
+        Date lastWeek = new Date();
+        lastWeek.setTime(date.getTime() - (7 * 24 * 60 * 60 * 1000));
+//        List<DifferentCourseCount> differentEventRecordsFromLastWeek = statsDao.getDifferentCourseCount(lastWeek);
+//        calculatePositionDeltas(differentEventRecords, differentEventRecordsFromLastWeek);
 
         System.out.println("* Generating attendance record table *");
         statsDao.generateAttendanceRecordTable();
@@ -67,7 +78,7 @@ public class Stats
         {
             try(MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer))
             {
-                for (StatsDao.DifferentCourseCount der : listOfDifferentEventRecords)
+                for (DifferentCourseCount der : differentEventRecords)
                 {
                     if (der.differentCourseCount == 0 || der.totalRuns == 0)
                     {
@@ -91,7 +102,7 @@ public class Stats
                     tableWriter.writeMostEventRecord(
                             new MostEventsRecord(der.name, der.athleteId,
                                     der.differentRegionCourseCount, der.totalRegionRuns,
-                                    der.differentCourseCount, der.totalRuns));
+                                    der.differentCourseCount, der.totalRuns, der.positionDelta));
                 }
             }
 
@@ -104,6 +115,25 @@ public class Stats
                     tableWriter.writeAttendanceRecord(ar);
                 }
                 tableWriter.writer.writeEndElement(); // tbody
+            }
+        }
+    }
+
+    private void calculatePositionDeltas(List<DifferentCourseCount> differentEventRecords,
+                                         List<DifferentCourseCount> differentEventRecordsFromLastWeek)
+    {
+        for (int indexThisWeek = 0; indexThisWeek < differentEventRecords.size(); indexThisWeek++)
+        {
+            for (int indexLastWeek = 0; indexLastWeek < differentEventRecordsFromLastWeek.size(); indexLastWeek++)
+            {
+                DifferentCourseCount thisWeek = differentEventRecords.get(0);
+                DifferentCourseCount lastWeek = differentEventRecordsFromLastWeek.get(0);
+
+                if(thisWeek.athleteId == lastWeek.athleteId)
+                {
+                    // Found athlete
+                    thisWeek.positionDelta = OptionalInt.of(indexLastWeek - indexThisWeek);
+                }
             }
         }
     }

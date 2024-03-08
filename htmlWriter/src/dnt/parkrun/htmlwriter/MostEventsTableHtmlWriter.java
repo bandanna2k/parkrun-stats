@@ -16,7 +16,8 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             "Region Events",
             "Total Region Runs",
             "Worldwide Events",
-            "Total Runs");
+            "Total Runs",
+            "");
 
 
     public MostEventsTableHtmlWriter(XMLStreamWriter writer) throws XMLStreamException
@@ -68,6 +69,8 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         }
         else
         {
+//            writer.writeCharacters(record.positionDelta);
+//            writer.writeCharacters(" ");
             writer.writeStartElement("a");
             writer.writeAttribute("href", generateAthleteEventSummaryUrl("parkrun.co.nz", record.athleteId).toString());
             writer.writeAttribute("target", String.valueOf(record.athleteId));

@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
+import java.util.OptionalInt;
 
 public class StatsDao
 {
@@ -54,8 +55,9 @@ public class StatsDao
         jdbc.update(sql, EmptySqlParameterSource.INSTANCE);
     }
 
-    public List<DifferentCourseCount> getDifferentCourseCount()
+    public List<DifferentCourseCount> getDifferentCourseCount(Date date)
     {
+        String differentCourseCountTableName = "most_events_for_region_" + DateConverter.formatDateForDbTable(date);
         String sql =
                 "select name, athlete_id, " +
                         "different_region_course_count, total_region_runs," +
@@ -94,6 +96,7 @@ public class StatsDao
         public final int totalRegionRuns;
         public final int differentCourseCount;
         public final int totalRuns;
+        public OptionalInt positionDelta;
 
         public DifferentCourseCount(String name,
                                     int athleteId,
@@ -120,6 +123,7 @@ public class StatsDao
                     ", totalRegionRuns=" + totalRegionRuns +
                     ", differentCourseCount=" + differentCourseCount +
                     ", totalRuns=" + totalRuns +
+                    ", positionDelta=" + positionDelta +
                     '}';
         }
     }
