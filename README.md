@@ -10,17 +10,13 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 # TODO
 
-- Backup DONE / Migrate time DONE / invariant DONE / backup / drop column
-
 - Invariant test for results against attendance NEEDS TESTING
 
 - DB Isolation
 
-- Nicer way of retrying for a URL
+- Replace course_name in ces and result with an id
 
-- Attendance records
-
-- Sort table
+- Delta between 2 weeks.
 
 # QUERIES
 
@@ -252,87 +248,20 @@ left join
 ) as sub3 on c.course_name = sub3.course_name;
 ```
 
+# Fastest First Finishers
 
 
-
-update result
-set
-    time_seconds = 
+```
+select row_number(), min(time_seconds) 
+from
 (
-    select new_time from 
-    (
-        select from result
-        convert(substring(time, 1, 2), unsigned integer) as mins,
-        convert(substring(time, 4, 2), unsigned integer) as seconds,
-        (((select mins) * 60) + (select seconds)) as new_time
-    )
-)
-where
-    length(time) = 5
-    time_seconds is null 
-
-select 
-    *,
-    convert(substring(time, 1, 2), unsigned integer) as mins,
-    convert(substring(time, 4, 2), unsigned integer) as seconds,
-    (((select mins) * 60) + (select seconds)) as new_time
-from result 
-where 
-    length(time) = 5 and
-    time_seconds is null 
-limit 10;
-
-
-
-
-
-
-update result
-set
-    time_seconds =
-    (
-        (  
-            convert(substring(time, 1, 1), unsigned integer)  
-        ) * 3600
-    ) +
-    (
-        (  
-            convert(substring(time, 3, 2), unsigned integer)  
-        ) * 60
-    ) +
-    (
-        convert(substring(time, 6, 2), unsigned integer)
-    )
-where
-    length(time) = 7 and
-    time_seconds is null;
-
-
-    course_name = 'anderson' and
-    event_number = 1 and
-    position = 97;
-
-
-
-JUNK
-
-select name, course_name as count
-from (select distinct athlete_id, course_name from parkrun_stats.result) as sub1
-join athlete using (athlete_id)
-limit 10;
-
-select name, count(course_name) as count
-from (select distinct athlete_id, course_name from parkrun_stats.result) as sub1
-join athlete using (athlete_id)
-group by athlete_id
-having count > 30
-order by count desc, athlete_id asc
-limit 50
-
-select athlete_id, course_name, event_number, time from
-(
-select athlete_id, course_name, event_number, time from result
-union
-select athlete_id, course_name, event_number, time from result2
+    select ces.course_name, ces.event_number, ces.date, fa.athlete_id, fr.time_seconds
+    from course_event_summary ces
+    left join athlete fa 
+    on ces.first_female_athlete_id = fa.athlete_id
+    left join result fr
+    on ces.course_name = fr.course_name and ces.event_number = fr.event_number and ces.first_female_athlete_id = fr.athlete_id    
 ) as sub1
-where athlete_id = 414811 and course_name = 'wanaka';
+group by row_number()
+    
+```

@@ -1,32 +1,35 @@
 package dnt.parkrun.htmlwriter;
 
+import dnt.parkrun.common.DateConverter;
+
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 public class HtmlWriter extends BaseWriter
 {
-    private final OutputStreamWriter rawWriter;
+    private final Date date;
 
-    public static HtmlWriter newInstance(File file) throws IOException, XMLStreamException
+    public static HtmlWriter newInstance(Date date) throws IOException, XMLStreamException
     {
+        File file = new File("stats_" + DateConverter.formatDateForDbTable(date) + ".html");
         FileOutputStream fos = new FileOutputStream(file);
 
-        OutputStreamWriter rawWriter = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
         XMLStreamWriter writer = XMLOutputFactory
                 .newInstance()
                 .createXMLStreamWriter(
-                        rawWriter);
+                        new OutputStreamWriter(fos, StandardCharsets.UTF_8));
 
-        return new HtmlWriter(writer, rawWriter);
+        return new HtmlWriter(writer, date);
     }
 
-    private HtmlWriter(XMLStreamWriter writer, OutputStreamWriter rawWriter) throws XMLStreamException, IOException
+    private HtmlWriter(XMLStreamWriter writer, Date date) throws XMLStreamException, IOException
     {
         super(writer);
-        this.rawWriter = rawWriter;
+        this.date = date;
 
         startHtml();
     }
@@ -36,6 +39,11 @@ public class HtmlWriter extends BaseWriter
         writer.writeStartDocument();
 
         startElement("html");
+
+        startElement("title");
+        writer.writeCharacters("New Zealand parkrun Statistics for Events on " + DateConverter.formatDateForHtml(date));
+        endElement("title");
+
         writer.writeStartElement("style");
         try(BufferedReader reader1 = new BufferedReader(new InputStreamReader(
                 this.getClass().getResourceAsStream("/css/most_events.css"))))
@@ -56,7 +64,7 @@ public class HtmlWriter extends BaseWriter
     }
 
     @Override
-    public void close()
+    public void close() throws IOException
     {
         try
         {
@@ -70,6 +78,8 @@ public class HtmlWriter extends BaseWriter
         {
             throw new RuntimeException(e);
         }
-    }
 
+        File htmlFile = new File("stats_" + DateConverter.formatDateForDbTable(date) + ".html");
+        new ProcessBuilder("xdg-open", htmlFile.getAbsolutePath()).start();
+    }
 }

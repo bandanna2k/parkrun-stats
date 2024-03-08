@@ -13,7 +13,6 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
@@ -30,14 +29,13 @@ public class Stats
         stats.generateStats();
     }
 
-
+    private final Date date;
     private final StatsDao statsDao;
-    private final File htmlFile;
 
     private Stats(DataSource dataSource, Date date)
     {
-        this.statsDao = new StatsDao(dataSource, date);
-        this.htmlFile = new File("stats_" + DateConverter.formatDateForDbTable(date) + ".html");
+        this.date = date;
+        this.statsDao = new StatsDao(dataSource, this.date);
     }
 
     public static Stats newInstance(Date date) throws SQLException
@@ -65,7 +63,7 @@ public class Stats
         List<AttendanceRecord> listOfAttendanceRecords = statsDao.getAttendanceRecords();
         listOfAttendanceRecords.forEach(System.out::println);
 
-        try(HtmlWriter writer = HtmlWriter.newInstance(htmlFile))
+        try(HtmlWriter writer = HtmlWriter.newInstance(date))
         {
             try(MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer))
             {
@@ -108,8 +106,6 @@ public class Stats
                 tableWriter.writer.writeEndElement(); // tbody
             }
         }
-
-        Process myProcess = new ProcessBuilder("xdg-open", htmlFile.getAbsolutePath()).start();
     }
 
     private static class TotalEventCountUpdate
