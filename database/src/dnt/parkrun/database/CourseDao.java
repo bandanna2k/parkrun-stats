@@ -23,7 +23,7 @@ public class CourseDao
     {
         try
         {
-            String sql = "insert ignore into parkrun_stats.course (" +
+            String sql = "insert ignore into course (" +
                     "course_name, course_long_name, country_code, country, status " +
                     ") values ( " +
                     ":courseName, :courseLongName, :countryCode, :country, :status" +
@@ -44,7 +44,7 @@ public class CourseDao
 
     public Course getCourse(String courseName)
     {
-        return jdbc.queryForObject("select * from parkrun_stats.course where course_name = :courseName",
+        return jdbc.queryForObject("select * from course where course_name = :courseName",
                 new MapSqlParameterSource("courseName", courseName),
                 (rs, rowNum) ->
                         new Course(rs.getString("course_name"),

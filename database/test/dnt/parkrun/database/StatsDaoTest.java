@@ -16,7 +16,7 @@ public class StatsDaoTest
     public void setUp() throws Exception
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "stats", "statsfractalstats");
+                "jdbc:mysql://localhost/parkrun_stats_test", "stats", "statsfractalstats");
         dao = new StatsDao(dataSource, DateConverter.parseWebsiteDate("02/03/2024"));
     }
 

@@ -31,9 +31,9 @@ public class CourseEventSummaryDao
         String sql = "select course_name, event_number, date, finishers," +
                 "fma.name as first_male_name, first_male_athlete_id, " +
                 "ffa.name as first_female_name, first_female_athlete_id " +
-                "from parkrun_stats.course_event_summary " +
-                "left join parkrun_stats.athlete fma on first_male_athlete_id = fma.athlete_id " +
-                "left join parkrun_stats.athlete ffa on first_female_athlete_id = ffa.athlete_id ";
+                "from course_event_summary " +
+                "left join athlete fma on first_male_athlete_id = fma.athlete_id " +
+                "left join athlete ffa on first_female_athlete_id = ffa.athlete_id ";
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             String courseName = rs.getString("course_name");
@@ -59,7 +59,7 @@ public class CourseEventSummaryDao
 
     public void insert(CourseEventSummary courseEventSummary)
     {
-        String sql = "insert into parkrun_stats.course_event_summary (" +
+        String sql = "insert into course_event_summary (" +
                 "course_name, event_number, date, finishers, first_male_athlete_id, first_female_athlete_id" +
                 ") values ( " +
                 ":courseName, :eventNumber, :date, :finishers, :firstMaleAthleteId, :firstFemaleAthleteId" +

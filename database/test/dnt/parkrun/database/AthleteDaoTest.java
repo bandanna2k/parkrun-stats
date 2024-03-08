@@ -2,7 +2,6 @@ package dnt.parkrun.database;
 
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.datastructures.Athlete;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
@@ -18,23 +17,15 @@ public class AthleteDaoTest
     private AthleteDao athleteDao;
     private NamedParameterJdbcTemplate jdbc;
 
-    public AthleteDaoTest()
-    {
-    }
-
     @Before
     public void setUp() throws Exception
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats_test", "dao", "daoFractaldao");
         athleteDao = new AthleteDao(dataSource);
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);
-    }
-    @After
-    public void tearDown()
-    {
-        jdbc.update("delete from parkrun_stats.athlete", EmptySqlParameterSource.INSTANCE);
+        jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);
     }
 
     @Test

@@ -32,7 +32,7 @@ public class CourseEventSummaryDaoTest
         courseRepository.addCourse(new Course("cornwall", NZ, null, Status.RUNNING));
 
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats_test", "dao", "daoFractaldao");
         dao = new CourseEventSummaryDao(dataSource, courseRepository);
         athleteDao = new AthleteDao(dataSource);
 
@@ -41,7 +41,7 @@ public class CourseEventSummaryDaoTest
     @After
     public void tearDown()
     {
-        jdbc.update("delete from parkrun_stats.course_event_summary", EmptySqlParameterSource.INSTANCE);
+        jdbc.update("delete from course_event_summary", EmptySqlParameterSource.INSTANCE);
     }
 
     @Test

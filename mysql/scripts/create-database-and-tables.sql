@@ -1,12 +1,8 @@
-CREATE DATABASE
-IF NOT EXISTS
-parkrun_stats;
-
 
 -- Course
 CREATE TABLE
 IF NOT EXISTS
-parkrun_stats.course (
+course (
     course_name             VARCHAR(255)        NOT NULL,
     course_long_name        VARCHAR(255)        NOT NULL,
     country_code            INT                 NOT NULL,
@@ -21,7 +17,7 @@ parkrun_stats.course (
 -- Athlete
 CREATE TABLE
 IF NOT EXISTS
-parkrun_stats.athlete (
+athlete (
     athlete_id      BIGINT              NOT NULL,
     name            VARCHAR(255)            NULL,
 
@@ -36,7 +32,7 @@ parkrun_stats.athlete (
 -- Result
 CREATE TABLE
 IF NOT EXISTS
-parkrun_stats.result (
+result (
     course_name     VARCHAR(255)        NOT NULL,
     event_number    INT                 NOT NULL,
     position        INT                 NOT NULL,
@@ -51,27 +47,7 @@ parkrun_stats.result (
 -- Course Event Summary
 CREATE TABLE
 IF NOT EXISTS
-parkrun_stats.course_event_summary (
-    course_name             VARCHAR(255)        NOT NULL,
-    event_number            INT                 NOT NULL,
-    date                    DATE                    NULL,
-    finishers               INT                 NOT NULL,
-    first_male_athlete_id   BIGINT              NOT NULL,
-    first_female_athlete_id BIGINT              NOT NULL,
-
-    UNIQUE KEY (course_name, event_number)
-
-) DEFAULT CHARSET=utf8mb4;
-
-
--- ---------------------------------- --
---         NON REGION TABLES
--- ---------------------------------- --
-
--- Course Event Summary
-CREATE TABLE
-IF NOT EXISTS
-parkrun_stats.course_event_summary_other (
+course_event_summary (
     course_name             VARCHAR(255)        NOT NULL,
     event_number            INT                 NOT NULL,
     date                    DATE                NOT NULL,
@@ -80,20 +56,5 @@ parkrun_stats.course_event_summary_other (
     first_female_athlete_id BIGINT              NOT NULL,
 
     UNIQUE KEY (course_name, event_number)
-
-) DEFAULT CHARSET=utf8mb4;
-
-
--- Result
-CREATE TABLE
-IF NOT EXISTS
-parkrun_stats.result_other (
-    course_name     VARCHAR(255)        NOT NULL,
-    event_number    INT                 NOT NULL,
-    position        INT                 NOT NULL,
-    athlete_id      BIGINT              NOT NULL,
-    time_seconds    INT                 NOT NULL,
-
-    UNIQUE KEY (course_name, event_number, position)
 
 ) DEFAULT CHARSET=utf8mb4;

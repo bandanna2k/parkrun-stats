@@ -22,7 +22,8 @@ public class ResultDao
 
     public List<Result> getResults()
     {
-        String sql = "select * from parkrun_stats.result right join parkrun_stats.athlete using (athlete_id)";
+        String sql = "select * from result " +
+                "right join athlete using (athlete_id)";
         List<Result> query = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             return new Result(
@@ -33,7 +34,7 @@ public class ResultDao
                             rs.getString("name"),
                             rs.getInt("athlete_id")
                     ),
-                    Time.from(rs.getString("time"))     // TODO Needs converting to int
+                    Time.from(rs.getInt("time_seconds"))     // TODO Needs converting to int
             );
         });
         return query;
@@ -41,17 +42,16 @@ public class ResultDao
 
     public void insert(Result result)
     {
-        String sql = "insert into parkrun_stats.result (" +
-                "athlete_id, course_name, event_number, position, time, time_seconds" +
+        String sql = "insert into result (" +
+                "athlete_id, course_name, event_number, position, time_seconds" +
                 ") values ( " +
-                ":athleteId, :courseName, :eventNumber, :position, :time, :time_seconds" +
+                ":athleteId, :courseName, :eventNumber, :position, :time_seconds" +
                 ")";
         jdbc.update(sql, new MapSqlParameterSource()
                 .addValue("athleteId", result.athlete.athleteId)
                 .addValue("courseName", result.courseName)
                 .addValue("eventNumber", result.eventNumber)
                 .addValue("position", result.position)
-                .addValue("time", result.time.toString())
                 .addValue("time_seconds", result.time.getTotalSeconds())
         );
     }

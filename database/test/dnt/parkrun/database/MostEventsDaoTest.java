@@ -14,15 +14,11 @@ public class MostEventsDaoTest
     private MostEventsDao dao;
     private NamedParameterJdbcTemplate jdbc;
 
-    public MostEventsDaoTest()
-    {
-    }
-
     @Before
     public void setUp() throws Exception
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats_test", "dao", "daoFractaldao");
         dao = new MostEventsDao(dataSource);
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);

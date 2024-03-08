@@ -5,9 +5,7 @@ import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.datastructures.Time;
 import org.assertj.core.api.Assertions;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -26,21 +24,16 @@ public class ResultDaoTest
     public void setUp() throws Exception
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats_test", "dao", "daoFractaldao");
         resultDao = new ResultDao(dataSource);
         athleteDao = new AthleteDao(dataSource);
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);
-    }
-    @After
-    public void tearDown()
-    {
-        jdbc.update("delete from parkrun_stats.result", EmptySqlParameterSource.INSTANCE);
-        jdbc.update("delete from parkrun_stats.athlete", EmptySqlParameterSource.INSTANCE);
+        jdbc.update("delete from result", EmptySqlParameterSource.INSTANCE);
+        jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);
     }
 
     @Test
-    @Ignore
     public void shouldInsertAndReturnResult()
     {
         Athlete athlete = Athlete.fromAthleteSummaryLink("Davey JONES", "https://www.parkrun.co.nz/parkrunner/902393/");

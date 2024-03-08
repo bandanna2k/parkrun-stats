@@ -25,7 +25,7 @@ public class AthleteDao
 
     public List<Result> getResults()
     {
-        List<Result> query = jdbc.query("select * from parkrun_stats.result", EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
+        List<Result> query = jdbc.query("select * from result", EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             return new Result(
                     rs.getString("course_name"),
@@ -42,7 +42,7 @@ public class AthleteDao
     {
         try
         {
-            String sql = "insert into parkrun_stats.athlete (" +
+            String sql = "insert into athlete (" +
                     "athlete_id, name" +
                     ") values ( " +
                     ":athleteId, :name" +
@@ -60,7 +60,7 @@ public class AthleteDao
 
     public Athlete getAthlete(int athleteId)
     {
-        Athlete athlete = jdbc.queryForObject("select * from parkrun_stats.athlete",
+        Athlete athlete = jdbc.queryForObject("select * from athlete",
                 new MapSqlParameterSource("athleteId", athleteId),
                 (rs, rowNum) ->
                         Athlete.from(

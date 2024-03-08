@@ -22,8 +22,8 @@ public class MostEventsDao
     public List<Record> getMostEventsForRegion()
     {
         String sql = "select name, athlete_id, count(course_name) as count " +
-                "from (select distinct athlete_id, course_name from parkrun_stats.result) as sub1 " +
-                "join parkrun_stats.athlete using (athlete_id) " +
+                "from (select distinct athlete_id, course_name from result) as sub1 " +
+                "join athlete using (athlete_id) " +
                 "group by athlete_id " +
                 "having count >= :minDifferentEvents " +
                 "order by count desc, athlete_id asc";
