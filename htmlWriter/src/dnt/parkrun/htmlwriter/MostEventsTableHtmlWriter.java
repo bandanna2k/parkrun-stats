@@ -7,19 +7,9 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.Closeable;
 
 import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
-import static dnt.parkrun.datastructures.Athlete.NO_ATHLETE_ID;
 
 public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 {
-    private static final MostEventsRecord HEADER = new MostEventsRecord("Name",
-            NO_ATHLETE_ID,
-            "Region Events",
-            "Total Region Runs",
-            "Worldwide Events",
-            "Total Runs",
-            0);
-
-
     public MostEventsTableHtmlWriter(XMLStreamWriter writer) throws XMLStreamException
     {
         super(writer);
@@ -30,8 +20,40 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         endElement("summary");
 
         startElement("table", "class", "sortable most-events");
+        writeHeader(writer);
+    }
 
-        writeRecord(true, HEADER);
+    private void writeHeader(XMLStreamWriter writer) throws XMLStreamException
+    {
+        startElement("thead");
+        startElement("tr");
+
+        // Up arrows for max attendance
+        startElement("th");
+        endElement("th");
+
+        // Name
+        startElement("th");
+        endElement("th");
+
+        startElement("th");
+        writer.writeCharacters("Region Events");
+        endElement("th");
+
+        startElement("th");
+        writer.writeCharacters("Total Region Runs");
+        endElement("th");
+
+        startElement("th");
+        writer.writeCharacters("Worldwide Events");
+        endElement("th");
+
+        startElement("th");
+        writer.writeCharacters("Total Runs");
+        endElement("th");
+
+        endElement("tr");
+        endElement("thead");
     }
 
     @Override
@@ -50,18 +72,10 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 
     public void writeMostEventRecord(MostEventsRecord record) throws XMLStreamException
     {
-        writeRecord(false, record);
-    }
-
-    private void writeRecord(boolean isHeader, MostEventsRecord record) throws XMLStreamException
-    {
-        String trType = isHeader ? "thead" : "tr";
-        String tdType = isHeader ? "th" : "td";
-
-        writer.writeStartElement(trType);
+       writer.writeStartElement("tr");
 
         // Up/Down
-        startElement(tdType);
+        startElement("td");
         if(record.positionDelta > 0)
         {
             startElement("font", "color", "green");
@@ -78,46 +92,37 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             endElement("abbr");
             endElement("font");
         }
-        endElement(tdType);
+        endElement("td");
 
         // Name
-        startElement(tdType);
-        if (isHeader)
-        {
-            writer.writeCharacters(record.name);
-        }
-        else
-        {
-//            writer.writeCharacters(record.positionDelta);
-//            writer.writeCharacters(" ");
-            writer.writeStartElement("a");
-            writer.writeAttribute("href", generateAthleteEventSummaryUrl("parkrun.co.nz", record.athleteId).toString());
-            writer.writeAttribute("target", String.valueOf(record.athleteId));
-            writer.writeCharacters(record.name);
-            endElement("a");
-        }
-        endElement(tdType);
+        startElement("td");
+        writer.writeStartElement("a");
+        writer.writeAttribute("href", generateAthleteEventSummaryUrl("parkrun.co.nz", record.athleteId).toString());
+        writer.writeAttribute("target", String.valueOf(record.athleteId));
+        writer.writeCharacters(record.name);
+        endElement("a");
+        endElement("td");
 
         // Different region courses
-        startElement(tdType);
-        writer.writeCharacters(record.differentRegionCourseCount);
-        endElement(tdType);
+        startElement("td");
+        writer.writeCharacters(String.valueOf(record.differentRegionCourseCount));
+        endElement("td");
 
         // Total region runs
-        startElement(tdType);
-        writer.writeCharacters(record.totalRegionRuns);
-        endElement(tdType);
+        startElement("td");
+        writer.writeCharacters(String.valueOf(record.totalRegionRuns));
+        endElement("td");
 
         // Different courses
-        startElement(tdType);
-        writer.writeCharacters(record.differentCourseCount);
-        endElement(tdType);
+        startElement("td");
+        writer.writeCharacters(String.valueOf(record.differentCourseCount));
+        endElement("td");
 
         // Total region runs
-        startElement(tdType);
-        writer.writeCharacters(record.totalRuns);
-        endElement(tdType);
+        startElement("td");
+        writer.writeCharacters(String.valueOf(record.totalRuns));
+        endElement("td");
 
-        endElement(trType);
+        endElement("tr");
     }
 }

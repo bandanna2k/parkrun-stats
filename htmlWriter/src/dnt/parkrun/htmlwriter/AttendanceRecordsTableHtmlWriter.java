@@ -1,5 +1,6 @@
 package dnt.parkrun.htmlwriter;
 
+import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 
@@ -9,12 +10,6 @@ import java.io.Closeable;
 
 public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Closeable
 {
-    private static final AttendanceRecord HEADER = new AttendanceRecord("Course",
-            null,
-            "Last Event Date", "Last Event Finishers",
-            "Record Event Date", "Record Event Finishers");
-
-
     public AttendanceRecordsTableHtmlWriter(XMLStreamWriter writer) throws XMLStreamException
     {
         super(writer);
@@ -27,8 +22,39 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         writer.writeStartElement("table");
         writer.writeAttribute("class", "sortable attendance");
 
+        writeHeader(writer);
+    }
+
+    private void writeHeader(XMLStreamWriter writer) throws XMLStreamException
+    {
         startElement("thead");
-        writeRecord(true, HEADER);
+        startElement("tr");
+
+        startElement("th");
+        writer.writeCharacters("Course");
+        endElement("th");
+
+        startElement("th");
+        writer.writeCharacters("Last Event Date");
+        endElement("th");
+
+        startElement("th");
+        writer.writeCharacters("Last Event Finishers");
+        endElement("th");
+
+        startElement("th");
+        writer.writeCharacters("Record Event Date");
+        endElement("th");
+
+        // Up arrows for max attendance
+        startElement("th");
+        endElement("th");
+
+        startElement("th");
+        writer.writeCharacters("Record Event Finishers");
+        endElement("th");
+
+        endElement("tr");
         endElement("thead");
     }
 
@@ -48,68 +74,74 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
 
     public void writeAttendanceRecord(AttendanceRecord record) throws XMLStreamException
     {
-        writeRecord(false, record);
+        writeRecord(record);
     }
 
-    private void writeRecord(boolean isHeader, AttendanceRecord record) throws XMLStreamException
+    private void writeRecord(AttendanceRecord record) throws XMLStreamException
     {
-        String tdType = isHeader ? "th" : "td";
-
         writer.writeStartElement("tr");
 
         // Course name
-        startElement(tdType);
-        if (isHeader)
+        startElement("td");
+        writer.writeStartElement("a");
+        writer.writeAttribute("href", UrlGenerator.generateCourseEventSummaryUrl("parkrun.co.nz", record.courseName).toString());
+        writer.writeAttribute("target", String.valueOf(record.courseName));
+        writer.writeCharacters(record.courseLongName);
+        endElement("a");
+        endElement("td");
+
+        // Recent date
+        startElement("td");
+        writer.writeCharacters(DateConverter.formatDateForHtml(record.recentDate));
+        endElement("td");
+
+        // Recent attendance
+        startElement("td");
+        if(record.recentAttendanceDelta >= 0)
         {
-            writer.writeCharacters(record.courseLongName);
+            startElement("abbr", "title", "+" + record.recentAttendanceDelta);
+            writer.writeCharacters(String.valueOf(record.recentAttendance));
+            endElement("abbr");
+            endElement("td");
         }
         else
         {
-            writer.writeStartElement("a");
-            writer.writeAttribute("href", UrlGenerator.generateCourseEventSummaryUrl("parkrun.co.nz", record.courseName).toString());
-            writer.writeAttribute("target", String.valueOf(record.courseName));
-            writer.writeCharacters(record.courseLongName);
-            endElement("a");
+            startElement("abbr", "title", String.valueOf(record.recentAttendanceDelta));
+            writer.writeCharacters(String.valueOf(record.recentAttendance));
+            endElement("abbr");
+            endElement("td");
         }
-        endElement(tdType);
-
-        // Recent date
-        startElement(tdType);
-        writer.writeCharacters(record.recentDate);
-        endElement(tdType);
-
-        // Recent delta
-        startElement(tdType);
-        if(record.recentAttendanceDelta > 0)
-        {
-            startElement("font", "color", "green");
-//            startElement("abbr", "title", record.recentAttendanceDelta);
-//            <abbr title="World Health Organization">"▲"</abbr>
-            writer.writeCharacters("▲");
-            endElement("font");
-        }
-        else if(record.recentAttendanceDelta < 0)
-        {
-            startElement("font", "color", "red");
-            writer.writeCharacters("▼");
-            endElement("font");
-        }
-        endElement(tdType);
-
-        // Recent attendance
-        startElement(tdType);
-        writer.writeCharacters(record.recentAttendance);
-        endElement(tdType);
 
         // Date
-        startElement(tdType);
-        writer.writeCharacters(record.maxDate);
-        endElement(tdType);
+        startElement("td");
+        writer.writeCharacters(DateConverter.formatDateForHtml(record.maxDate));
+        endElement("td");
+
+        // Max delta
+        startElement("td");
+        if(record.maxAttendanceDelta > 0)
+        {
+            startElement("font", "color", "green");
+            startElement("abbr", "title", "+" + record.maxAttendanceDelta);
+            writer.writeCharacters("▲");
+            endElement("abbr");
+            endElement("font");
+        }
+        else if(record.maxAttendanceDelta < 0)
+        {
+            // Probably won't happen, but keeps me honest
+            startElement("font", "color", "red");
+            startElement("abbr", "title", String.valueOf(record.maxAttendanceDelta));
+            writer.writeCharacters("▼");
+            endElement("abbr");
+            endElement("font");
+        }
+        endElement("td");
 
         // Max attendance
-        startElement(tdType);
-        writer.writeCharacters(record.maxAttendance);
-        endElement(tdType);
+        startElement("td");
+        writer.writeCharacters(String.valueOf(record.maxAttendance));
+        endElement("td");
 
         endElement("tr");
     }

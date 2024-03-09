@@ -165,17 +165,18 @@ public class StatsDao
         jdbc.update(sql, EmptySqlParameterSource.INSTANCE);
     }
 
-    public List<AttendanceRecord> getAttendanceRecords()
+    public List<AttendanceRecord> getAttendanceRecords(Date date)
     {
+        String attendanceTableName = "attendance_records_for_region_" + DateConverter.formatDateForDbTable(date);
         String sql = "select course_long_name, course_name, recent_event_date, recent_event_finishers, date, max " +
-                        "from " + attendanceRecordTableName;
+                        "from " + attendanceTableName;
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
                 new AttendanceRecord(
                         rs.getString("course_long_name"),
                         rs.getString("course_name"),
                         rs.getDate("recent_event_date"),
-                        String.valueOf(rs.getInt("recent_event_finishers")),
+                        rs.getInt("recent_event_finishers"),
                         rs.getDate("date"),
-                        String.valueOf(rs.getInt("max"))));
+                        rs.getInt("max")));
     }
 }

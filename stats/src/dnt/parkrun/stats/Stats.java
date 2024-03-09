@@ -70,10 +70,12 @@ public class Stats
 
         System.out.println("* Generating attendance record table *");
         statsDao.generateAttendanceRecordTable();
+        List<AttendanceRecord> attendanceRecords = statsDao.getAttendanceRecords(date);
+        attendanceRecords.forEach(System.out::println);
 
-        System.out.println("* Displaying most events table *");
-        List<AttendanceRecord> listOfAttendanceRecords = statsDao.getAttendanceRecords();
-        listOfAttendanceRecords.forEach(System.out::println);
+        System.out.println("* Calculate attendance deltas *");
+        List<AttendanceRecord> attendanceRecordsFromLastWeek = statsDao.getAttendanceRecords(lastWeek);
+        calculateAttendanceDeltas(attendanceRecords, attendanceRecordsFromLastWeek);
 
         try(HtmlWriter writer = HtmlWriter.newInstance(date))
         {
@@ -111,7 +113,7 @@ public class Stats
             try(AttendanceRecordsTableHtmlWriter tableWriter = new AttendanceRecordsTableHtmlWriter(writer.writer))
             {
                 tableWriter.writer.writeStartElement("tbody");
-                for (AttendanceRecord ar : listOfAttendanceRecords)
+                for (AttendanceRecord ar : attendanceRecords)
                 {
                     tableWriter.writeAttendanceRecord(ar);
                 }
@@ -134,6 +136,23 @@ public class Stats
                 {
                     // Found athlete
                     thisWeek.positionDelta = indexLastWeek - indexThisWeek;
+                }
+            }
+        }
+    }
+
+    private void calculateAttendanceDeltas(List<AttendanceRecord> attendanceRecords,
+                                           List<AttendanceRecord> attendanceRecordsFromLastWeek)
+    {
+        for (AttendanceRecord thisWeek : attendanceRecords)
+        {
+            for (AttendanceRecord lastWeek : attendanceRecordsFromLastWeek)
+            {
+                if (thisWeek.courseName.equals(lastWeek.courseName))
+                {
+                    // Found course
+                    thisWeek.maxAttendanceDelta = thisWeek.maxAttendance - lastWeek.maxAttendance;
+                    thisWeek.recentAttendanceDelta = thisWeek.recentAttendance - lastWeek.recentAttendance;
                 }
             }
         }
