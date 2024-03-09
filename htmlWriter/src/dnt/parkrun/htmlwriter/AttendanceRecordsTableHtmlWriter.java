@@ -25,7 +25,7 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         endElement("summary");
 
         writer.writeStartElement("table");
-        writer.writeAttribute("class", "sortable");
+        writer.writeAttribute("class", "sortable attendance");
 
         startElement("thead");
         writeRecord(true, HEADER);
@@ -83,6 +83,8 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         if(record.recentAttendanceDelta > 0)
         {
             startElement("font", "color", "green");
+//            startElement("abbr", "title", record.recentAttendanceDelta);
+//            <abbr title="World Health Organization">"▲"</abbr>
             writer.writeCharacters("▲");
             endElement("font");
         }

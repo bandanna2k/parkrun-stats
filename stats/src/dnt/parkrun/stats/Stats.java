@@ -65,8 +65,8 @@ public class Stats
         System.out.println("* Calculate table position deltas *");
         Date lastWeek = new Date();
         lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
-//        List<DifferentCourseCount> differentEventRecordsFromLastWeek = statsDao.getDifferentCourseCount(lastWeek);
-//        calculatePositionDeltas(differentEventRecords, differentEventRecordsFromLastWeek);
+        List<DifferentCourseCount> differentEventRecordsFromLastWeek = statsDao.getDifferentCourseCount(lastWeek);
+        calculatePositionDeltas(differentEventRecords, differentEventRecordsFromLastWeek);
 
         System.out.println("* Generating attendance record table *");
         statsDao.generateAttendanceRecordTable();
@@ -127,8 +127,8 @@ public class Stats
         {
             for (int indexLastWeek = 0; indexLastWeek < differentEventRecordsFromLastWeek.size(); indexLastWeek++)
             {
-                DifferentCourseCount thisWeek = differentEventRecords.get(0);
-                DifferentCourseCount lastWeek = differentEventRecordsFromLastWeek.get(0);
+                DifferentCourseCount thisWeek = differentEventRecords.get(indexThisWeek);
+                DifferentCourseCount lastWeek = differentEventRecordsFromLastWeek.get(indexLastWeek);
 
                 if(thisWeek.athleteId == lastWeek.athleteId)
                 {

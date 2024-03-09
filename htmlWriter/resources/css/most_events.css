@@ -60,3 +60,6 @@ tbody tr {
     display: none;
     font-size: 20px;
 }
+abbr[title] {
+    text-decoration: none;
+}

@@ -64,17 +64,19 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         startElement(tdType);
         if(record.positionDelta > 0)
         {
-            writer.writeStartElement("font");
-            writer.writeAttribute("color", "green");
+            startElement("font", "color", "green");
+            startElement("abbr", "title", "+" + record.positionDelta);
             writer.writeCharacters("▲");
-            writer.writeEndElement();
+            endElement("abbr");
+            endElement("font");
         }
         else if(record.positionDelta < 0)
         {
-            writer.writeStartElement("font");
-            writer.writeAttribute("color", "red");
+            startElement("font", "color", "red");
+            startElement("abbr", "title", String.valueOf(record.positionDelta));
             writer.writeCharacters("▼");
-            writer.writeEndElement();
+            endElement("abbr");
+            endElement("font");
         }
         endElement(tdType);
 
