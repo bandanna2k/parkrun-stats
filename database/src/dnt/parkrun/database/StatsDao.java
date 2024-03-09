@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
-import java.util.OptionalInt;
 
 public class StatsDao
 {
@@ -96,7 +95,7 @@ public class StatsDao
         public final int totalRegionRuns;
         public final int differentCourseCount;
         public final int totalRuns;
-        public OptionalInt positionDelta;
+        public int positionDelta = 0;
 
         public DifferentCourseCount(String name,
                                     int athleteId,

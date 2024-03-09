@@ -57,7 +57,7 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
 
         writer.writeStartElement("tr");
 
-        // Name
+        // Course name
         startElement(tdType);
         if (isHeader)
         {
@@ -73,12 +73,28 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         }
         endElement(tdType);
 
-        // Date
+        // Recent date
         startElement(tdType);
         writer.writeCharacters(record.recentDate);
         endElement(tdType);
 
-        // Max attendance
+        // Recent delta
+        startElement(tdType);
+        if(record.recentAttendanceDelta > 0)
+        {
+            startElement("font", "color", "green");
+            writer.writeCharacters("▲");
+            endElement("font");
+        }
+        else if(record.recentAttendanceDelta < 0)
+        {
+            startElement("font", "color", "red");
+            writer.writeCharacters("▼");
+            endElement("font");
+        }
+        endElement(tdType);
+
+        // Recent attendance
         startElement(tdType);
         writer.writeCharacters(record.recentAttendance);
         endElement(tdType);

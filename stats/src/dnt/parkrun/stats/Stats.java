@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
-import java.util.OptionalInt;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
@@ -25,8 +24,10 @@ import static dnt.parkrun.database.StatsDao.DifferentCourseCount;
 
 public class Stats
 {
+    private static final int SEVEN_DAYS_IN_MILLIS = (7 * 24 * 60 * 60 * 1000);
+
     /*
-            02/03/2024
+                    02/03/2024
      */
     public static void main(String[] args) throws SQLException, IOException, XMLStreamException
     {
@@ -63,7 +64,7 @@ public class Stats
 
         System.out.println("* Calculate table position deltas *");
         Date lastWeek = new Date();
-        lastWeek.setTime(date.getTime() - (7 * 24 * 60 * 60 * 1000));
+        lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
 //        List<DifferentCourseCount> differentEventRecordsFromLastWeek = statsDao.getDifferentCourseCount(lastWeek);
 //        calculatePositionDeltas(differentEventRecords, differentEventRecordsFromLastWeek);
 
@@ -132,7 +133,7 @@ public class Stats
                 if(thisWeek.athleteId == lastWeek.athleteId)
                 {
                     // Found athlete
-                    thisWeek.positionDelta = OptionalInt.of(indexLastWeek - indexThisWeek);
+                    thisWeek.positionDelta = indexLastWeek - indexThisWeek;
                 }
             }
         }

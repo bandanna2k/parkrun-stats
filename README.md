@@ -14,7 +14,13 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Replace course_name in ces and result with an id
 
-- Delta between 2 weeks.
+- Delta between 2 weeks for event history
+
+- Delta between 2 weeks for this weeks attendance
+
+- Get latest Sat for args
+
+- Use date as key for results (easier to delete stuff)
 
 # QUERIES
 

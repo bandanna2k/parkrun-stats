@@ -1,7 +1,5 @@
 package dnt.parkrun.datastructures.stats;
 
-import java.util.OptionalInt;
-
 public class MostEventsRecord
 {
     public final int athleteId;
@@ -10,13 +8,13 @@ public class MostEventsRecord
     public final String differentCourseCount;
     public final String totalRuns;
     public final String name;
-    public final String positionDelta;
+    public final int positionDelta;
 
     public MostEventsRecord(String name,
                             int athleteId,
                             String differentRegionCourseCount, String totalRegionRuns,
                             String differentCourseCount, String totalRuns,
-                            String positionDelta)
+                            int positionDelta)
     {
         this.athleteId = athleteId;
         this.differentRegionCourseCount = differentRegionCourseCount;
@@ -30,7 +28,7 @@ public class MostEventsRecord
                             int athleteId,
                             int differentRegionCourseCount, int totalRegionRuns,
                             int differentCourseCount, int totalRuns,
-                            OptionalInt positionDelta)
+                            int positionDelta)
     {
         this(name,
                 athleteId,
@@ -38,13 +36,7 @@ public class MostEventsRecord
                 String.valueOf(totalRegionRuns),
                 String.valueOf(differentCourseCount),
                 String.valueOf(totalRuns),
-//                positionDelta.stream().mapToObj(delta -> {
-//                    if(delta > 0) return "+" + delta;
-//                    if(delta < 0) return String.valueOf(delta);
-//                    return "-";
-//                }
-//                ).toString()
-                "+"
+                positionDelta
         );
     }
 

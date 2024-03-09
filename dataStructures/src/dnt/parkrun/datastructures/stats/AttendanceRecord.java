@@ -12,6 +12,7 @@ public class AttendanceRecord
     public final String recentDate;
     public final String maxAttendance;
     public final String maxDate;
+    public int recentAttendanceDelta = 0;
 
     public AttendanceRecord(String courseLongName, String courseName,
                             Date recentDate, String recentAttendance,
@@ -44,6 +45,7 @@ public class AttendanceRecord
                 ", recentDate='" + recentDate + '\'' +
                 ", maxAttendance='" + maxAttendance + '\'' +
                 ", maxDate='" + maxDate + '\'' +
+                ", recentAttendanceDelta=" + recentAttendanceDelta +
                 '}';
     }
 }

@@ -48,7 +48,7 @@ public class MostEvents
     public static MostEvents newInstance() throws SQLException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
         return new MostEvents(dataSource);
     }
 
@@ -82,6 +82,11 @@ public class MostEvents
         System.out.println("* Get all course event summaries *");
         for (CourseEventSummary ces : courseEventSummariesToGet)
         {
+            if(ces.course.status != Course.Status.RUNNING)
+            {
+                continue;
+            }
+
             System.out.printf("* Processing %s *\n", ces);
 
             Country courseCountry = courseRepository.getCountry(ces.course.country.countryEnum.getCountryCode());

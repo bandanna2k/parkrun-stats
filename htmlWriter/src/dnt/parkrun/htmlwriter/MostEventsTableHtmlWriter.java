@@ -17,7 +17,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             "Total Region Runs",
             "Worldwide Events",
             "Total Runs",
-            "");
+            0);
 
 
     public MostEventsTableHtmlWriter(XMLStreamWriter writer) throws XMLStreamException
@@ -29,8 +29,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         writer.writeCharacters("Most Events (New Zealand)");
         endElement("summary");
 
-        writer.writeStartElement("table");
-        writer.writeAttribute("class", "sortable");
+        startElement("table", "class", "sortable most-events");
 
         writeRecord(true, HEADER);
     }
@@ -60,6 +59,24 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         String tdType = isHeader ? "th" : "td";
 
         writer.writeStartElement(trType);
+
+        // Up/Down
+        startElement(tdType);
+        if(record.positionDelta > 0)
+        {
+            writer.writeStartElement("font");
+            writer.writeAttribute("color", "green");
+            writer.writeCharacters("▲");
+            writer.writeEndElement();
+        }
+        else if(record.positionDelta < 0)
+        {
+            writer.writeStartElement("font");
+            writer.writeAttribute("color", "red");
+            writer.writeCharacters("▼");
+            writer.writeEndElement();
+        }
+        endElement(tdType);
 
         // Name
         startElement(tdType);
