@@ -34,6 +34,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 
         // Name
         startElement("th");
+        writer.writeCharacters("Name");
         endElement("th");
 
         startElement("th");
@@ -61,8 +62,16 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
     {
         try
         {
-            endElement("details");
             endElement("table");
+
+            startElement("center");
+            startElement("p");
+            writer.writeCharacters("* Hover over position arrows to see weekly movement.");
+            endElement("p");
+            endElement("center");
+
+            endElement("details");
+
         }
         catch (XMLStreamException e)
         {

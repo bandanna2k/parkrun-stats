@@ -6,8 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static dnt.parkrun.datastructures.CountryEnum.NZ;
@@ -50,5 +49,17 @@ public class EventsJsonFileReaderTest
         assertThat(eventList.stream()
                 .filter(course -> course.country.countryEnum == NZ)
                 .count()).isEqualTo(43);
+    }
+
+    @Test
+    public void hashShouldNotCollide()
+    {
+        Map<Long, Course> hashToCourse = new HashMap<>();
+        eventList.forEach(course -> {
+            long hash = UUID.nameUUIDFromBytes(course.name.getBytes()).getMostSignificantBits();
+            hashToCourse.computeIfPresent(hash, (key, value) -> { throw new RuntimeException(); });
+            hashToCourse.put(hash, course);
+        });
+        System.out.println(hashToCourse);
     }
 }

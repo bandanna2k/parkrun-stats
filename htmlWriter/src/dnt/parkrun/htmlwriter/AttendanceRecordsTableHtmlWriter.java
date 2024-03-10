@@ -63,8 +63,18 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
     {
         try
         {
-            endElement("details");
             endElement("table");
+
+            startElement("center");
+            startElement("p");
+            writer.writeCharacters("* Hover over last event finisher to see weekly movement.");
+            endElement("p");
+            startElement("p");
+            writer.writeCharacters("* Hover over record attendance arrows to see difference since last record.");
+            endElement("p");
+            endElement("center");
+
+            endElement("details");
         }
         catch (XMLStreamException e)
         {
