@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,7 +32,8 @@ public class Stats
      */
     public static void main(String[] args) throws SQLException, IOException, XMLStreamException
     {
-        Stats stats = Stats.newInstance(DateConverter.parseWebsiteDate(args[0]));
+        Date date = args.length == 0 ? getParkrunDay(new Date()) : DateConverter.parseWebsiteDate(args[0]);
+        Stats stats = Stats.newInstance(date);
         stats.generateStats();
     }
 
@@ -181,4 +183,25 @@ public class Stats
                     '}';
         }
     }
+
+    public static Date getParkrunDay(Date result)
+    {
+        Calendar calResult = Calendar.getInstance();
+        calResult.setTime(result);
+
+        for (int i = 0; i < 7; i++)
+        {
+            if(calResult.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
+            {
+                calResult.set(Calendar.HOUR_OF_DAY, 0);
+                calResult.set(Calendar.MINUTE, 0);
+                calResult.set(Calendar.SECOND, 0);
+                calResult.set(Calendar.MILLISECOND, 0);
+                return calResult.getTime();
+            }
+            calResult.add(Calendar.DAY_OF_MONTH, i * -1);
+        }
+        throw new UnsupportedOperationException();
+    }
+
 }

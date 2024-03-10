@@ -10,17 +10,15 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 # TODO
 
-- Invariant test for results against attendance NEEDS TESTING
-
+## Major
+ 
 - Replace course_name in ces and result with an id
 
-- Delta between 2 weeks for event history
+- Use date as key, rather than event_number for results (easier to delete stuff)
 
-- Delta between 2 weeks for this weeks attendance
+## Minor
 
-- Get latest Sat for args
-
-- Use date as key for results (easier to delete stuff)
+- Invariant test for results against attendance NEEDS TESTING
 
 # QUERIES
 
