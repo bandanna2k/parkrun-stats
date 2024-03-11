@@ -31,7 +31,8 @@ public class StatsDao
                 "create table if not exists " + differentCourseCountTableName + " as " +
                         "select a.name, a.athlete_id, " +
                         "sub1.count as different_region_course_count, sub2.count as total_region_runs, " +
-                        "0 as different_course_count, 0 as total_runs " +
+                        "0 as different_course_count, 0 as total_runs, " +
+                        "0 as p_index " +
                         "from athlete a " +
                         "join   " +
                         "( " +
@@ -73,17 +74,19 @@ public class StatsDao
                 ));
     }
 
-    public void updateDifferentCourseRecord(int athleteId, int differentCourseCount, int totalRuns)
+    public void updateDifferentCourseRecord(int athleteId, int differentCourseCount, int totalRuns, int pIndex)
     {
         String sql = "update " + differentCourseCountTableName + " set " +
                 "different_course_count = :differentCourseCount, " +
-                "total_runs = :totalRuns " +
+                "total_runs = :totalRuns, " +
+                "p_index = :pIndex " +
                 "where athlete_id = :athleteId";
 
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("athleteId", athleteId)
                 .addValue("differentCourseCount", differentCourseCount)
-                .addValue("totalRuns", totalRuns);
+                .addValue("totalRuns", totalRuns)
+                .addValue("pIndex", pIndex);
         jdbc.update(sql, params);
     }
 

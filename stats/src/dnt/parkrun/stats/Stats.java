@@ -110,7 +110,7 @@ public class Stats
 
                         TotalEventCountUpdate update = new TotalEventCountUpdate(der.athleteId, differentCourseCount.get(), totalRuns.get(), pIndex);
                         System.out.println(update);
-                        statsDao.updateDifferentCourseRecord(update.athleteId, update.differentCourseCount, update.totalRuns);
+                        statsDao.updateDifferentCourseRecord(update.athleteId, update.differentCourseCount, update.totalRuns, update.pIndex);
                     }
                     tableWriter.writeMostEventRecord(
                             new MostEventsRecord(der.name, der.athleteId,
