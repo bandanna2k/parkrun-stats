@@ -61,7 +61,8 @@ public class StatsDao
         String sql =
                 "select name, athlete_id, " +
                         "different_region_course_count, total_region_runs," +
-                        "different_course_count, total_runs " +
+                        "different_course_count, total_runs," +
+                        "p_index " +
                         "from " + differentCourseCountTableName;
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
                 new DifferentCourseCount(
@@ -70,8 +71,9 @@ public class StatsDao
                         rs.getInt("different_region_course_count"),
                         rs.getInt("total_region_runs"),
                         rs.getInt("different_course_count"),
-                        rs.getInt("total_runs")
-                ));
+                        rs.getInt("total_runs"),
+                        rs.getInt("p_index")
+        ));
     }
 
     public void updateDifferentCourseRecord(int athleteId, int differentCourseCount, int totalRuns, int pIndex)
@@ -99,13 +101,15 @@ public class StatsDao
         public final int differentCourseCount;
         public final int totalRuns;
         public int positionDelta = 0;
+        public int pIndex;
 
         public DifferentCourseCount(String name,
                                     int athleteId,
                                     int differentRegionCourseCount,
                                     int totalRegionRuns,
                                     int differentCourseCount,
-                                    int totalRuns)
+                                    int totalRuns,
+                                    int pIndex)
         {
             this.name = name;
             this.athleteId = athleteId;
@@ -113,6 +117,7 @@ public class StatsDao
             this.totalRegionRuns = totalRegionRuns;
             this.differentCourseCount = differentCourseCount;
             this.totalRuns = totalRuns;
+            this.pIndex = pIndex;
         }
 
         @Override
@@ -126,6 +131,7 @@ public class StatsDao
                     ", differentCourseCount=" + differentCourseCount +
                     ", totalRuns=" + totalRuns +
                     ", positionDelta=" + positionDelta +
+                    ", pIndex=" + pIndex +
                     '}';
         }
     }

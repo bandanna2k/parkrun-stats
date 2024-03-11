@@ -10,6 +10,7 @@ import dnt.parkrun.datastructures.stats.MostEventsRecord;
 import dnt.parkrun.htmlwriter.AttendanceRecordsTableHtmlWriter;
 import dnt.parkrun.htmlwriter.HtmlWriter;
 import dnt.parkrun.htmlwriter.MostEventsTableHtmlWriter;
+import dnt.parkrun.htmlwriter.PIndexTableHtmlWriter;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
@@ -84,6 +85,17 @@ public class Stats
 
         try(HtmlWriter writer = HtmlWriter.newInstance(date))
         {
+            // Read attendance records from, and write html table
+            try(AttendanceRecordsTableHtmlWriter tableWriter = new AttendanceRecordsTableHtmlWriter(writer.writer))
+            {
+                tableWriter.writer.writeStartElement("tbody");
+                for (AttendanceRecord ar : attendanceRecords)
+                {
+                    tableWriter.writeAttendanceRecord(ar);
+                }
+                tableWriter.writer.writeEndElement(); // tbody
+            }
+
             try(MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer))
             {
                 for (DifferentCourseCount der : differentEventRecords)
@@ -115,19 +127,25 @@ public class Stats
                     tableWriter.writeMostEventRecord(
                             new MostEventsRecord(der.name, der.athleteId,
                                     der.differentRegionCourseCount, der.totalRegionRuns,
-                                    der.differentCourseCount, der.totalRuns, der.positionDelta));
+                                    der.differentCourseCount, der.totalRuns, der.positionDelta, der.pIndex));
                 }
             }
-
-            // Read attendance records from, and write html table
-            try(AttendanceRecordsTableHtmlWriter tableWriter = new AttendanceRecordsTableHtmlWriter(writer.writer))
+            try(PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer))
             {
-                tableWriter.writer.writeStartElement("tbody");
-                for (AttendanceRecord ar : attendanceRecords)
+                differentEventRecords.sort((der1, der2) -> {
+                    if(der1.pIndex < der2.pIndex) return 1;
+                    if(der1.pIndex > der2.pIndex) return -1;
+                    if(der1.athleteId > der2.athleteId) return 1;
+                    if(der1.athleteId < der2.athleteId) return -1;
+                    return 0;
+                });
+                for (DifferentCourseCount der : differentEventRecords)
                 {
-                    tableWriter.writeAttendanceRecord(ar);
+                    tableWriter.writePIndexRecord(
+                            new MostEventsRecord(der.name, der.athleteId,
+                                    0, 0,
+                                    0, 0, 0, der.pIndex));
                 }
-                tableWriter.writer.writeEndElement(); // tbody
             }
         }
     }
