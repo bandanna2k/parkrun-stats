@@ -20,13 +20,11 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Invariant test for results against attendance NEEDS TESTING
 
-- Add p-index to Most Events
-
 - Add event not run this weekend
 
 - Add unique runs to Most Events
 
-- Add links to attendance records
+- Remove unnecessary duplicate classes that do the same thing. MostEventRecord??? AttendanceRecord???
 
 # QUERIES
 

@@ -3,6 +3,7 @@ package dnt.parkrun.stats;
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.DateConverter;
+import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.database.StatsDao;
 import dnt.parkrun.datastructures.AthleteCourseSummary;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
@@ -17,11 +18,9 @@ import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
 import static dnt.parkrun.database.StatsDao.DifferentCourseCount;
@@ -30,6 +29,9 @@ import static dnt.parkrun.stats.PIndex.pIndex;
 public class Stats
 {
     private static final int SEVEN_DAYS_IN_MILLIS = (7 * 24 * 60 * 60 * 1000);
+
+    public static final String PARKRUN_CO_NZ = "parkrun.co.nz";
+    private final Date lastWeek;
 
     /*
                     02/03/2024
@@ -43,11 +45,16 @@ public class Stats
 
     private final Date date;
     private final StatsDao statsDao;
+    private final ResultDao resultDao;
 
     private Stats(DataSource dataSource, Date date)
     {
         this.date = date;
+        lastWeek = new Date();
+        lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
+
         this.statsDao = new StatsDao(dataSource, this.date);
+        this.resultDao = new ResultDao(dataSource);
     }
 
     public static Stats newInstance(Date date) throws SQLException
@@ -62,17 +69,35 @@ public class Stats
         System.out.println("* Generating most events table *");
         statsDao.generateDifferentCourseCountTable();
 
-        System.out.println("* Displaying most events table *");
+        System.out.println("* Get most events *");
         List<DifferentCourseCount> differentEventRecords = statsDao.getDifferentCourseCount(date);
-        differentEventRecords.forEach(differentCourseCount -> {
-            System.out.println(differentCourseCount);
-        });
 
-        System.out.println("* Calculate table position deltas *");
-        Date lastWeek = new Date();
-        lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
+        System.out.println("* Get most events for last week  *");
         List<DifferentCourseCount> differentEventRecordsFromLastWeek = statsDao.getDifferentCourseCount(lastWeek);
+
+        System.out.println("* Calculate most event position deltas *");
         calculatePositionDeltas(differentEventRecords, differentEventRecordsFromLastWeek);
+
+        System.out.println("* Calculate athlete summaries that need to be downloaded (1. Most event table) *");
+        Set<Integer> athletesFromMostEventTable = differentEventRecords.stream().map(der -> der.athleteId).collect(Collectors.toSet());
+        System.out.println("Size A " + athletesFromMostEventTable.size());
+
+        System.out.println("* Calculate athlete summaries that need to be downloaded (2. Results table) *");
+        Set<Integer> athletesFromResults = getAthletesFromDbWithMinimumPIndex(5);
+        System.out.println("Size B " + athletesFromResults.size());
+
+        Set<Integer> athletesInMostEventsNotInResults = new HashSet<>(athletesFromMostEventTable);
+        athletesInMostEventsNotInResults.removeAll(athletesFromResults);
+        System.out.println("Athletes in most events, not in results. " + athletesInMostEventsNotInResults + athletesInMostEventsNotInResults.size());
+
+        Set<Integer> athletesInResultsNotInMostEvents = new HashSet<>(athletesFromResults);
+        athletesInResultsNotInMostEvents.removeAll(athletesFromMostEventTable);
+        System.out.println("Athletes in results, not in most events. " + athletesInResultsNotInMostEvents + athletesInResultsNotInMostEvents.size());
+
+        Set<Integer> athletesToDownload = new HashSet<>();
+        athletesToDownload.addAll(athletesFromMostEventTable);
+        athletesToDownload.addAll(athletesFromResults);
+        System.out.println("Athletes too download. " + athletesToDownload.size());
 
         System.out.println("* Generating attendance record table *");
         statsDao.generateAttendanceRecordTable();
@@ -82,6 +107,7 @@ public class Stats
         System.out.println("* Calculate attendance deltas *");
         List<AttendanceRecord> attendanceRecordsFromLastWeek = statsDao.getAttendanceRecords(lastWeek);
         calculateAttendanceDeltas(attendanceRecords, attendanceRecordsFromLastWeek);
+
 
         try(HtmlWriter writer = HtmlWriter.newInstance(date))
         {
@@ -107,7 +133,7 @@ public class Stats
 
                         List<AthleteCourseSummary> listOfRuns = new ArrayList<>();
                         Parser parser = new Parser.Builder()
-                                .url(generateAthleteEventSummaryUrl("parkrun.co.nz", der.athleteId))
+                                .url(generateAthleteEventSummaryUrl(PARKRUN_CO_NZ, der.athleteId))
                                 .forEachAthleteCourseSummary(acs ->
                                 {
                                     listOfRuns.add(acs);
@@ -148,6 +174,47 @@ public class Stats
                 }
             }
         }
+    }
+
+    private Set<Integer> getAthletesFromDbWithMinimumPIndex(int minPIndex)
+    {
+        Map<Integer, Map<String, Integer>> athleteToCourseCount = new HashMap<>();
+        resultDao.tableScan(r -> {
+            if(r.athlete.athleteId < 0)
+            {
+                return;
+            }
+
+            Map<String, Integer> courseToCount = athleteToCourseCount.get(r.athlete.athleteId);
+            if(courseToCount == null)
+            {
+                courseToCount = new HashMap<>();
+                courseToCount.put(r.courseName, 1);
+                athleteToCourseCount.put(r.athlete.athleteId, courseToCount);
+            }
+            else
+            {
+                Integer count = courseToCount.get(r.courseName);
+                if(count == null)
+                {
+                    courseToCount.put(r.courseName, 1);
+                }
+                else
+                {
+                    courseToCount.put(r.courseName, count + 1);
+                }
+            }
+        });
+
+        Set<Integer> athletes = new HashSet<>();
+        athleteToCourseCount.forEach((athleteId, courseToCount) -> {
+            int pIndex = pIndex(courseToCount);
+            if(pIndex >= minPIndex)
+            {
+                athletes.add(athleteId);
+            }
+        });
+        return athletes;
     }
 
     private void calculatePositionDeltas(List<DifferentCourseCount> differentEventRecords,

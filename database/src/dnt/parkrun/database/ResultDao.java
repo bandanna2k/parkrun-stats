@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ResultDao
 {
@@ -20,6 +21,7 @@ public class ResultDao
         jdbc = new NamedParameterJdbcTemplate(dataSource);
     }
 
+    @Deprecated // Do not use. Results too large
     public List<Result> getResults()
     {
         String sql = "select * from result " +
@@ -54,5 +56,26 @@ public class ResultDao
                 .addValue("position", result.position)
                 .addValue("time_seconds", result.time.getTotalSeconds())
         );
+    }
+
+    public void tableScan(Consumer<Result> consumer)
+    {
+        String sql = "select * from result " +
+                "right join athlete using (athlete_id)";
+        jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
+        {
+            Result result = new Result(
+                    rs.getString("course_name"),
+                    rs.getInt("event_number"),
+                    rs.getInt("position"),
+                    Athlete.from(
+                            rs.getString("name"),
+                            rs.getInt("athlete_id")
+                    ),
+                    Time.from(rs.getInt("time_seconds"))
+            );
+            consumer.accept(result);
+            return null;
+        });
     }
 }
