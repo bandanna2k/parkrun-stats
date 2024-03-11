@@ -6,24 +6,31 @@ public class AttendanceRecord
 {
     public final String courseLongName;
     public final String courseName;
-    public final int recentAttendance;
-    public final Date recentDate;
-    public final int maxAttendance;
-    public final Date maxDate;
+
+    public final int recentEventFinishers;
+    public final int recentEventNumber;
+    public final Date recentEventDate;
+
+    public final int recordEventFinishers;
+    public final int recordEventNumber;
+    public final Date recordEventDate;
+
     public int recentAttendanceDelta = 0;
     public int maxAttendanceDelta = 0;
 
 
     public AttendanceRecord(String courseLongName, String courseName,
-                            Date recentDate, int recentAttendance,
-                            Date maxDate, int maxAttendance)
+                            int recentEventNumber, Date recentEventDate, int recentEventFinishers,
+                            int recordEventNumber, Date recordEventDate, int recordEventFinishers)
     {
         this.courseLongName = courseLongName;
         this.courseName = courseName;
-        this.recentAttendance = recentAttendance;
-        this.recentDate = recentDate;
-        this.maxAttendance = maxAttendance;
-        this.maxDate = maxDate;
+        this.recentEventNumber = recentEventNumber;
+        this.recentEventFinishers = recentEventFinishers;
+        this.recentEventDate = recentEventDate;
+        this.recordEventNumber = recordEventNumber;
+        this.recordEventFinishers = recordEventFinishers;
+        this.recordEventDate = recordEventDate;
     }
 
     @Override
@@ -32,12 +39,17 @@ public class AttendanceRecord
         return "AttendanceRecord{" +
                 "courseLongName='" + courseLongName + '\'' +
                 ", courseName='" + courseName + '\'' +
-                ", recentAttendance=" + recentAttendance +
-                ", recentDate=" + recentDate +
-                ", maxAttendance=" + maxAttendance +
-                ", maxDate=" + maxDate +
+                ", recentEventNumber=" + recentEventNumber +
+                ", recentEventDate=" + recentEventDate +
+                ", recentEventFinishers=" + recentEventFinishers +
+
+                ", recordEventNumber=" + recordEventNumber +
+                ", recordEventDate=" + recordEventDate +
+                ", recordEventFinishers=" + recordEventFinishers +
+
                 ", recentAttendanceDelta=" + recentAttendanceDelta +
                 ", maxAttendanceDelta=" + maxAttendanceDelta +
                 '}';
     }
+
 }

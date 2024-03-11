@@ -161,8 +161,8 @@ public class Stats
                 if (thisWeek.courseName.equals(lastWeek.courseName))
                 {
                     // Found course
-                    thisWeek.maxAttendanceDelta = thisWeek.maxAttendance - lastWeek.maxAttendance;
-                    thisWeek.recentAttendanceDelta = thisWeek.recentAttendance - lastWeek.recentAttendance;
+                    thisWeek.maxAttendanceDelta = thisWeek.recordEventFinishers - lastWeek.recordEventFinishers;
+                    thisWeek.recentAttendanceDelta = thisWeek.recentEventFinishers - lastWeek.recentEventFinishers;
                 }
             }
         }

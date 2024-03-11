@@ -10,6 +10,9 @@ import java.io.Closeable;
 
 public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Closeable
 {
+
+    public static final String PARKRUN_CO_NZ = "parkrun.co.nz";
+
     public AttendanceRecordsTableHtmlWriter(XMLStreamWriter writer) throws XMLStreamException
     {
         super(writer);
@@ -94,7 +97,7 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         // Course name
         startElement("td");
         writer.writeStartElement("a");
-        writer.writeAttribute("href", UrlGenerator.generateCourseEventSummaryUrl("parkrun.co.nz", record.courseName).toString());
+        writer.writeAttribute("href", UrlGenerator.generateCourseEventSummaryUrl(PARKRUN_CO_NZ, record.courseName).toString());
         writer.writeAttribute("target", String.valueOf(record.courseName));
         writer.writeCharacters(record.courseLongName);
         endElement("a");
@@ -102,7 +105,10 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
 
         // Recent date
         startElement("td");
-        writer.writeCharacters(DateConverter.formatDateForHtml(record.recentDate));
+        startElement("a", "target", record.courseName,
+                "href", UrlGenerator.generateCourseEventUrl(PARKRUN_CO_NZ, record.courseName, record.recentEventNumber).toString());
+        writer.writeCharacters(DateConverter.formatDateForHtml(record.recentEventDate));
+        endElement("a");
         endElement("td");
 
         // Recent attendance
@@ -110,21 +116,24 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         if(record.recentAttendanceDelta >= 0)
         {
             startElement("abbr", "title", "+" + record.recentAttendanceDelta);
-            writer.writeCharacters(String.valueOf(record.recentAttendance));
+            writer.writeCharacters(String.valueOf(record.recentEventFinishers));
             endElement("abbr");
             endElement("td");
         }
         else
         {
             startElement("abbr", "title", String.valueOf(record.recentAttendanceDelta));
-            writer.writeCharacters(String.valueOf(record.recentAttendance));
+            writer.writeCharacters(String.valueOf(record.recentEventFinishers));
             endElement("abbr");
             endElement("td");
         }
 
-        // Date
+        // Record Date
         startElement("td");
-        writer.writeCharacters(DateConverter.formatDateForHtml(record.maxDate));
+        startElement("a", "target", record.courseName, "href",
+                UrlGenerator.generateCourseEventUrl(PARKRUN_CO_NZ, record.courseName, record.recordEventNumber).toString());
+        writer.writeCharacters(DateConverter.formatDateForHtml(record.recordEventDate));
+        endElement("a");
         endElement("td");
 
         // Max delta
@@ -150,7 +159,7 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
 
         // Max attendance
         startElement("td");
-        writer.writeCharacters(String.valueOf(record.maxAttendance));
+        writer.writeCharacters(String.valueOf(record.recordEventFinishers));
         endElement("td");
 
         endElement("tr");

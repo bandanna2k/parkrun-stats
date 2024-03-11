@@ -26,6 +26,18 @@ public abstract class BaseWriter implements Closeable
         writer.writeCharacters("\n");
     }
 
+    protected void startElement(String tag,
+                                String attribute,
+                                String attributeValue,
+                                String attribute2,
+                                String attributeValue2) throws XMLStreamException
+    {
+        writer.writeStartElement(tag);
+        writer.writeAttribute(attribute, attributeValue);
+        writer.writeAttribute(attribute2, attributeValue2);
+        writer.writeCharacters("\n");
+    }
+
     protected void endElement(String tag) throws XMLStreamException
     {
         writer.writeEndElement();

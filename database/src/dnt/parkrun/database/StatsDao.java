@@ -135,8 +135,8 @@ public class StatsDao
         String sql =
                 "create table if not exists " + attendanceRecordTableName + " as " +
                 "select course_long_name, c.course_name, " +
-                        "            max, ces.date, " +
-                        "            sub3.recent_event_finishers, sub3.recent_event_date " +
+                        "            max as record_event_finishers, ces.date as record_event_date, ces.event_number as record_event_number, " +
+                        "            sub3.recent_event_finishers, sub3.recent_event_date, sub3.recent_event_number " +
                         "from course c " +
                         "left join " +
                         "(" +
@@ -155,7 +155,7 @@ public class StatsDao
                         "and ces.finishers = sub2.max " +
                         "left join " +
                         "( " +
-                        "    select ces.course_name, finishers as recent_event_finishers, recent_event_date " +
+                        "    select ces.course_name, ces.event_number as recent_event_number, finishers as recent_event_finishers, recent_event_date " +
                         "    from course_event_summary ces " +
                         "    join " +
                         "    ( " +
@@ -171,15 +171,19 @@ public class StatsDao
     public List<AttendanceRecord> getAttendanceRecords(Date date)
     {
         String attendanceTableName = "attendance_records_for_region_" + DateConverter.formatDateForDbTable(date);
-        String sql = "select course_long_name, course_name, recent_event_date, recent_event_finishers, date, max " +
+        String sql = "select course_long_name, course_name, " +
+                "recent_event_number, recent_event_date, recent_event_finishers, " +
+                "record_event_number, record_event_date, record_event_finishers " +
                         "from " + attendanceTableName;
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
                 new AttendanceRecord(
                         rs.getString("course_long_name"),
                         rs.getString("course_name"),
+                        rs.getInt("recent_event_number"),
                         rs.getDate("recent_event_date"),
                         rs.getInt("recent_event_finishers"),
-                        rs.getDate("date"),
-                        rs.getInt("max")));
+                        rs.getInt("record_event_number"),
+                        rs.getDate("record_event_date"),
+                        rs.getInt("record_event_finishers")));
     }
 }
