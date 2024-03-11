@@ -4,6 +4,7 @@ import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.StatsDao;
+import dnt.parkrun.datastructures.AthleteCourseSummary;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import dnt.parkrun.datastructures.stats.MostEventsRecord;
 import dnt.parkrun.htmlwriter.AttendanceRecordsTableHtmlWriter;
@@ -15,6 +16,7 @@ import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
 import static dnt.parkrun.database.StatsDao.DifferentCourseCount;
+import static dnt.parkrun.stats.PIndex.pIndex;
 
 public class Stats
 {
@@ -89,20 +92,25 @@ public class Stats
                     {
                         AtomicInteger differentCourseCount = new AtomicInteger();
                         AtomicInteger totalRuns = new AtomicInteger();
+
+                        List<AthleteCourseSummary> listOfRuns = new ArrayList<>();
                         Parser parser = new Parser.Builder()
                                 .url(generateAthleteEventSummaryUrl("parkrun.co.nz", der.athleteId))
                                 .forEachAthleteCourseSummary(acs ->
                                 {
+                                    listOfRuns.add(acs);
                                     differentCourseCount.incrementAndGet();
                                     totalRuns.addAndGet(acs.countOfRuns);
                                 })
                                 .build();
                         parser.parse();
 
-                        TotalEventCountUpdate update = new TotalEventCountUpdate(der.athleteId, differentCourseCount.get(), totalRuns.get());
+                        // pIndex stuff to go here.
+                        int pIndex = pIndex(listOfRuns);
+
+                        TotalEventCountUpdate update = new TotalEventCountUpdate(der.athleteId, differentCourseCount.get(), totalRuns.get(), pIndex);
                         System.out.println(update);
                         statsDao.updateDifferentCourseRecord(update.athleteId, update.differentCourseCount, update.totalRuns);
-
                     }
                     tableWriter.writeMostEventRecord(
                             new MostEventsRecord(der.name, der.athleteId,
@@ -165,12 +173,14 @@ public class Stats
         public final int athleteId;
         public final int differentCourseCount;
         public final int totalRuns;
+        public final int pIndex;
 
-        public TotalEventCountUpdate(int athleteId, int differentCourseCount, int totalRuns)
+        public TotalEventCountUpdate(int athleteId, int differentCourseCount, int totalRuns, int pIndex)
         {
             this.athleteId = athleteId;
             this.differentCourseCount = differentCourseCount;
             this.totalRuns = totalRuns;
+            this.pIndex = pIndex;
         }
 
         @Override
@@ -180,6 +190,7 @@ public class Stats
                     "athleteId=" + athleteId +
                     ", differentCourseCount=" + differentCourseCount +
                     ", totalRuns=" + totalRuns +
+                    ", pIndex=" + pIndex +
                     '}';
         }
     }
