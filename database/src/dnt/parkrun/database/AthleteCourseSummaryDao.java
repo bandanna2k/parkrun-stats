@@ -88,6 +88,26 @@ public class AthleteCourseSummaryDao
                 ));
     }
 
+    public List<RunsAtEvent> getMostRunsInRegion()
+    {
+        String sql = "select athlete_id, name, course_long_name, run_count\n" +
+                "from athlete_course_summary_2024_03_09\n" + // TODO
+                "\n" +
+                "right join course c using (course_long_name)\n" +
+                "right join athlete a using (athlete_id)\n" +
+                "\n" +
+                "where c.country_code = 65\n" +
+                "order by run_count desc limit 50;\n";
+        return Collections.emptyList();
+    }
+
+    public List<RunsAtEvent> getTop10AtEvent(String courseName)
+    {
+        String sql = "select athlete_id, name, course_long_name, run_count from athlete_course_summary_2024_03_09  right join course c using (course_long_name) right join athlete a\n" +
+                "using (athlete_id)  where c.course_name = 'hamiltonpark' order by run_count desc limit 10;";
+        return Collections.emptyList();
+    }
+
     public List<RunsAtEvent> getMostRunsAtEvent()
     {
         String sql =
@@ -96,7 +116,7 @@ public class AthleteCourseSummaryDao
                         "left join\n" +
                         "(\n" +
                         "    select course_long_name, max(run_count) as max_run_count\n" +
-                        "    from athlete_course_summary_2024_03_09\n" +
+                        "    from athlete_course_summary_2024_03_09\n" + // TODO
                         "    group by course_long_name\n" +
                         ") as sub1 using (course_long_name)\n" +
                         "left join\n" +
