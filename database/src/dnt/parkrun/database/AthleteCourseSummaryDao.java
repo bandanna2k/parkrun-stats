@@ -50,23 +50,23 @@ public class AthleteCourseSummaryDao
 
     }
 
-    public Map<Integer, List<AthleteCourseSummary>> getAthleteCourseSummariesMap()
+    public Map<Athlete, List<AthleteCourseSummary>> getAthleteCourseSummariesMap()
     {
-        Map<Integer, List<AthleteCourseSummary>> result = new HashMap<>();
+        Map<Athlete, List<AthleteCourseSummary>> result = new TreeMap<>(Comparator.comparingInt(a -> a.athleteId));
         String sql = "select * from athlete "  +
                 " join " + tableName + " using (athlete_id)";
         jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
-            int athleteId = rs.getInt("athlete_id");
-            List<AthleteCourseSummary> summaries = result.computeIfAbsent(athleteId, k -> new ArrayList<>());
+            Athlete athlete = Athlete.from(
+                    rs.getString("name"),
+                    rs.getInt("athlete_id")
+            );
+            List<AthleteCourseSummary> summaries = result.computeIfAbsent(athlete, k -> new ArrayList<>());
             summaries.add(
                     new AthleteCourseSummary(
-                        Athlete.from(
-                            rs.getString("name"),
-                            athleteId
-                        ),
-                        rs.getString("course_long_name"),
-                        rs.getInt("run_count")));
+                            athlete,
+                            rs.getString("course_long_name"),
+                            rs.getInt("run_count")));
             return null;
         });
         return result;

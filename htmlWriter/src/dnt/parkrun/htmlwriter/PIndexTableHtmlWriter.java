@@ -1,6 +1,6 @@
 package dnt.parkrun.htmlwriter;
 
-import dnt.parkrun.datastructures.stats.MostEventsRecord;
+import dnt.parkrun.datastructures.Athlete;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -50,7 +50,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
 
             startElement("center");
             startElement("p");
-            writer.writeCharacters("* Only containers parkrunners with >20 different NZ parkruns. (see most events table)");
+            writer.writeCharacters("* Only contains parkrunners with pIndex of 5 within NZ parkruns.");
             endElement("p");
             endElement("center");
 
@@ -63,16 +63,16 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         }
     }
 
-    public void writePIndexRecord(MostEventsRecord record) throws XMLStreamException
+    public void writePIndexRecord(Record record) throws XMLStreamException
     {
        writer.writeStartElement("tr");
 
         // Name
         startElement("td");
         writer.writeStartElement("a");
-        writer.writeAttribute("href", generateAthleteEventSummaryUrl("parkrun.co.nz", record.athleteId).toString());
-        writer.writeAttribute("target", String.valueOf(record.athleteId));
-        writer.writeCharacters(record.name);
+        writer.writeAttribute("href", generateAthleteEventSummaryUrl("parkrun.co.nz", record.athlete.athleteId).toString());
+        writer.writeAttribute("target", String.valueOf(record.athlete.name));
+        writer.writeCharacters(record.athlete.name);
         endElement("a");
         endElement("td");
 
@@ -82,5 +82,26 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         endElement("td");
 
         endElement("tr");
+    }
+
+    public static class Record
+    {
+        public final Athlete athlete;
+        public final int pIndex;
+
+        public Record(Athlete athlete, int pIndex)
+        {
+            this.athlete = athlete;
+            this.pIndex = pIndex;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Record{" +
+                    "athlete=" + athlete +
+                    ", pIndex=" + pIndex +
+                    '}';
+        }
     }
 }

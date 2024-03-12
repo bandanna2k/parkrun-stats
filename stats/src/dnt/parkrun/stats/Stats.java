@@ -6,9 +6,9 @@ import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.AthleteCourseSummaryDao;
 import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.database.StatsDao;
+import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.AthleteCourseSummary;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
-import dnt.parkrun.datastructures.stats.MostEventsRecord;
 import dnt.parkrun.htmlwriter.AttendanceRecordsTableHtmlWriter;
 import dnt.parkrun.htmlwriter.HtmlWriter;
 import dnt.parkrun.htmlwriter.MostEventsTableHtmlWriter;
@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
@@ -82,7 +81,7 @@ public class Stats
         System.out.println("* Calculate most event position deltas *");
         calculatePositionDeltas(differentEventRecords, differentEventRecordsFromLastWeek);
 
-        Map<Integer, List<AthleteCourseSummary>> acsMap = downloadAthleteCourseSummaries(differentEventRecords);
+        Map<Athlete, List<AthleteCourseSummary>> acsMap = downloadAthleteCourseSummaries(differentEventRecords);
 
         try(HtmlWriter writer = HtmlWriter.newInstance(date))
         {
@@ -101,44 +100,41 @@ public class Stats
             {
                 for (DifferentCourseCount der : differentEventRecords)
                 {
-                    AtomicInteger differentCourseCount = new AtomicInteger();
-                    AtomicInteger totalRuns = new AtomicInteger();
-
-                    List<AthleteCourseSummary> athleteCourseSummaries = acsMap.get(der.athleteId);
+                    Athlete athlete = acsMap.keySet().stream().filter(a -> a.athleteId == der.athleteId).findFirst().get();
+                    List<AthleteCourseSummary> athleteCourseSummaries = acsMap.get(athlete);
 
                     int pIndex = pIndex(athleteCourseSummaries);
+                    int courseCount = athleteCourseSummaries.size();
+                    int totalCourseCount = athleteCourseSummaries.stream().mapToInt(acs -> acs.countOfRuns).sum();
 
-                    TotalEventCountUpdate update = new TotalEventCountUpdate(der.athleteId, differentCourseCount.get(), totalRuns.get(), pIndex);
-                    System.out.println(update);
-                    statsDao.updateDifferentCourseRecord(update.athleteId, update.differentCourseCount, update.totalRuns, update.pIndex);
+                    statsDao.updateDifferentCourseRecord(athlete.athleteId, courseCount, totalCourseCount, pIndex);
 
                     tableWriter.writeMostEventRecord(
-                            new MostEventsRecord(der.name, der.athleteId,
+                            new MostEventsTableHtmlWriter.Record(athlete,
                                     der.differentRegionCourseCount, der.totalRegionRuns,
-                                    der.differentCourseCount, der.totalRuns, der.positionDelta, der.pIndex));
+                                    courseCount, totalCourseCount, der.positionDelta, der.pIndex));
                 }
             }
             try(PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer))
             {
-                List<MostEventsRecord> records = new ArrayList<>();
+                List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
                 acsMap.forEach((key, value) ->
                 {
                     int pIndex = pIndex(value);
                     if (pIndex >= 5)
                     {
-                        records.add(new MostEventsRecord(key + "", key,
-                                        0, 0, 0, 0, 0, pIndex));
+                        records.add(new PIndexTableHtmlWriter.Record(key, pIndex));
                     }
                 });
 
                 records.sort((der1, der2) -> {
                     if(der1.pIndex < der2.pIndex) return 1;
                     if(der1.pIndex > der2.pIndex) return -1;
-                    if(der1.athleteId > der2.athleteId) return 1;
-                    if(der1.athleteId < der2.athleteId) return -1;
+                    if(der1.athlete.athleteId > der2.athlete.athleteId) return 1;
+                    if(der1.athlete.athleteId < der2.athlete.athleteId) return -1;
                     return 0;
                 });
-                for (MostEventsRecord record : records)
+                for (PIndexTableHtmlWriter.Record record : records)
                 {
                     tableWriter.writePIndexRecord(record);
                 }
@@ -159,7 +155,7 @@ public class Stats
         return attendanceRecords;
     }
 
-    private Map<Integer, List<AthleteCourseSummary>> downloadAthleteCourseSummaries(List<DifferentCourseCount> differentEventRecords) throws MalformedURLException
+    private Map<Athlete, List<AthleteCourseSummary>> downloadAthleteCourseSummaries(List<DifferentCourseCount> differentEventRecords) throws MalformedURLException
     {
         System.out.println("* Calculate athlete summaries that need to be downloaded (1. Most event table) *");
         Set<Integer> athletesFromMostEventTable = differentEventRecords.stream().map(der -> der.athleteId).collect(Collectors.toSet());
@@ -269,33 +265,6 @@ public class Stats
                     thisWeek.recentAttendanceDelta = thisWeek.recentEventFinishers - lastWeek.recentEventFinishers;
                 }
             }
-        }
-    }
-
-    private static class TotalEventCountUpdate
-    {
-        public final int athleteId;
-        public final int differentCourseCount;
-        public final int totalRuns;
-        public final int pIndex;
-
-        public TotalEventCountUpdate(int athleteId, int differentCourseCount, int totalRuns, int pIndex)
-        {
-            this.athleteId = athleteId;
-            this.differentCourseCount = differentCourseCount;
-            this.totalRuns = totalRuns;
-            this.pIndex = pIndex;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "TotalEventCountUpdate{" +
-                    "athleteId=" + athleteId +
-                    ", differentCourseCount=" + differentCourseCount +
-                    ", totalRuns=" + totalRuns +
-                    ", pIndex=" + pIndex +
-                    '}';
         }
     }
 

@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -67,10 +68,13 @@ public class AthleteCourseSummaryDaoTest
                 new AthleteCourseSummary(athlete2, "Elliðaárdalur", 1)
         );
 
-        Map<Integer, List<AthleteCourseSummary>> acsMap = acsDao.getAthleteCourseSummariesMap();
+        Map<Athlete, List<AthleteCourseSummary>> acsMap = acsDao.getAthleteCourseSummariesMap();
         assertThat(acsMap).isNotEmpty();
-        assertThat(acsMap.get(12345).size()).isEqualTo(2);
-        assertThat(acsMap.get(12346).size()).isEqualTo(1);
+        Set<Athlete> athletes = acsMap.keySet();
+        Athlete athleteA = athletes.stream().filter(a -> a.athleteId == 12345).findFirst().get();
+        assertThat(acsMap.get(athleteA).size()).isEqualTo(2);
+        Athlete athleteB = athletes.stream().filter(a -> a.athleteId == 12346).findFirst().get();
+        assertThat(acsMap.get(athleteB).size()).isEqualTo(1);
         System.out.println(acsMap);
     }
 }

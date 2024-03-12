@@ -1,6 +1,6 @@
 package dnt.parkrun.htmlwriter;
 
-import dnt.parkrun.datastructures.stats.MostEventsRecord;
+import dnt.parkrun.datastructures.Athlete;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -79,7 +79,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         }
     }
 
-    public void writeMostEventRecord(MostEventsRecord record) throws XMLStreamException
+    public void writeMostEventRecord(Record record) throws XMLStreamException
     {
        writer.writeStartElement("tr");
 
@@ -106,9 +106,9 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         // Name
         startElement("td");
         writer.writeStartElement("a");
-        writer.writeAttribute("href", generateAthleteEventSummaryUrl("parkrun.co.nz", record.athleteId).toString());
-        writer.writeAttribute("target", String.valueOf(record.athleteId));
-        writer.writeCharacters(record.name);
+        writer.writeAttribute("href", generateAthleteEventSummaryUrl("parkrun.co.nz", record.athlete.athleteId).toString());
+        writer.writeAttribute("target", String.valueOf(record.athlete.name));
+        writer.writeCharacters(record.athlete.name);
         endElement("a");
         endElement("td");
 
@@ -133,5 +133,45 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         endElement("td");
 
         endElement("tr");
+    }
+
+    public static class Record
+    {
+        public final Athlete athlete;
+        public final int differentRegionCourseCount;
+        public final int totalRegionRuns;
+        public final int differentCourseCount;
+        public final int totalRuns;
+        public final int positionDelta;
+        public final int pIndex;
+
+        public Record(Athlete athlete,
+                      int differentRegionCourseCount, int totalRegionRuns,
+                      int differentCourseCount, int totalRuns,
+                      int positionDelta,
+                      int pIndex)
+        {
+            this.athlete = athlete;
+            this.differentRegionCourseCount = differentRegionCourseCount;
+            this.totalRegionRuns = totalRegionRuns;
+            this.differentCourseCount = differentCourseCount;
+            this.totalRuns = totalRuns;
+            this.positionDelta = positionDelta;
+            this.pIndex = pIndex;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Record{" +
+                    "athlete=" + athlete +
+                    ", differentRegionCourseCount=" + differentRegionCourseCount +
+                    ", totalRegionRuns=" + totalRegionRuns +
+                    ", differentCourseCount=" + differentCourseCount +
+                    ", totalRuns=" + totalRuns +
+                    ", positionDelta=" + positionDelta +
+                    ", pIndex=" + pIndex +
+                    '}';
+        }
     }
 }
