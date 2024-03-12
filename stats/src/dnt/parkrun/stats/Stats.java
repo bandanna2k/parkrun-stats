@@ -3,6 +3,7 @@ package dnt.parkrun.stats;
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.DateConverter;
+import dnt.parkrun.database.AthleteCourseSummaryDao;
 import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.database.StatsDao;
 import dnt.parkrun.datastructures.AthleteCourseSummary;
@@ -17,6 +18,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,7 +36,7 @@ public class Stats
     private final Date lastWeek;
 
     /*
-                    02/03/2024
+            02/03/2024
      */
     public static void main(String[] args) throws SQLException, IOException, XMLStreamException
     {
@@ -46,6 +48,7 @@ public class Stats
     private final Date date;
     private final StatsDao statsDao;
     private final ResultDao resultDao;
+    private final AthleteCourseSummaryDao acsDao;
 
     private Stats(DataSource dataSource, Date date)
     {
@@ -54,6 +57,7 @@ public class Stats
         lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
 
         this.statsDao = new StatsDao(dataSource, this.date);
+        this.acsDao = new AthleteCourseSummaryDao(dataSource, this.date);
         this.resultDao = new ResultDao(dataSource);
     }
 
@@ -78,36 +82,7 @@ public class Stats
         System.out.println("* Calculate most event position deltas *");
         calculatePositionDeltas(differentEventRecords, differentEventRecordsFromLastWeek);
 
-        System.out.println("* Calculate athlete summaries that need to be downloaded (1. Most event table) *");
-        Set<Integer> athletesFromMostEventTable = differentEventRecords.stream().map(der -> der.athleteId).collect(Collectors.toSet());
-        System.out.println("Size A " + athletesFromMostEventTable.size());
-
-        System.out.println("* Calculate athlete summaries that need to be downloaded (2. Results table) *");
-        Set<Integer> athletesFromResults = getAthletesFromDbWithMinimumPIndex(5);
-        System.out.println("Size B " + athletesFromResults.size());
-
-        Set<Integer> athletesInMostEventsNotInResults = new HashSet<>(athletesFromMostEventTable);
-        athletesInMostEventsNotInResults.removeAll(athletesFromResults);
-        System.out.println("Athletes in most events, not in results. " + athletesInMostEventsNotInResults + athletesInMostEventsNotInResults.size());
-
-        Set<Integer> athletesInResultsNotInMostEvents = new HashSet<>(athletesFromResults);
-        athletesInResultsNotInMostEvents.removeAll(athletesFromMostEventTable);
-        System.out.println("Athletes in results, not in most events. " + athletesInResultsNotInMostEvents + athletesInResultsNotInMostEvents.size());
-
-        Set<Integer> athletesToDownload = new HashSet<>();
-        athletesToDownload.addAll(athletesFromMostEventTable);
-        athletesToDownload.addAll(athletesFromResults);
-        System.out.println("Athletes too download. " + athletesToDownload.size());
-
-        System.out.println("* Generating attendance record table *");
-        statsDao.generateAttendanceRecordTable();
-        List<AttendanceRecord> attendanceRecords = statsDao.getAttendanceRecords(date);
-        attendanceRecords.forEach(System.out::println);
-
-        System.out.println("* Calculate attendance deltas *");
-        List<AttendanceRecord> attendanceRecordsFromLastWeek = statsDao.getAttendanceRecords(lastWeek);
-        calculateAttendanceDeltas(attendanceRecords, attendanceRecordsFromLastWeek);
-
+        Map<Integer, List<AthleteCourseSummary>> acsMap = downloadAthleteCourseSummaries(differentEventRecords);
 
         try(HtmlWriter writer = HtmlWriter.newInstance(date))
         {
@@ -115,7 +90,7 @@ public class Stats
             try(AttendanceRecordsTableHtmlWriter tableWriter = new AttendanceRecordsTableHtmlWriter(writer.writer))
             {
                 tableWriter.writer.writeStartElement("tbody");
-                for (AttendanceRecord ar : attendanceRecords)
+                for (AttendanceRecord ar : getAttendanceRecords())
                 {
                     tableWriter.writeAttendanceRecord(ar);
                 }
@@ -126,30 +101,17 @@ public class Stats
             {
                 for (DifferentCourseCount der : differentEventRecords)
                 {
-                    if (der.differentCourseCount == 0 || der.totalRuns == 0)
-                    {
-                        AtomicInteger differentCourseCount = new AtomicInteger();
-                        AtomicInteger totalRuns = new AtomicInteger();
+                    AtomicInteger differentCourseCount = new AtomicInteger();
+                    AtomicInteger totalRuns = new AtomicInteger();
 
-                        List<AthleteCourseSummary> listOfRuns = new ArrayList<>();
-                        Parser parser = new Parser.Builder()
-                                .url(generateAthleteEventSummaryUrl(PARKRUN_CO_NZ, der.athleteId))
-                                .forEachAthleteCourseSummary(acs ->
-                                {
-                                    listOfRuns.add(acs);
-                                    differentCourseCount.incrementAndGet();
-                                    totalRuns.addAndGet(acs.countOfRuns);
-                                })
-                                .build();
-                        parser.parse();
+                    List<AthleteCourseSummary> athleteCourseSummaries = acsMap.get(der.athleteId);
 
-                        // pIndex stuff to go here.
-                        int pIndex = pIndex(listOfRuns);
+                    int pIndex = pIndex(athleteCourseSummaries);
 
-                        TotalEventCountUpdate update = new TotalEventCountUpdate(der.athleteId, differentCourseCount.get(), totalRuns.get(), pIndex);
-                        System.out.println(update);
-                        statsDao.updateDifferentCourseRecord(update.athleteId, update.differentCourseCount, update.totalRuns, update.pIndex);
-                    }
+                    TotalEventCountUpdate update = new TotalEventCountUpdate(der.athleteId, differentCourseCount.get(), totalRuns.get(), pIndex);
+                    System.out.println(update);
+                    statsDao.updateDifferentCourseRecord(update.athleteId, update.differentCourseCount, update.totalRuns, update.pIndex);
+
                     tableWriter.writeMostEventRecord(
                             new MostEventsRecord(der.name, der.athleteId,
                                     der.differentRegionCourseCount, der.totalRegionRuns,
@@ -158,22 +120,79 @@ public class Stats
             }
             try(PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer))
             {
-                differentEventRecords.sort((der1, der2) -> {
+                List<MostEventsRecord> records = new ArrayList<>();
+                acsMap.forEach((key, value) ->
+                {
+                    int pIndex = pIndex(value);
+                    if (pIndex >= 5)
+                    {
+                        records.add(new MostEventsRecord(key + "", key,
+                                        0, 0, 0, 0, 0, pIndex));
+                    }
+                });
+
+                records.sort((der1, der2) -> {
                     if(der1.pIndex < der2.pIndex) return 1;
                     if(der1.pIndex > der2.pIndex) return -1;
                     if(der1.athleteId > der2.athleteId) return 1;
                     if(der1.athleteId < der2.athleteId) return -1;
                     return 0;
                 });
-                for (DifferentCourseCount der : differentEventRecords)
+                for (MostEventsRecord record : records)
                 {
-                    tableWriter.writePIndexRecord(
-                            new MostEventsRecord(der.name, der.athleteId,
-                                    0, 0,
-                                    0, 0, 0, der.pIndex));
+                    tableWriter.writePIndexRecord(record);
                 }
             }
         }
+    }
+
+    private List<AttendanceRecord> getAttendanceRecords()
+    {
+        System.out.println("* Generating attendance record table *");
+        statsDao.generateAttendanceRecordTable();
+        List<AttendanceRecord> attendanceRecords = statsDao.getAttendanceRecords(date);
+        attendanceRecords.forEach(System.out::println);
+
+        System.out.println("* Calculate attendance deltas *");
+        List<AttendanceRecord> attendanceRecordsFromLastWeek = statsDao.getAttendanceRecords(lastWeek);
+        calculateAttendanceDeltas(attendanceRecords, attendanceRecordsFromLastWeek);
+        return attendanceRecords;
+    }
+
+    private Map<Integer, List<AthleteCourseSummary>> downloadAthleteCourseSummaries(List<DifferentCourseCount> differentEventRecords) throws MalformedURLException
+    {
+        System.out.println("* Calculate athlete summaries that need to be downloaded (1. Most event table) *");
+        Set<Integer> athletesFromMostEventTable = differentEventRecords.stream().map(der -> der.athleteId).collect(Collectors.toSet());
+        System.out.println("Size A " + athletesFromMostEventTable.size());
+
+        System.out.println("* Calculate athlete summaries that need to be downloaded (2. Results table) *");
+        Set<Integer> athletesFromResults = getAthletesFromDbWithMinimumPIndex(5);
+        System.out.println("Size B " + athletesFromResults.size());
+
+        Set<Integer> athletesInMostEventsNotInResults = new HashSet<>(athletesFromMostEventTable);
+        athletesInMostEventsNotInResults.removeAll(athletesFromResults);
+        System.out.println("Athletes in most events, not in results. " + athletesInMostEventsNotInResults.size());
+
+        Set<Integer> athletesInResultsNotInMostEvents = new HashSet<>(athletesFromResults);
+        athletesInResultsNotInMostEvents.removeAll(athletesFromMostEventTable);
+        System.out.println("Athletes in results, not in most events. " + athletesInResultsNotInMostEvents.size());
+
+        Set<Integer> athletesToDownload = new HashSet<>();
+        athletesToDownload.addAll(athletesFromMostEventTable);
+        athletesToDownload.addAll(athletesFromResults);
+        Set<Integer> athletesAlreadyDownloaded = acsDao.getAthleteCourseSummaries().stream().map(acs -> acs.athlete.athleteId).collect(Collectors.toSet());
+        athletesToDownload.removeAll(athletesAlreadyDownloaded);
+        System.out.println("Athletes too download. " + athletesToDownload.size());
+
+        for (int athlete_id : athletesToDownload)
+        {
+            Parser parser = new Parser.Builder()
+                    .url(generateAthleteEventSummaryUrl(PARKRUN_CO_NZ, athlete_id))
+                    .forEachAthleteCourseSummary(acsDao::writeAthleteCourseSummary)
+                    .build();
+            parser.parse();
+        }
+        return acsDao.getAthleteCourseSummariesMap();
     }
 
     private Set<Integer> getAthletesFromDbWithMinimumPIndex(int minPIndex)

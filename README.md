@@ -16,6 +16,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Use date as key, rather than event_number for results (easier to delete stuff)
 
+- Create different database for date tables
+
 ## Minor
 
 - Invariant test for results against attendance NEEDS TESTING
