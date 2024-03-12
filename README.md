@@ -18,6 +18,12 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Create different database for date tables
 
+    - root to have all
+  
+    - dao to have read only? 
+
+    - stats to have create, insert, update in stats db
+
 ## Minor
 
 - Invariant test for results against attendance NEEDS TESTING

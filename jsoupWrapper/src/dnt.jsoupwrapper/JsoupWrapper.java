@@ -24,8 +24,9 @@ public abstract class JsoupWrapper
                 int sleepTime = 3000 + RANDOM.nextInt(3000);
                 System.out.print("Sleeping for " + sleepTime + " ... ");
                 Thread.sleep(sleepTime);
-                System.out.println("Loading URL");
+                System.out.print("Loading URL: " + url);
                 document = Jsoup.parse(url, 5000);
+                System.out.println("Done");
             }
             catch(Exception ex)
             {
