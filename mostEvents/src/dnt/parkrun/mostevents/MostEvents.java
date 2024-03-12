@@ -128,11 +128,8 @@ public class MostEvents
                 .forEachCountry(courseRepository::addCountry)
                 .forEachCourse(course ->
                 {
-                    if(course.country.countryEnum == CountryEnum.NZ)
-                    {
-                        courseDao.insert(course);
-                        courseRepository.addCourse(course);
-                    }
+                    courseDao.insert(course);
+                    courseRepository.addCourse(course);
                 })
                 .statusSupplier(() -> status)
                 .build();

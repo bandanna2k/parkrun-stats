@@ -12,7 +12,7 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Major
  
-- Replace course_name in ces and result with an id
+- Replace course_name in ces and result with an id. Next - Add course_id to result
 
 - Use date as key, rather than event_number for results (easier to delete stuff)
 
@@ -281,3 +281,8 @@ from
 group by row_number()
     
 ```
+
+
+insert into course (course_id, course_name, course_long_name, country_code, country, status) 
+values 
+(99, 'tbd', 'tbd', 65, 'NZ', 'R');

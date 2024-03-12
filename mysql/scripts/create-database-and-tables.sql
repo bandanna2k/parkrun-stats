@@ -3,13 +3,14 @@
 CREATE TABLE
 IF NOT EXISTS
 course (
+    course_id               INT                 NOT NULL  PRIMARY KEY  AUTO_INCREMENT,
     course_name             VARCHAR(255)        NOT NULL,
     course_long_name        VARCHAR(255)        NOT NULL,
     country_code            INT                 NOT NULL,
     country                 VARCHAR(2)          NOT NULL,
     status                  CHAR(1)             NOT NULL,
 
-    PRIMARY KEY (course_name)
+    CONSTRAINT unique_course_1 UNIQUE (course_name)
 
 ) DEFAULT CHARSET=utf8mb4;
 
