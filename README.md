@@ -34,6 +34,10 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Remove unnecessary duplicate classes that do the same thing. MostEventRecord??? AttendanceRecord???
 
+- Most runs at a single event
+
+- Most runs at each course
+
 # QUERIES
 
 ## How many athletes have finished a run (in the database)

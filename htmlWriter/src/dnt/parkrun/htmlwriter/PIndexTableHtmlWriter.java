@@ -19,7 +19,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         writer.writeCharacters("P-Index (New Zealand)");
         endElement("summary");
 
-        startElement("table", "class", "sortable p-index");
+        startElement("table", "class", "sortable name-data");
         writeHeader(writer);
     }
 

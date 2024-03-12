@@ -27,11 +27,15 @@ td,th {
     text-align:center;
     white-space:nowrap;
 }
-.attendance td:nth-child(1) {
+.name-data td:nth-child(1) {
     font-weight:700;
     text-align:left;
 }
-.p-index td:nth-child(1) {
+.name-name-data td:nth-child(1) {
+    font-weight:700;
+    text-align:left;
+}
+.name-name-data td:nth-child(2) {
     font-weight:700;
     text-align:left;
 }

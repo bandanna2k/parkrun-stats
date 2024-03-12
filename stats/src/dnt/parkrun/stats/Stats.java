@@ -9,6 +9,7 @@ import dnt.parkrun.database.StatsDao;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.AthleteCourseSummary;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
+import dnt.parkrun.datastructures.stats.RunsAtEvent;
 import dnt.parkrun.htmlwriter.AttendanceRecordsTableHtmlWriter;
 import dnt.parkrun.htmlwriter.HtmlWriter;
 import dnt.parkrun.htmlwriter.MostEventsTableHtmlWriter;
@@ -85,16 +86,7 @@ public class Stats
 
         try(HtmlWriter writer = HtmlWriter.newInstance(date))
         {
-            // Read attendance records from, and write html table
-            try(AttendanceRecordsTableHtmlWriter tableWriter = new AttendanceRecordsTableHtmlWriter(writer.writer))
-            {
-                tableWriter.writer.writeStartElement("tbody");
-                for (AttendanceRecord ar : getAttendanceRecords())
-                {
-                    tableWriter.writeAttendanceRecord(ar);
-                }
-                tableWriter.writer.writeEndElement(); // tbody
-            }
+            writeAttendanceRecords(writer);
 
             try(MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer))
             {
@@ -139,6 +131,30 @@ public class Stats
                     tableWriter.writePIndexRecord(record);
                 }
             }
+            try(MostRunsAtEventTableWriter tableWriter = new MostRunsAtEventTableWriter(writer.writer))
+            {
+                List<RunsAtEvent> records = acsDao.getMostRunsAtEvent();
+
+                for (RunsAtEvent record : records)
+                {
+                    tableWriter.writeRecord(record);
+                }
+            }
+
+        }
+    }
+
+    private void writeAttendanceRecords(HtmlWriter writer) throws XMLStreamException
+    {
+        // Read attendance records from, and write html table
+        try(AttendanceRecordsTableHtmlWriter tableWriter = new AttendanceRecordsTableHtmlWriter(writer.writer))
+        {
+            tableWriter.writer.writeStartElement("tbody");
+            for (AttendanceRecord ar : getAttendanceRecords())
+            {
+                tableWriter.writeAttendanceRecord(ar);
+            }
+            tableWriter.writer.writeEndElement(); // tbody
         }
     }
 

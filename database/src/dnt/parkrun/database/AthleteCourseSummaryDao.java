@@ -3,6 +3,7 @@ package dnt.parkrun.database;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.AthleteCourseSummary;
+import dnt.parkrun.datastructures.stats.RunsAtEvent;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -84,6 +85,39 @@ public class AthleteCourseSummaryDao
                         ),
                         rs.getString("course_long_name"),
                         rs.getInt("run_count")
+                ));
+    }
+
+    public List<RunsAtEvent> getMostRunsAtEvent()
+    {
+        String sql =
+                "select sub1.course_long_name, c.course_name, c.country_code, sub2.athlete_id, sub3.name, sub1.max_run_count\n" +
+                        "from course c\n" +
+                        "left join\n" +
+                        "(\n" +
+                        "    select course_long_name, max(run_count) as max_run_count\n" +
+                        "    from athlete_course_summary_2024_03_09\n" +
+                        "    group by course_long_name\n" +
+                        ") as sub1 using (course_long_name)\n" +
+                        "left join\n" +
+                        "(\n" +
+                        "    select athlete_id, course_long_name, run_count\n" +
+                        "    from athlete_course_summary_2024_03_09\n" +
+                        ") as sub2 on c.course_long_name = sub2.course_long_name and sub1.max_run_count = sub2.run_count\n" +
+                        "left join\n" +
+                        "(\n" +
+                        "    select athlete_id, name\n" +
+                        "    from athlete\n" +
+                        ") as sub3 on sub2.athlete_id = sub3.athlete_id\n" +
+                        "where c.country_code = 65 " +
+                        "order by course_long_name";
+        return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
+                new RunsAtEvent(
+                        rs.getString("course_long_name"),
+                        rs.getString("course_name"),
+                        rs.getInt("athlete_id"),
+                        rs.getString("name"),
+                        rs.getInt("max_run_count")
                 ));
     }
 }
