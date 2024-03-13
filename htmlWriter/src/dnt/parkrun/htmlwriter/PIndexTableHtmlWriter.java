@@ -16,7 +16,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
 
         startElement("details");
         startElement("summary");
-        writer.writeCharacters("P-Index (New Zealand)");
+        writer.writeCharacters("(WORK IN PROGRESS) P-Index (New Zealand)");
         endElement("summary");
 
         startElement("table", "class", "sortable name-data");

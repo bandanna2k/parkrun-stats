@@ -33,7 +33,6 @@ public class Stats
     private static final int SEVEN_DAYS_IN_MILLIS = (7 * 24 * 60 * 60 * 1000);
 
     public static final String PARKRUN_CO_NZ = "parkrun.co.nz";
-    private final Date lastWeek;
 
     /*
             02/03/2024
@@ -46,6 +45,7 @@ public class Stats
     }
 
     private final Date date;
+    private final Date lastWeek;
     private final StatsDao statsDao;
     private final ResultDao resultDao;
     private final AthleteCourseSummaryDao acsDao;
@@ -109,31 +109,35 @@ public class Stats
                                     courseCount, totalCourseCount, der.positionDelta, der.pIndex));
                 }
             }
-//            try(PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer))
-//            {
-//                List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
-//                acsMap.forEach((key, value) ->
-//                {
-//                    int pIndex = pIndex(value);
-//                    if (pIndex >= 5)
-//                    {
-//                        records.add(new PIndexTableHtmlWriter.Record(key, pIndex));
-//                    }
-//                });
-//
-//                records.sort((der1, der2) -> {
-//                    if(der1.pIndex < der2.pIndex) return 1;
-//                    if(der1.pIndex > der2.pIndex) return -1;
-//                    if(der1.athlete.athleteId > der2.athlete.athleteId) return 1;
-//                    if(der1.athlete.athleteId < der2.athlete.athleteId) return -1;
-//                    return 0;
-//                });
-//                for (PIndexTableHtmlWriter.Record record : records)
-//                {
-//                    tableWriter.writePIndexRecord(record);
-//                }
-//            }
-            try(Top10AtCoursesHtmlWriter top10atCourses = new Top10AtCoursesHtmlWriter(writer.writer))
+
+            writer.writer.writeStartElement("hr");
+            writer.writer.writeEndElement();
+
+            try(PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer))
+            {
+                List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
+                acsMap.forEach((key, value) ->
+                {
+                    int pIndex = pIndex(value);
+                    if (pIndex >= 5)
+                    {
+                        records.add(new PIndexTableHtmlWriter.Record(key, pIndex));
+                    }
+                });
+
+                records.sort((der1, der2) -> {
+                    if(der1.pIndex < der2.pIndex) return 1;
+                    if(der1.pIndex > der2.pIndex) return -1;
+                    if(der1.athlete.athleteId > der2.athlete.athleteId) return 1;
+                    if(der1.athlete.athleteId < der2.athlete.athleteId) return -1;
+                    return 0;
+                });
+                for (PIndexTableHtmlWriter.Record record : records)
+                {
+                    tableWriter.writePIndexRecord(record);
+                }
+            }
+            try(Top10AtCoursesHtmlWriter ignored = new Top10AtCoursesHtmlWriter(writer.writer))
             {
                 for (Course course : courseDao.getCourses(CountryEnum.NZ))
                 {
@@ -323,5 +327,4 @@ public class Stats
         }
         throw new UnsupportedOperationException();
     }
-
 }

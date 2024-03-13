@@ -1,5 +1,6 @@
 package dnt.parkrun.database;
 
+import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.CountryEnum;
 import dnt.parkrun.datastructures.Course;
 import org.springframework.dao.DuplicateKeyException;
@@ -57,14 +58,17 @@ public class CourseDao
 
     public List<Course> getCourses(CountryEnum countryEnum)
     {
-        return jdbc.query("select * from course where country_code = :countryCode",
+        return jdbc.query(
+                "select course_name, course_long_name, country_code, status " +
+                    "from course " +
+                    "where country_code = :countryCode " +
+                    "order by course_name",
                 new MapSqlParameterSource("countryCode", countryEnum.getCountryCode()),
                 (rs, rowNum) ->
                         new Course(rs.getString("course_name"),
-                                null,
+                                new Country(countryEnum, null),
                                 rs.getString("course_long_name"),
                                 Course.Status.fromDb(rs.getString("status"))
                         ));
-
     }
 }
