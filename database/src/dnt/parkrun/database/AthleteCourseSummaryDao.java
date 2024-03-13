@@ -103,13 +103,37 @@ public class AthleteCourseSummaryDao
 
     public List<RunsAtEvent> getTop10AtEvent(String courseName)
     {
-        String sql = "select athlete_id, name, course_long_name, run_count from athlete_course_summary_2024_03_09  right join course c using (course_long_name) right join athlete a\n" +
-                "using (athlete_id)  where c.course_name = 'hamiltonpark' order by run_count desc limit 10;";
-        return Collections.emptyList();
+        String sql =
+                "select name, athlete_id, c.course_name, course_long_name, run_count\n" +
+                        "from athlete\n" +
+                        "join\n" +
+                        "(\n" +
+                        "    select athlete_id, course_name, count(time_seconds) as run_count\n" +
+                        "    from result r\n" +
+                        "    group by athlete_id, course_name\n" +
+                        "    having\n" +
+                        "        athlete_id > 0\n" +
+                        "        and course_name = :courseName\n" +
+                        "    order by run_count desc, course_name asc\n" +
+                        "    limit 10\n" +
+                        ") as sub1 using (athlete_id)\n" +
+                        "join course c\n" +
+                        "on sub1.course_name = c.course_name";
+        return jdbc.query(sql, new MapSqlParameterSource("courseName", courseName), (rs, rowNum) ->
+        {
+            Athlete athlete = Athlete.from(rs.getString("name"), rs.getInt("athlete_id"));
+            return new RunsAtEvent(
+                            athlete,
+                            rs.getString("course_long_name"),
+                            rs.getString("course_name"),
+                            rs.getInt("run_count")
+                );
+        });
     }
 
     public List<RunsAtEvent> getMostRunsAtEvent()
     {
+        // TODO Only includes pIndex and Most Events. Not necessarily the max runners.
         String sql =
                 "select sub1.course_long_name, c.course_name, c.country_code, sub2.athlete_id, sub3.name, sub1.max_run_count\n" +
                         "from course c\n" +
@@ -132,12 +156,14 @@ public class AthleteCourseSummaryDao
                         "where c.country_code = 65 " +
                         "order by course_long_name";
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
-                new RunsAtEvent(
-                        rs.getString("course_long_name"),
-                        rs.getString("course_name"),
-                        rs.getInt("athlete_id"),
-                        rs.getString("name"),
-                        rs.getInt("max_run_count")
-                ));
+        {
+            Athlete athlete = Athlete.from(rs.getString("name"), rs.getInt("athlete_id"));
+            return new RunsAtEvent(
+                    athlete,
+                    rs.getString("course_long_name"),
+                    rs.getString("course_name"),
+                    rs.getInt("max_run_count")
+            );
+        });
     }
 }

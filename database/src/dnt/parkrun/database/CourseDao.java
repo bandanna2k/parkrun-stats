@@ -1,5 +1,6 @@
 package dnt.parkrun.database;
 
+import dnt.parkrun.datastructures.CountryEnum;
 import dnt.parkrun.datastructures.Course;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -7,14 +8,14 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
+import java.util.List;
 
 public class CourseDao
 {
 
     private final NamedParameterJdbcOperations jdbc;
 
-    public CourseDao(DataSource dataSource) throws SQLException
+    public CourseDao(DataSource dataSource)
     {
         jdbc = new NamedParameterJdbcTemplate(dataSource);
     }
@@ -52,5 +53,18 @@ public class CourseDao
                                 rs.getString("course_long_name"),
                                 Course.Status.fromDb(rs.getString("status"))
         ));
+    }
+
+    public List<Course> getCourses(CountryEnum countryEnum)
+    {
+        return jdbc.query("select * from course where country_code = :countryCode",
+                new MapSqlParameterSource("countryCode", countryEnum.getCountryCode()),
+                (rs, rowNum) ->
+                        new Course(rs.getString("course_name"),
+                                null,
+                                rs.getString("course_long_name"),
+                                Course.Status.fromDb(rs.getString("status"))
+                        ));
+
     }
 }

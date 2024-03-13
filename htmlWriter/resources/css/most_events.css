@@ -18,6 +18,9 @@ summary {
     font-size:32px;
     padding:20px;
 }
+details .indent1 {
+    margin-left:10em;
+}
 table a {
     color:inherit;
     text-decoration:none;

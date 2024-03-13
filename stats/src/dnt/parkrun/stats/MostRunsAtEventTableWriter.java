@@ -78,15 +78,15 @@ public class MostRunsAtEventTableWriter extends BaseWriter implements Closeable
         // Name
         startElement("td");
         writer.writeStartElement("a");
-        writer.writeAttribute("href", generateAthleteEventSummaryUrl(PARKRUN_CO_NZ, record.athleteId).toString());
-        writer.writeAttribute("target", record.name);
-        writer.writeCharacters(record.name);
+        writer.writeAttribute("href", generateAthleteEventSummaryUrl(PARKRUN_CO_NZ, record.athlete.athleteId).toString());
+        writer.writeAttribute("target", record.athlete.name);
+        writer.writeCharacters(record.athlete.name);
         endElement("a");
         endElement("td");
 
         // P-Index
         startElement("td");
-        writer.writeCharacters(String.valueOf(record.maxRunCount));
+        writer.writeCharacters(String.valueOf(record.runCount));
         endElement("td");
 
         endElement("tr");

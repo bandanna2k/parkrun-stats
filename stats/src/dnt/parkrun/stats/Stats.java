@@ -4,16 +4,16 @@ import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.AthleteCourseSummaryDao;
+import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.database.StatsDao;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.AthleteCourseSummary;
+import dnt.parkrun.datastructures.CountryEnum;
+import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import dnt.parkrun.datastructures.stats.RunsAtEvent;
-import dnt.parkrun.htmlwriter.AttendanceRecordsTableHtmlWriter;
-import dnt.parkrun.htmlwriter.HtmlWriter;
-import dnt.parkrun.htmlwriter.MostEventsTableHtmlWriter;
-import dnt.parkrun.htmlwriter.PIndexTableHtmlWriter;
+import dnt.parkrun.htmlwriter.*;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
@@ -49,6 +49,7 @@ public class Stats
     private final StatsDao statsDao;
     private final ResultDao resultDao;
     private final AthleteCourseSummaryDao acsDao;
+    private final CourseDao courseDao;
 
     private Stats(DataSource dataSource, Date date)
     {
@@ -59,6 +60,7 @@ public class Stats
         this.statsDao = new StatsDao(dataSource, this.date);
         this.acsDao = new AthleteCourseSummaryDao(dataSource, this.date);
         this.resultDao = new ResultDao(dataSource);
+        this.courseDao = new CourseDao(dataSource);
     }
 
     public static Stats newInstance(Date date) throws SQLException
@@ -107,30 +109,48 @@ public class Stats
                                     courseCount, totalCourseCount, der.positionDelta, der.pIndex));
                 }
             }
-            try(PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer))
+//            try(PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer))
+//            {
+//                List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
+//                acsMap.forEach((key, value) ->
+//                {
+//                    int pIndex = pIndex(value);
+//                    if (pIndex >= 5)
+//                    {
+//                        records.add(new PIndexTableHtmlWriter.Record(key, pIndex));
+//                    }
+//                });
+//
+//                records.sort((der1, der2) -> {
+//                    if(der1.pIndex < der2.pIndex) return 1;
+//                    if(der1.pIndex > der2.pIndex) return -1;
+//                    if(der1.athlete.athleteId > der2.athlete.athleteId) return 1;
+//                    if(der1.athlete.athleteId < der2.athlete.athleteId) return -1;
+//                    return 0;
+//                });
+//                for (PIndexTableHtmlWriter.Record record : records)
+//                {
+//                    tableWriter.writePIndexRecord(record);
+//                }
+//            }
+            try(Top10AtCoursesHtmlWriter top10atCourses = new Top10AtCoursesHtmlWriter(writer.writer))
             {
-                List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
-                acsMap.forEach((key, value) ->
+                for (Course course : courseDao.getCourses(CountryEnum.NZ))
                 {
-                    int pIndex = pIndex(value);
-                    if (pIndex >= 5)
+                    try(Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, course.longName))
                     {
-                        records.add(new PIndexTableHtmlWriter.Record(key, pIndex));
+                        // TODO Move to statsDao
+                        System.out.println("* Getting top 10 athletes for " + course.longName);
+                        List<RunsAtEvent> runsAtEvents = acsDao.getTop10AtEvent(course.name);
+                        for (RunsAtEvent rae : runsAtEvents)
+                        {
+                            top10atCourse.writeRecord(new Top10AtCourseHtmlWriter.Record(rae.athlete, rae.runCount));
+                        }
                     }
-                });
-
-                records.sort((der1, der2) -> {
-                    if(der1.pIndex < der2.pIndex) return 1;
-                    if(der1.pIndex > der2.pIndex) return -1;
-                    if(der1.athlete.athleteId > der2.athlete.athleteId) return 1;
-                    if(der1.athlete.athleteId < der2.athlete.athleteId) return -1;
-                    return 0;
-                });
-                for (PIndexTableHtmlWriter.Record record : records)
-                {
-                    tableWriter.writePIndexRecord(record);
                 }
             }
+
+            /*
             try(MostRunsAtEventTableWriter tableWriter = new MostRunsAtEventTableWriter(writer.writer))
             {
                 List<RunsAtEvent> records = acsDao.getMostRunsAtEvent();
@@ -140,7 +160,7 @@ public class Stats
                     tableWriter.writeRecord(record);
                 }
             }
-
+            */
         }
     }
 

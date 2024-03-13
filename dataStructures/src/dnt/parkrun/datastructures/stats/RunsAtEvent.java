@@ -1,32 +1,30 @@
 package dnt.parkrun.datastructures.stats;
 
+import dnt.parkrun.datastructures.Athlete;
+
 public class RunsAtEvent
 {
+    public final Athlete athlete;
     public final String courseLongName;
     public final String courseName;
-    public final int athleteId;
-    public final String name;
-    public final int maxRunCount;
+    public final int runCount;
 
-    public RunsAtEvent(String courseLongName, String courseName, int athleteId, String name, int maxRunCount)
+    public RunsAtEvent(Athlete athlete, String courseLongName, String courseName, int runCount)
     {
-
         this.courseLongName = courseLongName;
         this.courseName = courseName;
-        this.athleteId = athleteId;
-        this.name = name;
-        this.maxRunCount = maxRunCount;
+        this.athlete = athlete;
+        this.runCount = runCount;
     }
 
     @Override
     public String toString()
     {
         return "RunsAtEvent{" +
-                "courseLongName='" + courseLongName + '\'' +
+                "athlete=" + athlete +
+                ", courseLongName='" + courseLongName + '\'' +
                 ", courseName='" + courseName + '\'' +
-                ", athleteId=" + athleteId +
-                ", name=" + name +
-                ", maxRunCount=" + maxRunCount +
+                ", runCount=" + runCount +
                 '}';
     }
 }
