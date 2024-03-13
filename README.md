@@ -30,13 +30,13 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Add event not run this weekend
 
-- Add unique runs to Most Events
+- Add unique runs to Most Events???
 
 - Remove unnecessary duplicate classes that do the same thing. MostEventRecord??? AttendanceRecord???
 
 - Most runs at a single event
 
-- Most runs at each course
+- Most runs at each course. Needs optimising. Needs CSS tidy up.
 
 # QUERIES
 

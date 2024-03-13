@@ -13,9 +13,8 @@ public class Top10AtCourseHtmlWriter extends BaseWriter implements Closeable
     public Top10AtCourseHtmlWriter(XMLStreamWriter writer, String courseLongName) throws XMLStreamException
     {
         super(writer);
-
-        startElement("details", "class", "indent1");
-        startElement("summary");
+        startElement("details", "style", "margin-left:10em");
+        startElement("summary", "style", "font-size:24px");
         writer.writeCharacters(courseLongName);
         endElement("summary");
 
@@ -47,12 +46,6 @@ public class Top10AtCourseHtmlWriter extends BaseWriter implements Closeable
         try
         {
             endElement("table");
-
-//            startElement("center");
-//            startElement("p");
-//            writer.writeCharacters("* Only contains parkrunners with pIndex of 5 within NZ parkruns.");
-//            endElement("p");
-//            endElement("center");
 
             endElement("details");
         }
