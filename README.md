@@ -26,6 +26,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Minor
 
+- Font that works on mobile
+
 - Invariant test for results against attendance NEEDS TESTING
 
 - Add event not run this weekend

@@ -36,6 +36,10 @@ public class Top10AtCourseHtmlWriter extends BaseWriter implements Closeable
         writer.writeCharacters("Course Run Count");
         endElement("th");
 
+        startElement("th");
+        writer.writeCharacters("% of Total Events");
+        endElement("th");
+
         endElement("tr");
         endElement("thead");
     }
@@ -68,9 +72,14 @@ public class Top10AtCourseHtmlWriter extends BaseWriter implements Closeable
         endElement("a");
         endElement("td");
 
-        // P-Index
+        // Count
         startElement("td");
         writer.writeCharacters(String.valueOf(record.runCount));
+        endElement("td");
+
+        // Percentage
+        startElement("td");
+        writer.writeCharacters(record.percentage);
         endElement("td");
 
         endElement("tr");
@@ -80,11 +89,13 @@ public class Top10AtCourseHtmlWriter extends BaseWriter implements Closeable
     {
         public final Athlete athlete;
         public final int runCount;
+        public final String percentage;
 
-        public Record(Athlete athlete, int runCount)
+        public Record(Athlete athlete, int runCount, String percentage)
         {
             this.athlete = athlete;
             this.runCount = runCount;
+            this.percentage = percentage;
         }
 
         @Override
@@ -93,6 +104,7 @@ public class Top10AtCourseHtmlWriter extends BaseWriter implements Closeable
             return "Record{" +
                     "athlete=" + athlete +
                     ", runCount=" + runCount +
+                    ", percentage='" + percentage + '\'' +
                     '}';
         }
     }

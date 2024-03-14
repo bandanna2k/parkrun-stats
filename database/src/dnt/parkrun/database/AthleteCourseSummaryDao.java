@@ -136,4 +136,18 @@ public class AthleteCourseSummaryDao
             );
         });
     }
+
+    public Map<String, Integer> getCourseCount()
+    {
+        Map<String, Integer> courseToCount = new HashMap<>();
+        String sql =
+                "select course_name, max(event_number) as count\n" +
+                "from course_event_summary ces\n" +
+                "group by course_name";
+        jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> {
+            courseToCount.put(rs.getString("course_name"), rs.getInt("count"));
+            return null;
+        });
+        return courseToCount;
+    }
 }

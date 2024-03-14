@@ -137,6 +137,8 @@ public class Stats
                     tableWriter.writePIndexRecord(record);
                 }
             }
+
+            Map<String, Integer> courseToCount = acsDao.getCourseCount();
             try(Top10AtCoursesHtmlWriter ignored = new Top10AtCoursesHtmlWriter(writer.writer))
             {
                 for (Course course : courseDao.getCourses(CountryEnum.NZ))
@@ -148,7 +150,10 @@ public class Stats
                         List<RunsAtEvent> runsAtEvents = statsDao.getTop10AtEvent(course.name);
                         for (RunsAtEvent rae : runsAtEvents)
                         {
-                            top10atCourse.writeRecord(new Top10AtCourseHtmlWriter.Record(rae.athlete, rae.runCount));
+                            double courseCount = courseToCount.get(course.name);
+                            double runCount = rae.runCount;
+                            String percentage = String.format("%.1f", runCount * 100 / courseCount);
+                            top10atCourse.writeRecord(new Top10AtCourseHtmlWriter.Record(rae.athlete, rae.runCount, percentage));
                         }
                     }
                 }
@@ -315,7 +320,7 @@ public class Stats
 
         for (int i = 0; i < 7; i++)
         {
-            if(calResult.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
+            if (calResult.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
             {
                 calResult.set(Calendar.HOUR_OF_DAY, 0);
                 calResult.set(Calendar.MINUTE, 0);
