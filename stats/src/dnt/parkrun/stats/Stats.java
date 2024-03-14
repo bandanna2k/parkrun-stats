@@ -145,7 +145,7 @@ public class Stats
                     {
                         // TODO Move to statsDao
                         System.out.println("* Getting top 10 athletes for " + course.longName);
-                        List<RunsAtEvent> runsAtEvents = acsDao.getTop10AtEvent(course.name);
+                        List<RunsAtEvent> runsAtEvents = statsDao.getTop10AtEvent(course.name);
                         for (RunsAtEvent rae : runsAtEvents)
                         {
                             top10atCourse.writeRecord(new Top10AtCourseHtmlWriter.Record(rae.athlete, rae.runCount));

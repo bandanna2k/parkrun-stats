@@ -1,7 +1,9 @@
 package dnt.parkrun.database;
 
 import dnt.parkrun.common.DateConverter;
+import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
+import dnt.parkrun.datastructures.stats.RunsAtEvent;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -90,6 +92,36 @@ public class StatsDao
                 .addValue("totalRuns", totalRuns)
                 .addValue("pIndex", pIndex);
         jdbc.update(sql, params);
+    }
+
+    public List<RunsAtEvent> getTop10AtEvent(String courseName)
+    {
+        String sql =
+                "select name, athlete_id, c.course_name, course_long_name, run_count\n" +
+                        "from athlete\n" +
+                        "join\n" +
+                        "(\n" +
+                        "    select athlete_id, course_name, count(time_seconds) as run_count\n" +
+                        "    from result r\n" +
+                        "    group by athlete_id, course_name\n" +
+                        "    having\n" +
+                        "        athlete_id > 0\n" +
+                        "        and course_name = :courseName\n" +
+                        "    order by run_count desc, course_name asc\n" +
+                        "    limit 10\n" +
+                        ") as sub1 using (athlete_id)\n" +
+                        "join course c\n" +
+                        "on sub1.course_name = c.course_name";
+        return jdbc.query(sql, new MapSqlParameterSource("courseName", courseName), (rs, rowNum) ->
+        {
+            Athlete athlete = Athlete.from(rs.getString("name"), rs.getInt("athlete_id"));
+            return new RunsAtEvent(
+                    athlete,
+                    rs.getString("course_long_name"),
+                    rs.getString("course_name"),
+                    rs.getInt("run_count")
+            );
+        });
     }
 
     public static class DifferentCourseCount
