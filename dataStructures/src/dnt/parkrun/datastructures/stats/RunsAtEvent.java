@@ -1,18 +1,17 @@
 package dnt.parkrun.datastructures.stats;
 
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.Course;
 
 public class RunsAtEvent
 {
     public final Athlete athlete;
-    public final String courseLongName;
-    public final String courseName;
+    public final Course course;
     public final int runCount;
 
-    public RunsAtEvent(Athlete athlete, String courseLongName, String courseName, int runCount)
+    public RunsAtEvent(Athlete athlete, Course course, int runCount)
     {
-        this.courseLongName = courseLongName;
-        this.courseName = courseName;
+        this.course = course;
         this.athlete = athlete;
         this.runCount = runCount;
     }
@@ -22,8 +21,7 @@ public class RunsAtEvent
     {
         return "RunsAtEvent{" +
                 "athlete=" + athlete +
-                ", courseLongName='" + courseLongName + '\'' +
-                ", courseName='" + courseName + '\'' +
+                ", course=" + course +
                 ", runCount=" + runCount +
                 '}';
     }

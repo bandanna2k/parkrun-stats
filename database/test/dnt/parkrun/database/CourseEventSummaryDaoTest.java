@@ -29,7 +29,7 @@ public class CourseEventSummaryDaoTest
     {
         CourseRepository courseRepository = new CourseRepository();
         courseRepository.addCountry(NZ);
-        courseRepository.addCourse(new Course("cornwall", NZ, null, Status.RUNNING));
+        courseRepository.addCourse(new Course(9999, "cornwall", NZ, null, Status.RUNNING));
 
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats_test", "dao", "daoFractaldao");
@@ -52,7 +52,7 @@ public class CourseEventSummaryDaoTest
         athleteDao.insert(firstWoman);
         athleteDao.insert(firstMan);
 
-        Course course = new Course("cornwall", NZ, null, Status.RUNNING);
+        Course course = new Course(9999, "cornwall", NZ, null, Status.RUNNING);
         CourseEventSummary ces = new CourseEventSummary(
                 course, 1, Date.from(Instant.now()), 1234, Optional.of(firstMan), Optional.of(firstWoman));
         dao.insert(ces);

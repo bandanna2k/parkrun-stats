@@ -2,6 +2,9 @@ package dnt.parkrun.database;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.Country;
+import dnt.parkrun.datastructures.CountryEnum;
+import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import dnt.parkrun.datastructures.stats.RunsAtEvent;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
@@ -97,7 +100,7 @@ public class StatsDao
     public List<RunsAtEvent> getTop10AtEvent(String courseName)
     {
         String sql =
-                "select name, athlete_id, c.course_name, course_long_name, run_count\n" +
+                "select name, athlete_id, c.course_id, c.course_name, c.country_code, course_long_name, run_count\n" +
                         "from athlete\n" +
                         "join\n" +
                         "(\n" +
@@ -115,10 +118,16 @@ public class StatsDao
         return jdbc.query(sql, new MapSqlParameterSource("courseName", courseName), (rs, rowNum) ->
         {
             Athlete athlete = Athlete.from(rs.getString("name"), rs.getInt("athlete_id"));
+            CountryEnum countryEnum = CountryEnum.valueOf(rs.getInt("country_code"));
+            Course course = new Course(
+                    rs.getInt("course_id"),
+                    rs.getString("course_name"),
+                    new Country(countryEnum, null),
+                    rs.getString("course_long_name"),
+                    null);
             return new RunsAtEvent(
                     athlete,
-                    rs.getString("course_long_name"),
-                    rs.getString("course_name"),
+                    course,
                     rs.getInt("run_count")
             );
         });

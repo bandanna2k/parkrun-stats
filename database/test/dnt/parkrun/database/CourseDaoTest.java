@@ -33,7 +33,7 @@ public class CourseDaoTest
     @Test
     public void shouldReturnUtf8Result()
     {
-        courseDao.insert(new Course("otakiriver", new Country(NZ, null), "\u014ctaki River parkrun", RUNNING));
+        courseDao.insert(new Course(9999, "otakiriver", new Country(NZ, null), "\u014ctaki River parkrun", RUNNING));
 
         Course course = courseDao.getCourse("otakiriver");
         System.out.println(course);

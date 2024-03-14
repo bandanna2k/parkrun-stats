@@ -1,3 +1,11 @@
+CREATE DATABASE
+IF NOT EXISTS
+parkrun_stats;
+
+CREATE DATABASE
+IF NOT EXISTS
+weekly_stats;
+
 
 -- Course
 CREATE TABLE

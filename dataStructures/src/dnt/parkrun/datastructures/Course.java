@@ -8,9 +8,11 @@ public class Course
     public final Country country;
     public final String longName;
     public final Status status;
+    public final int courseId;
 
-    public Course(String name, Country country, String longName, Status status)
+    public Course(int courseId, String name, Country country, String longName, Status status)
     {
+        this.courseId = courseId;
         this.name = name;
         this.country = country;
         this.longName = longName;
@@ -29,13 +31,13 @@ public class Course
             return false;
         }
         Course course = (Course) o;
-        return country == course.country && Objects.equals(name, course.name);
+        return courseId == course.courseId && Objects.equals(name, course.name) && Objects.equals(country, course.country) && Objects.equals(longName, course.longName) && status == course.status;
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(name, country);
+        return Objects.hash(name, country, longName, status, courseId);
     }
 
     public String getStatusDbCode()
@@ -74,10 +76,11 @@ public class Course
         private String name;
         private String longName;
         private Status status;
+        private int courseId;
 
         public Course build()
         {
-            return new Course(name, country, longName, status);
+            return new Course(courseId, name, country, longName, status);
         }
 
         public Builder name(String name)

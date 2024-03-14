@@ -49,7 +49,9 @@ public class CourseDao
         return jdbc.queryForObject("select * from course where course_name = :courseName",
                 new MapSqlParameterSource("courseName", courseName),
                 (rs, rowNum) ->
-                        new Course(rs.getString("course_name"),
+                        new Course(
+                                rs.getInt("course_id"),
+                                rs.getString("course_name"),
                                 null,
                                 rs.getString("course_long_name"),
                                 Course.Status.fromDb(rs.getString("status"))
@@ -59,13 +61,15 @@ public class CourseDao
     public List<Course> getCourses(CountryEnum countryEnum)
     {
         return jdbc.query(
-                "select course_name, course_long_name, country_code, status " +
+                "select course_id, course_name, course_long_name, country_code, status " +
                     "from course " +
                     "where country_code = :countryCode " +
                     "order by course_name",
                 new MapSqlParameterSource("countryCode", countryEnum.getCountryCode()),
                 (rs, rowNum) ->
-                        new Course(rs.getString("course_name"),
+                        new Course(
+                                rs.getInt("course_id"),
+                                rs.getString("course_name"),
                                 new Country(countryEnum, null),
                                 rs.getString("course_long_name"),
                                 Course.Status.fromDb(rs.getString("status"))

@@ -40,6 +40,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Most runs at each course. Needs optimising. Needs CSS tidy up.
 
+- Combine CountryEnum and Country
+
 # QUERIES
 
 ## How many athletes have finished a run (in the database)

@@ -1,8 +1,7 @@
 package dnt.parkrun.database;
 
 import dnt.parkrun.common.DateConverter;
-import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.AthleteCourseSummary;
+import dnt.parkrun.datastructures.*;
 import dnt.parkrun.datastructures.stats.RunsAtEvent;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -105,7 +104,7 @@ public class AthleteCourseSummaryDao
     {
         // TODO Only includes pIndex and Most Events. Not necessarily the max runners.
         String sql =
-                "select sub1.course_long_name, c.course_name, c.country_code, sub2.athlete_id, sub3.name, sub1.max_run_count\n" +
+                "select sub1.course_long_name, c.course_id, c.course_name, c.country_code, sub2.athlete_id, sub3.name, sub1.max_run_count\n" +
                         "from course c\n" +
                         "left join\n" +
                         "(\n" +
@@ -128,10 +127,16 @@ public class AthleteCourseSummaryDao
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             Athlete athlete = Athlete.from(rs.getString("name"), rs.getInt("athlete_id"));
+            CountryEnum countryEnum = CountryEnum.valueOf(rs.getInt("country_code"));
+            Course course = new Course(
+                    rs.getInt("course_id"),
+                    rs.getString("course_name"),
+                    new Country(countryEnum, null),
+                    rs.getString("course_long_name"),
+                    null);
             return new RunsAtEvent(
                     athlete,
-                    rs.getString("course_long_name"),
-                    rs.getString("course_name"),
+                    course,
                     rs.getInt("max_run_count")
             );
         });

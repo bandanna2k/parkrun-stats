@@ -69,9 +69,9 @@ public class MostRunsAtEventTableWriter extends BaseWriter implements Closeable
         // Course
         startElement("td");
         writer.writeStartElement("a");
-        writer.writeAttribute("href", generateCourseUrl(PARKRUN_CO_NZ, record.courseName).toString());
-        writer.writeAttribute("target", record.courseName);
-        writer.writeCharacters(record.courseLongName);
+        writer.writeAttribute("href", generateCourseUrl(PARKRUN_CO_NZ, record.course.name).toString());
+        writer.writeAttribute("target", record.course.name);
+        writer.writeCharacters(record.course.longName);
         endElement("a");
         endElement("td");
 

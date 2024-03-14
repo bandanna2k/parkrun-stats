@@ -3,10 +3,7 @@ package dnt.parkrun.stats;
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.DateConverter;
-import dnt.parkrun.database.AthleteCourseSummaryDao;
-import dnt.parkrun.database.CourseDao;
-import dnt.parkrun.database.ResultDao;
-import dnt.parkrun.database.StatsDao;
+import dnt.parkrun.database.*;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.AthleteCourseSummary;
 import dnt.parkrun.datastructures.CountryEnum;
@@ -50,8 +47,11 @@ public class Stats
     private final ResultDao resultDao;
     private final AthleteCourseSummaryDao acsDao;
     private final CourseDao courseDao;
+    private final Top10AtCourseDao top10Dao;
 
-    private Stats(DataSource dataSource, Date date)
+    private Stats(DataSource dataSource,
+                  DataSource statsDataSource,
+                  Date date)
     {
         this.date = date;
         lastWeek = new Date();
@@ -59,6 +59,7 @@ public class Stats
 
         this.statsDao = new StatsDao(dataSource, this.date);
         this.acsDao = new AthleteCourseSummaryDao(dataSource, this.date);
+        this.top10Dao = new Top10AtCourseDao(statsDataSource, this.date);
         this.resultDao = new ResultDao(dataSource);
         this.courseDao = new CourseDao(dataSource);
     }
@@ -67,7 +68,9 @@ public class Stats
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats", "stats", "statsfractalstats");
-        return new Stats(dataSource, date);
+        DataSource statsDataSource = new SimpleDriverDataSource(new Driver(),
+                "jdbc:mysql://localhost/weekly_stats", "stats", "statsfractalstats");
+        return new Stats(dataSource, statsDataSource, date);
     }
 
     private void generateStats() throws IOException, XMLStreamException
@@ -145,10 +148,15 @@ public class Stats
                 {
                     try(Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, course.longName))
                     {
-                        // TODO Move to statsDao
-                        System.out.println("* Getting top 10 athletes for " + course.longName);
-                        List<RunsAtEvent> runsAtEvents = statsDao.getTop10AtEvent(course.name);
-                        for (RunsAtEvent rae : runsAtEvents)
+                        List<RunsAtEvent> top10 = top10Dao.getTop10AtCourse(course.name);
+                        if(top10.isEmpty())
+                        {
+                            System.out.println("* Getting top 10 athletes for " + course.longName);
+                            top10.addAll(statsDao.getTop10AtEvent(course.name));
+                            top10Dao.writeRunsAtEvents(top10);
+                        }
+
+                        for (RunsAtEvent rae : top10)
                         {
                             double courseCount = courseToCount.get(course.name);
                             double runCount = rae.runCount;
