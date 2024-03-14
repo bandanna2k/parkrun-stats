@@ -2,10 +2,7 @@ package dnt.parkrun.tests;
 
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
-import dnt.parkrun.datastructures.Country;
-import dnt.parkrun.datastructures.Course;
-import dnt.parkrun.datastructures.CourseEventSummary;
-import dnt.parkrun.datastructures.Result;
+import dnt.parkrun.datastructures.*;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -74,11 +71,12 @@ public class WalkerTest
 
         // https://www.parkrun.co.nz/parkrunner/902393/
         // List course summary for random athlete
+        CourseRepository courseRepository = new CourseRepository();
         URL athleteCourseSummaryUrl = new URL("https://" + country.url + "/parkrunner/" + result.athlete.athleteId + "/");
         dnt.parkrun.athletecoursesummary.Parser athleteCourseSummaryParser = new dnt.parkrun.athletecoursesummary.Parser.Builder()
                 .url(athleteCourseSummaryUrl)
                 .forEachAthleteCourseSummary(System.out::println)
-                .build();
+                .build(courseRepository);
         athleteCourseSummaryParser.parse();
     }
 }

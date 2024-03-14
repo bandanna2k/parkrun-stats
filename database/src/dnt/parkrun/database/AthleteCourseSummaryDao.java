@@ -8,7 +8,10 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 public class AthleteCourseSummaryDao
 {
@@ -29,7 +32,7 @@ public class AthleteCourseSummaryDao
         String sql =
                 "create table if not exists " + tableName + " ( " +
                         "    athlete_id       INT               NOT NULL," +
-                        "    course_long_name VARCHAR(255)      NOT NULL," +
+                        "    course_id        INT               NOT NULL," +
                         "    run_count        INT               NOT NULL" +
                         ") DEFAULT CHARSET=utf8mb4";
         jdbc.update(sql, EmptySqlParameterSource.INSTANCE);
@@ -38,21 +41,22 @@ public class AthleteCourseSummaryDao
     public void writeAthleteCourseSummary(AthleteCourseSummary acs)
     {
         String sql = "insert into " + tableName + " (" +
-                "athlete_id, course_long_name, run_count" +
+                "athlete_id, course_id, run_count" +
                 ") values ( " +
-                ":athleteId, :courseLongName, :runCount" +
+                ":athleteId, :courseId, :runCount" +
                 ")";
         jdbc.update(sql, new MapSqlParameterSource()
                 .addValue("athleteId", acs.athlete.athleteId)
-                .addValue("courseLongName", acs.courseLongName)
+                .addValue("courseId", acs.course.courseId)
                 .addValue("runCount", acs.countOfRuns)
         );
 
     }
 
-    public Map<Athlete, List<AthleteCourseSummary>> getAthleteCourseSummariesMap()
+    public List<Object[]> getAthleteCourseSummariesMap()
     {
-        Map<Athlete, List<AthleteCourseSummary>> result = new TreeMap<>(Comparator.comparingInt(a -> a.athleteId));
+        //        Map<Athlete, List<AthleteCourseSummary>> result = new TreeMap<>(Comparator.comparingInt(a -> a.athleteId));
+        List<Object[]> results = new ArrayList<>();
         String sql = "select * from athlete "  +
                 " join " + tableName + " using (athlete_id)";
         jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
@@ -61,30 +65,32 @@ public class AthleteCourseSummaryDao
                     rs.getString("name"),
                     rs.getInt("athlete_id")
             );
-            List<AthleteCourseSummary> summaries = result.computeIfAbsent(athlete, k -> new ArrayList<>());
-            summaries.add(
-                    new AthleteCourseSummary(
-                            athlete,
-                            rs.getString("course_long_name"),
-                            rs.getInt("run_count")));
+//            List<AthleteCourseSummary> summaries = result.computeIfAbsent(athlete, k -> new ArrayList<>());
+//            summaries.add(
+//                    new AthleteCourseSummary(
+//                            athlete,
+//                            rs.getString("course_long_name"),
+//                            rs.getInt("run_count")));
+            results.add(new Object[] {
+               rs.getInt("athlete_id"),
+               rs.getInt("course_id"),
+               rs.getInt("run_count")
+            });
             return null;
         });
-        return result;
+        return results;
     }
 
-    public List<AthleteCourseSummary> getAthleteCourseSummaries()
+    public List<Object[]> getAthleteCourseSummaries()
     {
         String sql = "select * from " + tableName +
                 " join parkrun_stats.athlete using (athlete_id)";
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
-                new AthleteCourseSummary(
-                        Athlete.from(
-                                rs.getString("name"),
-                                rs.getInt("athlete_id")
-                        ),
-                        rs.getString("course_long_name"),
+                new Object[] {
+                        rs.getInt("athlete_id"),
+                        rs.getInt("course_id"),
                         rs.getInt("run_count")
-                ));
+                });
     }
 
     public List<RunsAtEvent> getMostRunsInRegion()

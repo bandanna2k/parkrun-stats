@@ -27,6 +27,7 @@ public class Stats
     private static final int SEVEN_DAYS_IN_MILLIS = (7 * 24 * 60 * 60 * 1000);
 
     public static final String PARKRUN_CO_NZ = "parkrun.co.nz";
+    private final CourseRepository courseRepository;
 
     /*
             02/03/2024
@@ -46,6 +47,8 @@ public class Stats
     private final CourseDao courseDao;
     private final Top10AtCourseDao top10Dao;
     private final CourseEventSummaryDao courseEventSummaryDao;
+    private final Map<Integer, Athlete> athleteIdToAthlete = new HashMap<>();
+    private final Map<Integer, List<AthleteCourseSummary>> athleteIdToAthleteCourseSummaries = new HashMap<>();
 
     private Stats(DataSource dataSource,
                   DataSource statsDataSource,
@@ -59,8 +62,8 @@ public class Stats
         this.acsDao = new AthleteCourseSummaryDao(statsDataSource, this.date);
         this.top10Dao = new Top10AtCourseDao(statsDataSource, this.date);
         this.resultDao = new ResultDao(dataSource);
-        this.courseDao = new CourseDao(dataSource);
-        CourseRepository courseRepository = new CourseRepository();
+        this.courseRepository = new CourseRepository();
+        this.courseDao = new CourseDao(dataSource, courseRepository);
         this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
     }
 
@@ -87,7 +90,7 @@ public class Stats
         System.out.println("* Calculate most event position deltas *");
         calculatePositionDeltas(differentEventRecords, differentEventRecordsFromLastWeek);
 
-        Map<Athlete, List<AthleteCourseSummary>> acsMap = downloadAthleteCourseSummaries(differentEventRecords);
+        downloadAthleteCourseSummaries(differentEventRecords);
 
         try(HtmlWriter writer = HtmlWriter.newInstance(date))
         {
@@ -97,8 +100,8 @@ public class Stats
             {
                 for (DifferentCourseCount der : differentEventRecords)
                 {
-                    Athlete athlete = acsMap.keySet().stream().filter(a -> a.athleteId == der.athleteId).findFirst().get();
-                    List<AthleteCourseSummary> athleteCourseSummaries = acsMap.get(athlete);
+                    Athlete athlete = athleteIdToAthlete.get(der.athleteId);
+                    List<AthleteCourseSummary> athleteCourseSummaries = athleteIdToAthleteCourseSummaries.get(der.athleteId);
 
                     int pIndex = pIndex(athleteCourseSummaries);
                     int courseCount = athleteCourseSummaries.size();
@@ -116,6 +119,7 @@ public class Stats
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
+            /*
             try(PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer))
             {
                 List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
@@ -140,6 +144,8 @@ public class Stats
                     tableWriter.writePIndexRecord(record);
                 }
             }
+
+             */
 
             Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
             try(Top10AtCoursesHtmlWriter ignored = new Top10AtCoursesHtmlWriter(writer.writer))
@@ -208,7 +214,7 @@ public class Stats
         return attendanceRecords;
     }
 
-    private Map<Athlete, List<AthleteCourseSummary>> downloadAthleteCourseSummaries(List<DifferentCourseCount> differentEventRecords) throws MalformedURLException
+    private void downloadAthleteCourseSummaries(List<DifferentCourseCount> differentEventRecords) throws MalformedURLException
     {
         System.out.println("* Calculate athlete summaries that need to be downloaded (1. Most event table) *");
         Set<Integer> athletesFromMostEventTable = differentEventRecords.stream().map(der -> der.athleteId).collect(Collectors.toSet());
@@ -229,7 +235,8 @@ public class Stats
         Set<Integer> athletesToDownload = new HashSet<>();
         athletesToDownload.addAll(athletesFromMostEventTable);
         athletesToDownload.addAll(athletesFromResults);
-        Set<Integer> athletesAlreadyDownloaded = acsDao.getAthleteCourseSummaries().stream().map(acs -> acs.athlete.athleteId).collect(Collectors.toSet());
+        Set<Integer> athletesAlreadyDownloaded = acsDao.getAthleteCourseSummaries().stream().map(acs -> (int)acs[0]).collect(Collectors.toSet());
+        System.out.println("Athletes already downloaded. " + athletesAlreadyDownloaded.size());
         athletesToDownload.removeAll(athletesAlreadyDownloaded);
         System.out.println("Athletes too download. " + athletesToDownload.size());
 
@@ -238,10 +245,26 @@ public class Stats
             Parser parser = new Parser.Builder()
                     .url(generateAthleteEventSummaryUrl(PARKRUN_CO_NZ, athlete_id))
                     .forEachAthleteCourseSummary(acsDao::writeAthleteCourseSummary)
-                    .build();
+                    .build(courseRepository);
             parser.parse();
         }
-        return acsDao.getAthleteCourseSummariesMap();
+
+        acsDao.getAthleteCourseSummariesMap().forEach(objects -> {
+
+            int athleteId = (int)objects[0];
+            List<AthleteCourseSummary> summaries = athleteIdToAthleteCourseSummaries.get(athleteId);
+            if(summaries == null)
+            {
+                summaries = new ArrayList<>();
+            }
+            Course course = courseRepository.getCourse((int) objects[1]);
+            Athlete athlete = athleteIdToAthlete.get(athleteId);
+            summaries.add(new AthleteCourseSummary(
+                    athlete,
+                    course,
+                    (int) objects[2]
+            ));
+        });
     }
 
     private Set<Integer> getAthletesFromDbWithMinimumPIndex(int minPIndex)

@@ -3,7 +3,9 @@ package dnt.parkrun.database;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.CountryEnum;
 import dnt.parkrun.datastructures.Course;
+import dnt.parkrun.datastructures.CourseRepository;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -19,6 +21,29 @@ public class CourseDao
     public CourseDao(DataSource dataSource)
     {
         jdbc = new NamedParameterJdbcTemplate(dataSource);
+    }
+
+    public CourseDao(DataSource dataSource, CourseRepository courseRepository)
+    {
+        jdbc = new NamedParameterJdbcTemplate(dataSource);
+        jdbc.query(
+                "select course_id, course_name, course_long_name, country_code, status " +
+                        "from course " +
+                        "order by course_name",
+                EmptySqlParameterSource.INSTANCE,
+                (rs, rowNum) ->
+                {
+                    CountryEnum countryEnum = CountryEnum.valueOf(rs.getInt("country_code"));
+                    Course course = new Course(
+                            rs.getInt("course_id"),
+                            rs.getString("course_name"),
+                            new Country(countryEnum, null),
+                            rs.getString("course_long_name"),
+                            Course.Status.fromDb(rs.getString("status"))
+                    );
+                    courseRepository.addCourse(course);
+                    return null;
+                });
     }
 
     public void insert(Course course)

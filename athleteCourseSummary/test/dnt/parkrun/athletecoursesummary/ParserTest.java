@@ -1,6 +1,7 @@
 package dnt.parkrun.athletecoursesummary;
 
 
+import dnt.parkrun.datastructures.CourseRepository;
 import org.junit.Test;
 
 import java.io.File;
@@ -15,6 +16,7 @@ public class ParserTest
     {
         AtomicInteger counter = new AtomicInteger(0);
 
+        CourseRepository courseRepository = new CourseRepository();
         URL resource = this.getClass().getResource("/example.athlete.course.summary.html");
         new dnt.parkrun.athletecoursesummary.Parser.Builder()
                 .file(new File(resource.getFile()))
@@ -23,7 +25,7 @@ public class ParserTest
                     counter.addAndGet(x.countOfRuns);
                     System.out.println(x);
                 })
-                .build()
+                .build(courseRepository)
                 .parse();
         System.out.println("Total:" + counter.get());
     }

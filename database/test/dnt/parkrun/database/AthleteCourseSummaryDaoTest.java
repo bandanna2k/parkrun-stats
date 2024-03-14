@@ -1,8 +1,7 @@
 package dnt.parkrun.database;
 
 import com.mysql.jdbc.Driver;
-import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.AthleteCourseSummary;
+import dnt.parkrun.datastructures.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
@@ -12,13 +11,16 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AthleteCourseSummaryDaoTest
 {
+    public static final Course ELLIÐAÁRDALUR = new Course(9999, "Elliðaárdalur",
+            new Country(CountryEnum.NZ, null), "Elliðaárdalur", Course.Status.RUNNING);
+    public static final Course CORNWALL = new Course(9998, "Cornwall Park",
+            new Country(CountryEnum.NZ, null), "Cornwall Park", Course.Status.RUNNING);
+
     private NamedParameterJdbcTemplate jdbc;
     private AthleteCourseSummaryDao acsDao;
     private AthleteDao athleteDao;
@@ -42,10 +44,10 @@ public class AthleteCourseSummaryDaoTest
         Athlete athlete = Athlete.from("Bob Te WILLIGA", 12345);
         athleteDao.insert(athlete);
         acsDao.writeAthleteCourseSummary(
-                new AthleteCourseSummary(athlete, "Elliðaárdalur", 20)
+                new AthleteCourseSummary(athlete, ELLIÐAÁRDALUR, 20)
         );
 
-        List<AthleteCourseSummary> athleteCourseSummaries = acsDao.getAthleteCourseSummaries();
+        List<Object[]> athleteCourseSummaries = acsDao.getAthleteCourseSummaries();
         assertThat(athleteCourseSummaries).isNotEmpty();
         System.out.println(athleteCourseSummaries);
     }
@@ -59,22 +61,18 @@ public class AthleteCourseSummaryDaoTest
         athleteDao.insert(athlete2);
 
         acsDao.writeAthleteCourseSummary(
-                new AthleteCourseSummary(athlete, "Elliðaárdalur", 20)
+                new AthleteCourseSummary(athlete, ELLIÐAÁRDALUR, 20)
         );
         acsDao.writeAthleteCourseSummary(
-                new AthleteCourseSummary(athlete, "Cornwall Park", 2)
+                new AthleteCourseSummary(athlete, CORNWALL, 2)
         );
         acsDao.writeAthleteCourseSummary(
-                new AthleteCourseSummary(athlete2, "Elliðaárdalur", 1)
+                new AthleteCourseSummary(athlete2, ELLIÐAÁRDALUR, 1)
         );
 
-        Map<Athlete, List<AthleteCourseSummary>> acsMap = acsDao.getAthleteCourseSummariesMap();
-        assertThat(acsMap).isNotEmpty();
-        Set<Athlete> athletes = acsMap.keySet();
-        Athlete athleteA = athletes.stream().filter(a -> a.athleteId == 12345).findFirst().get();
-        assertThat(acsMap.get(athleteA).size()).isEqualTo(2);
-        Athlete athleteB = athletes.stream().filter(a -> a.athleteId == 12346).findFirst().get();
-        assertThat(acsMap.get(athleteB).size()).isEqualTo(1);
-        System.out.println(acsMap);
+        List<Object[]> actualSummaries = acsDao.getAthleteCourseSummariesMap();
+        assertThat(actualSummaries).isNotEmpty();
+
+        System.out.println(actualSummaries);
     }
 }

@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
-import static dnt.parkrun.common.UrlGenerator.generateAthleteEventUrl;
 import static java.util.Optional.empty;
 
 @Deprecated // Wrong solution
@@ -75,11 +74,12 @@ public class AddAthleteEvents
             Parser parser = new Parser.Builder()
                     .url(generateAthleteEventSummaryUrl(PARKRUN_CO_NZ, athleteId))
                     .forEachAthleteCourseSummary(courseSummaries::add)
-                    .build();
+                    .build(courseRepository);
             parser.parse();
         }
 
-        System.out.println("* Processing results *");
+        System.out.println("* NOT Processing results *");
+        /*
         for (AthleteCourseSummary acs : courseSummaries)
         {
             Course course = courseRepository.getCourseFromLongName(acs.courseLongName);
@@ -101,6 +101,8 @@ public class AddAthleteEvents
                 parser.parse();
             }
         }
+
+         */
     }
 
     private void processAthleteCourseEvent(AthleteCourseEvent ace)

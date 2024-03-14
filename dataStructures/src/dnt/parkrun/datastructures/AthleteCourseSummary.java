@@ -4,18 +4,18 @@ import java.net.URL;
 
 public class AthleteCourseSummary
 {
-    public final String courseLongName;
+    public final Course course;
     public final int countOfRuns;
     public final Athlete athlete;
 
-    public AthleteCourseSummary(String athleteName, String courseLongName, int countOfRuns, URL athleteAtEventUrl)
+    public AthleteCourseSummary(String athleteName, Course course, int countOfRuns, URL athleteAtEventUrl)
     {
-        this(Athlete.fromAthleteAtCourseLink(athleteName, athleteAtEventUrl.toString()), courseLongName, countOfRuns);
+        this(Athlete.fromAthleteAtCourseLink(athleteName, athleteAtEventUrl.toString()), course, countOfRuns);
     }
 
-    public AthleteCourseSummary(Athlete athlete, String courseLongName, int countOfRuns)
+    public AthleteCourseSummary(Athlete athlete, Course course, int countOfRuns)
     {
-        this.courseLongName = courseLongName;
+        this.course = course;
         this.countOfRuns = countOfRuns;
         this.athlete = athlete;
     }
@@ -24,7 +24,7 @@ public class AthleteCourseSummary
     public String toString()
     {
         return "AthleteCourseSummary{" +
-                "courseLongName='" + courseLongName + '\'' +
+                "course=" + course +
                 ", countOfRuns=" + countOfRuns +
                 ", athlete=" + athlete +
                 '}';

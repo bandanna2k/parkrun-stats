@@ -7,6 +7,7 @@ import java.util.Map;
 public class CourseRepository
 {
     private final Map<Integer, Country> countryCodeToCountry = new HashMap<>();
+    private final Map<Integer, Course> courseIdToCourse = new HashMap<>();
     private final Map<String, Course> courseNameToCourse = new HashMap<>();
     private final Map<String, Course> courseLongNameToCourse = new HashMap<>();
 
@@ -22,6 +23,7 @@ public class CourseRepository
 
     public void addCourse(Course course)
     {
+        courseIdToCourse.put(course.courseId, course);
         courseNameToCourse.put(course.name, course);
         courseLongNameToCourse.put(course.longName, course);
     }
@@ -46,12 +48,19 @@ public class CourseRepository
         return courseNameToCourse.values();
     }
 
+    public Course getCourse(int courseId)
+    {
+        return courseIdToCourse.get(courseId);
+    }
+
     @Override
     public String toString()
     {
         return "CourseRepository{" +
                 "countryCodeToCountry=" + countryCodeToCountry +
+                ", courseIdToCourse=" + courseIdToCourse +
                 ", courseNameToCourse=" + courseNameToCourse +
+                ", courseLongNameToCourse=" + courseLongNameToCourse +
                 '}';
     }
 }
