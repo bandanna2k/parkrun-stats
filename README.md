@@ -11,8 +11,10 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 # TODO
 
 ## Major
- 
-- Replace course_name in ces and result with an id. Next - Add course_id to result
+
+- Replace course_name in ces with an id. Next - Add course_id to result
+
+- Replace course_name in result with an id. Next - Add course_id to result
 
 - Use date as key, rather than event_number for results (easier to delete stuff)
 
@@ -38,9 +40,13 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Most runs at a single event
 
-- Most runs at each course. Needs optimising, DONE. Needs CSS tidy up.
+- Most runs at each course. Needs CSS tidy up.
 
 - Combine CountryEnum and Country
+
+- Add missing parkruns
+
+- New JSON file
 
 # QUERIES
 

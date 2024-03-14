@@ -57,7 +57,7 @@ public class AthleteCourseSummaryDao
     {
         //        Map<Athlete, List<AthleteCourseSummary>> result = new TreeMap<>(Comparator.comparingInt(a -> a.athleteId));
         List<Object[]> results = new ArrayList<>();
-        String sql = "select * from athlete "  +
+        String sql = "select * from parkrun_stats.athlete "  +
                 " join " + tableName + " using (athlete_id)";
         jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
@@ -71,10 +71,11 @@ public class AthleteCourseSummaryDao
 //                            athlete,
 //                            rs.getString("course_long_name"),
 //                            rs.getInt("run_count")));
-            results.add(new Object[] {
-               rs.getInt("athlete_id"),
-               rs.getInt("course_id"),
-               rs.getInt("run_count")
+            results.add(new Object[]{
+                    rs.getString("name"),
+                    rs.getInt("athlete_id"),
+                    rs.getInt("course_id"),
+                    rs.getInt("run_count")
             });
             return null;
         });

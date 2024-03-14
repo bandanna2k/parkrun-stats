@@ -251,18 +251,19 @@ public class Stats
 
         acsDao.getAthleteCourseSummariesMap().forEach(objects -> {
 
-            int athleteId = (int)objects[0];
-            List<AthleteCourseSummary> summaries = athleteIdToAthleteCourseSummaries.get(athleteId);
+            Athlete athlete = Athlete.from((String)objects[0], (int) objects[1]);
+            List<AthleteCourseSummary> summaries = athleteIdToAthleteCourseSummaries.get(athlete.athleteId);
             if(summaries == null)
             {
+                athleteIdToAthlete.put(athlete.athleteId, athlete);
                 summaries = new ArrayList<>();
+                athleteIdToAthleteCourseSummaries.put(athlete.athleteId, summaries);
             }
-            Course course = courseRepository.getCourse((int) objects[1]);
-            Athlete athlete = athleteIdToAthlete.get(athleteId);
+            Course course = courseRepository.getCourse((int) objects[2]);
             summaries.add(new AthleteCourseSummary(
                     athlete,
                     course,
-                    (int) objects[2]
+                    (int) objects[3]
             ));
         });
     }
