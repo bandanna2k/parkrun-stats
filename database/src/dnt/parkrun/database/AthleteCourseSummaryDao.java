@@ -16,9 +16,9 @@ public class AthleteCourseSummaryDao
 
     final String tableName;
 
-    public AthleteCourseSummaryDao(DataSource dataSource, Date date)
+    public AthleteCourseSummaryDao(DataSource statsDataSource, Date date)
     {
-        jdbc = new NamedParameterJdbcTemplate(dataSource);
+        jdbc = new NamedParameterJdbcTemplate(statsDataSource);
         tableName = "athlete_course_summary_" + DateConverter.formatDateForDbTable(date);
 
         createTable();
@@ -75,7 +75,7 @@ public class AthleteCourseSummaryDao
     public List<AthleteCourseSummary> getAthleteCourseSummaries()
     {
         String sql = "select * from " + tableName +
-                " join athlete using (athlete_id)";
+                " join parkrun_stats.athlete using (athlete_id)";
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
                 new AthleteCourseSummary(
                         Athlete.from(
@@ -140,19 +140,5 @@ public class AthleteCourseSummaryDao
                     rs.getInt("max_run_count")
             );
         });
-    }
-
-    public Map<String, Integer> getCourseCount()
-    {
-        Map<String, Integer> courseToCount = new HashMap<>();
-        String sql =
-                "select course_name, max(event_number) as count\n" +
-                "from course_event_summary ces\n" +
-                "group by course_name";
-        jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> {
-            courseToCount.put(rs.getString("course_name"), rs.getInt("count"));
-            return null;
-        });
-        return courseToCount;
     }
 }

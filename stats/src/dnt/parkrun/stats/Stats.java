@@ -4,10 +4,7 @@ import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.*;
-import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.AthleteCourseSummary;
-import dnt.parkrun.datastructures.CountryEnum;
-import dnt.parkrun.datastructures.Course;
+import dnt.parkrun.datastructures.*;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import dnt.parkrun.datastructures.stats.RunsAtEvent;
 import dnt.parkrun.htmlwriter.*;
@@ -48,6 +45,7 @@ public class Stats
     private final AthleteCourseSummaryDao acsDao;
     private final CourseDao courseDao;
     private final Top10AtCourseDao top10Dao;
+    private final CourseEventSummaryDao courseEventSummaryDao;
 
     private Stats(DataSource dataSource,
                   DataSource statsDataSource,
@@ -58,10 +56,12 @@ public class Stats
         lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
 
         this.statsDao = new StatsDao(dataSource, this.date);
-        this.acsDao = new AthleteCourseSummaryDao(dataSource, this.date);
+        this.acsDao = new AthleteCourseSummaryDao(statsDataSource, this.date);
         this.top10Dao = new Top10AtCourseDao(statsDataSource, this.date);
         this.resultDao = new ResultDao(dataSource);
         this.courseDao = new CourseDao(dataSource);
+        CourseRepository courseRepository = new CourseRepository();
+        this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
     }
 
     public static Stats newInstance(Date date) throws SQLException
@@ -141,7 +141,7 @@ public class Stats
                 }
             }
 
-            Map<String, Integer> courseToCount = acsDao.getCourseCount();
+            Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
             try(Top10AtCoursesHtmlWriter ignored = new Top10AtCoursesHtmlWriter(writer.writer))
             {
                 for (Course course : courseDao.getCourses(CountryEnum.NZ))

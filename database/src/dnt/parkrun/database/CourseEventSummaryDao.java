@@ -10,17 +10,14 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class CourseEventSummaryDao
 {
     private final NamedParameterJdbcOperations jdbc;
     private final CourseRepository courseRepository;
 
-    public CourseEventSummaryDao(DataSource dataSource, CourseRepository courseRepository) throws SQLException
+    public CourseEventSummaryDao(DataSource dataSource, CourseRepository courseRepository)
     {
         this.jdbc = new NamedParameterJdbcTemplate(dataSource);
         this.courseRepository = courseRepository;
@@ -87,5 +84,19 @@ public class CourseEventSummaryDao
                         .addValue("eventNumber", eventNumber)
                         .addValue("date", date)
                         .addValue("finishers", finishers));
+    }
+
+    public Map<String, Integer> getCourseCount()
+    {
+        Map<String, Integer> courseToCount = new HashMap<>();
+        String sql =
+                "select course_name, max(event_number) as count\n" +
+                        "from course_event_summary ces\n" +
+                        "group by course_name";
+        jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> {
+            courseToCount.put(rs.getString("course_name"), rs.getInt("count"));
+            return null;
+        });
+        return courseToCount;
     }
 }

@@ -38,7 +38,7 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Most runs at a single event
 
-- Most runs at each course. Needs optimising. Needs CSS tidy up.
+- Most runs at each course. Needs optimising, DONE. Needs CSS tidy up.
 
 - Combine CountryEnum and Country
 
