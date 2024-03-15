@@ -23,6 +23,6 @@ public abstract class BaseDao
     }
     private static boolean test()
     {
-        return false;
+        return true;
     }
 }

@@ -12,9 +12,7 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Major
 
-- Replace course_name in ces with an id. Next - Add course_id to result
-
-- Replace course_name in result with an id. Next - Add course_id to result
+- Replace course_name in ces with an id.
 
 - Use date as key, rather than event_number for results (easier to delete stuff)
 
@@ -41,6 +39,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 - Most runs at each course. Needs CSS tidy up.
 
 - Add missing parkruns
+
+- Nice way to run DAO tests
 
 ## Ideas
 

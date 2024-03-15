@@ -25,7 +25,7 @@ public class CourseEventSummaryDao
 
     public List<CourseEventSummary> getCourseEventSummaries()
     {
-        String sql = "select course_name, event_number, date, finishers," +
+        String sql = "select course_id, event_number, date, finishers," +
                 "fma.name as first_male_name, first_male_athlete_id, " +
                 "ffa.name as first_female_name, first_female_athlete_id " +
                 "from course_event_summary " +
@@ -33,9 +33,9 @@ public class CourseEventSummaryDao
                 "left join athlete ffa on first_female_athlete_id = ffa.athlete_id ";
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
-            String courseName = rs.getString("course_name");
-            Course course = courseRepository.getCourseFromName(courseName);
-            assert course != null : "Could not find " + courseName;
+            int courseId = rs.getInt("course_id");
+            Course course = courseRepository.getCourse(courseId);
+            assert course != null : "Could not find " + courseId;
 
             int firstMaleAthleteId = rs.getInt("first_male_athlete_id");
             int firstFemaleAthleteId = rs.getInt("first_female_athlete_id");
@@ -57,12 +57,12 @@ public class CourseEventSummaryDao
     public void insert(CourseEventSummary courseEventSummary)
     {
         String sql = "insert into course_event_summary (" +
-                "course_name, event_number, date, finishers, first_male_athlete_id, first_female_athlete_id" +
+                "course_id, event_number, date, finishers, first_male_athlete_id, first_female_athlete_id" +
                 ") values ( " +
-                ":courseName, :eventNumber, :date, :finishers, :firstMaleAthleteId, :firstFemaleAthleteId" +
+                ":courseId, :eventNumber, :date, :finishers, :firstMaleAthleteId, :firstFemaleAthleteId" +
                 ")";
         jdbc.update(sql, new MapSqlParameterSource()
-                .addValue("courseName", courseEventSummary.course.name)
+                .addValue("courseId", courseEventSummary.course.courseId)
                 .addValue("eventNumber", courseEventSummary.eventNumber)
                 .addValue("date", courseEventSummary.date)
                 .addValue("finishers", courseEventSummary.finishers)

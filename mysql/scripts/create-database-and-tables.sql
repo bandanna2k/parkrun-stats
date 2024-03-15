@@ -57,13 +57,13 @@ result (
 CREATE TABLE
 IF NOT EXISTS
 course_event_summary (
-    course_name             VARCHAR(255)        NOT NULL,
+    course_id               INT                 NOT NULL,
     event_number            INT                 NOT NULL,
     date                    DATE                NOT NULL,
     finishers               INT                 NOT NULL,
     first_male_athlete_id   BIGINT              NOT NULL,
     first_female_athlete_id BIGINT              NOT NULL,
 
-    UNIQUE KEY (course_name, event_number)
+    PRIMARY KEY (course_id, event_number)
 
 ) DEFAULT CHARSET=utf8mb4;
