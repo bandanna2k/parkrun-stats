@@ -1,7 +1,6 @@
 package dnt.parkrun.database;
 
 import com.mysql.jdbc.Driver;
-import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +10,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 
-import static dnt.parkrun.datastructures.CountryEnum.NZ;
+import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.RUNNING;
 
 public class CourseDaoTest
@@ -33,7 +32,7 @@ public class CourseDaoTest
     @Test
     public void shouldReturnUtf8Result()
     {
-        courseDao.insert(new Course(9999, "otakiriver", new Country(NZ, null), "\u014ctaki River parkrun", RUNNING));
+        courseDao.insert(new Course(9999, "otakiriver", NZ, "\u014ctaki River parkrun", RUNNING));
 
         Course course = courseDao.getCourse("otakiriver");
         System.out.println(course);

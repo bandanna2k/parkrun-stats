@@ -1,32 +1,66 @@
 package dnt.parkrun.datastructures;
 
-public class Country
+import java.util.HashMap;
+import java.util.Map;
+
+public enum Country
 {
-    public final CountryEnum countryEnum;
-    public final String url;
+    UNKNOWN(0, "??", null),
 
-    public Country(CountryEnum countryEnum, String url)
+    AUSTRALIA(3, "AU", "parkrun.com.au"),
+    AUSTRIA(4, "AS", ""),
+    CANADA(14, "CA", ""),
+    DENMARK(23, "DN", ""),
+    FINLAND(30, "FI", ""),
+    FRANCE(31, "FR", ""),
+    GERMANY(32, "DE", ""),
+    IRELAND(42, "EI", ""),
+    ITALY(44, "IT", ""),
+    JAPAN(46, "JP", ""),
+    MALAYSIA(57, "MA", ""),
+    NETHERLANDS(64, "NE", ""),
+    NZ(65, "NZ", "parkrun.co.nz"),
+    NORWAY(67, "NO", ""),
+    POLAND(74, "PO", ""),
+    SINGAPORE(82, "SG", ""),
+    SOUTH_AFRICA(85, "SA", ""),
+    SWEDEN(88, "SW", ""),
+    UK(97, "UK", "parkrun.org.uk"),
+    USA(98, "US", "parkrun.us");
+
+    private static final Map<Integer, Country> countryCodeToEnum = new HashMap<>()
     {
-        this.countryEnum = countryEnum;
-        this.url = url;
+        {
+            for (Country value : Country.values())
+            {
+                put(value.countryCode, value);
+            }
+        }
+    };
+
+    public final int countryCode;
+    public final String countryCodeForDb;
+    public final String baseUrl;
+
+    Country(int countryCode, String countryCodeForDb, String baseUrl)
+    {
+        this.countryCode = countryCode;
+        this.countryCodeForDb = countryCodeForDb;
+        this.baseUrl = baseUrl;
     }
 
-    @Override
-    public String toString()
+    public static Country valueOf(int countryCode)
     {
-        return "Country{" +
-                "countryEnum=" + countryEnum +
-                ", url='" + url + '\'' +
-                '}';
-    }
-
-    public Object getCountryDbCode()
-    {
-        return countryEnum.getCountryDbCode();
+        return countryCodeToEnum.get(countryCode);
     }
 
     public int getCountryCode()
     {
-        return countryEnum.getCountryCode();
+        return countryCode;
+    }
+
+    public String getCountryDbCode()
+    {
+        return countryCodeForDb;
     }
 }

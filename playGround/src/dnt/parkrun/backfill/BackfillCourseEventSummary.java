@@ -5,7 +5,6 @@ import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
 import dnt.parkrun.database.CourseEventSummaryDao;
-import dnt.parkrun.datastructures.CountryEnum;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -14,6 +13,8 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+
+import static dnt.parkrun.datastructures.Country.NZ;
 
 @Deprecated
 public class BackfillCourseEventSummary
@@ -30,7 +31,7 @@ public class BackfillCourseEventSummary
         dnt.parkrun.courses.reader.EventsJsonFileReader reader = new EventsJsonFileReader.Builder(() -> inputStream)
                 .forEachCourse(course ->
                 {
-                    if(course.country.countryEnum == CountryEnum.NZ)
+                    if(course.country == NZ)
                     {
                         courseRepository.addCourse(course);
                     }
@@ -41,7 +42,7 @@ public class BackfillCourseEventSummary
 
         CourseEventSummaryDao courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
 
-        for (Course course : courseRepository.getCourses())
+        for (Course course : courseRepository.getCourses(NZ))
         {
             System.out.println("* Collecting summary for " + course + " *");
             Parser parser = new Parser.Builder()

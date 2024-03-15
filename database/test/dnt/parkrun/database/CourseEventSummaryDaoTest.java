@@ -18,8 +18,6 @@ import java.util.Optional;
 
 public class CourseEventSummaryDaoTest
 {
-    private static final Country NZ = new Country(CountryEnum.NZ, null);
-
     private CourseEventSummaryDao dao;
     private NamedParameterJdbcTemplate jdbc;
     private AthleteDao athleteDao;
@@ -28,8 +26,7 @@ public class CourseEventSummaryDaoTest
     public void setUp() throws Exception
     {
         CourseRepository courseRepository = new CourseRepository();
-        courseRepository.addCountry(NZ);
-        courseRepository.addCourse(new Course(9999, "cornwall", NZ, null, Status.RUNNING));
+        courseRepository.addCourse(new Course(9999, "cornwall", Country.NZ, null, Status.RUNNING));
 
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats_test", "dao", "daoFractaldao");
@@ -52,7 +49,7 @@ public class CourseEventSummaryDaoTest
         athleteDao.insert(firstWoman);
         athleteDao.insert(firstMan);
 
-        Course course = new Course(9999, "cornwall", NZ, null, Status.RUNNING);
+        Course course = new Course(9999, "cornwall", Country.NZ, null, Status.RUNNING);
         CourseEventSummary ces = new CourseEventSummary(
                 course, 1, Date.from(Instant.now()), 1234, Optional.of(firstMan), Optional.of(firstWoman));
         dao.insert(ces);

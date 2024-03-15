@@ -51,7 +51,6 @@ public class AddAthleteEvents
             System.out.println("* Adding courses (Running) *");
             InputStream inputStream = Course.class.getResourceAsStream("/events.json");
             EventsJsonFileReader reader = new EventsJsonFileReader.Builder(() -> inputStream)
-                    .forEachCountry(courseRepository::addCountry)
                     .forEachCourse(courseRepository::addCourse)
                     .statusSupplier(() -> Course.Status.RUNNING)
                     .build();

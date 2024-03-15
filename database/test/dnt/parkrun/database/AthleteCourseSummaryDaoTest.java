@@ -1,7 +1,9 @@
 package dnt.parkrun.database;
 
 import com.mysql.jdbc.Driver;
-import dnt.parkrun.datastructures.*;
+import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.AthleteCourseSummary;
+import dnt.parkrun.datastructures.Course;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
@@ -12,14 +14,15 @@ import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
 
+import static dnt.parkrun.datastructures.Country.UNKNOWN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AthleteCourseSummaryDaoTest
 {
-    public static final Course ELLIÐAÁRDALUR = new Course(9999, "Elliðaárdalur",
-            new Country(CountryEnum.NZ, null), "Elliðaárdalur", Course.Status.RUNNING);
-    public static final Course CORNWALL = new Course(9998, "Cornwall Park",
-            new Country(CountryEnum.NZ, null), "Cornwall Park", Course.Status.RUNNING);
+    public static final Course ELLIÐAÁRDALUR =
+            new Course(9999, "Elliðaárdalur", UNKNOWN, "Elliðaárdalur", Course.Status.RUNNING);
+    public static final Course CORNWALL =
+            new Course(9998, "Cornwall Park", UNKNOWN, "Cornwall Park", Course.Status.RUNNING);
 
     private NamedParameterJdbcTemplate jdbc;
     private AthleteCourseSummaryDao acsDao;

@@ -3,7 +3,6 @@ package dnt.parkrun.database;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Country;
-import dnt.parkrun.datastructures.CountryEnum;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import dnt.parkrun.datastructures.stats.RunsAtEvent;
@@ -15,7 +14,7 @@ import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
 
-import static dnt.parkrun.datastructures.CountryEnum.NZ;
+import static dnt.parkrun.datastructures.Country.NZ;
 
 public class StatsDao
 {
@@ -120,11 +119,10 @@ public class StatsDao
         return jdbc.query(sql, new MapSqlParameterSource("courseName", courseName), (rs, rowNum) ->
         {
             Athlete athlete = Athlete.from(rs.getString("name"), rs.getInt("athlete_id"));
-            CountryEnum countryEnum = CountryEnum.valueOf(rs.getInt("country_code"));
             Course course = new Course(
                     rs.getInt("course_id"),
                     rs.getString("course_name"),
-                    new Country(countryEnum, null),
+                    Country.valueOf(rs.getInt("country_code")),
                     rs.getString("course_long_name"),
                     null);
             return new RunsAtEvent(

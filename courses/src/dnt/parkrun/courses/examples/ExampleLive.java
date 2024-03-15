@@ -13,18 +13,17 @@ public class ExampleLive
         AtomicInteger counter = new AtomicInteger(0);
         EventsJsonFileReader reader = new EventsJsonFileReader.Builder(() ->
         {
-            URL oracle = null;
+            URL url;
             try
             {
-                oracle = new URL("https://images.parkrun.com/events.json");
-                return oracle.openStream();
+                url = new URL("https://images.parkrun.com/events.json");
+                return url.openStream();
             }
             catch (IOException e)
             {
                 throw new RuntimeException(e);
             }
         })
-                .forEachCountry(country -> System.out.println("Country:" + country))
                 .forEachCourse(event ->
                 {
                     System.out.println("Event:" + event);

@@ -151,7 +151,7 @@ public class Stats
             Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
             try(Top10AtCoursesHtmlWriter ignored = new Top10AtCoursesHtmlWriter(writer.writer))
             {
-                for (Course course : courseDao.getCourses(CountryEnum.NZ))
+                for (Course course : courseDao.getCourses(Country.NZ))
                 {
                     try(Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, course.longName))
                     {

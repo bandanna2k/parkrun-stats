@@ -1,7 +1,6 @@
 package dnt.parkrun.database;
 
 import dnt.parkrun.datastructures.Country;
-import dnt.parkrun.datastructures.CountryEnum;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
 import org.springframework.dao.DuplicateKeyException;
@@ -33,11 +32,11 @@ public class CourseDao
                 EmptySqlParameterSource.INSTANCE,
                 (rs, rowNum) ->
                 {
-                    CountryEnum countryEnum = CountryEnum.valueOf(rs.getInt("country_code"));
+                    Country country = Country.valueOf(rs.getInt("country_code"));
                     Course course = new Course(
                             rs.getInt("course_id"),
                             rs.getString("course_name"),
-                            new Country(countryEnum, null),
+                            country,
                             rs.getString("course_long_name"),
                             Course.Status.fromDb(rs.getString("status"))
                     );
@@ -83,19 +82,19 @@ public class CourseDao
         ));
     }
 
-    public List<Course> getCourses(CountryEnum countryEnum)
+    public List<Course> getCourses(Country country)
     {
         return jdbc.query(
                 "select course_id, course_name, course_long_name, country_code, status " +
                     "from course " +
                     "where country_code = :countryCode " +
                     "order by course_name",
-                new MapSqlParameterSource("countryCode", countryEnum.getCountryCode()),
+                new MapSqlParameterSource("countryCode", country.getCountryCode()),
                 (rs, rowNum) ->
                         new Course(
                                 rs.getInt("course_id"),
                                 rs.getString("course_name"),
-                                new Country(countryEnum, null),
+                                country,
                                 rs.getString("course_long_name"),
                                 Course.Status.fromDb(rs.getString("status"))
                         ));

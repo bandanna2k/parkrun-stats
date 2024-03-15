@@ -3,7 +3,6 @@ package dnt.parkrun.database;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Country;
-import dnt.parkrun.datastructures.CountryEnum;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.stats.RunsAtEvent;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
@@ -72,7 +71,7 @@ public class Top10AtCourseDao
             Course course = new Course(
                     rs.getInt("course_id"),
                     rs.getString("course_name"),
-                    new Country(CountryEnum.valueOf(rs.getInt("country_code")), null),
+                    Country.valueOf(rs.getInt("country_code")),
                     rs.getString("course_long_name"),
                     null);
             return new RunsAtEvent(athlete, course, rs.getInt("run_count"));

@@ -7,7 +7,10 @@ import dnt.parkrun.database.AthleteDao;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.CourseEventSummaryDao;
 import dnt.parkrun.database.ResultDao;
-import dnt.parkrun.datastructures.*;
+import dnt.parkrun.datastructures.Country;
+import dnt.parkrun.datastructures.Course;
+import dnt.parkrun.datastructures.CourseEventSummary;
+import dnt.parkrun.datastructures.CourseRepository;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
@@ -20,6 +23,7 @@ import java.util.List;
 
 import static dnt.parkrun.common.UrlGenerator.generateCourseEventSummaryUrl;
 import static dnt.parkrun.common.UrlGenerator.generateCourseEventUrl;
+import static dnt.parkrun.datastructures.Country.NZ;
 
 public class MostEvents
 {
@@ -59,8 +63,8 @@ public class MostEvents
 //        addCourses("events.missing.json", Course.Status.STOPPED);
 
         System.out.println("* Filter courses *");
-        Arrays.stream(CountryEnum.values())
-                .filter(e -> e != CountryEnum.NZ)
+        Arrays.stream(Country.values())
+                .filter(e -> e != NZ)
                 .forEach(e -> courseRepository.filterByCountryCode(e.getCountryCode()));
 
         List<CourseEventSummary> courseEventSummariesToGet = new ArrayList<>();
@@ -89,14 +93,13 @@ public class MostEvents
 
             System.out.printf("* Processing %s *\n", ces);
 
-            Country courseCountry = courseRepository.getCountry(ces.course.country.countryEnum.getCountryCode());
             while(true)
             {
                 try
                 {
                     dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder()
                             .courseName(ces.course.name)
-                            .url(generateCourseEventUrl(courseCountry.url, ces.course.name, ces.eventNumber))
+                            .url(generateCourseEventUrl(ces.course.country.baseUrl, ces.course.name, ces.eventNumber))
                             .forEachAthlete(athleteDao::insert)
                             .forEachResult(resultDao::insert)
                             .build();
@@ -125,7 +128,6 @@ public class MostEvents
     {
         InputStream inputStream = Course.class.getResourceAsStream("/" + filename);
         EventsJsonFileReader reader = new EventsJsonFileReader.Builder(() -> inputStream)
-                .forEachCountry(courseRepository::addCountry)
                 .forEachCourse(course ->
                 {
                     courseDao.insert(course);
@@ -139,14 +141,13 @@ public class MostEvents
     private List<CourseEventSummary> getCourseEventSummariesFromWeb() throws IOException
     {
         List<CourseEventSummary> results = new ArrayList<>();
-        for (Course course : courseRepository.getCourses())
+        for (Course course : courseRepository.getCourses(NZ))
         {
             System.out.printf("* Processing %s *\n", course);
 
-            Country courseCountry = courseRepository.getCountry(course.country.getCountryCode());
             Parser courseEventSummaryParser = new Parser.Builder()
                     .course(course)
-                    .url(generateCourseEventSummaryUrl(courseCountry.url, course.name))
+                    .url(generateCourseEventSummaryUrl(course.country.baseUrl, course.name))
                     .forEachCourseEvent(results::add)
                     .build();
             courseEventSummaryParser.parse();

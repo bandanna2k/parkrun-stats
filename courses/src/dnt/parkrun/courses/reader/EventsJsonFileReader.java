@@ -4,13 +4,10 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import dnt.parkrun.datastructures.Country;
-import dnt.parkrun.datastructures.CountryEnum;
 import dnt.parkrun.datastructures.Course;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -18,19 +15,15 @@ public class EventsJsonFileReader
 {
     private final JsonFactory jsonFactory = new JsonFactory();
     private final Supplier<InputStream> inputStreamSupplier;
-    private final Consumer<Country> countryConsumer;
     private final Consumer<Course> eventConsumer;
     private final Supplier<Course.Status> statusSupplier;
-    private final Map<Integer, Country> countryCodeToCountry = new HashMap<>();
 
     private EventsJsonFileReader(
             Supplier<InputStream> inputStreamSupplier,
-            Consumer<Country> countryConsumer,
             Consumer<Course> eventConsumer,
             Supplier<Course.Status> statusSupplier)
     {
         this.inputStreamSupplier = inputStreamSupplier;
-        this.countryConsumer = countryConsumer;
         this.eventConsumer = eventConsumer;
         this.statusSupplier = statusSupplier;
     }
@@ -136,7 +129,7 @@ public class EventsJsonFileReader
             {
                 jsonParser.nextToken();
                 int countryCode = jsonParser.getIntValue();
-                builder.country(countryCodeToCountry.get(countryCode));
+                builder.country(null);
                 builder.status(statusSupplier.get());
                 eventConsumer.accept(builder.build());
             }
@@ -151,13 +144,13 @@ public class EventsJsonFileReader
             if (isNumeric(country))
             {
                 int countryId = Integer.parseInt(country);
-                CountryEnum countryCode = CountryEnum.valueOf(countryId);
+                Country countryCode = Country.valueOf(countryId);
                 parseCountryObject(jsonParser, countryCode);
             }
         }
     }
 
-    private void parseCountryObject(JsonParser jsonParser, CountryEnum countryCode) throws IOException
+    private void parseCountryObject(JsonParser jsonParser, Country countryCode) throws IOException
     {
         while (jsonParser.nextToken() != JsonToken.END_OBJECT)
         {
@@ -166,9 +159,10 @@ public class EventsJsonFileReader
             {
                 jsonParser.nextToken();
                 String url = jsonParser.getText();
-                Country country = new Country(countryCode, url);
-                countryCodeToCountry.put(country.countryEnum.getCountryCode(), country);
-                countryConsumer.accept(country);
+//
+//                Country country = new Country(countryCode, url);
+//                countryCodeToCountry.put(country.countryEnum.getCountryCode(), country);
+//                countryConsumer.accept(country);
             }
 
             if ("bounds".equals(fieldname))
@@ -213,7 +207,6 @@ public class EventsJsonFileReader
     public static class Builder
     {
         private final Supplier<InputStream> inputStreamSupplier;
-        private Consumer<Country> countryConsumer = c -> {};
         private Consumer<Course> eventConsumer = e -> {};
         private Supplier<Course.Status> statusSupplier = () -> Course.Status.RUNNING;
 
@@ -226,15 +219,8 @@ public class EventsJsonFileReader
         {
             return new EventsJsonFileReader(
                     inputStreamSupplier,
-                    countryConsumer,
                     eventConsumer,
                     statusSupplier);
-        }
-
-        public Builder forEachCountry(Consumer<Country> countryConsumer)
-        {
-            this.countryConsumer = countryConsumer;
-            return this;
         }
 
         public Builder forEachCourse(Consumer<Course> eventConsumer)

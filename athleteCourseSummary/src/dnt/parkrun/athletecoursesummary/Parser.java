@@ -67,7 +67,7 @@ public class Parser
                 if(course == null)
                 {
                     courseNotFoundConsumer.accept(courseLongName);
-                    course = new Course(Integer.MIN_VALUE, courseLongName, new Country(CountryEnum.UNKNOWN, null), courseLongName, Course.Status.STOPPED);
+                    course = new Course(Integer.MIN_VALUE, courseLongName, Country.UNKNOWN, courseLongName, Course.Status.STOPPED);
                 }
                 Athlete athlete = Athlete.from(name, athleteId);
                 int countOfRuns = Integer.parseInt(countNode.toString());

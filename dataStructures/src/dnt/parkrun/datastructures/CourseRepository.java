@@ -3,23 +3,13 @@ package dnt.parkrun.datastructures;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class CourseRepository
 {
-    private final Map<Integer, Country> countryCodeToCountry = new HashMap<>();
     private final Map<Integer, Course> courseIdToCourse = new HashMap<>();
     private final Map<String, Course> courseNameToCourse = new HashMap<>();
     private final Map<String, Course> courseLongNameToCourse = new HashMap<>();
-
-    public void addCountry(Country country)
-    {
-        countryCodeToCountry.put(country.countryEnum.getCountryCode(), country);
-    }
-
-    public Country getCountry(int countryCode)
-    {
-        return countryCodeToCountry.get(countryCode);
-    }
 
     public void addCourse(Course course)
     {
@@ -40,12 +30,12 @@ public class CourseRepository
 
     public void filterByCountryCode(int countryCode)
     {
-        courseNameToCourse.entrySet().removeIf(entry -> entry.getValue().country.countryEnum.getCountryCode() == countryCode);
+        courseNameToCourse.entrySet().removeIf(entry -> entry.getValue().country.countryCode == countryCode);
     }
 
-    public Collection<Course> getCourses()
+    public Collection<Course> getCourses(Country country)
     {
-        return courseNameToCourse.values();
+        return courseNameToCourse.values().stream().filter(c -> c.country == country).collect(Collectors.toList());
     }
 
     public Course getCourse(int courseId)
@@ -57,8 +47,7 @@ public class CourseRepository
     public String toString()
     {
         return "CourseRepository{" +
-                "countryCodeToCountry=" + countryCodeToCountry +
-                ", courseIdToCourse=" + courseIdToCourse +
+                "courseIdToCourse=" + courseIdToCourse +
                 ", courseNameToCourse=" + courseNameToCourse +
                 ", courseLongNameToCourse=" + courseLongNameToCourse +
                 '}';
