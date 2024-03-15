@@ -39,10 +39,10 @@ public class MostEvents
     private MostEvents(DataSource dataSource) throws SQLException
     {
         this.courseRepository = new CourseRepository();
+        this.courseDao = new CourseDao(dataSource, courseRepository);
         this.athleteDao = new AthleteDao(dataSource);
         this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
         this.resultDao = new ResultDao(dataSource);
-        this.courseDao = new CourseDao(dataSource);
     }
 
     public static MostEvents newInstance() throws SQLException
@@ -54,9 +54,9 @@ public class MostEvents
 
     public void collectMostEventRecords() throws IOException
     {
-        System.out.println("* Adding courses *");
-        addCourses("events.json", Course.Status.RUNNING);
-        addCourses("events.missing.json", Course.Status.STOPPED);
+//        System.out.println("* Adding courses *");
+//        addCourses("events.json", Course.Status.RUNNING);
+//        addCourses("events.missing.json", Course.Status.STOPPED);
 
         System.out.println("* Filter courses *");
         Arrays.stream(CountryEnum.values())

@@ -15,6 +15,8 @@ import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
 
+import static dnt.parkrun.datastructures.CountryEnum.NZ;
+
 public class StatsDao
 {
     private static final String MIN_DIFFERENT_REGION_COURSE_COUNT = "20";
@@ -38,11 +40,11 @@ public class StatsDao
                         "sub1.count as different_region_course_count, sub2.count as total_region_runs, " +
                         "0 as different_course_count, 0 as total_runs, " +
                         "0 as p_index " +
-                        "from athlete a " +
+                        "from parkrun_stats.athlete a " +
                         "join   " +
                         "( " +
                         "    select athlete_id, count(course_name) as count " +
-                        "    from (select distinct athlete_id, course_name from result) as sub1a " +
+                        "    from (select distinct athlete_id, course_name from parkrun_stats.result) as sub1a " +
                         "    group by athlete_id " +
                         "    having count >= " + MIN_DIFFERENT_REGION_COURSE_COUNT +
                         "    order by count desc, athlete_id asc  " +
@@ -50,7 +52,7 @@ public class StatsDao
                         "join " +
                         "( " +
                         "    select athlete_id, count(concat) as count " +
-                        "    from (select athlete_id, concat(athlete_id, course_name, event_number, '-', position) as concat from result) as sub2a " +
+                        "    from (select athlete_id, concat(athlete_id, course_name, event_number, '-', position) as concat from parkrun_stats.result) as sub2a " +
                         "    group by athlete_id " +
                         "    order by count desc, athlete_id asc  " +
                         ") as sub2 on sub2.athlete_id = a.athlete_id " +
@@ -181,36 +183,37 @@ public class StatsDao
     {
         String sql =
                 "create table if not exists " + attendanceRecordTableName + " as " +
-                "select course_long_name, c.course_name, " +
+                "select course_long_name, c.course_name, c.country_code, " +
                         "            max as record_event_finishers, ces.date as record_event_date, ces.event_number as record_event_number, " +
                         "            sub3.recent_event_finishers, sub3.recent_event_date, sub3.recent_event_number " +
-                        "from course c " +
+                        "from parkrun_stats.course c " +
                         "left join " +
                         "(" +
                         "    select course_name, max(count) as max" +
                         "    from" +
                         "    (" +
                         "        select course_name, event_number, count(position) as count" +
-                        "        from result" +
+                        "        from parkrun_stats.result" +
                         "        group by course_name, event_number" +
                         "    ) as sub1" +
                         "    group by course_name" +
                         "    order by course_name asc" +
                         ") as sub2 on c.course_name = sub2.course_name " +
-                        "left join course_event_summary ces " +
+                        "left join parkrun_stats.course_event_summary ces " +
                         "on c.course_name = ces.course_name " +
                         "and ces.finishers = sub2.max " +
                         "left join " +
                         "( " +
                         "    select ces.course_name, ces.event_number as recent_event_number, finishers as recent_event_finishers, recent_event_date " +
-                        "    from course_event_summary ces " +
+                        "    from parkrun_stats.course_event_summary ces " +
                         "    join " +
                         "    ( " +
                         "        select course_name, max(date) as recent_event_date " +
-                        "        from course_event_summary " +
+                        "        from parkrun_stats.course_event_summary " +
                         "        group by course_name " +
                         "    ) as sub4 on ces.course_name = sub4.course_name and ces.date = sub4.recent_event_date " +
-                        ") as sub3 on c.course_name = sub3.course_name;";
+                        ") as sub3 on c.course_name = sub3.course_name " +
+                        "where c.country_code = " + NZ.getCountryCode();
 
         jdbc.update(sql, EmptySqlParameterSource.INSTANCE);
     }

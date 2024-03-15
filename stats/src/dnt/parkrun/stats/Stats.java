@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
 import static dnt.parkrun.database.StatsDao.DifferentCourseCount;
 import static dnt.parkrun.stats.PIndex.pIndex;
+import static java.util.Collections.emptyList;
 
 public class Stats
 {
@@ -58,7 +59,7 @@ public class Stats
         lastWeek = new Date();
         lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
 
-        this.statsDao = new StatsDao(dataSource, this.date);
+        this.statsDao = new StatsDao(statsDataSource, this.date);
         this.acsDao = new AthleteCourseSummaryDao(statsDataSource, this.date);
         this.top10Dao = new Top10AtCourseDao(statsDataSource, this.date);
         this.resultDao = new ResultDao(dataSource);
@@ -85,7 +86,7 @@ public class Stats
         List<DifferentCourseCount> differentEventRecords = statsDao.getDifferentCourseCount(date);
 
         System.out.println("* Get most events for last week  *");
-        List<DifferentCourseCount> differentEventRecordsFromLastWeek = statsDao.getDifferentCourseCount(lastWeek);
+        List<DifferentCourseCount> differentEventRecordsFromLastWeek = getDifferentCourseCountForLastWeek();
 
         System.out.println("* Calculate most event position deltas *");
         calculatePositionDeltas(differentEventRecords, differentEventRecordsFromLastWeek);
@@ -187,6 +188,19 @@ public class Stats
         }
     }
 
+    private List<DifferentCourseCount> getDifferentCourseCountForLastWeek()
+    {
+        try
+        {
+            return statsDao.getDifferentCourseCount(lastWeek);
+        }
+        catch (Exception ex)
+        {
+            System.out.println("WARNING No different course count for last week");
+        }
+        return emptyList();
+    }
+
     private void writeAttendanceRecords(HtmlWriter writer) throws XMLStreamException
     {
         // Read attendance records from, and write html table
@@ -209,9 +223,22 @@ public class Stats
         attendanceRecords.forEach(System.out::println);
 
         System.out.println("* Calculate attendance deltas *");
-        List<AttendanceRecord> attendanceRecordsFromLastWeek = statsDao.getAttendanceRecords(lastWeek);
+        List<AttendanceRecord> attendanceRecordsFromLastWeek = getAttendanceRecordsForLastWeek();
         calculateAttendanceDeltas(attendanceRecords, attendanceRecordsFromLastWeek);
         return attendanceRecords;
+    }
+
+    private List<AttendanceRecord> getAttendanceRecordsForLastWeek()
+    {
+        try
+        {
+            return statsDao.getAttendanceRecords(lastWeek);
+        }
+        catch (Exception ex)
+        {
+            System.out.println("WARNING No attendance records for last week.");
+        }
+        return emptyList();
     }
 
     private void downloadAthleteCourseSummaries(List<DifferentCourseCount> differentEventRecords) throws MalformedURLException
