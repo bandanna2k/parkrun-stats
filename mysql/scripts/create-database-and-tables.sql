@@ -42,13 +42,13 @@ athlete (
 CREATE TABLE
 IF NOT EXISTS
 result (
-    course_name     VARCHAR(255)        NOT NULL,
+    course_id       INT                 NOT NULL,
     event_number    INT                 NOT NULL,
     position        INT                 NOT NULL,
     athlete_id      BIGINT              NOT NULL,
     time_seconds    INT                 NOT NULL,
 
-    UNIQUE KEY (course_name, event_number, position)
+    PRIMARY KEY (course_id, event_number, position)
 
 ) DEFAULT CHARSET=utf8mb4;
 

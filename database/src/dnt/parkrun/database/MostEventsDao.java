@@ -1,29 +1,25 @@
 package dnt.parkrun.database;
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
 
-public class MostEventsDao
+public class MostEventsDao extends BaseDao
 {
     private static final int MIN_DIFFERENT_EVENTS = 20;
 
-    private final NamedParameterJdbcOperations jdbc;
-
     public MostEventsDao(DataSource dataSource) throws SQLException
     {
-        jdbc = new NamedParameterJdbcTemplate(dataSource);
+        super(dataSource);
     }
 
     public List<Record> getMostEventsForRegion()
     {
-        String sql = "select name, athlete_id, count(course_name) as count " +
-                "from (select distinct athlete_id, course_name from result) as sub1 " +
-                "join athlete using (athlete_id) " +
+        String sql = "select name, athlete_id, count(course_id) as count " +
+                "from (select distinct athlete_id, course_id from " + resultTable() + ") as sub1 " +
+                "join " + athleteTable() + " using (athlete_id) " +
                 "group by athlete_id " +
                 "having count >= :minDifferentEvents " +
                 "order by count desc, athlete_id asc";

@@ -29,7 +29,7 @@ public class ResultDao
         List<Result> query = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             return new Result(
-                    rs.getString("course_name"),
+                    rs.getInt("course_id"),
                     rs.getInt("event_number"),
                     rs.getInt("position"),
                     Athlete.from(
@@ -45,13 +45,13 @@ public class ResultDao
     public void insert(Result result)
     {
         String sql = "insert into result (" +
-                "athlete_id, course_name, event_number, position, time_seconds" +
+                "athlete_id, course_id, event_number, position, time_seconds" +
                 ") values ( " +
-                ":athleteId, :courseName, :eventNumber, :position, :time_seconds" +
+                ":athleteId, :courseId, :eventNumber, :position, :time_seconds" +
                 ")";
         jdbc.update(sql, new MapSqlParameterSource()
                 .addValue("athleteId", result.athlete.athleteId)
-                .addValue("courseName", result.courseName)
+                .addValue("courseId", result.courseId)
                 .addValue("eventNumber", result.eventNumber)
                 .addValue("position", result.position)
                 .addValue("time_seconds", result.time.getTotalSeconds())
@@ -65,7 +65,7 @@ public class ResultDao
         jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             Result result = new Result(
-                    rs.getString("course_name"),
+                    rs.getInt("course_id"),
                     rs.getInt("event_number"),
                     rs.getInt("position"),
                     Athlete.from(

@@ -2,15 +2,15 @@ package dnt.parkrun.datastructures;
 
 public class Result
 {
-    public final String courseName;
+    public final int courseId;
     public final int eventNumber;
     public final int position;
     public final Athlete athlete;
     public final Time time;
 
-    public Result(String courseName, int eventNumber, int position, Athlete athlete, Time time)
+    public Result(int courseId, int eventNumber, int position, Athlete athlete, Time time)
     {
-        this.courseName = courseName;
+        this.courseId = courseId;
         this.eventNumber = eventNumber;
         this.position = position;
         this.athlete = athlete;
@@ -21,7 +21,7 @@ public class Result
     public String toString()
     {
         return "Result{" +
-                "courseName='" + courseName + '\'' +
+                "courseId=" + courseId +
                 ", eventNumber=" + eventNumber +
                 ", position=" + position +
                 ", athlete=" + athlete +

@@ -8,7 +8,6 @@ import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.stats.RunsAtEvent;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -16,17 +15,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class AthleteCourseSummaryDao
+public class AthleteCourseSummaryDao extends BaseDao
 {
-    private final NamedParameterJdbcTemplate jdbc;
-
     final String tableName;
 
     public AthleteCourseSummaryDao(DataSource statsDataSource, Date date)
     {
-        jdbc = new NamedParameterJdbcTemplate(statsDataSource);
+        super(statsDataSource);
         tableName = "athlete_course_summary_" + DateConverter.formatDateForDbTable(date);
-
         createTable();
     }
 
@@ -58,22 +54,11 @@ public class AthleteCourseSummaryDao
 
     public List<Object[]> getAthleteCourseSummariesMap()
     {
-        //        Map<Athlete, List<AthleteCourseSummary>> result = new TreeMap<>(Comparator.comparingInt(a -> a.athleteId));
         List<Object[]> results = new ArrayList<>();
-        String sql = "select * from parkrun_stats.athlete "  +
+        String sql = "select * from " + athleteTable()  +
                 " join " + tableName + " using (athlete_id)";
         jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
-            Athlete athlete = Athlete.from(
-                    rs.getString("name"),
-                    rs.getInt("athlete_id")
-            );
-//            List<AthleteCourseSummary> summaries = result.computeIfAbsent(athlete, k -> new ArrayList<>());
-//            summaries.add(
-//                    new AthleteCourseSummary(
-//                            athlete,
-//                            rs.getString("course_long_name"),
-//                            rs.getInt("run_count")));
             results.add(new Object[]{
                     rs.getString("name"),
                     rs.getInt("athlete_id"),
@@ -88,7 +73,7 @@ public class AthleteCourseSummaryDao
     public List<Object[]> getAthleteCourseSummaries()
     {
         String sql = "select * from " + tableName +
-                " join parkrun_stats.athlete using (athlete_id)";
+                " join " + athleteTable() + " using (athlete_id)";
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
                 new Object[] {
                         rs.getInt("athlete_id"),

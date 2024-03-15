@@ -2,6 +2,7 @@ package dnt.parkrun.courseevent;
 
 import dnt.jsoupwrapper.JsoupWrapper;
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.datastructures.Time;
 import org.jsoup.nodes.Document;
@@ -18,17 +19,17 @@ import java.util.function.Consumer;
 public class Parser
 {
     private final Document doc;
-    private final String courseName;
+    private final Course course;
     private final Consumer<Athlete> athleteConsumer;
     private final Consumer<Result> resultConsumer;
 
     public Parser(Document doc,
-                  String courseName,
+                  Course course,
                   Consumer<Athlete> athleteConsumer,
                   Consumer<Result> resultConsumer)
     {
         this.doc = doc;
-        this.courseName = courseName;
+        this.course = course;
         this.athleteConsumer = athleteConsumer;
         this.resultConsumer = resultConsumer;
     }
@@ -73,13 +74,13 @@ public class Parser
                     Node timeNode = row
                             .childNode(5)   // td
                             .childNode(0)   // div compact
-                            .childNode(0);  // value
+                            .childNode(0);  //  value
                     Time time = Time.from(timeNode.toString());
-                    resultConsumer.accept(new Result(courseName, eventNumber, position, athlete, time));
+                    resultConsumer.accept(new Result(course.courseId, eventNumber, position, athlete, time));
                 }
                 else
                 {
-                    resultConsumer.accept(new Result(courseName, eventNumber, position, athlete, Time.NO_TIME));
+                    resultConsumer.accept(new Result(course.courseId, eventNumber, position, athlete, Time.NO_TIME));
                 }
             }
         }
@@ -90,11 +91,11 @@ public class Parser
         private Document doc;
         private Consumer<Athlete> athleteConsumer = r -> {};
         private Consumer<Result> resultConsumer = r -> {};
-        private String courseName;
+        private Course course;
 
-        public Parser build() throws IOException
+        public Parser build()
         {
-            return new Parser(doc, courseName, athleteConsumer, resultConsumer);
+            return new Parser(doc, course, athleteConsumer, resultConsumer);
         }
 
         public Builder url(URL url) throws IOException
@@ -121,9 +122,9 @@ public class Parser
             return this;
         }
 
-        public Builder courseName(String name)
+        public Builder course(Course course)
         {
-            this.courseName = name;
+            this.course = course;
             return this;
         }
     }

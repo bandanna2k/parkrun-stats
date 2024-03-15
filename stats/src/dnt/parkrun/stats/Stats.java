@@ -298,30 +298,30 @@ public class Stats
 
     private Set<Integer> getAthletesFromDbWithMinimumPIndex(int minPIndex)
     {
-        Map<Integer, Map<String, Integer>> athleteToCourseCount = new HashMap<>();
+        Map<Integer, Map<Integer, Integer>> athleteToCourseCount = new HashMap<>();
         resultDao.tableScan(r -> {
             if(r.athlete.athleteId < 0)
             {
                 return;
             }
 
-            Map<String, Integer> courseToCount = athleteToCourseCount.get(r.athlete.athleteId);
+            Map<Integer, Integer> courseToCount = athleteToCourseCount.get(r.athlete.athleteId);
             if(courseToCount == null)
             {
                 courseToCount = new HashMap<>();
-                courseToCount.put(r.courseName, 1);
+                courseToCount.put(r.courseId, 1);
                 athleteToCourseCount.put(r.athlete.athleteId, courseToCount);
             }
             else
             {
-                Integer count = courseToCount.get(r.courseName);
+                Integer count = courseToCount.get(r.courseId);
                 if(count == null)
                 {
-                    courseToCount.put(r.courseName, 1);
+                    courseToCount.put(r.courseId, 1);
                 }
                 else
                 {
-                    courseToCount.put(r.courseName, count + 1);
+                    courseToCount.put(r.courseId, count + 1);
                 }
             }
         });

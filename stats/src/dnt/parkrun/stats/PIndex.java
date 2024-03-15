@@ -33,14 +33,14 @@ public abstract class PIndex
         return resultPIndex;
     }
 
-    public static int pIndex(Map<String, Integer> listOfRuns)
+    public static int pIndex(Map<Integer, Integer> listOfRuns)
     {
         int testPIndex;
         int resultPIndex = 0;
         for (testPIndex = 1; testPIndex < 100; testPIndex++)
         {
             int countOfRunsGreatherThanPIndex = 0;
-            for (Map.Entry<String, Integer> entry : listOfRuns.entrySet())
+            for (Map.Entry<Integer, Integer> entry : listOfRuns.entrySet())
             {
                 int count = entry.getValue();
                 if (count >= testPIndex)
@@ -48,13 +48,6 @@ public abstract class PIndex
                     countOfRunsGreatherThanPIndex++;
                 }
             }
-//            for (AthleteCourseSummary athleteCourseSummary : listOfRuns)
-//            {
-//                if(athleteCourseSummary.countOfRuns >= testPIndex)
-//                {
-//                    countOfRunsGreatherThanPIndex++;
-//                }
-//            }
             if(countOfRunsGreatherThanPIndex >= testPIndex)
             {
                 resultPIndex = testPIndex;
