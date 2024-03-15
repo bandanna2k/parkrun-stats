@@ -13,7 +13,7 @@ import javax.sql.DataSource;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.RUNNING;
 
-public class CourseDaoTest
+public class CourseDaoTest extends BaseDaoTest
 {
     private NamedParameterJdbcTemplate jdbc;
     private CourseDao courseDao;
@@ -22,7 +22,7 @@ public class CourseDaoTest
     public void setUp() throws Exception
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats_test", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
         courseDao = new CourseDao(dataSource);
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);

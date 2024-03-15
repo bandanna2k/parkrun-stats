@@ -8,7 +8,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 
-public class StatsDaoTest
+public class StatsDaoTest extends BaseDaoTest
 {
     private StatsDao dao;
 
@@ -16,7 +16,7 @@ public class StatsDaoTest
     public void setUp() throws Exception
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats_test", "stats", "statsfractalstats");
+                "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
         dao = new StatsDao(dataSource, DateConverter.parseWebsiteDate("02/03/2024"));
     }
 

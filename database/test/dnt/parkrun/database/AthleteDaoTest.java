@@ -12,7 +12,7 @@ import javax.sql.DataSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AthleteDaoTest
+public class AthleteDaoTest extends BaseDaoTest
 {
     private AthleteDao athleteDao;
     private NamedParameterJdbcTemplate jdbc;
@@ -21,7 +21,7 @@ public class AthleteDaoTest
     public void setUp() throws Exception
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats_test", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
         athleteDao = new AthleteDao(dataSource);
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);

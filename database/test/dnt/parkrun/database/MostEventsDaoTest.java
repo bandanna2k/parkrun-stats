@@ -9,7 +9,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import java.util.List;
 
-public class MostEventsDaoTest
+public class MostEventsDaoTest extends BaseDaoTest
 {
     private MostEventsDao dao;
     private NamedParameterJdbcTemplate jdbc;
@@ -18,7 +18,7 @@ public class MostEventsDaoTest
     public void setUp() throws Exception
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats_test", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
         dao = new MostEventsDao(dataSource);
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);

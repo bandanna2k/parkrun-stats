@@ -16,7 +16,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 
-public class CourseEventSummaryDaoTest
+public class CourseEventSummaryDaoTest extends BaseDaoTest
 {
     private CourseEventSummaryDao dao;
     private NamedParameterJdbcTemplate jdbc;
@@ -29,7 +29,7 @@ public class CourseEventSummaryDaoTest
         courseRepository.addCourse(new Course(9999, "cornwall", Country.NZ, "Cornwall", Status.RUNNING));
 
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats_test", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
         dao = new CourseEventSummaryDao(dataSource, courseRepository);
         athleteDao = new AthleteDao(dataSource);
 

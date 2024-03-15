@@ -14,7 +14,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import java.util.List;
 
-public class ResultDaoTest
+public class ResultDaoTest extends BaseDaoTest
 {
     private ResultDao resultDao;
     private AthleteDao athleteDao;
@@ -24,7 +24,7 @@ public class ResultDaoTest
     public void setUp() throws Exception
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats_test", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
         resultDao = new ResultDao(dataSource);
         athleteDao = new AthleteDao(dataSource);
 

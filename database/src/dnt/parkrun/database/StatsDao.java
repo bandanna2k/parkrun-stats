@@ -8,7 +8,6 @@ import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import dnt.parkrun.datastructures.stats.RunsAtEvent;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
 import java.util.Date;
@@ -16,17 +15,16 @@ import java.util.List;
 
 import static dnt.parkrun.datastructures.Country.NZ;
 
-public class StatsDao
+public class StatsDao extends BaseDao
 {
     private static final String MIN_DIFFERENT_REGION_COURSE_COUNT = "20";
 
-    private final NamedParameterJdbcTemplate jdbc;
     private final String differentCourseCountTableName;
     private final String attendanceRecordTableName;
 
     public StatsDao(DataSource dataSource, Date date)
     {
-        jdbc = new NamedParameterJdbcTemplate(dataSource);
+        super(dataSource);
         differentCourseCountTableName = "most_events_for_region_" + DateConverter.formatDateForDbTable(date);
         attendanceRecordTableName = "attendance_records_for_region_" + DateConverter.formatDateForDbTable(date);
     }
@@ -39,11 +37,11 @@ public class StatsDao
                         "sub1.count as different_region_course_count, sub2.count as total_region_runs, " +
                         "0 as different_course_count, 0 as total_runs, " +
                         "0 as p_index " +
-                        "from parkrun_stats.athlete a " +
+                        "from " + athleteTable() + " a " +
                         "join   " +
                         "( " +
                         "    select athlete_id, count(course_name) as count " +
-                        "    from (select distinct athlete_id, course_name from parkrun_stats.result) as sub1a " +
+                        "    from (select distinct athlete_id, course_name from " + resultTable() + ") as sub1a " +
                         "    group by athlete_id " +
                         "    having count >= " + MIN_DIFFERENT_REGION_COURSE_COUNT +
                         "    order by count desc, athlete_id asc  " +
@@ -51,7 +49,7 @@ public class StatsDao
                         "join " +
                         "( " +
                         "    select athlete_id, count(concat) as count " +
-                        "    from (select athlete_id, concat(athlete_id, course_name, event_number, '-', position) as concat from parkrun_stats.result) as sub2a " +
+                        "    from (select athlete_id, concat(athlete_id, course_name, event_number, '-', position) as concat from " + resultTable() + ") as sub2a " +
                         "    group by athlete_id " +
                         "    order by count desc, athlete_id asc  " +
                         ") as sub2 on sub2.athlete_id = a.athlete_id " +

@@ -9,7 +9,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 
-public class InvariantsTest
+public class InvariantsTest extends BaseDaoTest
 {
     private NamedParameterJdbcTemplate jdbc;
 
@@ -17,7 +17,7 @@ public class InvariantsTest
     public void setUp() throws Exception
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats_test", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);
     }

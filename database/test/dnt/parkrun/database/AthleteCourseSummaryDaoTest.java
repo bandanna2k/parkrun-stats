@@ -17,7 +17,7 @@ import java.util.List;
 import static dnt.parkrun.datastructures.Country.UNKNOWN;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AthleteCourseSummaryDaoTest
+public class AthleteCourseSummaryDaoTest extends BaseDaoTest
 {
     public static final Course ELLIÐAÁRDALUR =
             new Course(9999, "Elliðaárdalur", UNKNOWN, "Elliðaárdalur", Course.Status.RUNNING);

@@ -13,6 +13,11 @@ public abstract class BaseDao
         jdbc = new NamedParameterJdbcTemplate(statsDataSource);
     }
 
+    private static boolean test()
+    {
+        return null != System.getProperty("TEST") && Boolean.parseBoolean(System.getProperty("TEST"));
+    }
+
     protected String athleteTable()
     {
         return test() ? "parkrun_stats_test.athlete" : "parkrun_stats.athlete";
@@ -20,9 +25,5 @@ public abstract class BaseDao
     protected String resultTable()
     {
         return test() ? "parkrun_stats_test.result" : "parkrun_stats.result";
-    }
-    private static boolean test()
-    {
-        return true;
     }
 }
