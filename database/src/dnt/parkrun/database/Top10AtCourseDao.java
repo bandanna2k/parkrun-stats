@@ -65,7 +65,9 @@ public class Top10AtCourseDao
                 "        from " + tableName +
                 "        join parkrun_stats.course c using (course_id)\n" +
                 "        join parkrun_stats.athlete a using (athlete_id)\n" +
-                "where course_name = :courseName";
+                "where " +
+                "   course_name = :courseName " +
+                "   and run_count >= 2";
         return jdbc.query(sql, new MapSqlParameterSource("courseName", courseName), (rs, rowNum) -> {
             Athlete athlete = Athlete.from(rs.getString("name"), rs.getInt("athlete_id"));
             Course course = new Course(
