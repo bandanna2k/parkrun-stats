@@ -28,7 +28,7 @@ public enum Country
     UK(97, "UK", "parkrun.org.uk"),
     USA(98, "US", "parkrun.us");
 
-    private static final Map<Integer, Country> countryCodeToEnum = new HashMap<>()
+    private static final Map<Integer, Country> countryCodeToCountry = new HashMap<>()
     {
         {
             for (Country value : Country.values())
@@ -51,7 +51,7 @@ public enum Country
 
     public static Country valueOf(int countryCode)
     {
-        return countryCodeToEnum.get(countryCode);
+        return countryCodeToCountry.get(countryCode);
     }
 
     public int getCountryCode()

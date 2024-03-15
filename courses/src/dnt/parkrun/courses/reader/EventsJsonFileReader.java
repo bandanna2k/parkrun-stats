@@ -129,7 +129,7 @@ public class EventsJsonFileReader
             {
                 jsonParser.nextToken();
                 int countryCode = jsonParser.getIntValue();
-                builder.country(null);
+                builder.country(Country.valueOf(countryCode));
                 builder.status(statusSupplier.get());
                 eventConsumer.accept(builder.build());
             }
@@ -144,13 +144,12 @@ public class EventsJsonFileReader
             if (isNumeric(country))
             {
                 int countryId = Integer.parseInt(country);
-                Country countryCode = Country.valueOf(countryId);
-                parseCountryObject(jsonParser, countryCode);
+                parseCountryObject(jsonParser, countryId);
             }
         }
     }
 
-    private void parseCountryObject(JsonParser jsonParser, Country countryCode) throws IOException
+    private void parseCountryObject(JsonParser jsonParser, int countryId) throws IOException
     {
         while (jsonParser.nextToken() != JsonToken.END_OBJECT)
         {
@@ -159,15 +158,16 @@ public class EventsJsonFileReader
             {
                 jsonParser.nextToken();
                 String url = jsonParser.getText();
-//
-//                Country country = new Country(countryCode, url);
-//                countryCodeToCountry.put(country.countryEnum.getCountryCode(), country);
-//                countryConsumer.accept(country);
+
+                Country country = Country.valueOf(countryId);
+                if(country == null)
+                {
+                    System.out.println("WARNING: Unknown country: " + countryId + ", URL: " + url);
+                }
             }
 
             if ("bounds".equals(fieldname))
             {
-
                 ignoreArray(jsonParser);
             }
         }
@@ -233,6 +233,28 @@ public class EventsJsonFileReader
         {
             this.statusSupplier = statusSupplier;
             return this;
+        }
+    }
+
+    public static class JsonCountry
+    {
+        private final int countryId;
+        private final String url;
+
+        public JsonCountry(int countryId, String url)
+        {
+
+            this.countryId = countryId;
+            this.url = url;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "JsonCountry{" +
+                    "countryId=" + countryId +
+                    ", url='" + url + '\'' +
+                    '}';
         }
     }
 }

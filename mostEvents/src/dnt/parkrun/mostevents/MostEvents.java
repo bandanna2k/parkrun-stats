@@ -58,9 +58,9 @@ public class MostEvents
 
     public void collectMostEventRecords() throws IOException
     {
-//        System.out.println("* Adding courses *");
-//        addCourses("events.json", Course.Status.RUNNING);
-//        addCourses("events.missing.json", Course.Status.STOPPED);
+        System.out.println("* Adding courses *");
+        addCourses("events.json", Course.Status.RUNNING);
+        addCourses("events.missing.json", Course.Status.STOPPED);
 
         System.out.println("* Filter courses *");
         Arrays.stream(Country.values())
@@ -130,8 +130,13 @@ public class MostEvents
         EventsJsonFileReader reader = new EventsJsonFileReader.Builder(() -> inputStream)
                 .forEachCourse(course ->
                 {
-                    courseDao.insert(course);
-                    courseRepository.addCourse(course);
+                    Course doesItExistCourse = courseRepository.getCourseFromName(course.name); // Bit weird
+                    if(doesItExistCourse == null)
+                    {
+                        System.out.println("NEW COURSE " + course);
+                        courseRepository.addCourse(course);
+                        courseDao.insert(course);
+                    }
                 })
                 .statusSupplier(() -> status)
                 .build();

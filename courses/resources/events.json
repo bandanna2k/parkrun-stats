@@ -1644,9 +1644,9 @@
           ]
         },
         "properties": {
-          "eventname": "maidstone",
-          "EventLongName": "Maidstone parkrun",
-          "EventShortName": "Maidstone",
+          "eventname": "maidstoneriverpark",
+          "EventLongName": "Maidstone River Park parkrun",
+          "EventShortName": "Maidstone River Park",
           "LocalisedEventLongName": null,
           "countrycode": 97,
           "seriesid": 1,
@@ -2991,26 +2991,6 @@
           "countrycode": 97,
           "seriesid": 1,
           "EventLocation": "Pontefract Racecourse"
-        }
-      },
-      {
-        "id": 152,
-        "type": "Feature",
-        "geometry": {
-          "type": "Point",
-          "coordinates": [
-            -1.778156,
-            53.706086
-          ]
-        },
-        "properties": {
-          "eventname": "brighouse",
-          "EventLongName": "Brighouse parkrun",
-          "EventShortName": "Brighouse",
-          "LocalisedEventLongName": null,
-          "countrycode": 97,
-          "seriesid": 1,
-          "EventLocation": "Wellholme Park"
         }
       },
       {
@@ -49719,8 +49699,8 @@
         "geometry": {
           "type": "Point",
           "coordinates": [
-            -1.446862,
-            53.368576
+            -1.446852,
+            53.368694
           ]
         },
         "properties": {
@@ -49934,6 +49914,26 @@
         }
       },
       {
+        "id": 3424,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            143.988093,
+            -38.233939
+          ]
+        },
+        "properties": {
+          "eventname": "trebeckreserve",
+          "EventLongName": "Trebeck Reserve parkrun",
+          "EventShortName": "Trebeck Reserve",
+          "LocalisedEventLongName": null,
+          "countrycode": 3,
+          "seriesid": 1,
+          "EventLocation": "Trebeck Reserve"
+        }
+      },
+      {
         "id": 3425,
         "type": "Feature",
         "geometry": {
@@ -50111,6 +50111,186 @@
           "countrycode": 97,
           "seriesid": 2,
           "EventLocation": "Swanscombe Heritage Park juniors"
+        }
+      },
+      {
+        "id": 3435,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -0.025046,
+            51.94983
+          ]
+        },
+        "properties": {
+          "eventname": "norfolkroadplayingfields-juniors",
+          "EventLongName": "Norfolk Road Playing Fields junior parkrun",
+          "EventShortName": "Norfolk Road Playing Fields juniors ",
+          "LocalisedEventLongName": null,
+          "countrycode": 97,
+          "seriesid": 2,
+          "EventLocation": "Norfolk Road Playing Fields juniors "
+        }
+      },
+      {
+        "id": 3437,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            8.49073,
+            49.174065
+          ]
+        },
+        "properties": {
+          "eventname": "prestelsee",
+          "EventLongName": "Prestelsee parkrun",
+          "EventShortName": "Prestelsee",
+          "LocalisedEventLongName": null,
+          "countrycode": 32,
+          "seriesid": 1,
+          "EventLocation": "Prestelsee"
+        }
+      },
+      {
+        "id": 3438,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            19.132696,
+            -34.346162
+          ]
+        },
+        "properties": {
+          "eventname": "benguelacove",
+          "EventLongName": "Benguela Cove parkrun",
+          "EventShortName": "Benguela Cove",
+          "LocalisedEventLongName": null,
+          "countrycode": 85,
+          "seriesid": 1,
+          "EventLocation": "Benguela Cove"
+        }
+      },
+      {
+        "id": 3439,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -8.748937,
+            54.051656
+          ]
+        },
+        "properties": {
+          "eventname": "tubbercurrytrail",
+          "EventLongName": "Tubbercurry Trail parkrun",
+          "EventShortName": "Tubbercurry Trail",
+          "LocalisedEventLongName": null,
+          "countrycode": 42,
+          "seriesid": 1,
+          "EventLocation": "Tubbercurry Trail"
+        }
+      },
+      {
+        "id": 3440,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -2.164,
+            53.623457
+          ]
+        },
+        "properties": {
+          "eventname": "falingepark-juniors",
+          "EventLongName": "Falinge Park junior parkrun",
+          "EventShortName": "Falinge Park juniors",
+          "LocalisedEventLongName": null,
+          "countrycode": 97,
+          "seriesid": 2,
+          "EventLocation": "Falinge Park juniors"
+        }
+      },
+      {
+        "id": 3441,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -2.620993,
+            51.442898
+          ]
+        },
+        "properties": {
+          "eventname": "grevillesmythpark-juniors",
+          "EventLongName": "Greville Smyth Park junior parkrun",
+          "EventShortName": "Greville Smyth Park juniors",
+          "LocalisedEventLongName": null,
+          "countrycode": 97,
+          "seriesid": 2,
+          "EventLocation": "Greville Smyth Park juniors"
+        }
+      },
+      {
+        "id": 3442,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -71.213684,
+            42.294685
+          ]
+        },
+        "properties": {
+          "eventname": "cutlerpark",
+          "EventLongName": "Cutler Park parkrun",
+          "EventShortName": "Cutler Park",
+          "LocalisedEventLongName": null,
+          "countrycode": 98,
+          "seriesid": 1,
+          "EventLocation": "Cutler Park"
+        }
+      },
+      {
+        "id": 3443,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -3.377121,
+            51.740891
+          ]
+        },
+        "properties": {
+          "eventname": "merthyrleisurevillage-juniors",
+          "EventLongName": "Merthyr Leisure Village junior parkrun",
+          "EventShortName": "Merthyr Leisure Village juniors",
+          "LocalisedEventLongName": null,
+          "countrycode": 97,
+          "seriesid": 2,
+          "EventLocation": "Merthyr Leisure Village juniors"
+        }
+      },
+      {
+        "id": 3444,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            176.119443,
+            -37.687581
+          ]
+        },
+        "properties": {
+          "eventname": "gordoncarmichaelreserve",
+          "EventLongName": "Gordon Carmichael Reserve parkrun",
+          "EventShortName": "Gordon Carmichael Reserve",
+          "LocalisedEventLongName": null,
+          "countrycode": 65,
+          "seriesid": 1,
+          "EventLocation": "Gordon Carmichael Reserve"
         }
       }
     ]
