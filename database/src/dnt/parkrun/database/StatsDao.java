@@ -102,11 +102,11 @@ public class StatsDao
     {
         String sql =
                 "select name, athlete_id, c.course_id, c.course_name, c.country_code, course_long_name, run_count\n" +
-                        "from athlete\n" +
+                        "from parkrun_stats.athlete\n" +
                         "join\n" +
                         "(\n" +
                         "    select athlete_id, course_name, count(time_seconds) as run_count\n" +
-                        "    from result r\n" +
+                        "    from parkrun_stats.result r\n" +
                         "    group by athlete_id, course_name\n" +
                         "    having\n" +
                         "        athlete_id > 0\n" +
@@ -114,7 +114,7 @@ public class StatsDao
                         "    order by run_count desc, course_name asc\n" +
                         "    limit 10\n" +
                         ") as sub1 using (athlete_id)\n" +
-                        "join course c\n" +
+                        "join parkrun_stats.course c\n" +
                         "on sub1.course_name = c.course_name";
         return jdbc.query(sql, new MapSqlParameterSource("courseName", courseName), (rs, rowNum) ->
         {

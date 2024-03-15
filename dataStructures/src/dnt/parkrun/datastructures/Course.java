@@ -47,6 +47,7 @@ public class Course
 
     public enum Status
     {
+        PENDING("P"),
         RUNNING("R"),
         STOPPED("S");
 

@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
 import static dnt.parkrun.database.StatsDao.DifferentCourseCount;
+import static dnt.parkrun.datastructures.Course.Status.RUNNING;
 import static dnt.parkrun.stats.PIndex.pIndex;
 import static java.util.Collections.emptyList;
 
@@ -151,7 +152,7 @@ public class Stats
             Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
             try(Top10AtCoursesHtmlWriter ignored = new Top10AtCoursesHtmlWriter(writer.writer))
             {
-                for (Course course : courseDao.getCourses(Country.NZ))
+                for (Course course : courseDao.getCourses(Country.NZ).stream().filter(c -> c.status == RUNNING).collect(Collectors.toList()))
                 {
                     try(Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, course.longName))
                     {
