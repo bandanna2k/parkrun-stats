@@ -46,7 +46,6 @@ public class Stats
     private final StatsDao statsDao;
     private final ResultDao resultDao;
     private final AthleteCourseSummaryDao acsDao;
-    private final CourseDao courseDao;
     private final Top10AtCourseDao top10Dao;
     private final CourseEventSummaryDao courseEventSummaryDao;
     private final Map<Integer, Athlete> athleteIdToAthlete = new HashMap<>();
@@ -64,12 +63,10 @@ public class Stats
         this.acsDao = new AthleteCourseSummaryDao(statsDataSource, this.date);
         this.top10Dao = new Top10AtCourseDao(statsDataSource, this.date);
         this.resultDao = new ResultDao(dataSource);
-        this.courseRepository = new CourseRepository();
-        this.courseDao = new CourseDao(dataSource, courseRepository);
-        this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
 
-        Course cornwallPark = courseRepository.getCourseFromName("cornwall");
-        courseRepository.addCourse(new Course(cornwallPark.courseId, cornwallPark.name, cornwallPark.country, "Cornwall Park parkrun", RUNNING));
+        this.courseRepository = new CourseRepository();
+        new CourseDao(dataSource, courseRepository);
+        this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
     }
 
     public static Stats newInstance(Date date) throws SQLException
@@ -155,7 +152,8 @@ public class Stats
             Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
             try(Top10AtCoursesHtmlWriter ignored = new Top10AtCoursesHtmlWriter(writer.writer))
             {
-                for (Course course : courseDao.getCourses(Country.NZ).stream().filter(c -> c.status == RUNNING).collect(Collectors.toList()))
+                List<Course> courses = courseRepository.getCourses(Country.NZ).stream().filter(c -> c.status == RUNNING).collect(Collectors.toList());
+                for (Course course : courses)
                 {
                     try(Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, course.longName))
                     {

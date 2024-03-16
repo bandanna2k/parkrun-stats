@@ -22,7 +22,6 @@ course (
 
 ) DEFAULT CHARSET=utf8mb4;
 
-
 -- Athlete
 CREATE TABLE
 IF NOT EXISTS

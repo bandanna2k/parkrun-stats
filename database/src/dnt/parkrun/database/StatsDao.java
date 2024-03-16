@@ -216,11 +216,11 @@ public class StatsDao extends BaseDao
     public List<AttendanceRecord> getAttendanceRecords(Date date)
     {
         String attendanceTableName = "attendance_records_for_region_" + DateConverter.formatDateForDbTable(date);
-        String sql = "select at.course_long_name, course_name, " +
+        String sql = "select c.course_long_name, c.course_name, " +
                 "recent_event_number, recent_event_date, recent_event_finishers, " +
                 "record_event_number, record_event_date, record_event_finishers " +
                         "from " + attendanceTableName + " at " +
-                "left join " + courseTable() + " using (course_id)";
+                "left join " + courseTable() + " c using (course_id)";
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
                 new AttendanceRecord(
                         rs.getString("course_long_name"),
