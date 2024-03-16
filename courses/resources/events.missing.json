@@ -23,6 +23,1854 @@
           "EventLongName": "Porirua parkrun",
           "countrycode": 65
         }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "navalhill",
+          "EventLongName": "Naval Hill parkrun, Bloemfontein",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "hartenbos",
+          "EventLongName": "Hartenbos parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "klerksdorp",
+          "EventLongName": "Klerksdorp parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "parys",
+          "EventLongName": "Parys parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "crissyfield",
+          "EventLongName": "Crissy Field parkrun",
+          "countrycode": 98
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "gibside",
+          "EventLongName": "Gibside parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "frittonlake",
+          "EventLongName": "Fritton Lake parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "cuerdenvalley",
+          "EventLongName": "Cuerden Valley parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "teesbarrage",
+          "EventLongName": "Tees Barrage parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "tamanpuduulu",
+          "EventLongName": "Taman Pudu Ulu parkrun",
+          "countrycode": 57
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "catterick",
+          "EventLongName": "Catterick parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "inverness",
+          "EventLongName": "Inverness parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "fairparkreserve",
+          "EventLongName": "Fairpark Reserve parkrun",
+          "countrycode": 3
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "ballarat",
+          "EventLongName": "Ballarat parkrun",
+          "countrycode": 3
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "mulbarton",
+          "EventLongName": "Mulbarton parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "crissyfield",
+          "EventLongName": "Crissy Field parkrun",
+          "countrycode": 98
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "catterick",
+          "EventLongName": "Catterick parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "root44",
+          "EventLongName": "Root 44 parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "merimbula",
+          "EventLongName": "Merimbula parkrun",
+          "countrycode": 3
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "jindabynesportandrecreation",
+          "EventLongName": "Jindabyne Sport and Recreation parkrun",
+          "countrycode": 3
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "yeovilmontacute",
+          "EventLongName": "Yeovil Montacute parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "littlestoke",
+          "EventLongName": "Little Stoke parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "sunnidale",
+          "EventLongName": "Sunnidale parkrun",
+          "countrycode": 14
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "navalhill",
+          "EventLongName": "Naval Hill parkrun, Bloemfontein",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "langenhoven",
+          "EventLongName": "Langenhoven parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "aliwalnorth",
+          "EventLongName": "Aliwal North parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "klerksdorp",
+          "EventLongName": "Klerksdorp parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "mcallister",
+          "EventLongName": "McAllister parkrun",
+          "countrycode": 98
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "crissyfield",
+          "EventLongName": "Crissy Field parkrun",
+          "countrycode": 98
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "frittonlake",
+          "EventLongName": "Fritton Lake parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "churchfieldsfarm",
+          "EventLongName": "Churchfields Farm parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "wythall",
+          "EventLongName": "Wythall parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "callaghan",
+          "EventLongName": "Callaghan parkrun",
+          "countrycode": 3
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "merriwa",
+          "EventLongName": "Merriwa parkrun",
+          "countrycode": 3
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "gibside",
+          "EventLongName": "Gibside parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "teesbarrage",
+          "EventLongName": "Tees Barrage parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "inverness",
+          "EventLongName": "Inverness parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "catterick",
+          "EventLongName": "Catterick parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "brighton",
+          "EventLongName": "Brighton \u0026 Hove parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "crissyfield",
+          "EventLongName": "Crissy Field parkrun",
+          "countrycode": 98
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "inverness",
+          "EventLongName": "Inverness parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "bapsfontein",
+          "EventLongName": "Bapsfontein parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "aliwalnorth",
+          "EventLongName": "Aliwal North parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "ventersburg",
+          "EventLongName": "Ventersburg parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "yzerfontein",
+          "EventLongName": "Yzerfontein parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "klerksdorp",
+          "EventLongName": "Klerksdorp parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "parys",
+          "EventLongName": "Parys parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "lusitoland",
+          "EventLongName": "Lusitoland parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "witbank",
+          "EventLongName": "Witbank parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "bulithando",
+          "EventLongName": "Bulithando parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "doornhoekfarm",
+          "EventLongName": "Doornhoek Farm parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "heronbanks",
+          "EventLongName": "Heron Banks parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "root44",
+          "EventLongName": "Root 44 parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "westbury",
+          "EventLongName": "Westbury parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "modderfonteinreserve",
+          "EventLongName": "Modderfontein Reserve parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "elaginostrov",
+          "EventLongName": "parkrun Elagin Ostrov",
+          "countrycode": -80
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "omeya",
+          "EventLongName": "Omeya parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "loxton",
+          "EventLongName": "Loxton parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "noblevillage",
+          "EventLongName": "Noble Village parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "middelburg",
+          "EventLongName": "Middelburg parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "izmailovo",
+          "EventLongName": "parkrun Izmailovo",
+          "countrycode": -80
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "westonaria",
+          "EventLongName": "Westonaria parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "hartbeespoort",
+          "EventLongName": "Hartbeespoort parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "christiana",
+          "EventLongName": "Christiana parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "potchefstroom",
+          "EventLongName": "Potchefstroom parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "thefarmstead",
+          "EventLongName": "The Farmstead parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "kraalkop",
+          "EventLongName": "Kraalkop parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "jindabynesportandrecreation",
+          "EventLongName": "Jindabyne Sport and Recreation parkrun",
+          "countrycode": 3
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "merimbula",
+          "EventLongName": "Merimbula parkrun",
+          "countrycode": 3
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "bowral",
+          "EventLongName": "Bowral parkrun",
+          "countrycode": 3
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "merriwa",
+          "EventLongName": "Merriwa parkrun",
+          "countrycode": 3
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "cuerdenvalley",
+          "EventLongName": "Cuerden Valley parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "catterick",
+          "EventLongName": "Catterick parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "bespoke",
+          "EventLongName": "Bespoke parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "brighton",
+          "EventLongName": "Brighton \u0026 Hove parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "teesbarrage",
+          "EventLongName": "Tees Barrage parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "modderfonteinreserve",
+          "EventLongName": "Modderfontein Reserve parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "middelburg",
+          "EventLongName": "Middelburg parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "potchefstroom",
+          "EventLongName": "Potchefstroom parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "summerfields",
+          "EventLongName": "Summerfields parkrun, Kruger Park",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "heronbanks",
+          "EventLongName": "Heron Banks parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "lebone",
+          "EventLongName": "Lebone parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "hartbeespoort",
+          "EventLongName": "Hartbeespoort parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "kraalkop",
+          "EventLongName": "Kraalkop parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "potchefstroom",
+          "EventLongName": "Potchefstroom parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "heronbanks",
+          "EventLongName": "Heron Banks parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "klerksdorp",
+          "EventLongName": "Klerksdorp parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "hartenbos",
+          "EventLongName": "Hartenbos parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "summerfields",
+          "EventLongName": "Summerfields parkrun, Kruger Park",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "kraalkop",
+          "EventLongName": "Kraalkop parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "parys",
+          "EventLongName": "Parys parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "brighton",
+          "EventLongName": "Brighton & Hove parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "kungsangen",
+          "EventLongName": "Kungsängen parkrun",
+          "countrycode": 88
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "yeovilmontacute",
+          "EventLongName": "Yeovil Montacute parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "hartbeespoort",
+          "EventLongName": "Hartbeespoort parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "potchefstroom",
+          "EventLongName": "Potchefstroom parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "kraalkop",
+          "EventLongName": "Kraalkop parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "aliwalnorth",
+          "EventLongName": "Aliwal North parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "ventersburg",
+          "EventLongName": "Ventersburg parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "thefarmstead",
+          "EventLongName": "The Farmstead parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "klerksdorp",
+          "EventLongName": "Klerksdorp parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "witbank",
+          "EventLongName": "Witbank parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "bapsfontein",
+          "EventLongName": "Bapsfontein parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "heronbanks",
+          "EventLongName": "Heron Banks parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "christiana",
+          "EventLongName": "Christiana parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "bloemhof",
+          "EventLongName": "Bloemhof parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "elaginostrov",
+          "EventLongName": "parkrun Elagin Ostrov",
+          "countrycode": -80
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "omeya",
+          "EventLongName": "Omeya parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "modderfonteinreserve",
+          "EventLongName": "Modderfontein Reserve parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "noblevillage",
+          "EventLongName": "Noble Village parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "parys",
+          "EventLongName": "Parys parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "middelburg",
+          "EventLongName": "Middelburg parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "yzerfontein",
+          "EventLongName": "Yzerfontein parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "izmailovo",
+          "EventLongName": "parkrun Izmailovo",
+          "countrycode": -80
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "ballarat",
+          "EventLongName": "Ballarat parkrun",
+          "countrycode": 3
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "cuerdenvalley",
+          "EventLongName": "Cuerden Valley parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "catterick",
+          "EventLongName": "Catterick parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "yeovilmontacute",
+          "EventLongName": "Yeovil Montacute parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "summerfields",
+          "EventLongName": "Summerfields parkrun, Kruger Park",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "crissyfield",
+          "EventLongName": "Crissy Field parkrun",
+          "countrycode": 98
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "inverness",
+          "EventLongName": "Inverness parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "imonti",
+          "EventLongName": "iMonti parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "threesilos",
+          "EventLongName": "Three Silos parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "adrenalinaddo",
+          "EventLongName": "Adrenalin Addo parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "ladyslipper",
+          "EventLongName": "Lady Slipper parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "umdoni",
+          "EventLongName": "Umdoni parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "barberton",
+          "EventLongName": "Barberton parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "alicecampus",
+          "EventLongName": "Alice Campus parkrun, University of Fort Hare",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "kingwilliamstown",
+          "EventLongName": "King Williams Town parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "python",
+          "EventLongName": "Python parkrun",
+          "countrycode": 85
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "catterick",
+          "EventLongName": "Catterick parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "tamanpuduulu",
+          "EventLongName": "Taman Pudu Ulu parkrun",
+          "countrycode": 57
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "catterick",
+          "EventLongName": "Catterick parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "tamanpuduulu",
+          "EventLongName": "Taman Pudu Ulu parkrun",
+          "countrycode": 57
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "littlestoke",
+          "EventLongName": "Little Stoke parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "fireservicecollege",
+          "EventLongName": "Fire Service College parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "crissyfield",
+          "EventLongName": "Crissy Field parkrun",
+          "countrycode": 98
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "bodelwyddancastle",
+          "EventLongName": "Bodelwyddan Castle parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "yeovilmontacute",
+          "EventLongName": "Yeovil Montacute parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "churchfieldsfarm",
+          "EventLongName": "Churchfields Farm parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "caldicot",
+          "EventLongName": "Caldicot parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "henstridgeairfield",
+          "EventLongName": "Henstridge Airfield parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "ellenbrookfields",
+          "EventLongName": "Ellenbrook Fields parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "inverness",
+          "EventLongName": "Inverness parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "tring",
+          "EventLongName": "Tring parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "bedokreservoir",
+          "EventLongName": "Bedok Reservoir parkrun",
+          "countrycode": 82
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "inverness",
+          "EventLongName": "Inverness parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "crissyfield",
+          "EventLongName": "Crissy Field parkrun",
+          "countrycode": 98
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "ballarat",
+          "EventLongName": "Ballarat parkrun",
+          "countrycode": 3
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "gibside",
+          "EventLongName": "Gibside parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "teesbarrage",
+          "EventLongName": "Tees Barrage parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "catterick",
+          "EventLongName": "Catterick parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "inverness",
+          "EventLongName": "Inverness parkrun",
+          "countrycode": 97
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "tytowetlands",
+          "EventLongName": "TYTO Wetlands parkrun",
+          "countrycode": 3
+        }
       }
     ]
   }

@@ -9,7 +9,7 @@ public enum Country
 
     AUSTRALIA(3, "AU", "parkrun.com.au"),
     AUSTRIA(4, "AS", ""),
-    CANADA(14, "CA", ""),
+    CANADA(14, "CA", "parkrun.ca"),
     DENMARK(23, "DN", ""),
     FINLAND(30, "FI", ""),
     FRANCE(31, "FR", "parkrun.fr"),
@@ -18,15 +18,15 @@ public enum Country
     IRELAND(42, "EI", ""),
     ITALY(44, "IT", ""),
     JAPAN(46, "JP", ""),
-    MALAYSIA(57, "MA", ""),
+    MALAYSIA(57, "MA", "parkrun.my"),
     NETHERLANDS(64, "NE", ""),
     NZ(65, "NZ", "parkrun.co.nz"),
     NORWAY(67, "NO", ""),
     POLAND(74, "PO", ""),
     RUSSIA(-80, "RU", "parkrun.ru"),
-    SINGAPORE(82, "SG", ""),
-    SOUTH_AFRICA(85, "SA", ""),
-    SWEDEN(88, "SW", ""),
+    SINGAPORE(82, "SG", "parkrun.sg"),
+    SOUTH_AFRICA(85, "SA", "parkrun.co.za"),
+    SWEDEN(88, "SW", "parkrun.se"),
     UK(97, "UK", "parkrun.org.uk"),
     USA(98, "US", "parkrun.us");
 

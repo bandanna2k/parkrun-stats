@@ -14,5 +14,6 @@
     <orderEntry type="library" name="junit" level="project" />
     <orderEntry type="library" name="assertj.core" level="project" />
     <orderEntry type="library" name="fasterxml.jackson.core" level="project" />
+    <orderEntry type="library" scope="TEST" name="google.code.gson" level="project" />
   </component>
 </module>

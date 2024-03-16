@@ -235,26 +235,4 @@ public class EventsJsonFileReader
             return this;
         }
     }
-
-    public static class JsonCountry
-    {
-        private final int countryId;
-        private final String url;
-
-        public JsonCountry(int countryId, String url)
-        {
-
-            this.countryId = countryId;
-            this.url = url;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "JsonCountry{" +
-                    "countryId=" + countryId +
-                    ", url='" + url + '\'' +
-                    '}';
-        }
-    }
 }
