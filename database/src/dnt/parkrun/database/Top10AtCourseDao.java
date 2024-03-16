@@ -7,21 +7,18 @@ import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.stats.RunsAtEvent;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
 
-public class Top10AtCourseDao
+public class Top10AtCourseDao extends BaseDao
 {
-    private final NamedParameterJdbcTemplate jdbc;
-
     final String tableName;
 
     public Top10AtCourseDao(DataSource dataSource, Date date)
     {
-        jdbc = new NamedParameterJdbcTemplate(dataSource);
+        super(dataSource);
         tableName = "top_10_at_course_" + DateConverter.formatDateForDbTable(date);
 
         createTable();
@@ -63,8 +60,8 @@ public class Top10AtCourseDao
     {
         String sql = "        select a.athlete_id, a.name, c.course_id, c.course_name, c.course_long_name, c.country_code, run_count \n" +
                 "        from " + tableName +
-                "        join parkrun_stats.course c using (course_id)\n" +
-                "        join parkrun_stats.athlete a using (athlete_id)\n" +
+                "        join " + courseTable() + " c using (course_id)\n" +
+                "        join " + athleteTable() + " a using (athlete_id)\n" +
                 "where " +
                 "   course_name = :courseName " +
                 "   and run_count >= 2";

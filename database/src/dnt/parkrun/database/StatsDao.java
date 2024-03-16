@@ -110,7 +110,7 @@ public class StatsDao extends BaseDao
                         "        athlete_id > 0\n" +
                         "        and course_id = :courseId\n" +
                         "    order by run_count desc\n" +
-                        "    limit 10\n" +
+                        "    limit 20\n" +
                         ") as sub1 using (athlete_id)\n" +
                         "join " + courseTable() + " c using (course_id)";
         return jdbc.query(sql, new MapSqlParameterSource("courseId", courseId), (rs, rowNum) ->

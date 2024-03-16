@@ -24,8 +24,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Most runs at each course. Needs CSS tidy up.
 
-- Add missing parkruns
-
 ## Ideas
 
 - Add unique runs to Most Events???
