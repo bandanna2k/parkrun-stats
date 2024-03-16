@@ -67,6 +67,9 @@ public class Stats
         this.courseRepository = new CourseRepository();
         this.courseDao = new CourseDao(dataSource, courseRepository);
         this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
+
+        Course cornwallPark = courseRepository.getCourseFromName("cornwall");
+        courseRepository.addCourse(new Course(cornwallPark.courseId, cornwallPark.name, cornwallPark.country, "Cornwall Park parkrun", RUNNING));
     }
 
     public static Stats newInstance(Date date) throws SQLException

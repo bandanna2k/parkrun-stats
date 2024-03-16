@@ -12,8 +12,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Major
 
-- Use date as key, rather than event_number for results (easier to delete stuff)
-
 ## Minor
 
 - Font that works on mobile

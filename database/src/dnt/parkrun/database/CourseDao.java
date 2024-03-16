@@ -22,6 +22,9 @@ public class CourseDao
         jdbc = new NamedParameterJdbcTemplate(dataSource);
     }
 
+    /*
+        Adds course to DB and populates CourseRepository
+     */
     public CourseDao(DataSource dataSource, CourseRepository courseRepository)
     {
         jdbc = new NamedParameterJdbcTemplate(dataSource);
