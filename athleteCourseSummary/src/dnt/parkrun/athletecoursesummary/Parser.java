@@ -66,7 +66,7 @@ public class Parser
                 Course course = courseRepository.getCourseFromLongName(courseLongName);
                 if(course == null)
                 {
-                    courseNotFoundConsumer.accept(courseLongName);
+                    courseNotFoundConsumer.accept(courseLongName + " (" + athleteAtEvent + ")");
                     course = new Course(Integer.MIN_VALUE, courseLongName, Country.UNKNOWN, courseLongName, Course.Status.STOPPED);
                 }
                 Athlete athlete = Athlete.from(name, athleteId);
