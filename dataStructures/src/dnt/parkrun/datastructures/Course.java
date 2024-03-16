@@ -60,6 +60,7 @@ public class Course
 
         public static Status fromDb(String status)
         {
+            if(status.equals(PENDING.dbCode)) return PENDING;
             if(status.equals(RUNNING.dbCode)) return RUNNING;
             if(status.equals(STOPPED.dbCode)) return STOPPED;
             return null;

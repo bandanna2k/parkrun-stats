@@ -177,6 +177,8 @@ public class Stats
                     }
                 }
             }
+            List<RunsAtEvent> top10InRegion = top10Dao.getTop10InRegion();
+            top10InRegion.forEach(rae -> System.out.println("Top 10 in NZ: " + rae));
 
             /*
             try(MostRunsAtEventTableWriter tableWriter = new MostRunsAtEventTableWriter(writer.writer))

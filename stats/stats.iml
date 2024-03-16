@@ -17,5 +17,6 @@
     <orderEntry type="module" module-name="htmlWriter" />
     <orderEntry type="library" scope="TEST" name="junit" level="project" />
     <orderEntry type="library" name="assertj.core" level="project" />
+    <orderEntry type="module" module-name="courseEventSummary" scope="TEST" />
   </component>
 </module>

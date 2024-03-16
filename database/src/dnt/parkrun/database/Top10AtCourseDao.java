@@ -79,4 +79,24 @@ public class Top10AtCourseDao
             return new RunsAtEvent(athlete, course, rs.getInt("run_count"));
         });
     }
+
+    public List<RunsAtEvent> getTop10InRegion()
+    {
+        String sql = "select a.name, a.athlete_id, c.course_id, c.course_name, c.country_code, c.course_long_name, run_count\n" +
+                "from top_10_at_course_2024_03_09\n" +
+                "join parkrun_stats.athlete a using (athlete_id)\n" +
+                "join parkrun_stats.course c using (course_id)\n" +
+                "order by run_count desc\n" +
+                "limit 20;";
+        return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> {
+            Athlete athlete = Athlete.from(rs.getString("name"), rs.getInt("athlete_id"));
+            Course course = new Course(
+                    rs.getInt("course_id"),
+                    rs.getString("course_name"),
+                    Country.valueOf(rs.getInt("country_code")),
+                    rs.getString("course_long_name"),
+                    null);
+            return new RunsAtEvent(athlete, course, rs.getInt("run_count"));
+        });
+    }
 }
