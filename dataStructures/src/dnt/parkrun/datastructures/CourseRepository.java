@@ -1,8 +1,6 @@
 package dnt.parkrun.datastructures;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CourseRepository
@@ -35,7 +33,9 @@ public class CourseRepository
 
     public Collection<Course> getCourses(Country country)
     {
-        return courseNameToCourse.values().stream().filter(c -> c.country == country).collect(Collectors.toList());
+        List<Course> courses = courseNameToCourse.values().stream().filter(c -> c.country == country).collect(Collectors.toList());
+        courses.sort(Comparator.comparing(course -> course.name));
+        return courses;
     }
 
     public Course getCourse(int courseId)

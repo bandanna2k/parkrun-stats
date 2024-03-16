@@ -152,7 +152,8 @@ public class Stats
             Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
             try(Top10AtCoursesHtmlWriter ignored = new Top10AtCoursesHtmlWriter(writer.writer))
             {
-                List<Course> courses = courseRepository.getCourses(Country.NZ).stream().filter(c -> c.status == RUNNING).collect(Collectors.toList());
+                List<Course> courses = courseRepository.getCourses(Country.NZ).stream()
+                        .filter(c -> c.status == RUNNING).collect(Collectors.toList());
                 for (Course course : courses)
                 {
                     try(Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, course.longName))
@@ -211,7 +212,11 @@ public class Stats
         try(AttendanceRecordsTableHtmlWriter tableWriter = new AttendanceRecordsTableHtmlWriter(writer.writer))
         {
             tableWriter.writer.writeStartElement("tbody");
-            for (AttendanceRecord ar : getAttendanceRecords())
+            List<AttendanceRecord> attendanceRecords = getAttendanceRecords().stream()
+                    .filter(ar -> ar.recordEventFinishers != 0)
+                    .collect(Collectors.toList());
+            attendanceRecords.sort(Comparator.comparing(attendanceRecord -> attendanceRecord.courseName));
+            for (AttendanceRecord ar : attendanceRecords)
             {
                 tableWriter.writeAttendanceRecord(ar);
             }
