@@ -6,20 +6,17 @@ import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.CourseRepository;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
 import java.util.*;
 
-public class CourseEventSummaryDao
+public class CourseEventSummaryDao extends BaseDao
 {
-    private final NamedParameterJdbcOperations jdbc;
     private final CourseRepository courseRepository;
 
     public CourseEventSummaryDao(DataSource dataSource, CourseRepository courseRepository)
     {
-        this.jdbc = new NamedParameterJdbcTemplate(dataSource);
+        super(dataSource);
         this.courseRepository = courseRepository;
     }
 
@@ -91,7 +88,8 @@ public class CourseEventSummaryDao
         Map<String, Integer> courseToCount = new HashMap<>();
         String sql =
                 "select course_name, max(event_number) as count\n" +
-                        "from course_event_summary ces\n" +
+                        "from " + courseEventSummaryTable() + " ces\n" +
+                        "join course using (course_id)\n" +
                         "group by course_name";
         jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> {
             courseToCount.put(rs.getString("course_name"), rs.getInt("count"));

@@ -40,8 +40,8 @@ public class StatsDao extends BaseDao
                         "from " + athleteTable() + " a " +
                         "join   " +
                         "( " +
-                        "    select athlete_id, count(course_name) as count " +
-                        "    from (select distinct athlete_id, course_name from " + resultTable() + ") as sub1a " +
+                        "    select athlete_id, count(course_id) as count " +
+                        "    from (select distinct athlete_id, course_id from " + resultTable() + ") as sub1a " +
                         "    group by athlete_id " +
                         "    having count >= " + MIN_DIFFERENT_REGION_COURSE_COUNT +
                         "    order by count desc, athlete_id asc  " +
@@ -49,7 +49,7 @@ public class StatsDao extends BaseDao
                         "join " +
                         "( " +
                         "    select athlete_id, count(concat) as count " +
-                        "    from (select athlete_id, concat(athlete_id, course_name, event_number, '-', position) as concat from " + resultTable() + ") as sub2a " +
+                        "    from (select athlete_id, concat(athlete_id, '-', course_id, '-', date, '-', position) as concat from " + resultTable() + ") as sub2a " +
                         "    group by athlete_id " +
                         "    order by count desc, athlete_id asc  " +
                         ") as sub2 on sub2.athlete_id = a.athlete_id " +
@@ -96,25 +96,24 @@ public class StatsDao extends BaseDao
         jdbc.update(sql, params);
     }
 
-    public List<RunsAtEvent> getTop10AtEvent(String courseName)
+    public List<RunsAtEvent> getTop10AtEvent(int courseId)
     {
         String sql =
                 "select name, athlete_id, c.course_id, c.course_name, c.country_code, course_long_name, run_count\n" +
-                        "from parkrun_stats.athlete\n" +
+                        "from " + athleteTable() + "\n" +
                         "join\n" +
                         "(\n" +
-                        "    select athlete_id, course_name, count(time_seconds) as run_count\n" +
-                        "    from parkrun_stats.result r\n" +
-                        "    group by athlete_id, course_name\n" +
+                        "    select athlete_id, course_id, count(time_seconds) as run_count\n" +
+                        "    from " + resultTable() + " r\n" +
+                        "    group by athlete_id, course_id\n" +
                         "    having\n" +
                         "        athlete_id > 0\n" +
-                        "        and course_name = :courseName\n" +
-                        "    order by run_count desc, course_name asc\n" +
+                        "        and course_id = :courseId\n" +
+                        "    order by run_count desc\n" +
                         "    limit 10\n" +
                         ") as sub1 using (athlete_id)\n" +
-                        "join parkrun_stats.course c\n" +
-                        "on sub1.course_name = c.course_name";
-        return jdbc.query(sql, new MapSqlParameterSource("courseName", courseName), (rs, rowNum) ->
+                        "join " + courseTable() + " c using (course_id)";
+        return jdbc.query(sql, new MapSqlParameterSource("courseId", courseId), (rs, rowNum) ->
         {
             Athlete athlete = Athlete.from(rs.getString("name"), rs.getInt("athlete_id"));
             Course course = new Course(
@@ -179,36 +178,36 @@ public class StatsDao extends BaseDao
     {
         String sql =
                 "create table if not exists " + attendanceRecordTableName + " as " +
-                "select course_long_name, c.course_name, c.country_code, " +
+                "select course_long_name, c.course_id, c.country_code, " +
                         "            max as record_event_finishers, ces.date as record_event_date, ces.event_number as record_event_number, " +
                         "            sub3.recent_event_finishers, sub3.recent_event_date, sub3.recent_event_number " +
                         "from parkrun_stats.course c " +
                         "left join " +
                         "(" +
-                        "    select course_name, max(count) as max" +
+                        "    select course_id, max(count) as max" +
                         "    from" +
                         "    (" +
-                        "        select course_name, event_number, count(position) as count" +
+                        "        select course_id, date, count(position) as count" +
                         "        from parkrun_stats.result" +
-                        "        group by course_name, event_number" +
+                        "        group by course_id, date" +
                         "    ) as sub1" +
-                        "    group by course_name" +
-                        "    order by course_name asc" +
-                        ") as sub2 on c.course_name = sub2.course_name " +
+                        "    group by course_id" +
+                        "    order by course_id asc" +
+                        ") as sub2 on c.course_id = sub2.course_id " +
                         "left join parkrun_stats.course_event_summary ces " +
-                        "on c.course_name = ces.course_name " +
+                        "on c.course_id = ces.course_id " +
                         "and ces.finishers = sub2.max " +
                         "left join " +
                         "( " +
-                        "    select ces.course_name, ces.event_number as recent_event_number, finishers as recent_event_finishers, recent_event_date " +
+                        "    select ces.course_id, ces.event_number as recent_event_number, finishers as recent_event_finishers, recent_event_date " +
                         "    from parkrun_stats.course_event_summary ces " +
                         "    join " +
                         "    ( " +
-                        "        select course_name, max(date) as recent_event_date " +
+                        "        select course_id, max(date) as recent_event_date " +
                         "        from parkrun_stats.course_event_summary " +
-                        "        group by course_name " +
-                        "    ) as sub4 on ces.course_name = sub4.course_name and ces.date = sub4.recent_event_date " +
-                        ") as sub3 on c.course_name = sub3.course_name " +
+                        "        group by course_id " +
+                        "    ) as sub4 on ces.course_id = sub4.course_id and ces.date = sub4.recent_event_date " +
+                        ") as sub3 on c.course_id = sub3.course_id " +
                         "where c.country_code = " + NZ.getCountryCode();
 
         jdbc.update(sql, EmptySqlParameterSource.INSTANCE);
@@ -217,10 +216,11 @@ public class StatsDao extends BaseDao
     public List<AttendanceRecord> getAttendanceRecords(Date date)
     {
         String attendanceTableName = "attendance_records_for_region_" + DateConverter.formatDateForDbTable(date);
-        String sql = "select course_long_name, course_name, " +
+        String sql = "select at.course_long_name, course_name, " +
                 "recent_event_number, recent_event_date, recent_event_finishers, " +
                 "record_event_number, record_event_date, record_event_finishers " +
-                        "from " + attendanceTableName;
+                        "from " + attendanceTableName + " at " +
+                "left join " + courseTable() + " using (course_id)";
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
                 new AttendanceRecord(
                         rs.getString("course_long_name"),

@@ -163,7 +163,7 @@ public class Stats
                         if(top10.isEmpty())
                         {
                             System.out.println("* Getting top 10 athletes for " + course.longName);
-                            top10.addAll(statsDao.getTop10AtEvent(course.name));
+                            top10.addAll(statsDao.getTop10AtEvent(course.courseId));
                             top10Dao.writeRunsAtEvents(top10);
                         }
 
