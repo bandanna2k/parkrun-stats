@@ -1,6 +1,7 @@
 package dnt.parkrun.courseevent;
 
 import dnt.jsoupwrapper.JsoupWrapper;
+import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.Result;
@@ -13,6 +14,7 @@ import org.jsoup.select.Elements;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -43,6 +45,12 @@ public class Parser
                 .childNode(0);
         int eventNumber = Integer.parseInt(eventNumberNode.toString().replace("#", ""));
 
+        Node dateNode = resultsHeader.get(0)
+                .childNode(1)   // h3
+                .childNode(0)   // span
+                .childNode(0);
+        Date date = DateConverter.parseWebsiteDate(dateNode.toString());
+
         Elements tableElements = doc.getElementsByClass("Results-table");
 
         Element firstTable = tableElements.get(0);
@@ -69,6 +77,7 @@ public class Parser
                 Node timeDiv = row
                         .childNode(5)   // td
                         .childNode(0);   // div compact
+
                 if(!timeDiv.childNodes().isEmpty())
                 {
                     Node timeNode = row
@@ -76,11 +85,11 @@ public class Parser
                             .childNode(0)   // div compact
                             .childNode(0);  //  value
                     Time time = Time.from(timeNode.toString());
-                    resultConsumer.accept(new Result(course.courseId, eventNumber, position, athlete, time));
+                    resultConsumer.accept(new Result(course.courseId, date, position, athlete, time));
                 }
                 else
                 {
-                    resultConsumer.accept(new Result(course.courseId, eventNumber, position, athlete, Time.NO_TIME));
+                    resultConsumer.accept(new Result(course.courseId, date, position, athlete, Time.NO_TIME));
                 }
             }
         }

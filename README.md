@@ -14,14 +14,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Use date as key, rather than event_number for results (easier to delete stuff)
 
-- Create different database for date tables
-
-    - root to have all
-  
-    - dao to have read only? 
-
-    - stats to have create, insert, update in stats db
-
 ## Minor
 
 - Font that works on mobile
@@ -30,15 +22,11 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Add event not run this weekend
 
-- Remove unnecessary duplicate classes that do the same thing. MostEventRecord??? AttendanceRecord???
-
 - Most runs at a single event
 
 - Most runs at each course. Needs CSS tidy up.
 
 - Add missing parkruns
-
-- Nice way to run DAO tests
 
 ## Ideas
 

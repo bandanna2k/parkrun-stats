@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
+import java.util.Date;
 import java.util.List;
 
 public class ResultDaoTest extends BaseDaoTest
@@ -39,7 +40,7 @@ public class ResultDaoTest extends BaseDaoTest
         Athlete athlete = Athlete.fromAthleteSummaryLink("Davey JONES", "https://www.parkrun.co.nz/parkrunner/902393/");
         athleteDao.insert(athlete);
 
-        Result result = new Result(500, 200, 1, athlete, Time.from("1:30:02"));
+        Result result = new Result(500, new Date(), 1, athlete, Time.from("1:30:02"));
         resultDao.insert(result);
 
         List<Result> results = resultDao.getResults();

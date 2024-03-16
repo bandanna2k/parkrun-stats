@@ -30,7 +30,7 @@ public class ResultDao
         {
             return new Result(
                     rs.getInt("course_id"),
-                    rs.getInt("event_number"),
+                    rs.getDate("date"),
                     rs.getInt("position"),
                     Athlete.from(
                             rs.getString("name"),
@@ -45,14 +45,14 @@ public class ResultDao
     public void insert(Result result)
     {
         String sql = "insert into result (" +
-                "athlete_id, course_id, event_number, position, time_seconds" +
+                "athlete_id, course_id, date, position, time_seconds" +
                 ") values ( " +
-                ":athleteId, :courseId, :eventNumber, :position, :time_seconds" +
+                ":athleteId, :courseId, :date, :position, :time_seconds" +
                 ")";
         jdbc.update(sql, new MapSqlParameterSource()
                 .addValue("athleteId", result.athlete.athleteId)
                 .addValue("courseId", result.courseId)
-                .addValue("eventNumber", result.eventNumber)
+                .addValue("date", result.date)
                 .addValue("position", result.position)
                 .addValue("time_seconds", result.time.getTotalSeconds())
         );
@@ -66,7 +66,7 @@ public class ResultDao
         {
             Result result = new Result(
                     rs.getInt("course_id"),
-                    rs.getInt("event_number"),
+                    rs.getDate("date"),
                     rs.getInt("position"),
                     Athlete.from(
                             rs.getString("name"),
