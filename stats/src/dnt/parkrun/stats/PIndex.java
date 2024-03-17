@@ -2,11 +2,33 @@ package dnt.parkrun.stats;
 
 import dnt.parkrun.datastructures.AthleteCourseSummary;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Comparator.comparingInt;
+
 public abstract class PIndex
 {
+    public static Point pIndexNextMax(List<AthleteCourseSummary> listOfRuns)
+    {
+        listOfRuns.sort(comparingInt(acs -> -acs.countOfRuns));
+
+        int nextMax = 0;
+        List<AthleteCourseSummary> listOfPIndexACS = new ArrayList<>();
+        for (AthleteCourseSummary acs : listOfRuns)
+        {
+            if (listOfPIndexACS.size() >= acs.countOfRuns)
+            {
+                nextMax = acs.countOfRuns;
+                break;
+            }
+            listOfPIndexACS.add(acs);
+        }
+        return new Point(listOfPIndexACS.size(), nextMax);
+    }
+
     public static int pIndex(List<AthleteCourseSummary> listOfRuns)
     {
         int testPIndex;

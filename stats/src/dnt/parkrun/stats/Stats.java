@@ -12,9 +12,11 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
+import java.awt.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,6 +24,7 @@ import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
 import static dnt.parkrun.database.StatsDao.DifferentCourseCount;
 import static dnt.parkrun.datastructures.Course.Status.RUNNING;
 import static dnt.parkrun.stats.PIndex.pIndex;
+import static dnt.parkrun.stats.PIndex.pIndexNextMax;
 import static java.util.Collections.emptyList;
 
 public class Stats
@@ -127,13 +130,11 @@ public class Stats
                 List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
                 athleteIdToAthleteCourseSummaries.forEach((athleteId, summariesForAthlete) ->
                 {
-                    int pIndex = pIndex(summariesForAthlete);
+                    Point pIndexNextMax = pIndexNextMax(summariesForAthlete);
+                    int pIndex = pIndexNextMax.x;
+                    int nextMax = pIndexNextMax.y;
                     if (pIndex >= MIN_P_INDEX)
                     {
-                        int nextMax = summariesForAthlete.stream()
-                                .filter(acs -> acs.countOfRuns < pIndex)
-                                .map(acs -> acs.countOfRuns).max(Comparator.naturalOrder()).orElse(0);
-
                         Athlete athlete = athleteIdToAthlete.get(athleteId);
                         records.add(new PIndexTableHtmlWriter.Record(athlete, pIndex, nextMax));
                     }
@@ -142,6 +143,8 @@ public class Stats
                 records.sort((der1, der2) -> {
                     if(der1.pIndex < der2.pIndex) return 1;
                     if(der1.pIndex > der2.pIndex) return -1;
+                    if(der1.nextMax < der2.nextMax) return 1;
+                    if(der1.nextMax > der2.nextMax) return -1;
                     if(der1.athlete.athleteId > der2.athlete.athleteId) return 1;
                     if(der1.athlete.athleteId < der2.athlete.athleteId) return -1;
                     return 0;
