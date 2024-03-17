@@ -52,6 +52,19 @@ result (
 ) DEFAULT CHARSET=utf8mb4;
 
 
+-- Event volunteer
+CREATE TABLE
+IF NOT EXISTS
+event_volunteer (
+    course_id       INT                 NOT NULL,
+    date            DATE                NOT NULL,
+    athlete_id      BIGINT              NOT NULL,
+
+    PRIMARY KEY (course_id, date, athlete_id)
+
+) DEFAULT CHARSET=utf8mb4;
+
+
 -- Course Event Summary
 CREATE TABLE
 IF NOT EXISTS

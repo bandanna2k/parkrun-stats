@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class Parser
@@ -93,6 +94,22 @@ public class Parser
                 }
             }
         }
+
+        Elements thanksToTheVolunteers = doc.getElementsMatchingText("Thanks to the volunteers");
+        Elements parents = thanksToTheVolunteers.parents();
+
+        AtomicInteger counter = new AtomicInteger();
+        List<Node> volunteers = parents.last().childNode(1).childNodes();
+        volunteers.forEach(volunteerNode -> {
+            Node volunteerAthleteNode = volunteerNode.firstChild();
+            if(volunteerAthleteNode != null)
+            {
+                Athlete athlete = Athlete.fromAthleteAtCourseLink(volunteerAthleteNode.toString(), volunteerNode.toString());
+                counter.incrementAndGet();
+                System.out.println(athlete);
+            }
+        });
+        System.out.println(counter);
     }
 
     public static class Builder

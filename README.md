@@ -12,6 +12,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Major
 
+- Capture volunteer data
+
 ## Minor
 
 - Font that works on mobile
