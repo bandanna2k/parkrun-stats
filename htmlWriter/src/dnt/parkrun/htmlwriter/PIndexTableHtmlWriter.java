@@ -37,6 +37,10 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         writer.writeCharacters("P-Index");
         endElement("th");
 
+        startElement("th");
+        writer.writeCharacters("Next max");
+        endElement("th");
+
         endElement("tr");
         endElement("thead");
     }
@@ -81,6 +85,11 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         writer.writeCharacters(String.valueOf(record.pIndex));
         endElement("td");
 
+        // Next max
+        startElement("td");
+        writer.writeCharacters(String.valueOf(record.nextMax));
+        endElement("td");
+
         endElement("tr");
     }
 
@@ -88,11 +97,13 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
     {
         public final Athlete athlete;
         public final int pIndex;
+        public final int nextMax;
 
-        public Record(Athlete athlete, int pIndex)
+        public Record(Athlete athlete, int pIndex, int nextMax)
         {
             this.athlete = athlete;
             this.pIndex = pIndex;
+            this.nextMax = nextMax;
         }
 
         @Override
@@ -101,6 +112,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
             return "Record{" +
                     "athlete=" + athlete +
                     ", pIndex=" + pIndex +
+                    ", nextMax=" + nextMax +
                     '}';
         }
     }

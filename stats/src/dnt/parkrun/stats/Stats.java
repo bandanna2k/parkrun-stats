@@ -29,6 +29,7 @@ public class Stats
     private static final int SEVEN_DAYS_IN_MILLIS = (7 * 24 * 60 * 60 * 1000);
 
     public static final String PARKRUN_CO_NZ = "parkrun.co.nz";
+    public static final int MIN_P_INDEX = 5;
     private final CourseRepository courseRepository;
 
     /*
@@ -121,16 +122,20 @@ public class Stats
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
-            /*
             try(PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer))
             {
                 List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
-                acsMap.forEach((key, value) ->
+                athleteIdToAthleteCourseSummaries.forEach((athleteId, summariesForAthlete) ->
                 {
-                    int pIndex = pIndex(value);
-                    if (pIndex >= 5)
+                    int pIndex = pIndex(summariesForAthlete);
+                    if (pIndex >= MIN_P_INDEX)
                     {
-                        records.add(new PIndexTableHtmlWriter.Record(key, pIndex));
+                        int nextMax = summariesForAthlete.stream()
+                                .filter(acs -> acs.countOfRuns < pIndex)
+                                .map(acs -> acs.countOfRuns).max(Comparator.naturalOrder()).orElse(0);
+
+                        Athlete athlete = athleteIdToAthlete.get(athleteId);
+                        records.add(new PIndexTableHtmlWriter.Record(athlete, pIndex, nextMax));
                     }
                 });
 
@@ -146,8 +151,6 @@ public class Stats
                     tableWriter.writePIndexRecord(record);
                 }
             }
-
-             */
 
             Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
             try(Top10AtCoursesHtmlWriter ignored = new Top10AtCoursesHtmlWriter(writer.writer))
@@ -257,7 +260,7 @@ public class Stats
         System.out.println("Size A " + athletesFromMostEventTable.size());
 
         System.out.println("* Calculate athlete summaries that need to be downloaded (2. Results table) *");
-        Set<Integer> athletesFromResults = getAthletesFromDbWithMinimumPIndex(5);
+        Set<Integer> athletesFromResults = getAthletesFromDbWithMinimumPIndex(MIN_P_INDEX);
         System.out.println("Size B " + athletesFromResults.size());
 
         Set<Integer> athletesInMostEventsNotInResults = new HashSet<>(athletesFromMostEventTable);
