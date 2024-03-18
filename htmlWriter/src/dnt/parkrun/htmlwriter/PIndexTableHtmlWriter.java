@@ -34,11 +34,15 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         endElement("th");
 
         startElement("th");
-        writer.writeCharacters("P-Index");
+        writer.writeCharacters("Region P-Index");
         endElement("th");
 
         startElement("th");
-        writer.writeCharacters("Next max");
+        //writer.writeCharacters("Region Next Max");
+        endElement("th");
+
+        startElement("th");
+        writer.writeCharacters("Global P-Index");
         endElement("th");
 
         endElement("tr");
@@ -80,14 +84,19 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         endElement("a");
         endElement("td");
 
-        // P-Index
+        // Region P-Index
         startElement("td");
-        writer.writeCharacters(String.valueOf(record.pIndex));
+        writer.writeCharacters(String.valueOf(record.regionPIndex));
         endElement("td");
 
-        // Next max
+        // to next PIndex (Region Next Max)
         startElement("td");
-        writer.writeCharacters(String.valueOf(record.nextMax));
+        writer.writeCharacters(record.getRunsToNextPIndex() + " more to P" + (record.regionPIndex + 1));
+        endElement("td");
+
+        // Global P-Index
+        startElement("td");
+        writer.writeCharacters(String.valueOf(record.globalPIndex));
         endElement("td");
 
         endElement("tr");
@@ -96,14 +105,21 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
     public static class Record
     {
         public final Athlete athlete;
-        public final int pIndex;
-        public final int nextMax;
+        public final int regionPIndex;
+        public final int regionNextMax;
+        public final int globalPIndex;
 
-        public Record(Athlete athlete, int pIndex, int nextMax)
+        public Record(Athlete athlete, int regionPIndex, int globalPIndex, int regionNextMax)
         {
             this.athlete = athlete;
-            this.pIndex = pIndex;
-            this.nextMax = nextMax;
+            this.regionPIndex = regionPIndex;
+            this.regionNextMax = regionNextMax;
+            this.globalPIndex = globalPIndex;
+        }
+
+        public int getRunsToNextPIndex()
+        {
+            return (regionPIndex + 1) - regionNextMax;
         }
 
         @Override
@@ -111,8 +127,9 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         {
             return "Record{" +
                     "athlete=" + athlete +
-                    ", pIndex=" + pIndex +
-                    ", nextMax=" + nextMax +
+                    ", regionPIndex=" + regionPIndex +
+                    ", regionNextMax=" + regionNextMax +
+                    ", globalPIndex=" + globalPIndex +
                     '}';
         }
     }

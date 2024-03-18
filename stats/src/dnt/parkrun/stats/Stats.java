@@ -4,7 +4,10 @@ import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.*;
-import dnt.parkrun.datastructures.*;
+import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.AthleteCourseSummary;
+import dnt.parkrun.datastructures.Course;
+import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import dnt.parkrun.datastructures.stats.RunsAtEvent;
 import dnt.parkrun.htmlwriter.*;
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 
 import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
 import static dnt.parkrun.database.StatsDao.DifferentCourseCount;
+import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.RUNNING;
 import static dnt.parkrun.stats.PIndex.pIndex;
 import static dnt.parkrun.stats.PIndex.pIndexNextMax;
@@ -130,21 +134,37 @@ public class Stats
                 List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
                 athleteIdToAthleteCourseSummaries.forEach((athleteId, summariesForAthlete) ->
                 {
-                    Point pIndexNextMax = pIndexNextMax(summariesForAthlete);
-                    int pIndex = pIndexNextMax.x;
-                    int nextMax = pIndexNextMax.y;
-                    if (pIndex >= MIN_P_INDEX)
+                    int globalPIndex = 0;
                     {
-                        Athlete athlete = athleteIdToAthlete.get(athleteId);
-                        records.add(new PIndexTableHtmlWriter.Record(athlete, pIndex, nextMax));
+                        Point pIndexNextMax = pIndexNextMax(summariesForAthlete);
+                        int pIndex = pIndexNextMax.x;
+                        //int regionNextMax = pIndexNextMax.y;
+                        if (pIndex >= MIN_P_INDEX)
+                        {
+                            globalPIndex = pIndex;
+                        }
+                    }
+                    {
+                        List<AthleteCourseSummary> summariesForAthleteForRegion = summariesForAthlete.stream()
+                                .filter(acs -> acs.course != null && acs.course.country == NZ).collect(Collectors.toList());
+                        Point pIndexNextMax = pIndexNextMax(summariesForAthleteForRegion);
+                        int pIndex = pIndexNextMax.x;
+                        int nextMax = pIndexNextMax.y;
+                        if (pIndex >= MIN_P_INDEX)
+                        {
+                            Athlete athlete = athleteIdToAthlete.get(athleteId);
+                            records.add(new PIndexTableHtmlWriter.Record(athlete, pIndex, globalPIndex, nextMax));
+                        }
                     }
                 });
 
                 records.sort((der1, der2) -> {
-                    if(der1.pIndex < der2.pIndex) return 1;
-                    if(der1.pIndex > der2.pIndex) return -1;
-                    if(der1.nextMax < der2.nextMax) return 1;
-                    if(der1.nextMax > der2.nextMax) return -1;
+                    if(der1.regionPIndex < der2.regionPIndex) return 1;
+                    if(der1.regionPIndex > der2.regionPIndex) return -1;
+                    if(der1.regionNextMax < der2.regionNextMax) return 1;
+                    if(der1.regionNextMax > der2.regionNextMax) return -1;
+                    if(der1.globalPIndex < der2.globalPIndex) return 1;
+                    if(der1.globalPIndex > der2.globalPIndex) return -1;
                     if(der1.athlete.athleteId > der2.athlete.athleteId) return 1;
                     if(der1.athlete.athleteId < der2.athlete.athleteId) return -1;
                     return 0;
@@ -158,7 +178,7 @@ public class Stats
             Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
             try(Top10AtCoursesHtmlWriter ignored = new Top10AtCoursesHtmlWriter(writer.writer))
             {
-                List<Course> courses = courseRepository.getCourses(Country.NZ).stream()
+                List<Course> courses = courseRepository.getCourses(NZ).stream()
                         .filter(c -> c.status == RUNNING).collect(Collectors.toList());
                 for (Course course : courses)
                 {
@@ -302,6 +322,7 @@ public class Stats
                 athleteIdToAthleteCourseSummaries.put(athlete.athleteId, summaries);
             }
             Course course = courseRepository.getCourse((int) objects[2]);
+//            assert course != null : "Course is null: " + (int) objects[2];
             summaries.add(new AthleteCourseSummary(
                     athlete,
                     course,
@@ -402,7 +423,7 @@ public class Stats
                 calResult.set(Calendar.MILLISECOND, 0);
                 return calResult.getTime();
             }
-            calResult.add(Calendar.DAY_OF_MONTH, i * -1);
+            calResult.add(Calendar.DAY_OF_MONTH, -1);
         }
         throw new UnsupportedOperationException();
     }
