@@ -21,8 +21,8 @@ public class ResultDao
         jdbc = new NamedParameterJdbcTemplate(dataSource);
     }
 
-    @Deprecated // Do not use. Results too large
-    public List<Result> getResults()
+    @Deprecated // Testing only. Do not use. Results too large
+    List<Result> getResults()
     {
         String sql = "select * from result " +
                 "right join athlete using (athlete_id)";

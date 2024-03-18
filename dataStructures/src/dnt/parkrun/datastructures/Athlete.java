@@ -42,7 +42,6 @@ public class Athlete
     /*
         https://www.parkrun.co.nz/cornwall/results/athletehistory/?athleteNumber=320896
      */
-
     public static Athlete fromAthleteHistoryAtEventLink(String name, String link)
     {
         return new Athlete(name, extractIdFromAthleteHistoryAtEventLink(link));
@@ -60,6 +59,9 @@ public class Athlete
         return new Athlete(name, athleteId);
     }
 
+    /*
+        https://www.parkrun.co.nz/cornwall/results/athletehistory/?athleteNumber=320896
+     */
     static int extractIdFromAthleteHistoryAtEventLink(String href)
     {
         if(href == null)
@@ -81,6 +83,9 @@ public class Athlete
         return NO_ATHLETE_ID;
     }
 
+    /*
+        https://www.parkrun.us/colermountainbikepreserve/parkrunner/9265263
+     */
     static int extractIdFromAthleteAtCourseLink(String href)
     {
         if(href == null)
@@ -125,4 +130,5 @@ public class Athlete
             return NO_ATHLETE_ID;
         }
     }
+
 }

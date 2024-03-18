@@ -3,10 +3,7 @@ package dnt.parkrun.mostevents;
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
-import dnt.parkrun.database.AthleteDao;
-import dnt.parkrun.database.CourseDao;
-import dnt.parkrun.database.CourseEventSummaryDao;
-import dnt.parkrun.database.ResultDao;
+import dnt.parkrun.database.*;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
@@ -39,6 +36,7 @@ public class MostEvents
     private final CourseDao courseDao;
     private final CourseEventSummaryDao courseEventSummaryDao;
     private final ResultDao resultDao;
+    private final VolunteerDao volunteerDao;
 
     private MostEvents(DataSource dataSource) throws SQLException
     {
@@ -47,6 +45,7 @@ public class MostEvents
         this.athleteDao = new AthleteDao(dataSource);
         this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
         this.resultDao = new ResultDao(dataSource);
+        this.volunteerDao = new VolunteerDao(dataSource);
     }
 
     public static MostEvents newInstance() throws SQLException
@@ -102,6 +101,7 @@ public class MostEvents
                             .url(generateCourseEventUrl(ces.course.country.baseUrl, ces.course.name, ces.eventNumber))
                             .forEachAthlete(athleteDao::insert)
                             .forEachResult(resultDao::insert)
+                            .forEachVolunteer(volunteerDao::insert)
                             .build();
                     parser.parse();
 

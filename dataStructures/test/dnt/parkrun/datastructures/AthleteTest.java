@@ -35,6 +35,8 @@ public class AthleteTest
                 .isEqualTo(NO_ATHLETE_ID);
         assertThat(Athlete.fromAthleteHistoryAtEventLink("test", null).athleteId)
                 .isEqualTo(NO_ATHLETE_ID);
+        assertThat(Athlete.fromAthleteHistoryAtEventLink("test", "https://www.parkrun.us/colermountainbikepreserve/results/73/athletehistory/?athleteNumber=243802").athleteId)
+                .isEqualTo(243802);
     }
 
     @Test

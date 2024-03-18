@@ -2,10 +2,7 @@ package dnt.parkrun.courseevent;
 
 import dnt.jsoupwrapper.JsoupWrapper;
 import dnt.parkrun.common.DateConverter;
-import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.Course;
-import dnt.parkrun.datastructures.Result;
-import dnt.parkrun.datastructures.Time;
+import dnt.parkrun.datastructures.*;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -25,16 +22,19 @@ public class Parser
     private final Course course;
     private final Consumer<Athlete> athleteConsumer;
     private final Consumer<Result> resultConsumer;
+    private final Consumer<Volunteer> volunteerConsumer;
 
     public Parser(Document doc,
                   Course course,
                   Consumer<Athlete> athleteConsumer,
-                  Consumer<Result> resultConsumer)
+                  Consumer<Result> resultConsumer,
+                  Consumer<Volunteer> volunteerConsumer)
     {
         this.doc = doc;
         this.course = course;
         this.athleteConsumer = athleteConsumer;
         this.resultConsumer = resultConsumer;
+        this.volunteerConsumer = volunteerConsumer;
     }
 
     public void parse()
@@ -104,9 +104,8 @@ public class Parser
             Node volunteerAthleteNode = volunteerNode.firstChild();
             if(volunteerAthleteNode != null)
             {
-                Athlete athlete = Athlete.fromAthleteAtCourseLink(volunteerAthleteNode.toString(), volunteerNode.toString());
-                counter.incrementAndGet();
-                System.out.println(athlete);
+                Athlete athlete = Athlete.fromAthleteHistoryAtEventLink(volunteerAthleteNode.toString(), volunteerNode.attr("href"));
+                volunteerConsumer.accept(new Volunteer(course.courseId, date, athlete));
             }
         });
         System.out.println(counter);
@@ -117,11 +116,12 @@ public class Parser
         private Document doc;
         private Consumer<Athlete> athleteConsumer = r -> {};
         private Consumer<Result> resultConsumer = r -> {};
+        private Consumer<Volunteer> volunteerConsumer = r -> {};
         private Course course;
 
         public Parser build()
         {
-            return new Parser(doc, course, athleteConsumer, resultConsumer);
+            return new Parser(doc, course, athleteConsumer, resultConsumer, volunteerConsumer);
         }
 
         public Builder url(URL url) throws IOException
@@ -145,6 +145,12 @@ public class Parser
         public Builder forEachResult(Consumer<Result> consumer)
         {
             this.resultConsumer = consumer;
+            return this;
+        }
+
+        public Builder forEachVolunteer(Consumer<Volunteer> consumer)
+        {
+            this.volunteerConsumer = consumer;
             return this;
         }
 
