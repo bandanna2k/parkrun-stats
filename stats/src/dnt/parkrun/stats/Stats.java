@@ -178,6 +178,18 @@ public class Stats
             Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
             try(Top10AtCoursesHtmlWriter ignored = new Top10AtCoursesHtmlWriter(writer.writer))
             {
+                try(Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, "New Zealand"))
+                {
+                    List<RunsAtEvent> top10InRegion = top10Dao.getTop10InRegion();
+                    for (RunsAtEvent r : top10InRegion)
+                    {
+                        top10InRegionHtmlWriter.writeRecord(new Top10InRegionHtmlWriter.Record(r.athlete, r.course.longName, r.runCount));
+                    }
+                }
+
+                writer.writer.writeStartElement("hr");
+                writer.writer.writeEndElement();
+
                 List<Course> courses = courseRepository.getCourses(NZ).stream()
                         .filter(c -> c.status == RUNNING).collect(Collectors.toList());
                 for (Course course : courses)
@@ -202,8 +214,6 @@ public class Stats
                     }
                 }
             }
-            List<RunsAtEvent> top10InRegion = top10Dao.getTop10InRegion();
-            top10InRegion.forEach(rae -> System.out.println("Top 10 in NZ: " + rae));
 
             /*
             try(MostRunsAtEventTableWriter tableWriter = new MostRunsAtEventTableWriter(writer.writer))
