@@ -3,26 +3,15 @@ package dnt.parkrun.datastructures.stats;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Course;
 
-public class RunsAtEvent
+public class RunsAtEvent extends AtEvent
 {
-    public final Athlete athlete;
-    public final Course course;
-    public final int runCount;
-
     public RunsAtEvent(Athlete athlete, Course course, int runCount)
     {
-        this.course = course;
-        this.athlete = athlete;
-        this.runCount = runCount;
+        super(athlete, course, runCount);
     }
 
-    @Override
-    public String toString()
+    public int getRunCount()
     {
-        return "RunsAtEvent{" +
-                "athlete=" + athlete +
-                ", course=" + course +
-                ", runCount=" + runCount +
-                '}';
+        return count;
     }
 }

@@ -34,4 +34,8 @@ public abstract class BaseDao
     {
         return test() ? "parkrun_stats_test.result" : "parkrun_stats.result";
     }
+    protected String volunteerTable()
+    {
+        return test() ? "parkrun_stats_test.event_volunteer" : "parkrun_stats.event_volunteer";
+    }
 }

@@ -6,13 +6,13 @@ import java.io.Closeable;
 
 public class Top10AtCoursesHtmlWriter extends BaseWriter implements Closeable
 {
-    public Top10AtCoursesHtmlWriter(XMLStreamWriter writer) throws XMLStreamException
+    public Top10AtCoursesHtmlWriter(XMLStreamWriter writer, String title) throws XMLStreamException
     {
         super(writer);
 
         startElement("details");
         startElement("summary");
-        writer.writeCharacters("Most Runs at Courses (New Zealand)");
+        writer.writeCharacters(title);
         endElement("summary");
     }
 
