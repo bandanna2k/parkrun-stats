@@ -21,26 +21,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PIndexTest
 {
     /*
-                // 4, 4, 4          pIndex 3
-                // 2, 2, 4, 4, 4    pIndex 3
-                // 20               pIndex 1
-                // 1, 1, 1, 1       pIndex 1
-                // 2, 2, 2, 2       pIndex 2
-                // 5, 5, 5, 5       pIndex 4
-                // 100, 4, 4, 3     pIndex 3, next 3
+                // 4, 4, 4          pIndex 3, need 4
+                // 2, 2, 4, 4, 4    pIndex 3, need 1
+                // 20               pIndex 1, need 2
+                // 1, 1, 1, 1       pIndex 1, need 1
+                // 2, 2, 2, 2       pIndex 2, need 3 to get to P3
+                // 5, 5, 5, 5       pIndex 4, need 1 to get to P6
+                // 100, 4, 4, 3     pIndex 3, need 1
+                // 4, 4, 4, 4       pIndex 4, need 9
      */
 
     @Test
     public void testPIndex()
     {
-        //testPIndex(3,  4, 4, 4);
-        testPIndex(3,2,  2, 2, 4, 4, 4);
-        testPIndex(1, 0, 20);
-        testPIndex(0, 0);
+        testPIndex(3,1,  2, 2, 4, 4, 4);
+        testPIndex(1, 2, 20);
+        testPIndex(0, 1);
         testPIndex(1,  1, 1, 1, 1, 1);
-        testPIndex(2,  2, 2, 2, 2, 2);
-        testPIndex(4,  0, 5, 5, 5, 5);
-        testPIndex(3,  3, 100, 4, 4, 3);
+        testPIndex(2,  3, 2, 2, 2, 2);
+        testPIndex(4,  1, 5, 5, 5, 5);
+        testPIndex(3,  1, 100, 4, 4, 3);
+        testPIndex(4,  9, 4, 4, 4, 4);
     }
     private void testPIndex(int expectedPIndex, int expectedNextMax, int ... countOfRuns)
     {
