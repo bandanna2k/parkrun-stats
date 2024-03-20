@@ -17,9 +17,9 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
     {
         super(writer);
 
-        startElement("details");
-        startElement("summary");
-        writer.writeCharacters("(WORK IN PROGRESS) P-Index (New Zealand) - by ");
+        startElement("details", "style", "margin-left:10em");
+        startElement("summary", "style", "font-size:24px");
+        writer.writeCharacters("Legacy P-Index (New Zealand) - by ");
         startElement("a",
                 "href", UrlGenerator.generateAthleteUrl(NZ.baseUrl, 12345).toString(),
                 "style", "color:inherit;text-decoration:none;");

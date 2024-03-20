@@ -132,43 +132,47 @@ public class Stats
 
     private void writePIndex(HtmlWriter writer) throws XMLStreamException
     {
-        try(PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer))
+        try(CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, " P-Index (New Zealand)"))
         {
-            List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
-            for (Map.Entry<Integer, List<AthleteCourseSummary>> entry : athleteIdToAthleteCourseSummaries.entrySet())
+            try(PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer))
             {
-                int athleteId = entry.getKey();
-                Athlete athlete = athleteIdToAthlete.get(athleteId);
-                List<AthleteCourseSummary> summariesForAthlete = entry.getValue();
-
-                PIndex.Result globalPIndex = PIndex.pIndexAndNeeded(summariesForAthlete);
-                PIndex.Result regionPIndex = PIndex.pIndexAndNeeded(summariesForAthlete.stream()
-                        .filter(acs -> acs.course != null && acs.course.country == NZ).collect(Collectors.toList()));
-
-                if (regionPIndex.pIndex < MIN_P_INDEX)
+                List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
+                for (Map.Entry<Integer, List<AthleteCourseSummary>> entry : athleteIdToAthleteCourseSummaries.entrySet())
                 {
-                    continue;
+                    int athleteId = entry.getKey();
+                    Athlete athlete = athleteIdToAthlete.get(athleteId);
+                    List<AthleteCourseSummary> summariesForAthlete = entry.getValue();
+
+                    PIndex.Result globalPIndex = PIndex.pIndexAndNeeded(summariesForAthlete);
+                    PIndex.Result regionPIndex = PIndex.pIndexAndNeeded(summariesForAthlete.stream()
+                            .filter(acs -> acs.course != null && acs.course.country == NZ).collect(Collectors.toList()));
+
+                    if (regionPIndex.pIndex < MIN_P_INDEX)
+                    {
+                        continue;
+                    }
+
+                    records.add(new PIndexTableHtmlWriter.Record(athlete, regionPIndex, globalPIndex));
                 }
 
-                records.add(new PIndexTableHtmlWriter.Record(athlete, regionPIndex, globalPIndex));
-            }
-
-            records.sort((der1, der2) -> {
-                if(der1.globalPIndex.pIndex < der2.globalPIndex.pIndex) return 1;
-                if(der1.globalPIndex.pIndex > der2.globalPIndex.pIndex) return -1;
-                if(der1.globalPIndex.neededForNextPIndex > der2.globalPIndex.neededForNextPIndex) return 1;
-                if(der1.globalPIndex.neededForNextPIndex < der2.globalPIndex.neededForNextPIndex) return -1;
-//                if(der1.regionPIndex.pIndex < der2.regionPIndex.pIndex) return 1;
-//                if(der1.regionPIndex.pIndex > der2.regionPIndex.pIndex) return -1;
-//                if(der1.regionPIndex.neededForNextPIndex < der2.regionPIndex.neededForNextPIndex) return 1;
-//                if(der1.regionPIndex.neededForNextPIndex > der2.regionPIndex.neededForNextPIndex) return -1;
-                if(der1.athlete.athleteId > der2.athlete.athleteId) return 1;
-                if(der1.athlete.athleteId < der2.athlete.athleteId) return -1;
-                return 0;
-            });
-            for (PIndexTableHtmlWriter.Record record : records)
-            {
-                tableWriter.writePIndexRecord(record);
+                records.sort((der1, der2) ->
+                {
+                    if (der1.globalPIndex.pIndex < der2.globalPIndex.pIndex) return 1;
+                    if (der1.globalPIndex.pIndex > der2.globalPIndex.pIndex) return -1;
+                    if (der1.globalPIndex.neededForNextPIndex > der2.globalPIndex.neededForNextPIndex) return 1;
+                    if (der1.globalPIndex.neededForNextPIndex < der2.globalPIndex.neededForNextPIndex) return -1;
+                    //                if(der1.regionPIndex.pIndex < der2.regionPIndex.pIndex) return 1;
+                    //                if(der1.regionPIndex.pIndex > der2.regionPIndex.pIndex) return -1;
+                    //                if(der1.regionPIndex.neededForNextPIndex < der2.regionPIndex.neededForNextPIndex) return 1;
+                    //                if(der1.regionPIndex.neededForNextPIndex > der2.regionPIndex.neededForNextPIndex) return -1;
+                    if (der1.athlete.athleteId > der2.athlete.athleteId) return 1;
+                    if (der1.athlete.athleteId < der2.athlete.athleteId) return -1;
+                    return 0;
+                });
+                for (PIndexTableHtmlWriter.Record record : records)
+                {
+                    tableWriter.writePIndexRecord(record);
+                }
             }
         }
     }
@@ -176,7 +180,7 @@ public class Stats
     private void writeTop10Runs(HtmlWriter writer) throws XMLStreamException
     {
         Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
-        try(Top10AtCoursesHtmlWriter ignored = new Top10AtCoursesHtmlWriter(writer.writer, "Most Runs at Courses (New Zealand)"))
+        try(CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Runs at Courses (New Zealand)"))
         {
             try(Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, "New Zealand"))
             {
@@ -219,7 +223,7 @@ public class Stats
     private void writeTop10Volunteers(HtmlWriter writer) throws XMLStreamException
     {
         Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
-        try(Top10AtCoursesHtmlWriter ignored = new Top10AtCoursesHtmlWriter(writer.writer, "Most Volunteers at Courses (New Zealand)"))
+        try(CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Volunteers at Courses (New Zealand)"))
         {
             List<Course> courses = courseRepository.getCourses(NZ).stream()
                     .filter(c -> c.status == RUNNING).collect(Collectors.toList());
