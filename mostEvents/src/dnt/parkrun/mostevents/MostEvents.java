@@ -74,7 +74,6 @@ public class MostEvents
 
         System.out.println("* Get course summaries from Web *");
         List<CourseEventSummary> courseEventSummariesFromWeb = getCourseEventSummariesFromWeb();
-        // System.out.println(courseEventSummariesFromWeb); // Pollutes the logs
 
         System.out.println("* Filtering existing course event summaries *");
         courseEventSummariesFromWeb.removeAll(courseEventSummariesFromDao);
