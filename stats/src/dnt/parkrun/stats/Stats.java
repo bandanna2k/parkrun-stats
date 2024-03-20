@@ -26,7 +26,6 @@ import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
 import static dnt.parkrun.database.StatsDao.DifferentCourseCount;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.RUNNING;
-import static dnt.parkrun.pindex.PIndex.pIndexAndNeeded;
 import static java.util.Collections.emptyList;
 
 public class Stats
@@ -143,7 +142,7 @@ public class Stats
                 List<AthleteCourseSummary> summariesForAthlete = entry.getValue();
 
                 PIndex.Result globalPIndex = PIndex.pIndexAndNeeded(summariesForAthlete);
-                PIndex.Result regionPIndex = pIndexAndNeeded(summariesForAthlete.stream()
+                PIndex.Result regionPIndex = PIndex.pIndexAndNeeded(summariesForAthlete.stream()
                         .filter(acs -> acs.course != null && acs.course.country == NZ).collect(Collectors.toList()));
 
                 if (regionPIndex.pIndex < MIN_P_INDEX)

@@ -35,16 +35,16 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         endElement("th");
 
         startElement("th");
-        writer.writeCharacters("Region P-Index");
+        writer.writeCharacters("p-Index");
         endElement("th");
 
         startElement("th");
-        //writer.writeCharacters("Region Next Max");
+        writer.writeCharacters("Needed to Index Up");
         endElement("th");
 
-        startElement("th");
-        writer.writeCharacters("Global P-Index");
-        endElement("th");
+//        startElement("th");
+//        writer.writeCharacters("Global P-Index");
+//        endElement("th");
 
         endElement("tr");
         endElement("thead");
@@ -96,9 +96,9 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         endElement("td");
 
         // Global P-Index
-        startElement("td");
+//        startElement("td");
 //        writer.writeCharacters(String.valueOf(record.globalPIndex.pIndex));
-        endElement("td");
+//        endElement("td");
 
         endElement("tr");
     }
