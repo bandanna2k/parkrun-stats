@@ -1,6 +1,7 @@
 package dnt.parkrun.htmlwriter;
 
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.pindex.PIndex;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -86,17 +87,17 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
 
         // Region P-Index
         startElement("td");
-        writer.writeCharacters(String.valueOf(record.regionPIndex));
+        writer.writeCharacters(String.valueOf(record.globalPIndex.pIndex));
         endElement("td");
 
         // to next PIndex (Region Next Max)
         startElement("td");
-        writer.writeCharacters(record.getRunsToNextPIndex() + " more to P" + (record.regionPIndex + 1));
+        writer.writeCharacters(record.globalPIndex.neededForNextPIndex + " more to P" + (record.globalPIndex.pIndex + 1));
         endElement("td");
 
         // Global P-Index
         startElement("td");
-        writer.writeCharacters(String.valueOf(record.globalPIndex));
+//        writer.writeCharacters(String.valueOf(record.globalPIndex.pIndex));
         endElement("td");
 
         endElement("tr");
@@ -105,21 +106,14 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
     public static class Record
     {
         public final Athlete athlete;
-        public final int regionPIndex;
-        public final int regionNextMax;
-        public final int globalPIndex;
+        public final PIndex.Result regionPIndex;
+        public final PIndex.Result globalPIndex;
 
-        public Record(Athlete athlete, int regionPIndex, int globalPIndex, int regionNextMax)
+        public Record(Athlete athlete, PIndex.Result regionPIndex, PIndex.Result globalPIndex)
         {
             this.athlete = athlete;
             this.regionPIndex = regionPIndex;
-            this.regionNextMax = regionNextMax;
             this.globalPIndex = globalPIndex;
-        }
-
-        public int getRunsToNextPIndex()
-        {
-            return (regionPIndex + 1) - regionNextMax;
         }
 
         @Override
@@ -128,7 +122,6 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
             return "Record{" +
                     "athlete=" + athlete +
                     ", regionPIndex=" + regionPIndex +
-                    ", regionNextMax=" + regionNextMax +
                     ", globalPIndex=" + globalPIndex +
                     '}';
         }

@@ -42,7 +42,7 @@ public class Top10VoluteersAtCourseDao extends BaseDao
         String sql = "insert into " + tableName + " (" +
                 "athlete_id, course_id, volunteer_count" +
                 ") values ( " +
-                ":athleteId, :courseId, :runCount" +
+                ":athleteId, :courseId, :volunteerCount" +
                 ")";
         volunteersAtEvents.forEach(volunteersAtEvent -> {
 //            jdbc.batchUpdate(sql, new MapSqlParameterSource()

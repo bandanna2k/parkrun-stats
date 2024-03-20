@@ -11,15 +11,14 @@ import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.datastructures.stats.AtEvent;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import dnt.parkrun.htmlwriter.*;
+import dnt.parkrun.pindex.PIndex;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
-import java.awt.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,8 +26,7 @@ import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
 import static dnt.parkrun.database.StatsDao.DifferentCourseCount;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.RUNNING;
-import static dnt.parkrun.stats.PIndex.pIndex;
-import static dnt.parkrun.stats.PIndex.pIndexNextMax;
+import static dnt.parkrun.pindex.PIndex.pIndexAndNeeded;
 import static java.util.Collections.emptyList;
 
 public class Stats
@@ -113,51 +111,7 @@ public class Stats
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
-            try(PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer))
-            {
-                List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
-                athleteIdToAthleteCourseSummaries.forEach((athleteId, summariesForAthlete) ->
-                {
-                    int globalPIndex = 0;
-                    {
-                        Point pIndexNextMax = pIndexNextMax(summariesForAthlete);
-                        int pIndex = pIndexNextMax.x;
-                        //int regionNextMax = pIndexNextMax.y;
-                        if (pIndex >= MIN_P_INDEX)
-                        {
-                            globalPIndex = pIndex;
-                        }
-                    }
-                    {
-                        List<AthleteCourseSummary> summariesForAthleteForRegion = summariesForAthlete.stream()
-                                .filter(acs -> acs.course != null && acs.course.country == NZ).collect(Collectors.toList());
-                        Point pIndexNextMax = pIndexNextMax(summariesForAthleteForRegion);
-                        int pIndex = pIndexNextMax.x;
-                        int nextMax = pIndexNextMax.y;
-                        if (pIndex >= MIN_P_INDEX)
-                        {
-                            Athlete athlete = athleteIdToAthlete.get(athleteId);
-                            records.add(new PIndexTableHtmlWriter.Record(athlete, pIndex, globalPIndex, nextMax));
-                        }
-                    }
-                });
-
-                records.sort((der1, der2) -> {
-                    if(der1.regionPIndex < der2.regionPIndex) return 1;
-                    if(der1.regionPIndex > der2.regionPIndex) return -1;
-                    if(der1.regionNextMax < der2.regionNextMax) return 1;
-                    if(der1.regionNextMax > der2.regionNextMax) return -1;
-                    if(der1.globalPIndex < der2.globalPIndex) return 1;
-                    if(der1.globalPIndex > der2.globalPIndex) return -1;
-                    if(der1.athlete.athleteId > der2.athlete.athleteId) return 1;
-                    if(der1.athlete.athleteId < der2.athlete.athleteId) return -1;
-                    return 0;
-                });
-                for (PIndexTableHtmlWriter.Record record : records)
-                {
-                    tableWriter.writePIndexRecord(record);
-                }
-            }
+            writePIndex(writer);
 
             writeTop10Runs(writer);
 
@@ -174,6 +128,49 @@ public class Stats
                 }
             }
             */
+        }
+    }
+
+    private void writePIndex(HtmlWriter writer) throws XMLStreamException
+    {
+        try(PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer))
+        {
+            List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
+            for (Map.Entry<Integer, List<AthleteCourseSummary>> entry : athleteIdToAthleteCourseSummaries.entrySet())
+            {
+                int athleteId = entry.getKey();
+                Athlete athlete = athleteIdToAthlete.get(athleteId);
+                List<AthleteCourseSummary> summariesForAthlete = entry.getValue();
+
+                PIndex.Result globalPIndex = PIndex.pIndexAndNeeded(summariesForAthlete);
+                PIndex.Result regionPIndex = pIndexAndNeeded(summariesForAthlete.stream()
+                        .filter(acs -> acs.course != null && acs.course.country == NZ).collect(Collectors.toList()));
+
+                if (regionPIndex.pIndex < MIN_P_INDEX)
+                {
+                    continue;
+                }
+
+                records.add(new PIndexTableHtmlWriter.Record(athlete, regionPIndex, globalPIndex));
+            }
+
+            records.sort((der1, der2) -> {
+                if(der1.globalPIndex.pIndex < der2.globalPIndex.pIndex) return 1;
+                if(der1.globalPIndex.pIndex > der2.globalPIndex.pIndex) return -1;
+                if(der1.globalPIndex.neededForNextPIndex > der2.globalPIndex.neededForNextPIndex) return 1;
+                if(der1.globalPIndex.neededForNextPIndex < der2.globalPIndex.neededForNextPIndex) return -1;
+//                if(der1.regionPIndex.pIndex < der2.regionPIndex.pIndex) return 1;
+//                if(der1.regionPIndex.pIndex > der2.regionPIndex.pIndex) return -1;
+//                if(der1.regionPIndex.neededForNextPIndex < der2.regionPIndex.neededForNextPIndex) return 1;
+//                if(der1.regionPIndex.neededForNextPIndex > der2.regionPIndex.neededForNextPIndex) return -1;
+                if(der1.athlete.athleteId > der2.athlete.athleteId) return 1;
+                if(der1.athlete.athleteId < der2.athlete.athleteId) return -1;
+                return 0;
+            });
+            for (PIndexTableHtmlWriter.Record record : records)
+            {
+                tableWriter.writePIndexRecord(record);
+            }
         }
     }
 
@@ -242,8 +239,8 @@ public class Stats
                     for (AtEvent rae : top10)
                     {
                         double courseCount = courseToCount.get(course.name);
-                        double runCount = rae.count;
-                        String percentage = String.format("%.1f", runCount * 100 / courseCount);
+                        double volunteerCount = rae.count;
+                        String percentage = String.format("%.1f", volunteerCount * 100 / courseCount);
                         top10atCourse.writeRecord(new Top10AtCourseHtmlWriter.Record(rae.athlete, rae.count, percentage));
                     }
                 }
@@ -260,11 +257,11 @@ public class Stats
                 Athlete athlete = athleteIdToAthlete.get(der.athleteId);
                 List<AthleteCourseSummary> athleteCourseSummaries = athleteIdToAthleteCourseSummaries.get(der.athleteId);
 
-                int pIndex = pIndex(athleteCourseSummaries);
+//                PIndexRecord pIndex = pIndexAndNeeded(athleteCourseSummaries);
                 int courseCount = athleteCourseSummaries.size();
                 int totalCourseCount = athleteCourseSummaries.stream().mapToInt(acs -> acs.countOfRuns).sum();
 
-                statsDao.updateDifferentCourseRecord(athlete.athleteId, courseCount, totalCourseCount, pIndex);
+                statsDao.updateDifferentCourseRecord(athlete.athleteId, courseCount, totalCourseCount, 0);
 
                 tableWriter.writeMostEventRecord(
                         new MostEventsTableHtmlWriter.Record(athlete,
@@ -418,7 +415,7 @@ public class Stats
 
         Set<Integer> athletes = new HashSet<>();
         athleteToCourseCount.forEach((athleteId, courseToCount) -> {
-            int pIndex = pIndex(courseToCount);
+            int pIndex = PIndex.pIndex(new ArrayList<>(courseToCount.values()));
             if(pIndex >= minPIndex)
             {
                 athletes.add(athleteId);

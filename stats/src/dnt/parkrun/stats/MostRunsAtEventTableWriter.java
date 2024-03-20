@@ -86,7 +86,7 @@ public class MostRunsAtEventTableWriter extends BaseWriter implements Closeable
 
         // P-Index
         startElement("td");
-        writer.writeCharacters(String.valueOf(record.runCount));
+        writer.writeCharacters(String.valueOf(record.count));
         endElement("td");
 
         endElement("tr");
