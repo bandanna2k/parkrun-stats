@@ -101,7 +101,7 @@ public class Stats
 
         downloadAthleteCourseSummaries(differentEventRecords);
 
-        try(HtmlWriter writer = HtmlWriter.newInstance(date))
+        try (HtmlWriter writer = HtmlWriter.newInstance(date))
         {
             writeAttendanceRecords(writer);
 
@@ -132,9 +132,9 @@ public class Stats
 
     private void writePIndex(HtmlWriter writer) throws XMLStreamException
     {
-        try(CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, " P-Index (New Zealand)"))
+        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, " P-Index (New Zealand)"))
         {
-            try(PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer))
+            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer))
             {
                 List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
                 for (Map.Entry<Integer, List<AthleteCourseSummary>> entry : athleteIdToAthleteCourseSummaries.entrySet())
@@ -152,21 +152,63 @@ public class Stats
                         continue;
                     }
 
-                    records.add(new PIndexTableHtmlWriter.Record(athlete, regionPIndex, globalPIndex));
+                    // Calculate max count
+                    AthleteCourseSummary maxAthleteCourseSummary = getMaxAthleteCourseSummary(summariesForAthlete);
+                    Course homeParkrun = maxAthleteCourseSummary.course;
+                    if (homeParkrun == null)
+                    {
+                        continue; // TODO: How can this happen???
+                    }
+                    if (homeParkrun.country != NZ)
+                    {
+                        continue;
+                    }
+
+                    double provinceRunCount = getProvinceRunCount(homeParkrun, summariesForAthlete);
+                    double homeRatio = maxAthleteCourseSummary.countOfRuns / provinceRunCount;
+
+                    // Add pIndex
+                    records.add(new PIndexTableHtmlWriter.Record(athlete, regionPIndex, globalPIndex, homeRatio));
                 }
 
                 records.sort((der1, der2) ->
                 {
-                    if (der1.globalPIndex.pIndex < der2.globalPIndex.pIndex) return 1;
-                    if (der1.globalPIndex.pIndex > der2.globalPIndex.pIndex) return -1;
-                    if (der1.globalPIndex.neededForNextPIndex > der2.globalPIndex.neededForNextPIndex) return 1;
-                    if (der1.globalPIndex.neededForNextPIndex < der2.globalPIndex.neededForNextPIndex) return -1;
+                    if (der1.globalPIndex.pIndex < der2.globalPIndex.pIndex)
+                    {
+                        return 1;
+                    }
+                    if (der1.globalPIndex.pIndex > der2.globalPIndex.pIndex)
+                    {
+                        return -1;
+                    }
+                    if (der1.globalPIndex.neededForNextPIndex > der2.globalPIndex.neededForNextPIndex)
+                    {
+                        return 1;
+                    }
+                    if (der1.globalPIndex.neededForNextPIndex < der2.globalPIndex.neededForNextPIndex)
+                    {
+                        return -1;
+                    }
+                    if (der1.homeRatio < der2.homeRatio)
+                    {
+                        return 1;
+                    }
+                    if (der1.homeRatio > der2.homeRatio)
+                    {
+                        return -1;
+                    }
                     //                if(der1.regionPIndex.pIndex < der2.regionPIndex.pIndex) return 1;
                     //                if(der1.regionPIndex.pIndex > der2.regionPIndex.pIndex) return -1;
                     //                if(der1.regionPIndex.neededForNextPIndex < der2.regionPIndex.neededForNextPIndex) return 1;
                     //                if(der1.regionPIndex.neededForNextPIndex > der2.regionPIndex.neededForNextPIndex) return -1;
-                    if (der1.athlete.athleteId > der2.athlete.athleteId) return 1;
-                    if (der1.athlete.athleteId < der2.athlete.athleteId) return -1;
+                    if (der1.athlete.athleteId > der2.athlete.athleteId)
+                    {
+                        return 1;
+                    }
+                    if (der1.athlete.athleteId < der2.athlete.athleteId)
+                    {
+                        return -1;
+                    }
                     return 0;
                 });
                 for (PIndexTableHtmlWriter.Record record : records)
@@ -177,12 +219,187 @@ public class Stats
         }
     }
 
+    private static int getProvinceRunCount(Course homeParkrun, List<AthleteCourseSummary> summariesForAthlete)
+    {
+        int count = 0;
+        for (AthleteCourseSummary acs : summariesForAthlete)
+        {
+            if (isSameProvince(homeParkrun, acs.course))
+            {
+                count += acs.countOfRuns;
+            }
+        }
+        return count;
+    }
+
+    static boolean isSameProvince(Course homeParkrun, Course course)
+    {
+        if (course == null)
+        {
+            return false;
+        }
+        if (isAuckland(homeParkrun) && isAuckland(course))
+        {
+            return true;
+        }
+        if (isWaikato(homeParkrun) && isWaikato(course))
+        {
+            return true;
+        }
+        if (isNorthland(homeParkrun) && isNorthland(course))
+        {
+            return true;
+        }
+        if (isBayOfPlenty(homeParkrun) && isBayOfPlenty(course))
+        {
+            return true;
+        }
+        if (isGisbourne(homeParkrun) && isGisbourne(course))
+        {
+            return true;
+        }
+        if (isTaranaki(homeParkrun) && isTaranaki(course))
+        {
+            return true;
+        }
+        if (isManawatu(homeParkrun) && isManawatu(course))
+        {
+            return true;
+        }
+        if (isCantebury(homeParkrun) && isCantebury(course))
+        {
+            return true;
+        }
+        if (isWellington(homeParkrun) && isWellington(course))
+        {
+            return true;
+        }
+
+        if (isMarlborough(homeParkrun) && isMarlborough(course))
+        {
+            return true;
+        }
+        if (isOtago(homeParkrun) && isOtago(course))
+        {
+            return true;
+        }
+        if (isSouthland(homeParkrun) && isSouthland(course))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isGisbourne(Course course)
+    {
+        String[] list = {"gisborne", "anderson", "flaxmere", "russellpark"};
+        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
+    }
+
+    private static boolean isBayOfPlenty(Course course)
+    {
+        String[] list = {"tauranga",
+                "gordonsprattreserve",
+                "whakatanegardens",
+                "gordoncarmichaelreserve"};
+        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
+    }
+
+    private static boolean isWaikato(Course course)
+    {
+        String[] list = {"cambridgenz", "hamiltonlake", "universityofwaikato"};
+        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
+    }
+
+    private static boolean isMarlborough(Course course)
+    {
+        String[] list = {"blenheim"};
+        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
+    }
+
+    private static boolean isManawatu(Course course)
+    {
+        String[] list = {"puarenga",
+                "taupo",
+                "palmerstonnorth"};
+        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
+    }
+
+    private static boolean isTaranaki(Course course)
+    {
+        String[] list = {"eastend", "whanganuiriverbank"};
+        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
+    }
+
+    private static boolean isAuckland(Course course)
+    {
+        String[] list = {"hobsonvillepoint",
+                "cornwall",
+                "barrycurtis",
+                "millwater",
+                "westernsprings",
+                "northernpathway",
+                "sherwoodreserve",
+                "owairaka"};
+        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
+    }
+
+    private static boolean isWellington(Course course)
+    {
+        String[] list = {"otakiriver",
+                "greytownwoodsidetrail",
+                "lowerhutt",
+                "kapiticoast",
+                "trenthammemorial",
+                "araharakeke",
+                "waitangi",
+                "porirua"};
+        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
+    }
+
+    private static boolean isNorthland(Course course)
+    {
+        String[] list = {"whangarei"};
+        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
+    }
+
+    private static boolean isOtago(Course course)
+    {
+        String[] list = {"queenstown", "wanaka", "lake2laketrail"};
+        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
+    }
+
+    private static boolean isCantebury(Course course)
+    {
+        String[] list = {"broadpark", "hagley", "pegasus", "foster"};
+        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
+    }
+
+    private static boolean isSouthland(Course course)
+    {
+        String[] list = {"dunedin", "hamiltonpark", "balclutha", "invercargill"};
+        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
+    }
+
+    private static AthleteCourseSummary getMaxAthleteCourseSummary(List<AthleteCourseSummary> summariesForAthlete)
+    {
+        AthleteCourseSummary result = summariesForAthlete.get(0);
+        for (AthleteCourseSummary acs : summariesForAthlete)
+        {
+            if (acs.countOfRuns > result.countOfRuns)
+            {
+                result = acs;
+            }
+        }
+        return result;
+    }
+
     private void writeTop10Runs(HtmlWriter writer) throws XMLStreamException
     {
         Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
-        try(CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Runs at Courses (New Zealand)"))
+        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Runs at Courses (New Zealand)"))
         {
-            try(Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, "New Zealand"))
+            try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, "New Zealand"))
             {
                 List<AtEvent> top10InRegion = top10Dao.getTop10InRegion();
                 for (AtEvent r : top10InRegion)
@@ -198,10 +415,10 @@ public class Stats
                     .filter(c -> c.status == RUNNING).collect(Collectors.toList());
             for (Course course : courses)
             {
-                try(Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, course.longName))
+                try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, course.longName))
                 {
                     List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);
-                    if(top10.isEmpty())
+                    if (top10.isEmpty())
                     {
                         System.out.println("* Getting top 10 athletes for " + course.longName);
                         top10.addAll(statsDao.getTop10AtEvent(course.courseId));
@@ -223,16 +440,16 @@ public class Stats
     private void writeTop10Volunteers(HtmlWriter writer) throws XMLStreamException
     {
         Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
-        try(CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Volunteers at Courses (New Zealand)"))
+        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Volunteers at Courses (New Zealand)"))
         {
             List<Course> courses = courseRepository.getCourses(NZ).stream()
                     .filter(c -> c.status == RUNNING).collect(Collectors.toList());
             for (Course course : courses)
             {
-                try(Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, course.longName))
+                try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, course.longName))
                 {
                     List<AtEvent> top10 = top10VolunteerDao.getTop10VolunteersAtCourse(course.name);
-                    if(top10.isEmpty())
+                    if (top10.isEmpty())
                     {
                         System.out.println("* Getting top 10 volunteers for " + course.longName);
                         top10.addAll(statsDao.getTop10VolunteersAtEvent(course.courseId));
@@ -253,7 +470,7 @@ public class Stats
 
     private void writeMostEvents(HtmlWriter writer, List<DifferentCourseCount> differentEventRecords) throws XMLStreamException
     {
-        try(MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer))
+        try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer))
         {
             for (DifferentCourseCount der : differentEventRecords)
             {
@@ -290,7 +507,7 @@ public class Stats
     private void writeAttendanceRecords(HtmlWriter writer) throws XMLStreamException
     {
         // Read attendance records from, and write html table
-        try(AttendanceRecordsTableHtmlWriter tableWriter = new AttendanceRecordsTableHtmlWriter(writer.writer))
+        try (AttendanceRecordsTableHtmlWriter tableWriter = new AttendanceRecordsTableHtmlWriter(writer.writer))
         {
             tableWriter.writer.writeStartElement("tbody");
             List<AttendanceRecord> attendanceRecords = getAttendanceRecords().stream()
@@ -352,7 +569,7 @@ public class Stats
         Set<Integer> athletesToDownload = new HashSet<>();
         athletesToDownload.addAll(athletesFromMostEventTable);
         athletesToDownload.addAll(athletesFromResults);
-        Set<Integer> athletesAlreadyDownloaded = acsDao.getAthleteCourseSummaries().stream().map(acs -> (int)acs[0]).collect(Collectors.toSet());
+        Set<Integer> athletesAlreadyDownloaded = acsDao.getAthleteCourseSummaries().stream().map(acs -> (int) acs[0]).collect(Collectors.toSet());
         System.out.println("Athletes already downloaded. " + athletesAlreadyDownloaded.size());
         athletesToDownload.removeAll(athletesAlreadyDownloaded);
         System.out.println("Athletes too download. " + athletesToDownload.size());
@@ -366,11 +583,12 @@ public class Stats
             parser.parse();
         }
 
-        acsDao.getAthleteCourseSummariesMap().forEach(objects -> {
+        acsDao.getAthleteCourseSummariesMap().forEach(objects ->
+        {
 
-            Athlete athlete = Athlete.from((String)objects[0], (int) objects[1]);
+            Athlete athlete = Athlete.from((String) objects[0], (int) objects[1]);
             List<AthleteCourseSummary> summaries = athleteIdToAthleteCourseSummaries.get(athlete.athleteId);
-            if(summaries == null)
+            if (summaries == null)
             {
                 athleteIdToAthlete.put(athlete.athleteId, athlete);
                 summaries = new ArrayList<>();
@@ -389,14 +607,15 @@ public class Stats
     private Set<Integer> getAthletesFromDbWithMinimumPIndex(int minPIndex)
     {
         Map<Integer, Map<Integer, Integer>> athleteToCourseCount = new HashMap<>();
-        resultDao.tableScan(r -> {
-            if(r.athlete.athleteId < 0)
+        resultDao.tableScan(r ->
+        {
+            if (r.athlete.athleteId < 0)
             {
                 return;
             }
 
             Map<Integer, Integer> courseToCount = athleteToCourseCount.get(r.athlete.athleteId);
-            if(courseToCount == null)
+            if (courseToCount == null)
             {
                 courseToCount = new HashMap<>();
                 courseToCount.put(r.courseId, 1);
@@ -405,7 +624,7 @@ public class Stats
             else
             {
                 Integer count = courseToCount.get(r.courseId);
-                if(count == null)
+                if (count == null)
                 {
                     courseToCount.put(r.courseId, 1);
                 }
@@ -417,9 +636,10 @@ public class Stats
         });
 
         Set<Integer> athletes = new HashSet<>();
-        athleteToCourseCount.forEach((athleteId, courseToCount) -> {
+        athleteToCourseCount.forEach((athleteId, courseToCount) ->
+        {
             int pIndex = PIndex.pIndex(new ArrayList<>(courseToCount.values()));
-            if(pIndex >= minPIndex)
+            if (pIndex >= minPIndex)
             {
                 athletes.add(athleteId);
             }
@@ -437,7 +657,7 @@ public class Stats
                 DifferentCourseCount thisWeek = differentEventRecords.get(indexThisWeek);
                 DifferentCourseCount lastWeek = differentEventRecordsFromLastWeek.get(indexLastWeek);
 
-                if(thisWeek.athleteId == lastWeek.athleteId)
+                if (thisWeek.athleteId == lastWeek.athleteId)
                 {
                     // Found athlete
                     thisWeek.positionDelta = indexLastWeek - indexThisWeek;

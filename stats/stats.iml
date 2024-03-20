@@ -19,5 +19,6 @@
     <orderEntry type="library" name="assertj.core" level="project" />
     <orderEntry type="module" module-name="courseEventSummary" scope="TEST" />
     <orderEntry type="module" module-name="pindex" />
+    <orderEntry type="module" module-name="courses" scope="TEST" />
   </component>
 </module>

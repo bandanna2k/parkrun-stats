@@ -118,6 +118,7 @@ public class Course
                 ", country=" + country +
                 ", longName='" + longName + '\'' +
                 ", status=" + status +
+                ", courseId=" + courseId +
                 '}';
     }
 }

@@ -49,9 +49,9 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         writer.writeCharacters("Needed to Index Up");
         endElement("th");
 
-//        startElement("th");
-//        writer.writeCharacters("Global P-Index");
-//        endElement("th");
+        startElement("th");
+        writer.writeCharacters("Home Ratio");
+        endElement("th");
 
         endElement("tr");
         endElement("thead");
@@ -102,10 +102,10 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         writer.writeCharacters(record.globalPIndex.neededForNextPIndex + " more to P" + (record.globalPIndex.pIndex + 1));
         endElement("td");
 
-        // Global P-Index
-//        startElement("td");
-//        writer.writeCharacters(String.valueOf(record.globalPIndex.pIndex));
-//        endElement("td");
+        // Home parkrun Ratio
+        startElement("td");
+        writer.writeCharacters(String.format("%.3f", record.homeRatio));
+        endElement("td");
 
         endElement("tr");
     }
@@ -115,12 +115,14 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         public final Athlete athlete;
         public final PIndex.Result regionPIndex;
         public final PIndex.Result globalPIndex;
+        public final double homeRatio;
 
-        public Record(Athlete athlete, PIndex.Result regionPIndex, PIndex.Result globalPIndex)
+        public Record(Athlete athlete, PIndex.Result regionPIndex, PIndex.Result globalPIndex, double homeRatio)
         {
             this.athlete = athlete;
             this.regionPIndex = regionPIndex;
             this.globalPIndex = globalPIndex;
+            this.homeRatio = homeRatio;
         }
 
         @Override
@@ -130,6 +132,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
                     "athlete=" + athlete +
                     ", regionPIndex=" + regionPIndex +
                     ", globalPIndex=" + globalPIndex +
+                    ", homeRatio=" + homeRatio +
                     '}';
         }
     }
