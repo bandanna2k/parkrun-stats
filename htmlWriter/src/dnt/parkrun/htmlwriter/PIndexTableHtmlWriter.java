@@ -1,5 +1,6 @@
 package dnt.parkrun.htmlwriter;
 
+import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.pindex.PIndex;
 
@@ -8,6 +9,7 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.Closeable;
 
 import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
+import static dnt.parkrun.datastructures.Country.NZ;
 
 public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
 {
@@ -17,7 +19,12 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
 
         startElement("details");
         startElement("summary");
-        writer.writeCharacters("(WORK IN PROGRESS) P-Index (New Zealand)");
+        writer.writeCharacters("(WORK IN PROGRESS) P-Index (New Zealand) - by ");
+        startElement("a",
+                "href", UrlGenerator.generateAthleteUrl(NZ.baseUrl, 12345).toString(),
+                "style", "color:inherit;text-decoration:none;");
+        writer.writeCharacters("Dan Joe");
+        endElement("a");
         endElement("summary");
 
         startElement("table", "class", "sortable name-data");

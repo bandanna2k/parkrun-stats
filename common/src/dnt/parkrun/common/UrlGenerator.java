@@ -53,11 +53,26 @@ public abstract class UrlGenerator
         }
     }
 
-    public static Object generateCourseUrl(String countryBaseUrl, String courseName)
+    public static URL generateCourseUrl(String countryBaseUrl, String courseName)
     {
         try
         {
             return new URL("https://" + countryBaseUrl + "/" + courseName + "/");
+        }
+        catch (MalformedURLException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /*
+        https://www.parkrun.co.nz/parkrunner/414811/all/
+     */
+    public static URL generateAthleteUrl(String countryBaseUrl, int athleteId)
+    {
+        try
+        {
+            return new URL("https://" + countryBaseUrl + "/parkrunner/" + athleteId + "/all/");
         }
         catch (MalformedURLException e)
         {
