@@ -13,16 +13,16 @@ import static dnt.parkrun.datastructures.Country.NZ;
 
 public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
 {
-    public PIndexTableHtmlWriter(XMLStreamWriter writer) throws XMLStreamException
+    public PIndexTableHtmlWriter(XMLStreamWriter writer, String title) throws XMLStreamException
     {
         super(writer);
 
         startElement("details", "style", "margin-left:10em");
         startElement("summary", "style", "font-size:24px");
-        writer.writeCharacters("p-Index (New Zealand)");
+        writer.writeCharacters(title);
         endElement("summary");
 
-        startElement("p", "align", "right");
+        startElement("p", "style", "margin-left:100px");
         writer.writeCharacters("p-Index table courtesy of ");
         startElement("a",
                 "href", UrlGenerator.generateAthleteUrl(NZ.baseUrl, 4225353).toString(),
@@ -68,11 +68,11 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         {
             endElement("table");
 
-            startElement("center");
-            startElement("p");
-            writer.writeCharacters("* Only contains parkrunners with pIndex of 5 within NZ parkruns.");
-            endElement("p");
-            endElement("center");
+//            startElement("center");
+//            startElement("p");
+//            writer.writeCharacters("* Only contains parkrunners with pIndex of 5 within NZ parkruns.");
+//            endElement("p");
+//            endElement("center");
 
             endElement("details");
 
@@ -88,7 +88,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
        writer.writeStartElement("tr");
 
         // Name
-        startElement("td");
+        startTableElement(record.isRegionalPIndexAthlete);
         writer.writeStartElement("a");
         writer.writeAttribute("href", generateAthleteEventSummaryUrl("parkrun.co.nz", record.athlete.athleteId).toString());
         writer.writeAttribute("target", String.valueOf(record.athlete.name));
@@ -97,21 +97,33 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         endElement("td");
 
         // Region P-Index
-        startElement("td");
+        startTableElement(record.isRegionalPIndexAthlete);
         writer.writeCharacters(String.valueOf(record.globalPIndex.pIndex));
         endElement("td");
 
         // to next PIndex (Region Next Max)
-        startElement("td");
+        startTableElement(record.isRegionalPIndexAthlete);
         writer.writeCharacters(record.globalPIndex.neededForNextPIndex + " more to P" + (record.globalPIndex.pIndex + 1));
         endElement("td");
 
         // Home parkrun Ratio
-        startElement("td");
+        startTableElement(record.isRegionalPIndexAthlete);
         writer.writeCharacters(String.format("%.3f", record.homeRatio));
         endElement("td");
 
         endElement("tr");
+    }
+
+    private void startTableElement(boolean isRegionalPIndexAthlete) throws XMLStreamException
+    {
+        if(isRegionalPIndexAthlete)
+        {
+            startElement("td");
+        }
+        else
+        {
+            startElement("td", "style", "background-color:#FFE9F0");
+        }
     }
 
     public static class Record
@@ -120,13 +132,20 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         public final PIndex.Result regionPIndex;
         public final PIndex.Result globalPIndex;
         public final double homeRatio;
+        public final boolean isRegionalPIndexAthlete;
 
         public Record(Athlete athlete, PIndex.Result regionPIndex, PIndex.Result globalPIndex, double homeRatio)
+        {
+            this(athlete, regionPIndex, globalPIndex, homeRatio, true);
+        }
+
+        public Record(Athlete athlete, PIndex.Result regionPIndex, PIndex.Result globalPIndex, double homeRatio, boolean isRegionalPIndexAthlete)
         {
             this.athlete = athlete;
             this.regionPIndex = regionPIndex;
             this.globalPIndex = globalPIndex;
             this.homeRatio = homeRatio;
+            this.isRegionalPIndexAthlete = isRegionalPIndexAthlete;
         }
 
         @Override
@@ -137,6 +156,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
                     ", regionPIndex=" + regionPIndex +
                     ", globalPIndex=" + globalPIndex +
                     ", homeRatio=" + homeRatio +
+                    ", isRegionalPIndexAthlete=" + isRegionalPIndexAthlete +
                     '}';
         }
     }

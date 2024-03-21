@@ -135,7 +135,8 @@ public class Stats
     {
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, " P-Index (New Zealand)"))
         {
-            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer))
+            Set<Integer> regionalPIndexAthletes = new HashSet<>();
+            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, "p-Index (New Zealand)"))
             {
                 List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
                 for (Map.Entry<Integer, List<AthleteCourseSummary>> entry : athleteIdToAthleteCourseSummaries.entrySet())
@@ -145,10 +146,10 @@ public class Stats
                     List<AthleteCourseSummary> summariesForAthlete = entry.getValue();
 
                     PIndex.Result globalPIndex = PIndex.pIndexAndNeeded(summariesForAthlete);
-                    PIndex.Result regionPIndex = PIndex.pIndexAndNeeded(summariesForAthlete.stream()
-                            .filter(acs -> acs.course != null && acs.course.country == NZ).collect(Collectors.toList()));
+//                    PIndex.Result regionPIndex = PIndex.pIndexAndNeeded(summariesForAthlete.stream()
+//                            .filter(acs -> acs.course != null && acs.course.country == NZ).collect(Collectors.toList()));
 
-                    if (regionPIndex.pIndex < MIN_P_INDEX)
+                    if (globalPIndex.pIndex <= MIN_P_INDEX)
                     {
                         continue;
                     }
@@ -164,13 +165,73 @@ public class Stats
                     {
                         continue;
                     }
+                    regionalPIndexAthletes.add(athleteId);
 
                     double provinceRunCount = getNzRegionRunCount(homeParkrun, summariesForAthlete);
                     double totalRuns = getTotalRuns(summariesForAthlete);
                     double homeRatio = provinceRunCount / totalRuns;
 
                     // Add pIndex
-                    records.add(new PIndexTableHtmlWriter.Record(athlete, regionPIndex, globalPIndex, homeRatio));
+                    records.add(new PIndexTableHtmlWriter.Record(athlete, null, globalPIndex, homeRatio));
+                }
+
+                records.sort((der1, der2) ->
+                {
+                    if (der1.globalPIndex.pIndex < der2.globalPIndex.pIndex) return 1;
+                    if (der1.globalPIndex.pIndex > der2.globalPIndex.pIndex) return -1;
+                    if (der1.globalPIndex.neededForNextPIndex > der2.globalPIndex.neededForNextPIndex) return 1;
+                    if (der1.globalPIndex.neededForNextPIndex < der2.globalPIndex.neededForNextPIndex) return -1;
+                    if (der1.homeRatio < der2.homeRatio) return 1;
+                    if (der1.homeRatio > der2.homeRatio) return -1;
+                    //                if(der1.regionPIndex.pIndex < der2.regionPIndex.pIndex) return 1;
+                    //                if(der1.regionPIndex.pIndex > der2.regionPIndex.pIndex) return -1;
+                    //                if(der1.regionPIndex.neededForNextPIndex < der2.regionPIndex.neededForNextPIndex) return 1;
+                    //                if(der1.regionPIndex.neededForNextPIndex > der2.regionPIndex.neededForNextPIndex) return -1;
+                    if (der1.athlete.athleteId > der2.athlete.athleteId) return 1;
+                    if (der1.athlete.athleteId < der2.athlete.athleteId) return -1;
+                    return 0;
+                });
+                for (PIndexTableHtmlWriter.Record record : records)
+                {
+                    tableWriter.writePIndexRecord(record);
+                }
+            }
+            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, "Legacy p-Index (New Zealand)"))
+            {
+                List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
+                for (Map.Entry<Integer, List<AthleteCourseSummary>> entry : athleteIdToAthleteCourseSummaries.entrySet())
+                {
+                    int athleteId = entry.getKey();
+                    Athlete athlete = athleteIdToAthlete.get(athleteId);
+                    List<AthleteCourseSummary> summariesForAthlete = entry.getValue();
+
+                    PIndex.Result globalPIndex = PIndex.pIndexAndNeeded(summariesForAthlete);
+//                    PIndex.Result regionPIndex = PIndex.pIndexAndNeeded(summariesForAthlete.stream()
+//                            .filter(acs -> acs.course != null && acs.course.country == NZ).collect(Collectors.toList()));
+
+                    if (globalPIndex.pIndex <= MIN_P_INDEX)
+                    {
+                        continue;
+                    }
+
+                    // Calculate max count
+                    AthleteCourseSummary maxAthleteCourseSummary = getMaxAthleteCourseSummary(summariesForAthlete);
+                    Course homeParkrun = maxAthleteCourseSummary.course;
+                    double homeRatio;
+                    if (homeParkrun == null)
+                    {
+                        homeRatio = 0;
+                    }
+                    else
+                    {
+                        double provinceRunCount = getNzRegionRunCount(homeParkrun, summariesForAthlete);
+                        double totalRuns = getTotalRuns(summariesForAthlete);
+                        homeRatio = provinceRunCount / totalRuns;
+                    }
+
+                    // Add pIndex
+                    boolean isRegionalPIndexAthlete = regionalPIndexAthletes.contains(athleteId);
+                    records.add(new PIndexTableHtmlWriter.Record(athlete, null, globalPIndex, homeRatio, isRegionalPIndexAthlete));
                 }
 
                 records.sort((der1, der2) ->
@@ -411,7 +472,6 @@ public class Stats
 
         acsDao.getAthleteCourseSummariesMap().forEach(objects ->
         {
-
             Athlete athlete = Athlete.from((String) objects[0], (int) objects[1]);
             List<AthleteCourseSummary> summaries = athleteIdToAthleteCourseSummaries.get(athlete.athleteId);
             if (summaries == null)
