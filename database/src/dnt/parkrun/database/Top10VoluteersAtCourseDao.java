@@ -5,7 +5,6 @@ import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.stats.AtEvent;
-import dnt.parkrun.datastructures.stats.RunsAtEvent;
 import dnt.parkrun.datastructures.stats.VolunteersAtEvent;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -79,23 +78,21 @@ public class Top10VoluteersAtCourseDao extends BaseDao
         });
     }
 
-    public List<RunsAtEvent> getTop10VolunteersInRegion()
+    public List<Object[]> getTop10VolunteersInRegion()
     {
-        String sql = "select a.name, a.athlete_id, c.course_id, c.course_name, c.country_code, c.course_long_name, volunteers_count\n" +
-                " from " + tableName +
-                " join " + athleteTable() + " a using (athlete_id)\n" +
-                " join " + courseTable() + " c using (course_id)\n" +
-                " order by volunteers_count desc\n" +
-                " limit 20;";
+        String sql = "select a.name, sub1.athlete_id, sub1.total_volunteer_count\n" +
+                "from " + athleteTable() + " a\n" +
+                "join\n" +
+                "(\n" +
+                "    select athlete_id, sum(volunteer_count) as total_volunteer_count\n" +
+                "    from " + tableName +
+                "    group by athlete_id\n" +
+                "    order by total_volunteer_count desc\n" +
+                "    limit 20\n" +
+                ") as sub1 using (athlete_id)";
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> {
             Athlete athlete = Athlete.from(rs.getString("name"), rs.getInt("athlete_id"));
-            Course course = new Course(
-                    rs.getInt("course_id"),
-                    rs.getString("course_name"),
-                    Country.valueOf(rs.getInt("country_code")),
-                    rs.getString("course_long_name"),
-                    null);
-            return new RunsAtEvent(athlete, course, rs.getInt("volunteers_count"));
+            return new Object[] { athlete, rs.getInt("total_volunteer_count") };
         });
     }
 }
