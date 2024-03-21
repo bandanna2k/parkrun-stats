@@ -26,6 +26,7 @@ import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
 import static dnt.parkrun.database.StatsDao.DifferentCourseCount;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.RUNNING;
+import static dnt.parkrun.region.Region.getNzRegionRunCount;
 import static java.util.Collections.emptyList;
 
 public class Stats
@@ -164,8 +165,9 @@ public class Stats
                         continue;
                     }
 
-                    double provinceRunCount = getProvinceRunCount(homeParkrun, summariesForAthlete);
-                    double homeRatio = maxAthleteCourseSummary.countOfRuns / provinceRunCount;
+                    double provinceRunCount = getNzRegionRunCount(homeParkrun, summariesForAthlete);
+                    double totalRuns = getTotalRuns(summariesForAthlete);
+                    double homeRatio = provinceRunCount / totalRuns;
 
                     // Add pIndex
                     records.add(new PIndexTableHtmlWriter.Record(athlete, regionPIndex, globalPIndex, homeRatio));
@@ -173,42 +175,18 @@ public class Stats
 
                 records.sort((der1, der2) ->
                 {
-                    if (der1.globalPIndex.pIndex < der2.globalPIndex.pIndex)
-                    {
-                        return 1;
-                    }
-                    if (der1.globalPIndex.pIndex > der2.globalPIndex.pIndex)
-                    {
-                        return -1;
-                    }
-                    if (der1.globalPIndex.neededForNextPIndex > der2.globalPIndex.neededForNextPIndex)
-                    {
-                        return 1;
-                    }
-                    if (der1.globalPIndex.neededForNextPIndex < der2.globalPIndex.neededForNextPIndex)
-                    {
-                        return -1;
-                    }
-                    if (der1.homeRatio < der2.homeRatio)
-                    {
-                        return 1;
-                    }
-                    if (der1.homeRatio > der2.homeRatio)
-                    {
-                        return -1;
-                    }
+                    if (der1.globalPIndex.pIndex < der2.globalPIndex.pIndex) return 1;
+                    if (der1.globalPIndex.pIndex > der2.globalPIndex.pIndex) return -1;
+                    if (der1.globalPIndex.neededForNextPIndex > der2.globalPIndex.neededForNextPIndex) return 1;
+                    if (der1.globalPIndex.neededForNextPIndex < der2.globalPIndex.neededForNextPIndex) return -1;
+                    if (der1.homeRatio < der2.homeRatio) return 1;
+                    if (der1.homeRatio > der2.homeRatio) return -1;
                     //                if(der1.regionPIndex.pIndex < der2.regionPIndex.pIndex) return 1;
                     //                if(der1.regionPIndex.pIndex > der2.regionPIndex.pIndex) return -1;
                     //                if(der1.regionPIndex.neededForNextPIndex < der2.regionPIndex.neededForNextPIndex) return 1;
                     //                if(der1.regionPIndex.neededForNextPIndex > der2.regionPIndex.neededForNextPIndex) return -1;
-                    if (der1.athlete.athleteId > der2.athlete.athleteId)
-                    {
-                        return 1;
-                    }
-                    if (der1.athlete.athleteId < der2.athlete.athleteId)
-                    {
-                        return -1;
-                    }
+                    if (der1.athlete.athleteId > der2.athlete.athleteId) return 1;
+                    if (der1.athlete.athleteId < der2.athlete.athleteId) return -1;
                     return 0;
                 });
                 for (PIndexTableHtmlWriter.Record record : records)
@@ -219,166 +197,14 @@ public class Stats
         }
     }
 
-    private static int getProvinceRunCount(Course homeParkrun, List<AthleteCourseSummary> summariesForAthlete)
+    private static double getTotalRuns(List<AthleteCourseSummary> summariesForAthlete)
     {
-        int count = 0;
+        int result = 0;
         for (AthleteCourseSummary acs : summariesForAthlete)
         {
-            if (isSameProvince(homeParkrun, acs.course))
-            {
-                count += acs.countOfRuns;
-            }
+            result += acs.countOfRuns;
         }
-        return count;
-    }
-
-    static boolean isSameProvince(Course homeParkrun, Course course)
-    {
-        if (course == null)
-        {
-            return false;
-        }
-        if (isAuckland(homeParkrun) && isAuckland(course))
-        {
-            return true;
-        }
-        if (isWaikato(homeParkrun) && isWaikato(course))
-        {
-            return true;
-        }
-        if (isNorthland(homeParkrun) && isNorthland(course))
-        {
-            return true;
-        }
-        if (isBayOfPlenty(homeParkrun) && isBayOfPlenty(course))
-        {
-            return true;
-        }
-        if (isGisbourne(homeParkrun) && isGisbourne(course))
-        {
-            return true;
-        }
-        if (isTaranaki(homeParkrun) && isTaranaki(course))
-        {
-            return true;
-        }
-        if (isManawatu(homeParkrun) && isManawatu(course))
-        {
-            return true;
-        }
-        if (isCantebury(homeParkrun) && isCantebury(course))
-        {
-            return true;
-        }
-        if (isWellington(homeParkrun) && isWellington(course))
-        {
-            return true;
-        }
-
-        if (isMarlborough(homeParkrun) && isMarlborough(course))
-        {
-            return true;
-        }
-        if (isOtago(homeParkrun) && isOtago(course))
-        {
-            return true;
-        }
-        if (isSouthland(homeParkrun) && isSouthland(course))
-        {
-            return true;
-        }
-        return false;
-    }
-
-    private static boolean isGisbourne(Course course)
-    {
-        String[] list = {"gisborne", "anderson", "flaxmere", "russellpark"};
-        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
-    }
-
-    private static boolean isBayOfPlenty(Course course)
-    {
-        String[] list = {"tauranga",
-                "gordonsprattreserve",
-                "whakatanegardens",
-                "gordoncarmichaelreserve"};
-        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
-    }
-
-    private static boolean isWaikato(Course course)
-    {
-        String[] list = {"cambridgenz", "hamiltonlake", "universityofwaikato"};
-        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
-    }
-
-    private static boolean isMarlborough(Course course)
-    {
-        String[] list = {"blenheim"};
-        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
-    }
-
-    private static boolean isManawatu(Course course)
-    {
-        String[] list = {"puarenga",
-                "taupo",
-                "palmerstonnorth"};
-        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
-    }
-
-    private static boolean isTaranaki(Course course)
-    {
-        String[] list = {"eastend", "whanganuiriverbank"};
-        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
-    }
-
-    private static boolean isAuckland(Course course)
-    {
-        String[] list = {"hobsonvillepoint",
-                "cornwall",
-                "barrycurtis",
-                "millwater",
-                "westernsprings",
-                "northernpathway",
-                "sherwoodreserve",
-                "owairaka"};
-        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
-    }
-
-    private static boolean isWellington(Course course)
-    {
-        String[] list = {"otakiriver",
-                "greytownwoodsidetrail",
-                "lowerhutt",
-                "kapiticoast",
-                "trenthammemorial",
-                "araharakeke",
-                "waitangi",
-                "porirua"};
-        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
-    }
-
-    private static boolean isNorthland(Course course)
-    {
-        String[] list = {"whangarei"};
-        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
-    }
-
-    private static boolean isOtago(Course course)
-    {
-        String[] list = {"queenstown", "wanaka", "lake2laketrail"};
-        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
-    }
-
-    private static boolean isCantebury(Course course)
-    {
-        String[] list = {"broadpark", "hagley", "pegasus", "foster"};
-        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
-    }
-
-    private static boolean isSouthland(Course course)
-    {
-        String[] list = {"dunedin", "hamiltonpark", "balclutha", "invercargill"};
-        return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
+        return result;
     }
 
     private static AthleteCourseSummary getMaxAthleteCourseSummary(List<AthleteCourseSummary> summariesForAthlete)

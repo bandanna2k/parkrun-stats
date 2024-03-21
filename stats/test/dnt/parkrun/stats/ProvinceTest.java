@@ -26,7 +26,7 @@ public class ProvinceTest
                 .build();
         reader.read();
         courses.stream().filter(c -> c.country == Country.NZ).forEach(c -> {
-            assertTrue("Bad course " + c, Stats.isSameProvince(c, c));
+            assertTrue("Bad course " + c, Stats.isSameNzRegion(c, c));
         });
 
     }
