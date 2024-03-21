@@ -12,15 +12,11 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Major
 
-- Backfill volunteer records.
-
 ## Minor
 
 - Change 'How are we doing test to assume next event number'
 
 - Upload to Google sites. Add as embedded for now.
-
-- Updated text
 
 - Font that works on mobile
 

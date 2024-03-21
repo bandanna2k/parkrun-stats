@@ -19,6 +19,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -104,6 +105,11 @@ public class Stats
 
         try (HtmlWriter writer = HtmlWriter.newInstance(date))
         {
+            writer.writer.writeStartElement("p");
+            writer.writer.writeAttribute("align", "right");
+            writer.writer.writeCharacters(new SimpleDateFormat("yyyy MMM dd hh:mm").format(new Date()));
+            writer.writer.writeEndElement();
+
             writeAttendanceRecords(writer);
 
             writeMostEvents(writer, differentEventRecords);
