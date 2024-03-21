@@ -2,7 +2,10 @@ package dnt.parkrun.athletecoursesummary;
 
 
 import dnt.jsoupwrapper.JsoupWrapper;
-import dnt.parkrun.datastructures.*;
+import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.AthleteCourseSummary;
+import dnt.parkrun.datastructures.Course;
+import dnt.parkrun.datastructures.CourseRepository;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -67,7 +70,8 @@ public class Parser
                 if(course == null)
                 {
                     courseNotFoundConsumer.accept(courseLongName + " (" + athleteAtEvent + ")");
-                    course = new Course(Integer.MIN_VALUE, courseLongName, Country.UNKNOWN, courseLongName, Course.Status.STOPPED);
+                    throw new RuntimeException("Course not found. " + courseLongName);
+                    //course = new Course(Integer.MIN_VALUE, courseLongName, Country.UNKNOWN, courseLongName, Course.Status.STOPPED);
                 }
                 Athlete athlete = Athlete.from(name, athleteId);
                 int countOfRuns = Integer.parseInt(countNode.toString());

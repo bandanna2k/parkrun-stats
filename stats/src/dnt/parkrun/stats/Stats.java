@@ -122,18 +122,6 @@ public class Stats
             writeTop10Runs(writer);
 
             writeTop10Volunteers(writer);
-
-            /*
-            try(MostRunsAtEventTableWriter tableWriter = new MostRunsAtEventTableWriter(writer.writer))
-            {
-                List<RunsAtEvent> records = acsDao.getMostRunsAtEvent();
-
-                for (RunsAtEvent record : records)
-                {
-                    tableWriter.writeRecord(record);
-                }
-            }
-            */
         }
     }
 
@@ -335,6 +323,9 @@ public class Stats
         Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Volunteers at Courses (New Zealand)"))
         {
+            writer.writer.writeStartElement("hr");
+            writer.writer.writeEndElement();
+
             List<Course> courses = courseRepository.getCourses(NZ).stream()
                     .filter(c -> c.status == RUNNING).collect(Collectors.toList());
             for (Course course : courses)
