@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static dnt.parkrun.region.Region.isSameNzRegion;
 import static org.junit.Assert.assertTrue;
 
 public class ProvinceTest
@@ -26,7 +27,7 @@ public class ProvinceTest
                 .build();
         reader.read();
         courses.stream().filter(c -> c.country == Country.NZ).forEach(c -> {
-            assertTrue("Bad course " + c, Stats.isSameNzRegion(c, c));
+            assertTrue("Bad course " + c, isSameNzRegion(c, c));
         });
 
     }

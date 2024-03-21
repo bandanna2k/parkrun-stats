@@ -21,7 +21,7 @@ public abstract class Region
         return count;
     }
 
-    static boolean isSameNzRegion(Course homeParkrun, Course course)
+    public static boolean isSameNzRegion(Course homeParkrun, Course course)
     {
         if (course == null) return false;
         if (isAuckland(homeParkrun) && isAuckland(course)) { return true; }
