@@ -208,7 +208,7 @@ public class Stats
                     {
                         continue;
                     }
-                    pIndexDao.writePIndexRecord(athleteId, new PIndex.Result(globalPIndex.pIndex, globalPIndex.neededForNextPIndex));
+                    pIndexDao.writePIndexRecord(new PIndexDao.PIndexRecord(athleteId, globalPIndex.pIndex, globalPIndex.neededForNextPIndex));
 
                     // Calculate max count
                     AthleteCourseSummary maxAthleteCourseSummary = getMaxAthleteCourseSummary(summariesForAthlete);
@@ -245,8 +245,8 @@ public class Stats
                 for (PIndexTableHtmlWriter.Record record : records)
                 {
                     tableWriter.writePIndexRecord(record);
-                    pIndexDao.writePIndexRecord(record.athlete.athleteId,
-                            new PIndex.Result(record.globalPIndex.pIndex, record.globalPIndex.neededForNextPIndex));
+                    pIndexDao.writePIndexRecord(
+                            new PIndexDao.PIndexRecord(record.athlete.athleteId, record.globalPIndex.pIndex, record.globalPIndex.neededForNextPIndex));
                 }
             }
         }
@@ -538,8 +538,8 @@ public class Stats
         return athletes;
     }
 
-    private void calculatePositionDeltas(List<DifferentCourseCount> differentEventRecords,
-                                         List<DifferentCourseCount> differentEventRecordsFromLastWeek)
+    private static void calculatePositionDeltas(List<DifferentCourseCount> differentEventRecords,
+                                                List<DifferentCourseCount> differentEventRecordsFromLastWeek)
     {
         for (int indexThisWeek = 0; indexThisWeek < differentEventRecords.size(); indexThisWeek++)
         {
@@ -557,7 +557,7 @@ public class Stats
         }
     }
 
-    private void calculateAttendanceDeltas(List<AttendanceRecord> attendanceRecords,
+    private static void calculateAttendanceDeltas(List<AttendanceRecord> attendanceRecords,
                                            List<AttendanceRecord> attendanceRecordsFromLastWeek)
     {
         for (AttendanceRecord thisWeek : attendanceRecords)
@@ -573,6 +573,27 @@ public class Stats
             }
         }
     }
+
+    private void calculatePIndexDeltas(List<PIndexDao.PIndexRecord> pIndexRecords,
+                                       List<PIndexDao.PIndexRecord> pIndexRecordsLastWeek)
+    {
+        for (int indexThisWeek = 0; indexThisWeek < pIndexRecords.size(); indexThisWeek++)
+        {
+            for (int indexLastWeek = 0; indexLastWeek < pIndexRecordsLastWeek.size(); indexLastWeek++)
+            {
+                PIndexDao.PIndexRecord thisWeek = pIndexRecords.get(indexThisWeek);
+                PIndexDao.PIndexRecord lastWeek = pIndexRecordsLastWeek.get(indexLastWeek);
+
+                if (thisWeek.athleteId == lastWeek.athleteId)
+                {
+                    // Found athlete
+                    thisWeek.positionDelta = indexLastWeek - indexThisWeek;
+                }
+            }
+        }
+    }
+
+
 
     public static Date getParkrunDay(Date result)
     {

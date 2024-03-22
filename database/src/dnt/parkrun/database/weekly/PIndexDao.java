@@ -11,19 +11,24 @@ import java.util.Date;
 
 public class PIndexDao extends BaseDao
 {
-    final String tableName;
+    private final Date date;
 
     public PIndexDao(DataSource statsDataSource, Date date)
     {
         super(statsDataSource);
-        tableName = "p_index_" + DateConverter.formatDateForDbTable(date);
+        this.date = date;
         createTable();
+    }
+
+    private static String getTableName(Date date)
+    {
+        return "p_index_" + DateConverter.formatDateForDbTable(date);
     }
 
     public void createTable()
     {
         String sql =
-                "create table if not exists " + tableName + " ( " +
+                "create table if not exists " + getTableName(date) + " ( " +
                         "    athlete_id             INT               NOT NULL," +
                         "    p_index                INT               NOT NULL," +
                         "    runs_needed_to_next    INT               NOT NULL," +
@@ -32,25 +37,50 @@ public class PIndexDao extends BaseDao
         jdbc.update(sql, EmptySqlParameterSource.INSTANCE);
     }
 
-    public void writePIndexRecord(int athleteId, PIndex.Result result)
+    public void writePIndexRecord(PIndexRecord pIndexRecord)
     {
-        String sql = "insert into " + tableName + " (" +
+        String sql = "insert into " + getTableName(date) + " (" +
                 "athlete_id, p_index, runs_needed_to_next" +
                 ") values ( " +
                 ":athleteId, :pIndex, :runsNeeded" +
                 ") on duplicate key " +
                 "update p_index = :pIndex, runs_needed_to_next = :runsNeeded";
         jdbc.update(sql, new MapSqlParameterSource()
-                .addValue("athleteId", athleteId)
-                .addValue("pIndex", result.pIndex)
-                .addValue("runsNeeded", result.neededForNextPIndex)
+                .addValue("athleteId", pIndexRecord.athleteId)
+                .addValue("pIndex", pIndexRecord.pIndex)
+                .addValue("runsNeeded", pIndexRecord.neededForNextPIndex)
         );
     }
 
     public PIndex.Result getPIndexForAthlete(int athleteId)
     {
-        String sql = "select * from " + tableName + " where athlete_id = :athleteId";
+        String sql = "select * from " + getTableName(date) + " where athlete_id = :athleteId";
         return jdbc.queryForObject(sql, new MapSqlParameterSource("athleteId", athleteId), (rs, rowNum) ->
                 new PIndex.Result(rs.getInt("p_index"), rs.getInt("runs_needed_to_next")));
+    }
+
+    public static class PIndexRecord
+    {
+        public final int athleteId;
+        public final int pIndex;
+        public final int neededForNextPIndex;
+        public int positionDelta;
+
+        public PIndexRecord(int athleteId, int pIndex, int neededForNextPIndex)
+        {
+            this.athleteId = athleteId;
+            this.pIndex = pIndex;
+            this.neededForNextPIndex = neededForNextPIndex;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "PIndexRecord{" +
+                    "athleteId=" + athleteId +
+                    ", pIndex=" + pIndex +
+                    ", neededForNextPIndex=" + neededForNextPIndex +
+                    '}';
+        }
     }
 }
