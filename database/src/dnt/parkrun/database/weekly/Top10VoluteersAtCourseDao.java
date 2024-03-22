@@ -1,6 +1,7 @@
-package dnt.parkrun.database;
+package dnt.parkrun.database.weekly;
 
 import dnt.parkrun.common.DateConverter;
+import dnt.parkrun.database.BaseDao;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;

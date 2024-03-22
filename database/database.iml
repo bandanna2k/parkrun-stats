@@ -14,5 +14,6 @@
     <orderEntry type="module" module-name="dataStructures" />
     <orderEntry type="library" name="springframework.spring.jdbc" level="project" />
     <orderEntry type="module" module-name="common" />
+    <orderEntry type="module" module-name="pindex" />
   </component>
 </module>

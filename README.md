@@ -14,11 +14,11 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Minor
 
+- Save pIndex
+
+- pIndex deltas
+
 - Change 'How are we doing test to assume next event number'
-
-- Upload to Google sites. Add as embedded for now.
-
-- Font that works on mobile
 
 - Invariant test for results against attendance NEEDS TESTING
 

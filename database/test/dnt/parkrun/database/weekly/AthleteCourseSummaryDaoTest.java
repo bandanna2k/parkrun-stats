@@ -1,6 +1,8 @@
-package dnt.parkrun.database;
+package dnt.parkrun.database.weekly;
 
 import com.mysql.jdbc.Driver;
+import dnt.parkrun.database.AthleteDao;
+import dnt.parkrun.database.BaseDaoTest;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.AthleteCourseSummary;
 import dnt.parkrun.datastructures.Course;

@@ -3,7 +3,14 @@ package dnt.parkrun.stats;
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.DateConverter;
-import dnt.parkrun.database.*;
+import dnt.parkrun.database.CourseDao;
+import dnt.parkrun.database.CourseEventSummaryDao;
+import dnt.parkrun.database.ResultDao;
+import dnt.parkrun.database.StatsDao;
+import dnt.parkrun.database.weekly.AthleteCourseSummaryDao;
+import dnt.parkrun.database.weekly.PIndexDao;
+import dnt.parkrun.database.weekly.Top10AtCourseDao;
+import dnt.parkrun.database.weekly.Top10VoluteersAtCourseDao;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.AthleteCourseSummary;
 import dnt.parkrun.datastructures.Course;
@@ -37,10 +44,10 @@ public class Stats
     public static final String PARKRUN_CO_NZ = "parkrun.co.nz";
     public static final int MIN_P_INDEX = 5;
     private final CourseRepository courseRepository;
-
     /*
             02/03/2024
      */
+
     public static void main(String[] args) throws SQLException, IOException, XMLStreamException
     {
         Date date = args.length == 0 ? getParkrunDay(new Date()) : DateConverter.parseWebsiteDate(args[0]);
@@ -56,6 +63,7 @@ public class Stats
     private final Top10AtCourseDao top10Dao;
     private final Top10VoluteersAtCourseDao top10VolunteerDao;
     private final CourseEventSummaryDao courseEventSummaryDao;
+    private final PIndexDao pIndexDao;
     private final Map<Integer, Athlete> athleteIdToAthlete = new HashMap<>();
     private final Map<Integer, List<AthleteCourseSummary>> athleteIdToAthleteCourseSummaries = new HashMap<>();
 
@@ -72,6 +80,7 @@ public class Stats
         this.top10Dao = new Top10AtCourseDao(statsDataSource, this.date);
         this.top10VolunteerDao = new Top10VoluteersAtCourseDao(statsDataSource, this.date);
         this.resultDao = new ResultDao(dataSource);
+        this.pIndexDao = new PIndexDao(dataSource, date);
 
         this.courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
@@ -247,6 +256,8 @@ public class Stats
                 for (PIndexTableHtmlWriter.Record record : records)
                 {
                     tableWriter.writePIndexRecord(record);
+                    pIndexDao.writePIndexRecord(record.athlete.athleteId,
+                            new PIndex.Result(record.globalPIndex.pIndex, record.globalPIndex.neededForNextPIndex));
                 }
             }
         }

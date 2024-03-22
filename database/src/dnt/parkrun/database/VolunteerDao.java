@@ -33,7 +33,8 @@ public class VolunteerDao
         );
     }
 
-    @Deprecated // Testing only. Do not use. Results too large
+    @Deprecated
+    public // Testing only. Do not use. Results too large
     List<Volunteer> getVolunteers()
     {
         String sql = "select * from event_volunteer " +
