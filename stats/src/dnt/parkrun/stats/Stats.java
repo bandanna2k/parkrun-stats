@@ -80,7 +80,7 @@ public class Stats
         this.top10Dao = new Top10AtCourseDao(statsDataSource, this.date);
         this.top10VolunteerDao = new Top10VoluteersAtCourseDao(statsDataSource, this.date);
         this.resultDao = new ResultDao(dataSource);
-        this.pIndexDao = new PIndexDao(dataSource, date);
+        this.pIndexDao = new PIndexDao(statsDataSource, date);
 
         this.courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
@@ -149,8 +149,6 @@ public class Stats
                     List<AthleteCourseSummary> summariesForAthlete = entry.getValue();
 
                     PIndex.Result globalPIndex = PIndex.pIndexAndNeeded(summariesForAthlete);
-//                    PIndex.Result regionPIndex = PIndex.pIndexAndNeeded(summariesForAthlete.stream()
-//                            .filter(acs -> acs.course != null && acs.course.country == NZ).collect(Collectors.toList()));
 
                     if (globalPIndex.pIndex <= MIN_P_INDEX)
                     {
@@ -175,7 +173,7 @@ public class Stats
                     double homeRatio = provinceRunCount / totalRuns;
 
                     // Add pIndex
-                    records.add(new PIndexTableHtmlWriter.Record(athlete, null, globalPIndex, homeRatio));
+                    records.add(new PIndexTableHtmlWriter.Record(athlete, globalPIndex, homeRatio));
                 }
 
                 records.sort((der1, der2) ->
@@ -186,10 +184,6 @@ public class Stats
                     if (der1.globalPIndex.neededForNextPIndex < der2.globalPIndex.neededForNextPIndex) return -1;
                     if (der1.homeRatio < der2.homeRatio) return 1;
                     if (der1.homeRatio > der2.homeRatio) return -1;
-                    //                if(der1.regionPIndex.pIndex < der2.regionPIndex.pIndex) return 1;
-                    //                if(der1.regionPIndex.pIndex > der2.regionPIndex.pIndex) return -1;
-                    //                if(der1.regionPIndex.neededForNextPIndex < der2.regionPIndex.neededForNextPIndex) return 1;
-                    //                if(der1.regionPIndex.neededForNextPIndex > der2.regionPIndex.neededForNextPIndex) return -1;
                     if (der1.athlete.athleteId > der2.athlete.athleteId) return 1;
                     if (der1.athlete.athleteId < der2.athlete.athleteId) return -1;
                     return 0;
@@ -209,13 +203,12 @@ public class Stats
                     List<AthleteCourseSummary> summariesForAthlete = entry.getValue();
 
                     PIndex.Result globalPIndex = PIndex.pIndexAndNeeded(summariesForAthlete);
-//                    PIndex.Result regionPIndex = PIndex.pIndexAndNeeded(summariesForAthlete.stream()
-//                            .filter(acs -> acs.course != null && acs.course.country == NZ).collect(Collectors.toList()));
 
                     if (globalPIndex.pIndex <= MIN_P_INDEX)
                     {
                         continue;
                     }
+                    pIndexDao.writePIndexRecord(athleteId, new PIndex.Result(globalPIndex.pIndex, globalPIndex.neededForNextPIndex));
 
                     // Calculate max count
                     AthleteCourseSummary maxAthleteCourseSummary = getMaxAthleteCourseSummary(summariesForAthlete);
@@ -234,7 +227,7 @@ public class Stats
 
                     // Add pIndex
                     boolean isRegionalPIndexAthlete = regionalPIndexAthletes.contains(athleteId);
-                    records.add(new PIndexTableHtmlWriter.Record(athlete, null, globalPIndex, homeRatio, isRegionalPIndexAthlete));
+                    records.add(new PIndexTableHtmlWriter.Record(athlete, globalPIndex, homeRatio, isRegionalPIndexAthlete));
                 }
 
                 records.sort((der1, der2) ->
@@ -245,10 +238,6 @@ public class Stats
                     if (der1.globalPIndex.neededForNextPIndex < der2.globalPIndex.neededForNextPIndex) return -1;
                     if (der1.homeRatio < der2.homeRatio) return 1;
                     if (der1.homeRatio > der2.homeRatio) return -1;
-                    //                if(der1.regionPIndex.pIndex < der2.regionPIndex.pIndex) return 1;
-                    //                if(der1.regionPIndex.pIndex > der2.regionPIndex.pIndex) return -1;
-                    //                if(der1.regionPIndex.neededForNextPIndex < der2.regionPIndex.neededForNextPIndex) return 1;
-                    //                if(der1.regionPIndex.neededForNextPIndex > der2.regionPIndex.neededForNextPIndex) return -1;
                     if (der1.athlete.athleteId > der2.athlete.athleteId) return 1;
                     if (der1.athlete.athleteId < der2.athlete.athleteId) return -1;
                     return 0;
@@ -381,7 +370,6 @@ public class Stats
                 Athlete athlete = athleteIdToAthlete.get(der.athleteId);
                 List<AthleteCourseSummary> athleteCourseSummaries = athleteIdToAthleteCourseSummaries.get(der.athleteId);
 
-//                PIndexRecord pIndex = pIndexAndNeeded(athleteCourseSummaries);
                 int courseCount = athleteCourseSummaries.size();
                 int totalCourseCount = athleteCourseSummaries.stream().mapToInt(acs -> acs.countOfRuns).sum();
 

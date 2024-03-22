@@ -1,16 +1,12 @@
 package dnt.parkrun.database.weekly;
 
 import com.mysql.jdbc.Driver;
-import dnt.parkrun.database.AthleteDao;
 import dnt.parkrun.database.BaseDaoTest;
-import dnt.parkrun.database.VolunteerDao;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.pindex.PIndex;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
@@ -19,9 +15,6 @@ import java.util.Date;
 
 public class PIndexDaoTest extends BaseDaoTest
 {
-    private VolunteerDao volunteerDao;
-    private AthleteDao athleteDao;
-    private NamedParameterJdbcTemplate jdbc;
     private PIndexDao pIndexDao;
 
     @Before
@@ -29,12 +22,7 @@ public class PIndexDaoTest extends BaseDaoTest
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
-        athleteDao = new AthleteDao(dataSource);
         pIndexDao = new PIndexDao(dataSource, Date.from(Instant.EPOCH));
-
-        jdbc = new NamedParameterJdbcTemplate(dataSource);
-        jdbc.update("delete from event_volunteer", EmptySqlParameterSource.INSTANCE);
-        jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);
     }
 
     @Test

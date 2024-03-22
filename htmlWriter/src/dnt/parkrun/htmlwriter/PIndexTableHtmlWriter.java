@@ -129,20 +129,18 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
     public static class Record
     {
         public final Athlete athlete;
-        public final PIndex.Result regionPIndex;
         public final PIndex.Result globalPIndex;
         public final double homeRatio;
         public final boolean isRegionalPIndexAthlete;
 
-        public Record(Athlete athlete, PIndex.Result regionPIndex, PIndex.Result globalPIndex, double homeRatio)
+        public Record(Athlete athlete, PIndex.Result globalPIndex, double homeRatio)
         {
-            this(athlete, regionPIndex, globalPIndex, homeRatio, true);
+            this(athlete, globalPIndex, homeRatio, true);
         }
 
-        public Record(Athlete athlete, PIndex.Result regionPIndex, PIndex.Result globalPIndex, double homeRatio, boolean isRegionalPIndexAthlete)
+        public Record(Athlete athlete, PIndex.Result globalPIndex, double homeRatio, boolean isRegionalPIndexAthlete)
         {
             this.athlete = athlete;
-            this.regionPIndex = regionPIndex;
             this.globalPIndex = globalPIndex;
             this.homeRatio = homeRatio;
             this.isRegionalPIndexAthlete = isRegionalPIndexAthlete;
@@ -153,7 +151,6 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         {
             return "Record{" +
                     "athlete=" + athlete +
-                    ", regionPIndex=" + regionPIndex +
                     ", globalPIndex=" + globalPIndex +
                     ", homeRatio=" + homeRatio +
                     ", isRegionalPIndexAthlete=" + isRegionalPIndexAthlete +
