@@ -1,6 +1,7 @@
 package dnt.parkrun.datastructures;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class CourseRepository
@@ -51,5 +52,10 @@ public class CourseRepository
                 ", courseNameToCourse=" + courseNameToCourse +
                 ", courseLongNameToCourse=" + courseLongNameToCourse +
                 '}';
+    }
+
+    public void forEachCourse(Consumer<Course> consumer)
+    {
+        courseIdToCourse.values().forEach(consumer);
     }
 }
