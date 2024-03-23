@@ -43,7 +43,7 @@ public class HowYouDoingTest
         @Parameterized.Parameters(name = "{0}")
         public static Object[] data() throws SQLException
         {
-            SimpleDriverDataSource dataSource = new SimpleDriverDataSource(new Driver(),
+            DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                     "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
             CourseRepository courseRepository = new CourseRepository();
             CourseDao courseDao = new CourseDao(dataSource, courseRepository);
