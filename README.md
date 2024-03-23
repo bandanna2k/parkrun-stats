@@ -14,6 +14,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Minor
 
+- Backfill Porirua volunteers
+
 - Firefox font 
 
 - Save pIndex
@@ -21,8 +23,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 - pIndex deltas
 
 - Change 'How are we doing test to assume next event number'
-
-- Invariant test for results against attendance NEEDS TESTING
 
 - Course event summary without volunteers invariant
 
@@ -181,14 +181,14 @@ order by count desc
 
 # INVARIANTS
 
-## Finishers does not match results (needs testing)
+## Finishers does not match results
 ```
-select ces.course_name, ces.event_number, ces.finishers, count(r.athlete_id) as result_count
+select ces.course_id, ces.date, ces.finishers, count(r.athlete_id) as result_count
 from course_event_summary ces
 left join result r on 
-    ces.course_name = r.course_name and
-    ces.event_number = r.event_number
-group by ces.course_name, ces.event_number
+    ces.course_id = r.course_id and
+    ces.date = r.date
+group by ces.course_id, ces.date, ces.finishers
 having 
     ces.finishers <> result_count
 limit 10;
@@ -275,7 +275,6 @@ left join
 
 # Fastest First Finishers
 
-
 ```
 select row_number(), min(time_seconds) 
 from
@@ -292,17 +291,17 @@ group by row_number()
 ```
 
 
-insert into course (course_id, course_name, course_long_name, country_code, country, status) 
-values 
-(99, 'tbd', 'tbd', 65, 'NZ', 'R');
 
-
+All event volunteers should have an athlete id.
+```
 select distinct athlete_id, course_id, name 
 from event_volunteer
 left join athlete using (athlete_id)
 where name is null;
+```
 
-
+Count of volunteers at all courses
+```
 select course_id, count(athlete_id) as count
 from
 (
@@ -313,3 +312,29 @@ from
 ) as sub1
 group by course_id
 order by count;
+```
+
+# Course Event Summary without volunteers
+```
+select distinct ces.course_id, ces.date, ev.athlete_id 
+from course_event_summary ces
+left join event_volunteer ev using (course_id)
+where ev.athlete_id is null;
+```
+
+
+mysql> select * from result where athlete_id = 414811 order by date desc limit 10;
++-----------+------------+----------+------------+--------------+
+| course_id | date       | position | athlete_id | time_seconds |
++-----------+------------+----------+------------+--------------+
+|         2 | 2024-03-23 |       70 |     414811 |         1502 |
+|         2 | 2024-03-16 |       77 |     414811 |         1546 |
+|         2 | 2024-03-09 |       67 |     414811 |         1544 |
+|         2 | 2024-03-02 |       66 |     414811 |         1541 |
+|         2 | 2024-02-24 |       44 |     414811 |         1478 |
+|        37 | 2024-02-17 |       16 |     414811 |         1596 |
+|         2 | 2024-02-10 |       92 |     414811 |         1522 |
+|         3 | 2024-02-03 |       33 |     414811 |         1464 |
+|         2 | 2024-01-27 |       65 |     414811 |         1491 |
+|         2 | 2024-01-20 |       70 |     414811 |         1544 |
++-----------+------------+----------+------------+--------------+

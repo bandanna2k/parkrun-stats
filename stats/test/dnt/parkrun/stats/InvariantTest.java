@@ -25,6 +25,47 @@ public class InvariantTest
     }
 
     @Test
+    public void courseEventSummaryWithoutVolunteers()
+    {
+        String sql = "select distinct ces.course_id, ces.date, ev.athlete_id \n" +
+                "from course_event_summary ces\n" +
+                "left join event_volunteer ev using (course_id)\n" +
+                "where ev.athlete_id is null;\n";
+        List<Object[]> query = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
+        {
+            return new Object[]{
+                    rs.getInt("course_id"),
+                    rs.getInt("date"),
+                    rs.getString("result_count")
+            };
+        });
+        Assertions.assertThat(query.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void courseEventSummaryFinishersShouldMatchResultCount()
+    {
+        String sql = "select ces.course_id, ces.date, ces.finishers, count(r.athlete_id) as result_count\n" +
+                "from course_event_summary ces\n" +
+                "left join result r on \n" +
+                "    ces.course_id = r.course_id and\n" +
+                "    ces.date = r.date\n" +
+                "group by ces.course_id, ces.date, ces.finishers\n" +
+                "having \n" +
+                "    ces.finishers <> result_count\n" +
+                "limit 10;\n";
+        List<Object[]> query = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
+        {
+            return new Object[]{
+                    rs.getInt("course_id"),
+                    rs.getInt("date"),
+                    rs.getString("result_count")
+            };
+        });
+        Assertions.assertThat(query.size()).isEqualTo(0);
+    }
+
+    @Test
     public void allVolunteersShouldHaveAnAthlete()
     {
         String sql = "select distinct athlete_id, course_id, name \n" +
