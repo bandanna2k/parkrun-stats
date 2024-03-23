@@ -43,4 +43,27 @@ public abstract class BaseWriter implements Closeable
         writer.writeEndElement();
         writer.writeCharacters("\n");
     }
+
+    protected void writeTableDataWithDelta(int delta) throws XMLStreamException
+    {
+        // Up/Down
+        startElement("td");
+        if(delta > 0)
+        {
+            startElement("font", "color", "green");
+            startElement("abbr", "title", "+" + delta);
+            writer.writeCharacters("▲");
+            endElement("abbr");
+            endElement("font");
+        }
+        else if(delta < 0)
+        {
+            startElement("font", "color", "red");
+            startElement("abbr", "title", String.valueOf(delta));
+            writer.writeCharacters("▼");
+            endElement("abbr");
+            endElement("font");
+        }
+        endElement("td");
+    }
 }

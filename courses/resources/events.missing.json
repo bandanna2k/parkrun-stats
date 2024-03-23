@@ -1907,6 +1907,18 @@
           "EventLongName": "Killarney parkrun",
           "countrycode": 42
         }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "mountaingoattrail",
+          "EventLongName": "Mountain Goat Trail parkrun",
+          "countrycode": 98
+        }
       }
     ]
   }

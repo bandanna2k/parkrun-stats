@@ -43,6 +43,18 @@ public class Stats
 {
     public static final String PARKRUN_CO_NZ = "parkrun.co.nz";
     public static final int MIN_P_INDEX = 5;
+    public static final Comparator<PIndexTableHtmlWriter.Record> PINDEX_RECORD_COMPARATOR = (pIndexRecord1, pIndexRecord2) ->
+    {
+        if (pIndexRecord1.globalPIndex.pIndex < pIndexRecord2.globalPIndex.pIndex) return 1;
+        if (pIndexRecord1.globalPIndex.pIndex > pIndexRecord2.globalPIndex.pIndex) return -1;
+        if (pIndexRecord1.globalPIndex.neededForNextPIndex > pIndexRecord2.globalPIndex.neededForNextPIndex) return 1;
+        if (pIndexRecord1.globalPIndex.neededForNextPIndex < pIndexRecord2.globalPIndex.neededForNextPIndex) return -1;
+        if (pIndexRecord1.homeRatio < pIndexRecord2.homeRatio) return 1;
+        if (pIndexRecord1.homeRatio > pIndexRecord2.homeRatio) return -1;
+        if (pIndexRecord1.athlete.athleteId > pIndexRecord2.athlete.athleteId) return 1;
+        if (pIndexRecord1.athlete.athleteId < pIndexRecord2.athlete.athleteId) return -1;
+        return 0;
+    };
     private final CourseRepository courseRepository;
     /*
             02/03/2024
@@ -144,8 +156,12 @@ public class Stats
                  OutputStreamWriter osw = new OutputStreamWriter(fos);
                  BufferedWriter writer = new BufferedWriter(osw))
             {
-                String lineModified = reader.readLine().replace("Cornwall parkrun", "Cornwall Park parkrun");
-                writer.write(lineModified + "\n");
+                String line;
+                while (null != (line = reader.readLine()))
+                {
+                    String lineModified = line.replace("Cornwall parkrun", "Cornwall Park parkrun");
+                    writer.write(lineModified + "\n");
+                }
             }
         }
         new ProcessBuilder("xdg-open", htmlFileModified.getAbsolutePath()).start();
@@ -203,18 +219,20 @@ public class Stats
                     records.add(new PIndexTableHtmlWriter.Record(athlete, globalPIndex, homeRatio));
                 }
 
-                records.sort((der1, der2) ->
-                {
-                    if (der1.globalPIndex.pIndex < der2.globalPIndex.pIndex) return 1;
-                    if (der1.globalPIndex.pIndex > der2.globalPIndex.pIndex) return -1;
-                    if (der1.globalPIndex.neededForNextPIndex > der2.globalPIndex.neededForNextPIndex) return 1;
-                    if (der1.globalPIndex.neededForNextPIndex < der2.globalPIndex.neededForNextPIndex) return -1;
-                    if (der1.homeRatio < der2.homeRatio) return 1;
-                    if (der1.homeRatio > der2.homeRatio) return -1;
-                    if (der1.athlete.athleteId > der2.athlete.athleteId) return 1;
-                    if (der1.athlete.athleteId < der2.athlete.athleteId) return -1;
-                    return 0;
-                });
+                List<PIndexTableHtmlWriter.Record> recordsLastWeek = pIndexDao.getPIndexRecordsLastWeek().stream()
+                        .filter(r -> regionalPIndexAthletes.contains(r.athleteId))
+                        .map(r ->
+                        new PIndexTableHtmlWriter.Record(
+                                athleteIdToAthlete.get(r.athleteId),
+                                new PIndex.Result(r.pIndex, 0),
+                                0))
+                        .collect(Collectors.toList());
+
+                records.sort(PINDEX_RECORD_COMPARATOR);
+                recordsLastWeek.sort(PINDEX_RECORD_COMPARATOR);
+
+                calculatePIndexDeltas(records, recordsLastWeek);
+
                 for (PIndexTableHtmlWriter.Record record : records)
                 {
                     tableWriter.writePIndexRecord(record);
@@ -257,26 +275,7 @@ public class Stats
                     records.add(new PIndexTableHtmlWriter.Record(athlete, globalPIndex, homeRatio, isRegionalPIndexAthlete));
                 }
 
-                calculatePIndexDeltas(
-                        records,
-                        pIndexDao.getPIndexRecordsLastWeek().stream().map(r ->
-                                new PIndexTableHtmlWriter.Record(
-                                        athleteIdToAthlete.get(r.athleteId),
-                                        new PIndex.Result(r.pIndex, 0),
-                                        0)).collect(Collectors.toList()));
-
-                records.sort((der1, der2) ->
-                {
-                    if (der1.globalPIndex.pIndex < der2.globalPIndex.pIndex) return 1;
-                    if (der1.globalPIndex.pIndex > der2.globalPIndex.pIndex) return -1;
-                    if (der1.globalPIndex.neededForNextPIndex > der2.globalPIndex.neededForNextPIndex) return 1;
-                    if (der1.globalPIndex.neededForNextPIndex < der2.globalPIndex.neededForNextPIndex) return -1;
-                    if (der1.homeRatio < der2.homeRatio) return 1;
-                    if (der1.homeRatio > der2.homeRatio) return -1;
-                    if (der1.athlete.athleteId > der2.athlete.athleteId) return 1;
-                    if (der1.athlete.athleteId < der2.athlete.athleteId) return -1;
-                    return 0;
-                });
+                records.sort(PINDEX_RECORD_COMPARATOR);
                 for (PIndexTableHtmlWriter.Record record : records)
                 {
                     tableWriter.writePIndexRecord(record);
@@ -331,7 +330,7 @@ public class Stats
                     .filter(c -> c.status == RUNNING).collect(Collectors.toList());
             for (Course course : courses)
             {
-                try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, course.longName))
+                try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, course.longName, "Run"))
                 {
                     List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);
                     if (top10.isEmpty())
@@ -358,7 +357,7 @@ public class Stats
         Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Volunteers at Courses (New Zealand)"))
         {
-            try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, "New Zealand"))
+            try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, "New Zealand", "Volunteer"))
             {
                 List<Object[]> top10 = top10VolunteerDao.getTop10VolunteersInRegion();
                 for (Object[] vir : top10)
@@ -374,7 +373,7 @@ public class Stats
                     .filter(c -> c.status == RUNNING).collect(Collectors.toList());
             for (Course course : courses)
             {
-                try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, course.longName))
+                try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, course.longName, "Volunteer"))
                 {
                     List<AtEvent> top10 = top10VolunteerDao.getTop10VolunteersAtCourse(course.name);
                     if (top10.isEmpty())

@@ -29,6 +29,10 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         startElement("thead");
         startElement("tr");
 
+        // Up/Down
+//        startElement("th");
+//        endElement("th");
+
         // Name
         startElement("th");
         writer.writeCharacters("Name");
@@ -75,6 +79,8 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
     public void writePIndexRecord(Record record) throws XMLStreamException
     {
        writer.writeStartElement("tr");
+
+       //writeTableDataWithDelta(record.positionDelta);
 
         // Name
         startTableElement(record.isRegionalPIndexAthlete);

@@ -10,12 +10,15 @@ import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
 
 public class Top10AtCourseHtmlWriter extends BaseWriter implements Closeable
 {
-    public Top10AtCourseHtmlWriter(XMLStreamWriter writer, String courseLongName) throws XMLStreamException
+    private final String runOrVolunteer;
+
+    public Top10AtCourseHtmlWriter(XMLStreamWriter writer, String title, String runOrVolunteer) throws XMLStreamException
     {
         super(writer);
+        this.runOrVolunteer = runOrVolunteer;
         startElement("details", "style", "margin-left:10em");
         startElement("summary", "style", "font-size:24px");
-        writer.writeCharacters(courseLongName);
+        writer.writeCharacters(title);
         endElement("summary");
 
         startElement("table", "class", "sortable name-data");
@@ -33,7 +36,7 @@ public class Top10AtCourseHtmlWriter extends BaseWriter implements Closeable
         endElement("th");
 
         startElement("th");
-        writer.writeCharacters("Course Run Count");
+        writer.writeCharacters("Course " + runOrVolunteer + " Count");
         endElement("th");
 
         startElement("th");
