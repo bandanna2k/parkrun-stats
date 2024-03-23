@@ -36,4 +36,23 @@ public class AthleteDaoTest extends BaseDaoTest
         System.out.println(athlete);
         assertThat(athleteDao.getAthlete(athlete.athleteId)).isNotNull();
     }
+
+    @Test
+    public void shouldUpdateAthleteName()
+    {
+        {
+            Athlete athlete = Athlete.fromAthleteSummaryLink("Davey JONES", "https://www.parkrun.co.nz/parkrunner/902393/");
+            athleteDao.insert(athlete);
+
+            System.out.println(athlete);
+            assertThat(athleteDao.getAthlete(athlete.athleteId).name).isEqualTo("Davey JONES");
+        }
+        {
+            Athlete athlete = Athlete.fromAthleteSummaryLink("Davey JONES-BRIGHT", "https://www.parkrun.co.nz/parkrunner/902393/");
+            athleteDao.insert(athlete);
+
+            System.out.println(athlete);
+            assertThat(athleteDao.getAthlete(athlete.athleteId).name).isEqualTo("Davey JONES-BRIGHT");
+        }
+    }
 }

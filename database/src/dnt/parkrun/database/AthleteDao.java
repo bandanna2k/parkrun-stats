@@ -20,11 +20,13 @@ public class AthleteDao
 
     public void insert(Athlete athlete)
     {
-        String sql = "insert ignore into athlete (" +
+        String sql = "insert into athlete (" +
                 "athlete_id, name" +
                 ") values ( " +
                 ":athleteId, :name" +
-                ")";
+                ") on duplicate key " +
+                "update " +
+                "name = :name";
         jdbc.update(sql, new MapSqlParameterSource()
                 .addValue("athleteId", athlete.athleteId)
                 .addValue("name", athlete.name)
