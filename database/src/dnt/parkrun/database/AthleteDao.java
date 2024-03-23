@@ -1,7 +1,6 @@
 package dnt.parkrun.database;
 
 import dnt.parkrun.datastructures.Athlete;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -21,22 +20,15 @@ public class AthleteDao
 
     public void insert(Athlete athlete)
     {
-        try
-        {
-            String sql = "insert into athlete (" +
-                    "athlete_id, name" +
-                    ") values ( " +
-                    ":athleteId, :name" +
-                    ")";
-            jdbc.update(sql, new MapSqlParameterSource()
-                    .addValue("athleteId", athlete.athleteId)
-                    .addValue("name", athlete.name)
-            );
-        }
-        catch (DuplicateKeyException ex)
-        {
-            // System.out.println("DEBUG: Duplicate key for athlete: " + athlete);
-        }
+        String sql = "insert ignore into athlete (" +
+                "athlete_id, name" +
+                ") values ( " +
+                ":athleteId, :name" +
+                ")";
+        jdbc.update(sql, new MapSqlParameterSource()
+                .addValue("athleteId", athlete.athleteId)
+                .addValue("name", athlete.name)
+        );
     }
 
     public Athlete getAthlete(int athleteId)

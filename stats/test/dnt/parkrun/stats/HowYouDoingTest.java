@@ -26,6 +26,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
 
+import static dnt.parkrun.common.DateConverter.ONE_DAY_IN_MILLIS;
 import static dnt.parkrun.common.UrlGenerator.generateCourseEventSummaryUrl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -140,6 +141,21 @@ public class HowYouDoingTest
                 }
             });
             softly.assertAll();
+        }
+
+        @Test
+        public void areLastResultsIn() throws IOException
+        {
+            Course course = new Course(12345, "shawniganhills", Country.CANADA, "Shawnigan Hills", Course.Status.RUNNING);
+            dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(course)
+                    .url(new URL("https://www.parkrun.ca/shawniganhills/results/latestresults/"))
+                    .build();
+            parser.parse();
+
+            Date dateFromMostWesterlyParkrun = parser.getDate();
+            Date todayMinus5Days = new Date();
+            todayMinus5Days.setTime(todayMinus5Days.getTime() - (5 * ONE_DAY_IN_MILLIS));
+            Assertions.assertThat(dateFromMostWesterlyParkrun).isAfter(todayMinus5Days);
         }
     }
 }

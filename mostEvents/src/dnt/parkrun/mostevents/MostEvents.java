@@ -95,8 +95,7 @@ public class MostEvents
             {
                 try
                 {
-                    dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder()
-                            .course(ces.course)
+                    dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(ces.course)
                             .url(generateCourseEventUrl(ces.course.country.baseUrl, ces.course.name, ces.eventNumber))
                             .forEachAthlete(athleteDao::insert)
                             .forEachResult(resultDao::insert)

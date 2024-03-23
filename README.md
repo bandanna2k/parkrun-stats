@@ -14,6 +14,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Minor
 
+- Firefox font 
+
 - Save pIndex
 
 - pIndex deltas
@@ -293,3 +295,21 @@ group by row_number()
 insert into course (course_id, course_name, course_long_name, country_code, country, status) 
 values 
 (99, 'tbd', 'tbd', 65, 'NZ', 'R');
+
+
+select distinct athlete_id, course_id, name 
+from event_volunteer
+left join athlete using (athlete_id)
+where name is null;
+
+
+select course_id, count(athlete_id) as count
+from
+(
+    select course_id, athlete_id, if(name is null, athlete_id, name) as identifier
+    from event_volunteer
+    left join athlete using (athlete_id)
+    where athlete_id = 2306890
+) as sub1
+group by course_id
+order by count;

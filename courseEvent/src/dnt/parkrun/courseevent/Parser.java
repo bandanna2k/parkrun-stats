@@ -23,6 +23,7 @@ public class Parser
     private final Consumer<Athlete> athleteConsumer;
     private final Consumer<Result> resultConsumer;
     private final Consumer<Volunteer> volunteerConsumer;
+    private Date date;
 
     public Parser(Document doc,
                   Course course,
@@ -50,7 +51,7 @@ public class Parser
                 .childNode(1)   // h3
                 .childNode(0)   // span
                 .childNode(0);
-        Date date = DateConverter.parseWebsiteDate(dateNode.toString());
+        date = DateConverter.parseWebsiteDate(dateNode.toString());
 
         Elements tableElements = doc.getElementsByClass("Results-table");
 
@@ -105,11 +106,14 @@ public class Parser
             if(volunteerAthleteNode != null)
             {
                 Athlete athlete = Athlete.fromAthleteHistoryAtEventLink(volunteerAthleteNode.toString(), volunteerNode.attr("href"));
+                athleteConsumer.accept(athlete);
                 volunteerConsumer.accept(new Volunteer(course.courseId, date, athlete));
             }
         });
         System.out.println(counter);
     }
+
+    public Date getDate() { return this.date; }
 
     public static class Builder
     {
@@ -117,7 +121,12 @@ public class Parser
         private Consumer<Athlete> athleteConsumer = r -> {};
         private Consumer<Result> resultConsumer = r -> {};
         private Consumer<Volunteer> volunteerConsumer = r -> {};
-        private Course course;
+        private final Course course;
+
+        public Builder(Course course)
+        {
+            this.course = course;
+        }
 
         public Parser build()
         {
@@ -151,12 +160,6 @@ public class Parser
         public Builder forEachVolunteer(Consumer<Volunteer> consumer)
         {
             this.volunteerConsumer = consumer;
-            return this;
-        }
-
-        public Builder course(Course course)
-        {
-            this.course = course;
             return this;
         }
     }

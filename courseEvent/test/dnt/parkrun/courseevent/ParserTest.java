@@ -15,8 +15,8 @@ public class ParserTest
     public void shouldParseWithUnknowns()
     {
         URL resource = this.getClass().getResource("/example.event.with.unknowns.html");
-        Parser parser = new Parser.Builder()
-                .course(cornwall)
+        Parser parser = new Parser.Builder(cornwall)
+                .forEachAthlete(x -> System.out.println("Athlete: " + x))
                 .forEachResult(x -> System.out.println("Result: " + x))
                 .forEachVolunteer(x -> System.out.println("Volunteer: " + x))
                 .file(new File(resource.getFile()))
@@ -28,8 +28,8 @@ public class ParserTest
     public void shouldParseWithHourPlusRunners()
     {
         URL resource = this.getClass().getResource("/example.event.with.hour.plus.times.html");
-        Parser parser = new Parser.Builder()
-                .course(cornwall)
+        Parser parser = new Parser.Builder(cornwall)
+                .forEachAthlete(x -> System.out.println("Athlete: " + x))
                 .forEachResult(x -> System.out.println("Result: " + x))
                 .forEachVolunteer(x -> System.out.println("Volunteer: " + x))
                 .file(new File(resource.getFile()))

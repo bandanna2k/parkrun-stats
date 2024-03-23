@@ -59,7 +59,7 @@ public class WalkerTest
         // List athletes at event
         List<Result> results = new ArrayList<>();
         URL courseEventUrl = new URL("https://" + course.country.baseUrl + "/" + course.name + "/results/" + event.eventNumber + "/");
-        dnt.parkrun.courseevent.Parser courseEventParser = new dnt.parkrun.courseevent.Parser.Builder()
+        dnt.parkrun.courseevent.Parser courseEventParser = new dnt.parkrun.courseevent.Parser.Builder(null)
                 .url(courseEventUrl)
                 .forEachResult(results::add)
                 .build();
