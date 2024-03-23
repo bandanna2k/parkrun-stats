@@ -78,8 +78,5 @@ public class HtmlWriter extends BaseWriter
         {
             throw new RuntimeException(e);
         }
-
-        File htmlFile = new File("stats_" + DateConverter.formatDateForDbTable(date) + ".html");
-        new ProcessBuilder("xdg-open", htmlFile.getAbsolutePath()).start();
     }
 }

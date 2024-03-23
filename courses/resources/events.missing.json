@@ -1871,6 +1871,42 @@
           "EventLongName": "TYTO Wetlands parkrun",
           "countrycode": 3
         }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "kolomenskoe",
+          "EventLongName": "parkrun Kolomenskoe",
+          "countrycode": -80
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "whistler",
+          "EventLongName": "Whistler parkrun",
+          "countrycode": 14
+        }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "killarney",
+          "EventLongName": "Killarney parkrun",
+          "countrycode": 42
+        }
       }
     ]
   }

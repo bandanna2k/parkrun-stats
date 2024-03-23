@@ -36,8 +36,7 @@ public class StatsDao extends BaseDao
                 "create table if not exists " + differentCourseCountTableName + " as " +
                         "select a.name, a.athlete_id, " +
                         "sub1.count as different_region_course_count, sub2.count as total_region_runs, " +
-                        "0 as different_course_count, 0 as total_runs, " +
-                        "0 as p_index " +
+                        "0 as different_course_count, 0 as total_runs " +
                         "from " + athleteTable() + " a " +
                         "join   " +
                         "( " +

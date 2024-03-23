@@ -3,6 +3,7 @@ package dnt.parkrun.stats;
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.DateConverter;
+import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.CourseEventSummaryDao;
 import dnt.parkrun.database.ResultDao;
@@ -23,13 +24,14 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
 import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
 import static dnt.parkrun.database.StatsDao.DifferentCourseCount;
 import static dnt.parkrun.datastructures.Country.NZ;
@@ -39,8 +41,6 @@ import static java.util.Collections.emptyList;
 
 public class Stats
 {
-    private static final int SEVEN_DAYS_IN_MILLIS = (7 * 24 * 60 * 60 * 1000);
-
     public static final String PARKRUN_CO_NZ = "parkrun.co.nz";
     public static final int MIN_P_INDEX = 5;
     private final CourseRepository courseRepository;
@@ -132,12 +132,39 @@ public class Stats
 
             writeTop10Volunteers(writer);
         }
+
+        File htmlFile = new File("stats_" + DateConverter.formatDateForDbTable(date) + ".html");
+        File htmlFileModified = new File("stats_modified_" + DateConverter.formatDateForDbTable(date) + ".html");
+
+        try (FileInputStream fis = new FileInputStream(htmlFile);
+             InputStreamReader isr = new InputStreamReader(fis);
+             BufferedReader reader = new BufferedReader(isr))
+        {
+            try (FileOutputStream fos = new FileOutputStream(htmlFileModified);
+                 OutputStreamWriter osw = new OutputStreamWriter(fos);
+                 BufferedWriter writer = new BufferedWriter(osw))
+            {
+                String lineModified = reader.readLine().replace("Cornwall parkrun", "Cornwall Park parkrun");
+                writer.write(lineModified + "\n");
+            }
+        }
+        new ProcessBuilder("xdg-open", htmlFileModified.getAbsolutePath()).start();
     }
 
     private void writePIndex(HtmlWriter writer) throws XMLStreamException
     {
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, " P-Index (New Zealand)"))
         {
+            writer.writer.writeStartElement("p");
+            writer.writer.writeAttribute("style", "margin-left:100px");
+            writer.writer.writeCharacters("p-Index tables with credit to ");
+            writer.writer.writeStartElement("a");
+            writer.writer.writeAttribute("href", UrlGenerator.generateAthleteUrl(NZ.baseUrl, 4225353).toString());
+            writer.writer.writeAttribute("style", "color:inherit;text-decoration:none;");
+            writer.writer.writeCharacters("Dan Joe");
+            writer.writer.writeEndElement(); // a
+            writer.writer.writeEndElement(); // p
+
             Set<Integer> regionalPIndexAthletes = new HashSet<>();
             try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, "p-Index (New Zealand)"))
             {
@@ -229,6 +256,14 @@ public class Stats
                     boolean isRegionalPIndexAthlete = regionalPIndexAthletes.contains(athleteId);
                     records.add(new PIndexTableHtmlWriter.Record(athlete, globalPIndex, homeRatio, isRegionalPIndexAthlete));
                 }
+
+                calculatePIndexDeltas(
+                        records,
+                        pIndexDao.getPIndexRecordsLastWeek().stream().map(r ->
+                                new PIndexTableHtmlWriter.Record(
+                                        athleteIdToAthlete.get(r.athleteId),
+                                        new PIndex.Result(r.pIndex, 0),
+                                        0)).collect(Collectors.toList()));
 
                 records.sort((der1, der2) ->
                 {
@@ -466,6 +501,19 @@ public class Stats
         athletesToDownload.removeAll(athletesAlreadyDownloaded);
         System.out.println("Athletes too download. " + athletesToDownload.size());
 
+        List<Integer> listOfAthletesToDownload = new ArrayList<>(athletesToDownload);
+        int countOfAthletesToDownload = listOfAthletesToDownload.size();
+        System.out.println("Downloading athlete course summaries. Athletes too download. " + countOfAthletesToDownload);
+        for (int i = 1; i <= countOfAthletesToDownload; i++)
+        {
+            int athleteId = listOfAthletesToDownload.get(i - 1);
+            System.out.printf("Downloading %d of %d ", i, countOfAthletesToDownload);
+            Parser parser = new Parser.Builder()
+                    .url(generateAthleteEventSummaryUrl(PARKRUN_CO_NZ, athleteId))
+                    .forEachAthleteCourseSummary(acsDao::writeAthleteCourseSummary)
+                    .build(courseRepository);
+            parser.parse();
+        }
         for (int athlete_id : athletesToDownload)
         {
             Parser parser = new Parser.Builder()
@@ -574,17 +622,17 @@ public class Stats
         }
     }
 
-    private void calculatePIndexDeltas(List<PIndexDao.PIndexRecord> pIndexRecords,
-                                       List<PIndexDao.PIndexRecord> pIndexRecordsLastWeek)
+    private void calculatePIndexDeltas(List<PIndexTableHtmlWriter.Record> pIndexRecords,
+                                       List<PIndexTableHtmlWriter.Record> pIndexRecordsLastWeek)
     {
         for (int indexThisWeek = 0; indexThisWeek < pIndexRecords.size(); indexThisWeek++)
         {
             for (int indexLastWeek = 0; indexLastWeek < pIndexRecordsLastWeek.size(); indexLastWeek++)
             {
-                PIndexDao.PIndexRecord thisWeek = pIndexRecords.get(indexThisWeek);
-                PIndexDao.PIndexRecord lastWeek = pIndexRecordsLastWeek.get(indexLastWeek);
+                PIndexTableHtmlWriter.Record thisWeek = pIndexRecords.get(indexThisWeek);
+                PIndexTableHtmlWriter.Record lastWeek = pIndexRecordsLastWeek.get(indexLastWeek);
 
-                if (thisWeek.athleteId == lastWeek.athleteId)
+                if (thisWeek.athlete.athleteId == lastWeek.athlete.athleteId)
                 {
                     // Found athlete
                     thisWeek.positionDelta = indexLastWeek - indexThisWeek;

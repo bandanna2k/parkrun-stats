@@ -1,6 +1,5 @@
 package dnt.parkrun.htmlwriter;
 
-import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.pindex.PIndex;
 
@@ -9,7 +8,6 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.Closeable;
 
 import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
-import static dnt.parkrun.datastructures.Country.NZ;
 
 public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
 {
@@ -21,15 +19,6 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         startElement("summary", "style", "font-size:24px");
         writer.writeCharacters(title);
         endElement("summary");
-
-        startElement("p", "style", "margin-left:100px");
-        writer.writeCharacters("p-Index table courtesy of ");
-        startElement("a",
-                "href", UrlGenerator.generateAthleteUrl(NZ.baseUrl, 4225353).toString(),
-                "style", "color:inherit;text-decoration:none;");
-        writer.writeCharacters("Dan Joe");
-        endElement("a");
-        endElement("p");
 
         startElement("table", "class", "sortable name-data");
         writeHeader(writer);
@@ -132,6 +121,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         public final PIndex.Result globalPIndex;
         public final double homeRatio;
         public final boolean isRegionalPIndexAthlete;
+        public int positionDelta;
 
         public Record(Athlete athlete, PIndex.Result globalPIndex, double homeRatio)
         {

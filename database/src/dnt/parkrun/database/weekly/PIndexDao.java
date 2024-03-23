@@ -8,6 +8,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import javax.sql.DataSource;
 import java.util.Date;
+import java.util.List;
+
+import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
 
 public class PIndexDao extends BaseDao
 {
@@ -57,6 +60,17 @@ public class PIndexDao extends BaseDao
         String sql = "select * from " + getTableName(date) + " where athlete_id = :athleteId";
         return jdbc.queryForObject(sql, new MapSqlParameterSource("athleteId", athleteId), (rs, rowNum) ->
                 new PIndex.Result(rs.getInt("p_index"), rs.getInt("runs_needed_to_next")));
+    }
+
+    public List<PIndexRecord> getPIndexRecordsLastWeek()
+    {
+        Date lastWeek = new Date();
+        lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
+        String sql = "select * from " + getTableName(lastWeek);
+        return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> new PIndexRecord(
+                rs.getInt("athlete_id"),
+                rs.getInt("p_index"),
+                rs.getInt("runs_needed_to_next")));
     }
 
     public static class PIndexRecord

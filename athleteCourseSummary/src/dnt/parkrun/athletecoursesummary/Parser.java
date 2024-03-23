@@ -55,7 +55,7 @@ public class Parser
                         .childNode(0)   // td
                         .childNode(0)   // a
                         .childNode(0);
-                String courseLongName = eventNode.toString();
+                String courseLongName = org.jsoup.parser.Parser.unescapeEntities(eventNode.toString(), false);
 
                 Node countNode = row
                         .childNode(1)   // td

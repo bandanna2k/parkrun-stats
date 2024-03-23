@@ -6,6 +6,8 @@ import java.util.Date;
 
 public abstract class DateConverter
 {
+    public static final int SEVEN_DAYS_IN_MILLIS = (7 * 24 * 60 * 60 * 1000);
+
     private static final SimpleDateFormat WEBSITE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
     private static final SimpleDateFormat DATABASE_NAME_DATE_FORMATTER = new SimpleDateFormat("yyyy_MM_dd");
 
