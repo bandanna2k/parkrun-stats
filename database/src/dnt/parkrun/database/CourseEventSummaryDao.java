@@ -8,7 +8,10 @@ import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import javax.sql.DataSource;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class CourseEventSummaryDao extends BaseDao
 {
@@ -66,21 +69,6 @@ public class CourseEventSummaryDao extends BaseDao
                 .addValue("firstMaleAthleteId", courseEventSummary.firstMale.map(a -> a.athleteId).orElse(Athlete.NO_ATHLETE_ID))
                 .addValue("firstFemaleAthleteId", courseEventSummary.firstFemale.map(a -> a.athleteId).orElse(Athlete.NO_ATHLETE_ID))
         );
-    }
-
-    @Deprecated
-    public void backfillFinishers(String name, int eventNumber, int finishers, Date date)
-    {
-        int update = jdbc.update("update course_event_summary " +
-                        "set date = :date " +
-                        "where course_name = :courseName and " +
-                        " event_number = :eventNumber and " +
-                        " date is null",
-                new MapSqlParameterSource()
-                        .addValue("courseName", name)
-                        .addValue("eventNumber", eventNumber)
-                        .addValue("date", date)
-                        .addValue("finishers", finishers));
     }
 
     public Map<String, Integer> getCourseCount()

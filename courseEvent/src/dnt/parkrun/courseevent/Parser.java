@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class Parser
@@ -99,7 +98,6 @@ public class Parser
         Elements thanksToTheVolunteers = doc.getElementsMatchingText("Thanks to the volunteers");
         Elements parents = thanksToTheVolunteers.parents();
 
-        AtomicInteger counter = new AtomicInteger();
         List<Node> volunteers = parents.last().childNode(1).childNodes();
         volunteers.forEach(volunteerNode -> {
             Node volunteerAthleteNode = volunteerNode.firstChild();
@@ -110,7 +108,6 @@ public class Parser
                 volunteerConsumer.accept(new Volunteer(course.courseId, date, athlete));
             }
         });
-        System.out.println(counter);
     }
 
     public Date getDate() { return this.date; }
