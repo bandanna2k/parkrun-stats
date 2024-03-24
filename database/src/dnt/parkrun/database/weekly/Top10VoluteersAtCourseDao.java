@@ -81,19 +81,22 @@ public class Top10VoluteersAtCourseDao extends BaseDao
 
     public List<Object[]> getTop10VolunteersInRegion()
     {
-        String sql = "select a.name, sub1.athlete_id, sub1.total_volunteer_count\n" +
-                "from " + athleteTable() + " a\n" +
-                "join\n" +
-                "(\n" +
-                "    select athlete_id, sum(volunteer_count) as total_volunteer_count\n" +
+        String sql = "select a.name, sub1.athlete_id, sub1.course_id, sub1.total_volunteer_count\n" +
+                "from " + athleteTable() + " a " +
+                "join " +
+                "(" +
+                "    select athlete_id, course_id, sum(volunteer_count) as total_volunteer_count\n" +
                 "    from " + tableName +
-                "    group by athlete_id\n" +
+                "    group by athlete_id, course_id\n" +
                 "    order by total_volunteer_count desc\n" +
-                "    limit 20\n" +
+                "    limit 20" +
                 ") as sub1 using (athlete_id)";
-        return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> {
-            Athlete athlete = Athlete.from(rs.getString("name"), rs.getInt("athlete_id"));
-            return new Object[] { athlete, rs.getInt("total_volunteer_count") };
-        });
+        return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
+                new Object[]
+                        {
+                                Athlete.from(rs.getString("name"), rs.getInt("athlete_id")),
+                                rs.getInt("course_id"),
+                                rs.getInt("total_volunteer_count")
+                        });
     }
 }
