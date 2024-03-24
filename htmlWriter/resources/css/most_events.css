@@ -71,3 +71,9 @@ tbody tr {
 abbr[title] {
     text-decoration: none;
 }
+.small-text {
+    margin-top: 5px;
+    color: #888;
+    font-size: 12px;
+    font-weight: 400;
+}

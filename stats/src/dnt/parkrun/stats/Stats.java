@@ -36,6 +36,7 @@ import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
 import static dnt.parkrun.database.StatsDao.DifferentCourseCount;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.RUNNING;
+import static dnt.parkrun.datastructures.Course.Status.STOPPED;
 import static dnt.parkrun.region.Region.getNzRegionRunCount;
 import static java.util.Collections.emptyList;
 
@@ -460,6 +461,11 @@ public class Stats
             tableWriter.writer.writeStartElement("tbody");
             List<AttendanceRecord> attendanceRecords = getAttendanceRecords().stream()
                     .filter(ar -> ar.recordEventFinishers != 0)
+                    .peek(ar -> {
+                        Course course = courseRepository.getCourseFromName(ar.courseName);
+                        if(course.status == STOPPED) ar.courseSmallTest = "no longer takes place";
+                        else if(ar.recentEventDate.before(date)) ar.courseSmallTest = "not run this week";
+                    })
                     .collect(Collectors.toList());
             attendanceRecords.sort(Comparator.comparing(attendanceRecord -> attendanceRecord.courseName));
             for (AttendanceRecord ar : attendanceRecords)

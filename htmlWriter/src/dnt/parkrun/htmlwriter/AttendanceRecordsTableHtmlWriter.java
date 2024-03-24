@@ -100,6 +100,12 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         writer.writeAttribute("href", UrlGenerator.generateCourseEventSummaryUrl(PARKRUN_CO_NZ, record.courseName).toString());
         writer.writeAttribute("target", String.valueOf(record.courseName));
         writer.writeCharacters(record.courseLongName);
+        if(record.courseSmallTest != null)
+        {
+            startElement("div", "class", "small-text");
+            writer.writeCharacters(record.courseSmallTest);
+            endElement("div");
+        }
         endElement("a");
         endElement("td");
 

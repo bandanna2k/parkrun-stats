@@ -6,6 +6,7 @@ public class AttendanceRecord
 {
     public final String courseLongName;
     public final String courseName;
+    public String courseSmallTest;
 
     public final int recentEventFinishers;
     public final int recentEventNumber;
@@ -39,14 +40,13 @@ public class AttendanceRecord
         return "AttendanceRecord{" +
                 "courseLongName='" + courseLongName + '\'' +
                 ", courseName='" + courseName + '\'' +
+                ", courseSmallTest='" + courseSmallTest + '\'' +
+                ", recentEventFinishers=" + recentEventFinishers +
                 ", recentEventNumber=" + recentEventNumber +
                 ", recentEventDate=" + recentEventDate +
-                ", recentEventFinishers=" + recentEventFinishers +
-
+                ", recordEventFinishers=" + recordEventFinishers +
                 ", recordEventNumber=" + recordEventNumber +
                 ", recordEventDate=" + recordEventDate +
-                ", recordEventFinishers=" + recordEventFinishers +
-
                 ", recentAttendanceDelta=" + recentAttendanceDelta +
                 ", maxAttendanceDelta=" + maxAttendanceDelta +
                 '}';

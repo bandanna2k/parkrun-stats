@@ -14,15 +14,9 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Minor
 
-- Backfill Porirua volunteers
-
 - pIndex deltas (waiting until next weekend)
 
 - Change 'How are we doing test to assume next event number'
-
-- Course event summary without volunteers invariant
-
-- Add events not run this weekend
 
 ## Ideas
 
