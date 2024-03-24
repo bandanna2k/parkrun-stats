@@ -16,17 +16,15 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Backfill Porirua volunteers
 
-- Firefox font 
+- Firefox font
 
-- Save pIndex
-
-- pIndex deltas
+- pIndex deltas (waiting until next weekend)
 
 - Change 'How are we doing test to assume next event number'
 
 - Course event summary without volunteers invariant
 
-- Add event not run this weekend
+- Add events not run this weekend
 
 ## Ideas
 
