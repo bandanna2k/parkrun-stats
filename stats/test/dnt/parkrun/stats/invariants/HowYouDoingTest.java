@@ -31,7 +31,6 @@ import static dnt.parkrun.common.DateConverter.ONE_DAY_IN_MILLIS;
 import static dnt.parkrun.common.UrlGenerator.generateCourseEventSummaryUrl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 @RunWith(Enclosed.class)
 public class HowYouDoingTest
@@ -50,8 +49,9 @@ public class HowYouDoingTest
             CourseRepository courseRepository = new CourseRepository();
             CourseDao courseDao = new CourseDao(dataSource, courseRepository);
 
-            List<Course> courses = courseDao.getCourses(Country.NZ);
-            return courses.toArray();
+            return courseDao.getCourses(Country.NZ).stream()
+                    .filter(c -> c.status == Course.Status.RUNNING)
+                    .toArray();
         }
 
         @Test
@@ -148,17 +148,17 @@ public class HowYouDoingTest
         @Test
         public void areLastResultsIn() throws IOException
         {
-            https://www.parkrun.ca/cloverpoint/
-            if(areResultsIn(new Course(12345, "shawniganhills", Country.CANADA, "shawniganhills", Course.Status.RUNNING)) ||
-                areResultsIn(new Course(12346, "cloverpoint", Country.CANADA, "cloverpoint", Course.Status.RUNNING)) ||
-                areResultsIn(new Course(12347, "ambleside", Country.CANADA, "ambleside", Course.Status.RUNNING)))
-            {
-                // We're good
-            }
-            else
-            {
-                fail("No western Canada results in yet.");
-            }
+            SoftAssertions softly = new SoftAssertions();
+            softly.assertThat(areResultsIn(new Course(12345, "shawniganhills", Country.CANADA, "shawniganhills", Course.Status.RUNNING)))
+                    .describedAs("shawniganhills results not in")
+                    .isEqualTo(true);
+            softly.assertThat(areResultsIn(new Course(12346, "cloverpoint", Country.CANADA, "cloverpoint", Course.Status.RUNNING)))
+                    .describedAs("cloverpoint results not in")
+                    .isEqualTo(true);
+            softly.assertThat(new Course(12347, "ambleside", Country.CANADA, "ambleside", Course.Status.RUNNING))
+                    .describedAs("ambleside results not in")
+                    .isEqualTo(true);
+            softly.assertAll();
         }
         public boolean areResultsIn(Course course) throws IOException
         {
