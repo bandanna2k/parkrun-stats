@@ -23,6 +23,7 @@ public class Parser
     private final CourseRepository courseRepository;
     private final Consumer<AthleteCourseSummary> consumer;
     private final Consumer<String> courseNotFoundConsumer;
+    private Athlete athlete;
 
     private Parser(Document doc, CourseRepository courseRepository, Consumer<AthleteCourseSummary> consumer)
     {
@@ -37,8 +38,16 @@ public class Parser
         Elements nameElements = doc.getElementsByTag("h2");
         String name = extractName(nameElements.text());
         int athleteId = extractAthleteId(nameElements.text());
+        athlete = Athlete.from(name, athleteId);
 
-        Elements summaries = doc.getElementById("event-summary").parents();
+        Element eventSummary = doc.getElementById("event-summary");
+        if(eventSummary == null)
+        {
+            System.out.println("WARNING No event summary. Probable volunteer only.");
+            return;
+        }
+
+        Elements summaries = eventSummary.parents();
         Elements tableElements = summaries.select("table");
 
         Element firstTable = tableElements.get(0);
@@ -90,12 +99,16 @@ public class Parser
 
     private static int extractAthleteId(String nameWithId)
     {
-        int start = nameWithId.indexOf("(");
-        int end = nameWithId.indexOf(")");
+        int start = nameWithId.lastIndexOf("(");
+        int end = nameWithId.indexOf(")", start);
         String athleteId = nameWithId.substring(start + 2/*(A*/, end);
         return Integer.parseInt(athleteId);
     }
 
+    public Athlete getAthlete()
+    {
+        return athlete;
+    }
 
     public static class Builder
     {

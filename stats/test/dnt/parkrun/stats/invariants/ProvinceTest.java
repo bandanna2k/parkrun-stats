@@ -1,4 +1,4 @@
-package dnt.parkrun.stats;
+package dnt.parkrun.stats.invariants;
 
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
 import dnt.parkrun.datastructures.Country;
