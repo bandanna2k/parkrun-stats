@@ -3,7 +3,6 @@ package dnt.parkrun.database.weekly;
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.database.BaseDaoTest;
 import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.pindex.PIndex;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,9 +28,9 @@ public class PIndexDaoTest extends BaseDaoTest
     public void shouldInsertAndReturnResult()
     {
         Athlete athlete = Athlete.fromAthleteSummaryLink("Massimilino PAGININ", "https://www.parkrun.co.nz/parkrunner/7001007/");
-        pIndexDao.writePIndexRecord(new PIndexDao.PIndexRecord(athlete.athleteId, 2, 1));
+        pIndexDao.writePIndexRecord(new PIndexDao.PIndexRecord(athlete.athleteId, 2, 1, 1.0));
 
-        PIndex.Result result = pIndexDao.getPIndexForAthlete(athlete.athleteId);
+        PIndexDao.PIndexRecord result = pIndexDao.getPIndexForAthlete(athlete.athleteId);
         Assertions.assertThat(result.pIndex).isEqualTo(2);
         Assertions.assertThat(result.neededForNextPIndex).isEqualTo(1);
     }
@@ -40,16 +39,16 @@ public class PIndexDaoTest extends BaseDaoTest
     public void shouldOverwriteRecords()
     {
         Athlete athlete = Athlete.fromAthleteSummaryLink("Paolo MALDINI", "https://www.parkrun.co.nz/parkrunner/3456789/");
-        pIndexDao.writePIndexRecord(new PIndexDao.PIndexRecord(athlete.athleteId, 8, 3));
+        pIndexDao.writePIndexRecord(new PIndexDao.PIndexRecord(athlete.athleteId, 8, 3, 1.0));
 
         {
-            PIndex.Result result = pIndexDao.getPIndexForAthlete(athlete.athleteId);
+            PIndexDao.PIndexRecord result = pIndexDao.getPIndexForAthlete(athlete.athleteId);
             Assertions.assertThat(result.pIndex).isEqualTo(8);
             Assertions.assertThat(result.neededForNextPIndex).isEqualTo(3);
         }
-        pIndexDao.writePIndexRecord(new PIndexDao.PIndexRecord(athlete.athleteId, 8, 2));
+        pIndexDao.writePIndexRecord(new PIndexDao.PIndexRecord(athlete.athleteId, 8, 2, 1.0));
         {
-            PIndex.Result result = pIndexDao.getPIndexForAthlete(athlete.athleteId);
+            PIndexDao.PIndexRecord result = pIndexDao.getPIndexForAthlete(athlete.athleteId);
             Assertions.assertThat(result.pIndex).isEqualTo(8);
             Assertions.assertThat(result.neededForNextPIndex).isEqualTo(2);
         }

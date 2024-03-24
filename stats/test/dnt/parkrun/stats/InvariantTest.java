@@ -35,8 +35,8 @@ public class InvariantTest
         {
             return new Object[]{
                     rs.getInt("course_id"),
-                    rs.getInt("date"),
-                    rs.getString("result_count")
+                    rs.getDate("date"),
+                    rs.getInt("athlete_id")
             };
         });
         Assertions.assertThat(query.size()).isEqualTo(0);

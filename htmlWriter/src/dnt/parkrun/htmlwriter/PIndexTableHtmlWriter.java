@@ -80,7 +80,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
     {
        writer.writeStartElement("tr");
 
-       //writeTableDataWithDelta(record.positionDelta);
+//       writeTableDataWithDelta(record.positionDelta);
 
         // Name
         startTableElement(record.isRegionalPIndexAthlete);

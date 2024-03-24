@@ -181,6 +181,7 @@ public class Stats
             writer.writer.writeEndElement(); // a
             writer.writer.writeEndElement(); // p
 
+            // p-Index
             Set<Integer> regionalPIndexAthletes = new HashSet<>();
             try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, "p-Index (New Zealand)"))
             {
@@ -222,10 +223,10 @@ public class Stats
                 List<PIndexTableHtmlWriter.Record> recordsLastWeek = pIndexDao.getPIndexRecordsLastWeek().stream()
                         .filter(r -> regionalPIndexAthletes.contains(r.athleteId))
                         .map(r ->
-                        new PIndexTableHtmlWriter.Record(
-                                athleteIdToAthlete.get(r.athleteId),
-                                new PIndex.Result(r.pIndex, 0),
-                                0))
+                                new PIndexTableHtmlWriter.Record(
+                                    athleteIdToAthlete.get(r.athleteId),
+                                    new PIndex.Result(r.pIndex, r.neededForNextPIndex),
+                                    r.homeRatio))
                         .collect(Collectors.toList());
 
                 records.sort(PINDEX_RECORD_COMPARATOR);
@@ -238,6 +239,8 @@ public class Stats
                     tableWriter.writePIndexRecord(record);
                 }
             }
+
+            // Legacy p-Index
             try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, "Legacy p-Index (New Zealand)"))
             {
                 List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
@@ -253,7 +256,6 @@ public class Stats
                     {
                         continue;
                     }
-                    pIndexDao.writePIndexRecord(new PIndexDao.PIndexRecord(athleteId, globalPIndex.pIndex, globalPIndex.neededForNextPIndex));
 
                     // Calculate max count
                     AthleteCourseSummary maxAthleteCourseSummary = getMaxAthleteCourseSummary(summariesForAthlete);
@@ -269,6 +271,7 @@ public class Stats
                         double totalRuns = getTotalRuns(summariesForAthlete);
                         homeRatio = provinceRunCount / totalRuns;
                     }
+                    pIndexDao.writePIndexRecord(new PIndexDao.PIndexRecord(athleteId, globalPIndex.pIndex, globalPIndex.neededForNextPIndex, homeRatio));
 
                     // Add pIndex
                     boolean isRegionalPIndexAthlete = regionalPIndexAthletes.contains(athleteId);
@@ -280,7 +283,8 @@ public class Stats
                 {
                     tableWriter.writePIndexRecord(record);
                     pIndexDao.writePIndexRecord(
-                            new PIndexDao.PIndexRecord(record.athlete.athleteId, record.globalPIndex.pIndex, record.globalPIndex.neededForNextPIndex));
+                            new PIndexDao.PIndexRecord(
+                                    record.athlete.athleteId, record.globalPIndex.pIndex, record.globalPIndex.neededForNextPIndex, record.homeRatio));
                 }
             }
         }

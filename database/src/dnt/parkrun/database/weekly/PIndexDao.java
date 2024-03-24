@@ -2,7 +2,6 @@ package dnt.parkrun.database.weekly;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.BaseDao;
-import dnt.parkrun.pindex.PIndex;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -35,6 +34,7 @@ public class PIndexDao extends BaseDao
                         "    athlete_id             INT               NOT NULL," +
                         "    p_index                INT               NOT NULL," +
                         "    runs_needed_to_next    INT               NOT NULL," +
+                        "    home_ratio             DECIMAL(6,4)      NOT NULL," +
                         " PRIMARY KEY (athlete_id) " +
                         ") DEFAULT CHARSET=utf8mb4";
         jdbc.update(sql, EmptySqlParameterSource.INSTANCE);
@@ -43,23 +43,28 @@ public class PIndexDao extends BaseDao
     public void writePIndexRecord(PIndexRecord pIndexRecord)
     {
         String sql = "insert into " + getTableName(date) + " (" +
-                "athlete_id, p_index, runs_needed_to_next" +
+                "athlete_id, p_index, runs_needed_to_next, home_ratio" +
                 ") values ( " +
-                ":athleteId, :pIndex, :runsNeeded" +
+                ":athleteId, :pIndex, :runsNeeded, :homeRatio" +
                 ") on duplicate key " +
-                "update p_index = :pIndex, runs_needed_to_next = :runsNeeded";
+                "update p_index = :pIndex, runs_needed_to_next = :runsNeeded, home_ratio = :homeRatio";
         jdbc.update(sql, new MapSqlParameterSource()
                 .addValue("athleteId", pIndexRecord.athleteId)
                 .addValue("pIndex", pIndexRecord.pIndex)
                 .addValue("runsNeeded", pIndexRecord.neededForNextPIndex)
+                .addValue("homeRatio", pIndexRecord.homeRatio)
         );
     }
 
-    public PIndex.Result getPIndexForAthlete(int athleteId)
+    public PIndexRecord getPIndexForAthlete(int athleteId)
     {
         String sql = "select * from " + getTableName(date) + " where athlete_id = :athleteId";
         return jdbc.queryForObject(sql, new MapSqlParameterSource("athleteId", athleteId), (rs, rowNum) ->
-                new PIndex.Result(rs.getInt("p_index"), rs.getInt("runs_needed_to_next")));
+                new PIndexRecord(
+                        rs.getInt("athlete_id"),
+                        rs.getInt("p_index"),
+                        rs.getInt("runs_needed_to_next"),
+                        rs.getDouble("home_ratio")));
     }
 
     public List<PIndexRecord> getPIndexRecordsLastWeek()
@@ -70,7 +75,8 @@ public class PIndexDao extends BaseDao
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> new PIndexRecord(
                 rs.getInt("athlete_id"),
                 rs.getInt("p_index"),
-                rs.getInt("runs_needed_to_next")));
+                rs.getInt("runs_needed_to_next"),
+                rs.getDouble("home_ratio")));
     }
 
     public static class PIndexRecord
@@ -78,13 +84,15 @@ public class PIndexDao extends BaseDao
         public final int athleteId;
         public final int pIndex;
         public final int neededForNextPIndex;
+        public final double homeRatio;
         public int positionDelta;
 
-        public PIndexRecord(int athleteId, int pIndex, int neededForNextPIndex)
+        public PIndexRecord(int athleteId, int pIndex, int neededForNextPIndex, double homeRatio)
         {
             this.athleteId = athleteId;
             this.pIndex = pIndex;
             this.neededForNextPIndex = neededForNextPIndex;
+            this.homeRatio = homeRatio;
         }
 
         @Override
@@ -94,6 +102,8 @@ public class PIndexDao extends BaseDao
                     "athleteId=" + athleteId +
                     ", pIndex=" + pIndex +
                     ", neededForNextPIndex=" + neededForNextPIndex +
+                    ", homeRatio=" + homeRatio +
+                    ", positionDelta=" + positionDelta +
                     '}';
         }
     }
