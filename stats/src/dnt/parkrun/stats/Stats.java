@@ -361,6 +361,7 @@ public class Stats
         Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Volunteers at Courses (New Zealand)"))
         {
+            /*
             try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, "New Zealand", "Volunteer"))
             {
                 List<Object[]> top10 = top10VolunteerDao.getTop10VolunteersInRegion();
@@ -372,6 +373,7 @@ public class Stats
 
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
+             */
 
             List<Course> courses = courseRepository.getCourses(NZ).stream()
                     .filter(c -> c.status == RUNNING).collect(Collectors.toList());

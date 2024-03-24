@@ -2,6 +2,7 @@ package dnt.parkrun.stats;
 
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.DateConverter;
+import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
 import dnt.parkrun.database.CourseDao;
@@ -30,6 +31,7 @@ import static dnt.parkrun.common.DateConverter.ONE_DAY_IN_MILLIS;
 import static dnt.parkrun.common.UrlGenerator.generateCourseEventSummaryUrl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(Enclosed.class)
 public class HowYouDoingTest
@@ -146,16 +148,29 @@ public class HowYouDoingTest
         @Test
         public void areLastResultsIn() throws IOException
         {
-            Course course = new Course(12345, "shawniganhills", Country.CANADA, "Shawnigan Hills", Course.Status.RUNNING);
+            https://www.parkrun.ca/cloverpoint/
+            if(areResultsIn(new Course(12345, "shawniganhills", Country.CANADA, "shawniganhills", Course.Status.RUNNING)) ||
+                areResultsIn(new Course(12346, "cloverpoint", Country.CANADA, "cloverpoint", Course.Status.RUNNING)) ||
+                areResultsIn(new Course(12347, "ambleside", Country.CANADA, "ambleside", Course.Status.RUNNING)))
+            {
+                // We're good
+            }
+            else
+            {
+                fail("No western Canada results in yet.");
+            }
+        }
+        public boolean areResultsIn(Course course) throws IOException
+        {
             dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(course)
-                    .url(new URL("https://www.parkrun.ca/shawniganhills/results/latestresults/"))
+                    .url(UrlGenerator.generateCourseLatestResultsUrl("parkrun.ca", course.name))
                     .build();
             parser.parse();
 
             Date dateFromMostWesterlyParkrun = parser.getDate();
             Date todayMinus5Days = new Date();
             todayMinus5Days.setTime(todayMinus5Days.getTime() - (5 * ONE_DAY_IN_MILLIS));
-            Assertions.assertThat(dateFromMostWesterlyParkrun).isAfter(todayMinus5Days);
+            return dateFromMostWesterlyParkrun.after(todayMinus5Days);
         }
     }
 }

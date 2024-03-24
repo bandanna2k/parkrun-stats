@@ -53,6 +53,22 @@ public abstract class UrlGenerator
         }
     }
 
+    /*
+        https://www.parkrun.ca/shawniganhills/results/latestresults/
+     */
+    public static URL generateCourseLatestResultsUrl(String countryBaseUrl, String courseName)
+    {
+        try
+        {
+            return new URL("https://" + countryBaseUrl + "/" + courseName + "/results/latestresults/");
+        }
+        catch (MalformedURLException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     public static URL generateCourseUrl(String countryBaseUrl, String courseName)
     {
         try
