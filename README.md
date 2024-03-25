@@ -12,13 +12,15 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Major
 
+- Most volunteers table
+
 ## Minor
 
-- pIndex deltas (waiting until next weekend)
+- Why is p-Index 0.000 for non-local runners
+
+- Global pIndex, css for up/down in pink has gone??? 
 
 - Change 'How are we doing test to assume next event number'
-
-- Backfill volunteer names
 
 ## Ideas
 

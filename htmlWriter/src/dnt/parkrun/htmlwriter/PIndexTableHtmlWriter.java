@@ -78,12 +78,12 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
 
     public void writePIndexRecord(Record record) throws XMLStreamException
     {
-       writer.writeStartElement("tr");
+        startTableRowElement(record.isRegionalPIndexAthlete);
 
-       writeTableDataWithDelta(record.positionDelta);
+        writeTableDataWithDelta(record.positionDelta);
 
         // Name
-        startTableElement(record.isRegionalPIndexAthlete);
+        startElement("td");
         writer.writeStartElement("a");
         writer.writeAttribute("href", generateAthleteEventSummaryUrl("parkrun.co.nz", record.athlete.athleteId).toString());
         writer.writeAttribute("target", String.valueOf(record.athlete.name));
@@ -92,24 +92,24 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         endElement("td");
 
         // Region P-Index
-        startTableElement(record.isRegionalPIndexAthlete);
+        startElement("td");
         writer.writeCharacters(String.valueOf(record.globalPIndex.pIndex));
         endElement("td");
 
         // to next PIndex (Region Next Max)
-        startTableElement(record.isRegionalPIndexAthlete);
+        startElement("td");
         writer.writeCharacters(record.globalPIndex.neededForNextPIndex + " more to P" + (record.globalPIndex.pIndex + 1));
         endElement("td");
 
         // Home parkrun Ratio
-        startTableElement(record.isRegionalPIndexAthlete);
+        startElement("td");
         writer.writeCharacters(String.format("%.3f", record.homeRatio));
         endElement("td");
 
         endElement("tr");
     }
 
-    private void startTableElement(boolean isRegionalPIndexAthlete) throws XMLStreamException
+    private void XstartTableElement(boolean isRegionalPIndexAthlete) throws XMLStreamException
     {
         if(isRegionalPIndexAthlete)
         {
@@ -118,6 +118,18 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         else
         {
             startElement("td", "style", "background-color:#FFE9F0");
+        }
+    }
+
+    private void startTableRowElement(boolean isRegionalPIndexAthlete) throws XMLStreamException
+    {
+        if(isRegionalPIndexAthlete)
+        {
+            startElement("tr");
+        }
+        else
+        {
+            startElement("tr", "style", "background-color:#FFE9F0");
         }
     }
 
