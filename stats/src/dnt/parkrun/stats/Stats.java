@@ -170,7 +170,7 @@ public class Stats
 
     private void writePIndex(HtmlWriter writer) throws XMLStreamException
     {
-        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, " P-Index (New Zealand)"))
+        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, " p-Index (New Zealand)"))
         {
             writer.writer.writeStartElement("p");
             writer.writer.writeAttribute("style", "margin-left:100px");

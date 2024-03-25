@@ -20,7 +20,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         writer.writeCharacters(title);
         endElement("summary");
 
-        startElement("table", "class", "sortable name-data");
+        startElement("table", "class", "sortable name-name-data");
         writeHeader(writer);
     }
 
@@ -30,8 +30,8 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         startElement("tr");
 
         // Up/Down
-//        startElement("th");
-//        endElement("th");
+        startElement("th");
+        endElement("th");
 
         // Name
         startElement("th");
@@ -80,7 +80,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
     {
        writer.writeStartElement("tr");
 
-//       writeTableDataWithDelta(record.positionDelta);
+       writeTableDataWithDelta(record.positionDelta);
 
         // Name
         startTableElement(record.isRegionalPIndexAthlete);
