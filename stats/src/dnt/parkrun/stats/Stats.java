@@ -12,10 +12,7 @@ import dnt.parkrun.database.weekly.AthleteCourseSummaryDao;
 import dnt.parkrun.database.weekly.PIndexDao;
 import dnt.parkrun.database.weekly.Top10AtCourseDao;
 import dnt.parkrun.database.weekly.Top10VoluteersAtCourseDao;
-import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.AthleteCourseSummary;
-import dnt.parkrun.datastructures.Course;
-import dnt.parkrun.datastructures.CourseRepository;
+import dnt.parkrun.datastructures.*;
 import dnt.parkrun.datastructures.stats.AtEvent;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import dnt.parkrun.htmlwriter.*;
@@ -200,20 +197,19 @@ public class Stats
                         continue;
                     }
 
-                    // Calculate max count
-                    AthleteCourseSummary maxAthleteCourseSummary = getMaxAthleteCourseSummary(summariesForAthlete);
-                    Course homeParkrun = maxAthleteCourseSummary.course;
-                    if (homeParkrun == null)
                     {
-                        continue; // TODO: How can this happen???
+                        AthleteCourseSummary maxAthleteCourseSummary = getMaxAthleteCourseSummary(summariesForAthlete);
+                        Course globalHomeParkrun = maxAthleteCourseSummary.course;
+                        assert globalHomeParkrun != null : "Home parkrun is null, how?";
+                        if (globalHomeParkrun.country != NZ)
+                        {
+                            continue;
+                        }
+                        regionalPIndexAthletes.add(athleteId);
                     }
-                    if (homeParkrun.country != NZ)
-                    {
-                        continue;
-                    }
-                    regionalPIndexAthletes.add(athleteId);
 
-                    double provinceRunCount = getNzRegionRunCount(homeParkrun, summariesForAthlete);
+                    AthleteCourseSummary maxAthleteCourseSummaryInRegion = getMaxAthleteCourseSummaryInRegion(summariesForAthlete, NZ);
+                    double provinceRunCount = getNzRegionRunCount(maxAthleteCourseSummaryInRegion.course, summariesForAthlete);
                     double totalRuns = getTotalRuns(summariesForAthlete);
                     double homeRatio = provinceRunCount / totalRuns;
 
@@ -258,20 +254,21 @@ public class Stats
                         continue;
                     }
 
-                    // Calculate max count
-                    AthleteCourseSummary maxAthleteCourseSummary = getMaxAthleteCourseSummary(summariesForAthlete);
-                    Course homeParkrun = maxAthleteCourseSummary.course;
-                    double homeRatio;
-                    if (homeParkrun == null)
-                    {
-                        homeRatio = 0;
-                    }
-                    else
-                    {
-                        double provinceRunCount = getNzRegionRunCount(homeParkrun, summariesForAthlete);
-                        double totalRuns = getTotalRuns(summariesForAthlete);
-                        homeRatio = provinceRunCount / totalRuns;
-                    }
+//                    {
+//                        AthleteCourseSummary maxAthleteCourseSummary = getMaxAthleteCourseSummary(summariesForAthlete);
+//                        Course globalHomeParkrun = maxAthleteCourseSummary.course;
+//                        assert globalHomeParkrun != null : "Home parkrun is null, how?";
+//                        if (globalHomeParkrun.country != NZ)
+//                        {
+//                            continue;
+//                        }
+//                        regionalPIndexAthletes.add(athleteId);
+//                    }
+
+                    AthleteCourseSummary maxAthleteCourseSummaryInRegion = getMaxAthleteCourseSummaryInRegion(summariesForAthlete, NZ);
+                    double provinceRunCount = getNzRegionRunCount(maxAthleteCourseSummaryInRegion.course, summariesForAthlete);
+                    double totalRuns = getTotalRuns(summariesForAthlete);
+                    double homeRatio = provinceRunCount / totalRuns;
                     pIndexDao.writePIndexRecord(new PIndexDao.PIndexRecord(athleteId, globalPIndex.pIndex, globalPIndex.neededForNextPIndex, homeRatio));
 
                     // Add pIndex
@@ -303,12 +300,28 @@ public class Stats
 
     private static AthleteCourseSummary getMaxAthleteCourseSummary(List<AthleteCourseSummary> summariesForAthlete)
     {
-        AthleteCourseSummary result = summariesForAthlete.get(0);
+        AthleteCourseSummary result = null;
         for (AthleteCourseSummary acs : summariesForAthlete)
         {
-            if (acs.countOfRuns > result.countOfRuns)
+            if(result == null || acs.countOfRuns > result.countOfRuns)
             {
                 result = acs;
+            }
+        }
+        return result;
+    }
+
+    private static AthleteCourseSummary getMaxAthleteCourseSummaryInRegion(List<AthleteCourseSummary> summariesForAthlete, Country country)
+    {
+        AthleteCourseSummary result = null;
+        for (AthleteCourseSummary acs : summariesForAthlete)
+        {
+            if (acs.course.country == country)
+            {
+                if(result == null || acs.countOfRuns > result.countOfRuns)
+                {
+                    result = acs;
+                }
             }
         }
         return result;
