@@ -16,6 +16,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Minor
 
+- StatsDao - break this up
+
 - Why is p-Index 0.000 for non-local runners
 
 - Global pIndex, css for up/down in pink has gone??? 
@@ -314,4 +316,50 @@ select distinct ces.course_id, ces.date, ev.athlete_id
 from course_event_summary ces
 left join event_volunteer ev using (course_id)
 where ev.athlete_id is null;
+```
+
+
+# Most different volunteers 
+```
+select a.name, a.athlete_id, sub1.count as different_region_course_count, sub2.count as total_region_volunteers
+from parkrun_stats.athlete a
+join  
+(
+    select athlete_id, count(course_id) as count
+    from (select distinct athlete_id, course_id from parkrun_stats.event_volunteer) as sub1a
+    group by athlete_id
+    having count >= 10
+    order by count desc, athlete_id asc 
+) as sub1 on sub1.athlete_id = a.athlete_id
+join
+(
+    select athlete_id, count(concat) as count
+    from (select athlete_id, concat(athlete_id, '-', course_id, '-', date) as concat from event_volunteer) as sub2a
+    group by athlete_id
+    order by count desc, athlete_id asc 
+) as sub2 on sub2.athlete_id = a.athlete_id
+where a.name is not null
+order by different_region_course_count desc, total_region_volunteers desc, a.athlete_id desc;
+```
+
+```
+select a.name, a.athlete_id, sub1.count as different_region_course_count, sub2.count as total_region_volunteers
+from parkrun_stats.athlete a
+join  
+(
+    select athlete_id, count(course_id) as count
+    from (select distinct athlete_id, course_id from parkrun_stats.event_volunteer) as sub1a
+    group by athlete_id
+    having count >= 10
+    order by count desc, athlete_id asc 
+) as sub1 on sub1.athlete_id = a.athlete_id
+join
+(
+    select athlete_id, count(concat) as count
+    from (select athlete_id, concat(athlete_id, '-', course_id, '-', date) as concat from event_volunteer) as sub2a
+    group by athlete_id
+    order by count desc, athlete_id asc 
+) as sub2 on sub2.athlete_id = a.athlete_id
+where a.name is not null
+order by different_region_course_count desc, total_region_volunteers desc, a.athlete_id desc;
 ```

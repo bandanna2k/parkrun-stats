@@ -8,6 +8,7 @@ import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.CourseEventSummaryDao;
 import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.database.StatsDao;
+import dnt.parkrun.database.stats.MostVolunteersDao;
 import dnt.parkrun.database.weekly.AthleteCourseSummaryDao;
 import dnt.parkrun.database.weekly.PIndexDao;
 import dnt.parkrun.database.weekly.Top10AtCourseDao;
@@ -67,6 +68,7 @@ public class Stats
 
     private final Date date;
     private final Date lastWeek;
+    private final DataSource statsDataSource;
     private final StatsDao statsDao;
     private final ResultDao resultDao;
     private final AthleteCourseSummaryDao acsDao;
@@ -85,7 +87,8 @@ public class Stats
         lastWeek = new Date();
         lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
 
-        this.statsDao = new StatsDao(statsDataSource, this.date);
+        this.statsDataSource = statsDataSource;
+        this.statsDao = new StatsDao(this.statsDataSource, this.date);
         this.acsDao = new AthleteCourseSummaryDao(statsDataSource, this.date);
         this.top10Dao = new Top10AtCourseDao(statsDataSource, this.date);
         this.top10VolunteerDao = new Top10VoluteersAtCourseDao(statsDataSource, this.date);
@@ -136,6 +139,8 @@ public class Stats
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
+            writeMostVolunteers(writer);
+
             writePIndex(writer);
 
             writeTop10Runs(writer);
@@ -163,6 +168,22 @@ public class Stats
             }
         }
         new ProcessBuilder("xdg-open", htmlFileModified.getAbsolutePath()).start();
+    }
+
+    private void writeMostVolunteers(HtmlWriter writer) throws XMLStreamException
+    {
+        MostVolunteersDao mostVolunteersDao = MostVolunteersDao.getOrCreate(statsDataSource, date);
+        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Event Volunteers (New Zealand)"))
+        {
+            try (MostVolunteersTableHtmlWriter tableWriter = new MostVolunteersTableHtmlWriter(writer))
+            {
+                for (Object[] record : mostVolunteersDao.getMostVolunteers())
+                {
+                    tableWriter.writeRecord(new MostVolunteersTableHtmlWriter.Record(
+                            (Athlete)record[0], (int) record[1], (int) record[2]));
+                }
+            }
+        }
     }
 
     private void writePIndex(HtmlWriter writer) throws XMLStreamException
