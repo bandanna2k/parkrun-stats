@@ -173,7 +173,7 @@ public class Stats
     private void writeMostVolunteers(HtmlWriter writer) throws XMLStreamException
     {
         MostVolunteersDao mostVolunteersDao = MostVolunteersDao.getOrCreate(statsDataSource, date);
-        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Event Volunteers (New Zealand)"))
+        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Events, Volunteering (New Zealand)"))
         {
             try (MostVolunteersTableHtmlWriter tableWriter = new MostVolunteersTableHtmlWriter(writer))
             {
