@@ -143,13 +143,11 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         public final int differentCourseCount;
         public final int totalRuns;
         public final int positionDelta;
-        public final int pIndex;
 
         public Record(Athlete athlete,
                       int differentRegionCourseCount, int totalRegionRuns,
                       int differentCourseCount, int totalRuns,
-                      int positionDelta,
-                      int pIndex)
+                      int positionDelta)
         {
             this.athlete = athlete;
             this.differentRegionCourseCount = differentRegionCourseCount;
@@ -157,7 +155,6 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             this.differentCourseCount = differentCourseCount;
             this.totalRuns = totalRuns;
             this.positionDelta = positionDelta;
-            this.pIndex = pIndex;
         }
 
         @Override
@@ -170,7 +167,6 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
                     ", differentCourseCount=" + differentCourseCount +
                     ", totalRuns=" + totalRuns +
                     ", positionDelta=" + positionDelta +
-                    ", pIndex=" + pIndex +
                     '}';
         }
     }

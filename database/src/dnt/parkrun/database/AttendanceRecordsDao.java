@@ -16,84 +16,14 @@ import java.util.List;
 
 import static dnt.parkrun.datastructures.Country.NZ;
 
-public class StatsDao extends BaseDao
+public class AttendanceRecordsDao extends BaseDao
 {
-    private static final String MIN_DIFFERENT_REGION_COURSE_COUNT = "20";
-
-    private final String differentCourseCountTableName;
     private final String attendanceRecordTableName;
 
-    public StatsDao(DataSource dataSource, Date date)
+    public AttendanceRecordsDao(DataSource dataSource, Date date)
     {
         super(dataSource);
-        differentCourseCountTableName = "most_events_for_region_" + DateConverter.formatDateForDbTable(date);
         attendanceRecordTableName = "attendance_records_for_region_" + DateConverter.formatDateForDbTable(date);
-    }
-
-    public void generateDifferentCourseCountTable()
-    {
-        String sql =
-                "create table if not exists " + differentCourseCountTableName + " as " +
-                        "select a.name, a.athlete_id, " +
-                        "sub1.count as different_region_course_count, sub2.count as total_region_runs, " +
-                        "0 as different_course_count, 0 as total_runs " +
-                        "from " + athleteTable() + " a " +
-                        "join   " +
-                        "( " +
-                        "    select athlete_id, count(course_id) as count " +
-                        "    from (select distinct athlete_id, course_id from " + resultTable() + ") as sub1a " +
-                        "    group by athlete_id " +
-                        "    having count >= " + MIN_DIFFERENT_REGION_COURSE_COUNT +
-                        "    order by count desc, athlete_id asc  " +
-                        ") as sub1 on sub1.athlete_id = a.athlete_id " +
-                        "join " +
-                        "( " +
-                        "    select athlete_id, count(concat) as count " +
-                        "    from (select athlete_id, concat(athlete_id, '-', course_id, '-', date, '-', position) as concat from " + resultTable() + ") as sub2a " +
-                        "    group by athlete_id " +
-                        "    order by count desc, athlete_id asc  " +
-                        ") as sub2 on sub2.athlete_id = a.athlete_id " +
-                        "where a.name is not null " +
-                        "order by different_region_course_count desc, total_region_runs desc, a.athlete_id desc ";
-
-        jdbc.update(sql, EmptySqlParameterSource.INSTANCE);
-    }
-
-    public List<DifferentCourseCount> getDifferentCourseCount(Date date)
-    {
-        String differentCourseCountTableName = "most_events_for_region_" + DateConverter.formatDateForDbTable(date);
-        String sql =
-                "select name, athlete_id, " +
-                        "different_region_course_count, total_region_runs," +
-                        "different_course_count, total_runs," +
-                        "p_index " +
-                        "from " + differentCourseCountTableName;
-        return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
-                new DifferentCourseCount(
-                        rs.getString("name"),
-                        rs.getInt("athlete_id"),
-                        rs.getInt("different_region_course_count"),
-                        rs.getInt("total_region_runs"),
-                        rs.getInt("different_course_count"),
-                        rs.getInt("total_runs"),
-                        rs.getInt("p_index")
-        ));
-    }
-
-    public void updateDifferentCourseRecord(int athleteId, int differentCourseCount, int totalRuns, int pIndex)
-    {
-        String sql = "update " + differentCourseCountTableName + " set " +
-                "different_course_count = :differentCourseCount, " +
-                "total_runs = :totalRuns, " +
-                "p_index = :pIndex " +
-                "where athlete_id = :athleteId";
-
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("athleteId", athleteId)
-                .addValue("differentCourseCount", differentCourseCount)
-                .addValue("totalRuns", totalRuns)
-                .addValue("pIndex", pIndex);
-        jdbc.update(sql, params);
     }
 
     public List<RunsAtEvent> getTop10AtEvent(int courseId)
@@ -162,50 +92,6 @@ public class StatsDao extends BaseDao
                     rs.getInt("volunteer_count")
             );
         });
-    }
-
-    public static class DifferentCourseCount
-    {
-        public final String name;
-        public final int athleteId;
-        public final int differentRegionCourseCount;
-        public final int totalRegionRuns;
-        public final int differentCourseCount;
-        public final int totalRuns;
-        public int positionDelta = 0;
-        public int pIndex;
-
-        public DifferentCourseCount(String name,
-                                    int athleteId,
-                                    int differentRegionCourseCount,
-                                    int totalRegionRuns,
-                                    int differentCourseCount,
-                                    int totalRuns,
-                                    int pIndex)
-        {
-            this.name = name;
-            this.athleteId = athleteId;
-            this.differentRegionCourseCount = differentRegionCourseCount;
-            this.totalRegionRuns = totalRegionRuns;
-            this.differentCourseCount = differentCourseCount;
-            this.totalRuns = totalRuns;
-            this.pIndex = pIndex;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "DifferentCourseCount{" +
-                    "name='" + name + '\'' +
-                    ", athleteId=" + athleteId +
-                    ", differentRegionCourseCount=" + differentRegionCourseCount +
-                    ", totalRegionRuns=" + totalRegionRuns +
-                    ", differentCourseCount=" + differentCourseCount +
-                    ", totalRuns=" + totalRuns +
-                    ", positionDelta=" + positionDelta +
-                    ", pIndex=" + pIndex +
-                    '}';
-        }
     }
 
     public void generateAttendanceRecordTable()

@@ -4,10 +4,11 @@ import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
+import dnt.parkrun.database.AttendanceRecordsDao;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.CourseEventSummaryDao;
 import dnt.parkrun.database.ResultDao;
-import dnt.parkrun.database.StatsDao;
+import dnt.parkrun.database.stats.MostEventsDao;
 import dnt.parkrun.database.stats.MostVolunteersDao;
 import dnt.parkrun.database.weekly.AthleteCourseSummaryDao;
 import dnt.parkrun.database.weekly.PIndexDao;
@@ -23,7 +24,6 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 
 import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
 import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
-import static dnt.parkrun.database.StatsDao.DifferentCourseCount;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.RUNNING;
 import static dnt.parkrun.datastructures.Course.Status.STOPPED;
@@ -55,6 +54,7 @@ public class Stats
         return 0;
     };
     private final CourseRepository courseRepository;
+    private MostEventsDao mostEventsDao;
     /*
             02/03/2024
      */
@@ -69,7 +69,7 @@ public class Stats
     private final Date date;
     private final Date lastWeek;
     private final DataSource statsDataSource;
-    private final StatsDao statsDao;
+    private final AttendanceRecordsDao attendanceRecordsDao;
     private final ResultDao resultDao;
     private final AthleteCourseSummaryDao acsDao;
     private final Top10AtCourseDao top10Dao;
@@ -88,7 +88,7 @@ public class Stats
         lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
 
         this.statsDataSource = statsDataSource;
-        this.statsDao = new StatsDao(this.statsDataSource, this.date);
+        this.attendanceRecordsDao = new AttendanceRecordsDao(this.statsDataSource, this.date);
         this.acsDao = new AthleteCourseSummaryDao(statsDataSource, this.date);
         this.top10Dao = new Top10AtCourseDao(statsDataSource, this.date);
         this.top10VolunteerDao = new Top10VoluteersAtCourseDao(statsDataSource, this.date);
@@ -112,13 +112,14 @@ public class Stats
     private void generateStats() throws IOException, XMLStreamException
     {
         System.out.println("* Generating most events table *");
-        statsDao.generateDifferentCourseCountTable();
+        this.mostEventsDao = MostEventsDao.getOrCreate(statsDataSource, date);
+        this.mostEventsDao.populateMostEventsTable();
 
         System.out.println("* Get most events *");
-        List<DifferentCourseCount> differentEventRecords = statsDao.getDifferentCourseCount(date);
+        List<MostEventsDao.MostEventsRecord> differentEventRecords = mostEventsDao.getMostEvents();
 
         System.out.println("* Get most events for last week  *");
-        List<DifferentCourseCount> differentEventRecordsFromLastWeek = getDifferentCourseCountForLastWeek();
+        List<MostEventsDao.MostEventsRecord> differentEventRecordsFromLastWeek = mostEventsDao.getMostEventsForLastWeek();
 
         System.out.println("* Calculate most event position deltas *");
         calculatePositionDeltas(differentEventRecords, differentEventRecordsFromLastWeek);
@@ -387,7 +388,7 @@ public class Stats
                     if (top10.isEmpty())
                     {
                         System.out.println("* Getting top 10 athletes for " + course.longName);
-                        top10.addAll(statsDao.getTop10AtEvent(course.courseId));
+                        top10.addAll(attendanceRecordsDao.getTop10AtEvent(course.courseId));
                         top10Dao.writeRunsAtEvents(top10);
                     }
 
@@ -448,7 +449,7 @@ public class Stats
                     if (top10.isEmpty())
                     {
                         System.out.println("* Getting top 10 volunteers for " + course.longName);
-                        top10.addAll(statsDao.getTop10VolunteersAtEvent(course.courseId));
+                        top10.addAll(attendanceRecordsDao.getTop10VolunteersAtEvent(course.courseId));
                         top10VolunteerDao.writeVolunteersAtEvents(top10);
                     }
 
@@ -464,11 +465,11 @@ public class Stats
         }
     }
 
-    private void writeMostEvents(HtmlWriter writer, List<DifferentCourseCount> differentEventRecords) throws XMLStreamException
+    private void writeMostEvents(HtmlWriter writer, List<MostEventsDao.MostEventsRecord> differentEventRecords) throws XMLStreamException
     {
         try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer))
         {
-            for (DifferentCourseCount der : differentEventRecords)
+            for (MostEventsDao.MostEventsRecord der : differentEventRecords)
             {
                 Athlete athlete = athleteIdToAthlete.get(der.athleteId);
                 List<AthleteCourseSummary> athleteCourseSummaries = athleteIdToAthleteCourseSummaries.get(der.athleteId);
@@ -476,27 +477,14 @@ public class Stats
                 int courseCount = athleteCourseSummaries.size();
                 int totalCourseCount = athleteCourseSummaries.stream().mapToInt(acs -> acs.countOfRuns).sum();
 
-                statsDao.updateDifferentCourseRecord(athlete.athleteId, courseCount, totalCourseCount, 0);
+                mostEventsDao.updateDifferentCourseRecord(athlete.athleteId, courseCount, totalCourseCount);
 
                 tableWriter.writeMostEventRecord(
                         new MostEventsTableHtmlWriter.Record(athlete,
                                 der.differentRegionCourseCount, der.totalRegionRuns,
-                                courseCount, totalCourseCount, der.positionDelta, der.pIndex));
+                                courseCount, totalCourseCount, der.positionDelta));
             }
         }
-    }
-
-    private List<DifferentCourseCount> getDifferentCourseCountForLastWeek()
-    {
-        try
-        {
-            return statsDao.getDifferentCourseCount(lastWeek);
-        }
-        catch (Exception ex)
-        {
-            System.out.println("WARNING No different course count for last week");
-        }
-        return emptyList();
     }
 
     private void writeAttendanceRecords(HtmlWriter writer) throws XMLStreamException
@@ -525,8 +513,8 @@ public class Stats
     private List<AttendanceRecord> getAttendanceRecords()
     {
         System.out.println("* Generating attendance record table *");
-        statsDao.generateAttendanceRecordTable();
-        List<AttendanceRecord> attendanceRecords = statsDao.getAttendanceRecords(date);
+        attendanceRecordsDao.generateAttendanceRecordTable();
+        List<AttendanceRecord> attendanceRecords = attendanceRecordsDao.getAttendanceRecords(date);
 //        attendanceRecords.forEach(System.out::println);
 
         System.out.println("* Calculate attendance deltas *");
@@ -539,7 +527,7 @@ public class Stats
     {
         try
         {
-            return statsDao.getAttendanceRecords(lastWeek);
+            return attendanceRecordsDao.getAttendanceRecords(lastWeek);
         }
         catch (Exception ex)
         {
@@ -548,7 +536,7 @@ public class Stats
         return emptyList();
     }
 
-    private void downloadAthleteCourseSummaries(List<DifferentCourseCount> differentEventRecords) throws MalformedURLException
+    private void downloadAthleteCourseSummaries(List<MostEventsDao.MostEventsRecord> differentEventRecords)
     {
         System.out.println("* Calculate athlete summaries that need to be downloaded (1. Most event table) *");
         Set<Integer> athletesFromMostEventTable = differentEventRecords.stream().map(der -> der.athleteId).collect(Collectors.toSet());
@@ -659,15 +647,15 @@ public class Stats
         return athletes;
     }
 
-    private static void calculatePositionDeltas(List<DifferentCourseCount> differentEventRecords,
-                                                List<DifferentCourseCount> differentEventRecordsFromLastWeek)
+    private static void calculatePositionDeltas(List<MostEventsDao.MostEventsRecord> differentEventRecords,
+                                                List<MostEventsDao.MostEventsRecord> differentEventRecordsFromLastWeek)
     {
         for (int indexThisWeek = 0; indexThisWeek < differentEventRecords.size(); indexThisWeek++)
         {
             for (int indexLastWeek = 0; indexLastWeek < differentEventRecordsFromLastWeek.size(); indexLastWeek++)
             {
-                DifferentCourseCount thisWeek = differentEventRecords.get(indexThisWeek);
-                DifferentCourseCount lastWeek = differentEventRecordsFromLastWeek.get(indexLastWeek);
+                MostEventsDao.MostEventsRecord thisWeek = differentEventRecords.get(indexThisWeek);
+                MostEventsDao.MostEventsRecord lastWeek = differentEventRecordsFromLastWeek.get(indexLastWeek);
 
                 if (thisWeek.athleteId == lastWeek.athleteId)
                 {
