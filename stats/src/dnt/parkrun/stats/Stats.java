@@ -212,8 +212,14 @@ public class Stats
                     List<AthleteCourseSummary> summariesForAthlete = entry.getValue();
 
                     PIndex.Result globalPIndex = PIndex.pIndexAndNeeded(summariesForAthlete);
-
                     if (globalPIndex.pIndex <= MIN_P_INDEX)
+                    {
+                        continue;
+                    }
+
+                    PIndex.Result regionPIndex = PIndex.pIndexAndNeeded(summariesForAthlete.stream()
+                            .filter(acs -> acs.course.country == NZ).collect(Collectors.toList()));
+                    if (regionPIndex.pIndex <= MIN_P_INDEX)
                     {
                         continue;
                     }
@@ -235,7 +241,7 @@ public class Stats
                     double homeRatio = provinceRunCount / totalRuns;
 
                     // Add pIndex
-                    records.add(new PIndexTableHtmlWriter.Record(athlete, globalPIndex, homeRatio));
+                    records.add(new PIndexTableHtmlWriter.Record(athlete, globalPIndex, homeRatio, regionPIndex));
                 }
 
                 List<PIndexTableHtmlWriter.Record> recordsLastWeek = pIndexDao.getPIndexRecordsLastWeek().stream()
@@ -244,7 +250,7 @@ public class Stats
                                 new PIndexTableHtmlWriter.Record(
                                     athleteIdToAthlete.get(r.athleteId),
                                     new PIndex.Result(r.pIndex, r.neededForNextPIndex),
-                                    r.homeRatio))
+                                    r.homeRatio, null))
                         .collect(Collectors.toList());
 
                 records.sort(PINDEX_RECORD_COMPARATOR);
@@ -269,8 +275,14 @@ public class Stats
                     List<AthleteCourseSummary> summariesForAthlete = entry.getValue();
 
                     PIndex.Result globalPIndex = PIndex.pIndexAndNeeded(summariesForAthlete);
-
                     if (globalPIndex.pIndex <= MIN_P_INDEX)
+                    {
+                        continue;
+                    }
+
+                    PIndex.Result regionPIndex = PIndex.pIndexAndNeeded(summariesForAthlete.stream()
+                            .filter(acs -> acs.course.country == NZ).collect(Collectors.toList()));
+                    if (regionPIndex.pIndex <= MIN_P_INDEX)
                     {
                         continue;
                     }
@@ -294,7 +306,7 @@ public class Stats
 
                     // Add pIndex
                     boolean isRegionalPIndexAthlete = regionalPIndexAthletes.contains(athleteId);
-                    records.add(new PIndexTableHtmlWriter.Record(athlete, globalPIndex, homeRatio, isRegionalPIndexAthlete));
+                    records.add(new PIndexTableHtmlWriter.Record(athlete, globalPIndex, homeRatio, regionPIndex, isRegionalPIndexAthlete));
                 }
 
                 records.sort(PINDEX_RECORD_COMPARATOR);
@@ -515,7 +527,7 @@ public class Stats
         System.out.println("* Generating attendance record table *");
         statsDao.generateAttendanceRecordTable();
         List<AttendanceRecord> attendanceRecords = statsDao.getAttendanceRecords(date);
-        attendanceRecords.forEach(System.out::println);
+//        attendanceRecords.forEach(System.out::println);
 
         System.out.println("* Calculate attendance deltas *");
         List<AttendanceRecord> attendanceRecordsFromLastWeek = getAttendanceRecordsForLastWeek();
