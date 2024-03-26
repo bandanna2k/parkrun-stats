@@ -10,6 +10,8 @@ import dnt.parkrun.database.CourseEventSummaryDao;
 import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.database.stats.MostEventsDao;
 import dnt.parkrun.database.stats.MostVolunteersDao;
+import dnt.parkrun.database.stats.Top10RunsDao;
+import dnt.parkrun.database.stats.Top10VolunteersDao;
 import dnt.parkrun.database.weekly.AthleteCourseSummaryDao;
 import dnt.parkrun.database.weekly.PIndexDao;
 import dnt.parkrun.database.weekly.Top10AtCourseDao;
@@ -68,6 +70,7 @@ public class Stats
 
     private final Date date;
     private final Date lastWeek;
+    private final DataSource dataSource;
     private final DataSource statsDataSource;
     private final AttendanceRecordsDao attendanceRecordsDao;
     private final ResultDao resultDao;
@@ -87,6 +90,7 @@ public class Stats
         lastWeek = new Date();
         lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
 
+        this.dataSource = dataSource;
         this.statsDataSource = statsDataSource;
         this.attendanceRecordsDao = new AttendanceRecordsDao(this.statsDataSource, this.date);
         this.acsDao = new AthleteCourseSummaryDao(statsDataSource, this.date);
@@ -378,6 +382,7 @@ public class Stats
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
+            Top10RunsDao top10RunsDao = new Top10RunsDao(dataSource);
             List<Course> courses = courseRepository.getCourses(NZ).stream()
                     .filter(c -> c.status == RUNNING).collect(Collectors.toList());
             for (Course course : courses)
@@ -388,7 +393,7 @@ public class Stats
                     if (top10.isEmpty())
                     {
                         System.out.println("* Getting top 10 athletes for " + course.longName);
-                        top10.addAll(attendanceRecordsDao.getTop10AtEvent(course.courseId));
+                        top10.addAll(top10RunsDao.getTop10AtEvent(course.courseId));
                         top10Dao.writeRunsAtEvents(top10);
                     }
 
@@ -439,6 +444,7 @@ public class Stats
             writer.writer.writeEndElement();
              */
 
+            Top10VolunteersDao top10VolunteersDao = new Top10VolunteersDao(dataSource);
             List<Course> courses = courseRepository.getCourses(NZ).stream()
                     .filter(c -> c.status == RUNNING).collect(Collectors.toList());
             for (Course course : courses)
@@ -449,7 +455,7 @@ public class Stats
                     if (top10.isEmpty())
                     {
                         System.out.println("* Getting top 10 volunteers for " + course.longName);
-                        top10.addAll(attendanceRecordsDao.getTop10VolunteersAtEvent(course.courseId));
+                        top10.addAll(top10VolunteersDao.getTop10VolunteersAtEvent(course.courseId));
                         top10VolunteerDao.writeVolunteersAtEvents(top10);
                     }
 

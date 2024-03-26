@@ -16,8 +16,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables.
 
-- StatsDao - break this up
-
 - Change 'How are we doing test to assume next event number'
 
 ## Ideas
