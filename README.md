@@ -357,3 +357,43 @@ join
 where a.name is not null
 order by different_region_course_count desc, total_region_volunteers desc, a.athlete_id desc;
 ```
+
+# Get all course start dates
+```
+select course_long_name, course_id, date 
+from course join course_event_summary using (course_id)  
+where event_number = 1 
+order by date desc;
+```
+```
+SELECT JSON_ARRAYAGG(unix_timestamp(date)), JSON_ARRAYAGG(course_id), JSON_ARRAYAGG(course_long_name)
+from
+(
+    select * 
+    from course join course_event_summary using (course_id)  
+    where event_number = 1
+    order by date asc
+) as sub1 
+```
+
+# Get first runs of athlete
+```
+select course_id, first_run 
+from
+(
+    select athlete_id, course_id, min(date) as first_run 
+    from result 
+    group by athlete_id, course_id 
+    having athlete_id = 414811
+) as sub1;
+```
+```
+select JSON_ARRAYAGG(course_id), JSON_ARRAYAGG(unix_timestamp(first_run)) 
+from
+(
+    select athlete_id, course_id, min(date) as first_run 
+    from result 
+    group by athlete_id, course_id 
+    having athlete_id = 414811
+) as sub1;
+```
