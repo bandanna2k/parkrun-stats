@@ -490,7 +490,7 @@ public class Stats
                 mostEventsDao.updateDifferentCourseRecord(athlete.athleteId, courseCount, totalCourseCount);
 
                 System.out.println("Getting first runs for " + athlete.name);
-                String firstRuns = resultDao.getFirstRuns(athlete.athleteId);
+                String firstRuns = true ? "[[],[]]" : resultDao.getFirstRuns(athlete.athleteId);
                 tableWriter.writeMostEventRecord(
                         new MostEventsTableHtmlWriter.Record(athlete,
                                 der.differentRegionCourseCount, der.totalRegionRuns,
