@@ -137,7 +137,9 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 
         // Total region runs
         startElement("td");
-        startElement("span", "onclick", "dialog.showModal()");
+        startElement("span", "onclick",
+                "dialog.showModal();" +
+                        "setFirstRuns(" + record.firstRuns + ");");
         writer.writeCharacters("\uD83D\uDCC8");
         endElement("div");
         endElement("td");
@@ -153,11 +155,12 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         public final int differentCourseCount;
         public final int totalRuns;
         public final int positionDelta;
+        public final String firstRuns;
 
         public Record(Athlete athlete,
                       int differentRegionCourseCount, int totalRegionRuns,
                       int differentCourseCount, int totalRuns,
-                      int positionDelta)
+                      int positionDelta, String firstRuns)
         {
             this.athlete = athlete;
             this.differentRegionCourseCount = differentRegionCourseCount;
@@ -165,6 +168,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             this.differentCourseCount = differentCourseCount;
             this.totalRuns = totalRuns;
             this.positionDelta = positionDelta;
+            this.firstRuns = firstRuns;
         }
 
         @Override

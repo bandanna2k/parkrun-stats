@@ -489,10 +489,12 @@ public class Stats
 
                 mostEventsDao.updateDifferentCourseRecord(athlete.athleteId, courseCount, totalCourseCount);
 
+                System.out.println("Getting first runs for " + athlete.name);
+                String firstRuns = resultDao.getFirstRuns(athlete.athleteId);
                 tableWriter.writeMostEventRecord(
                         new MostEventsTableHtmlWriter.Record(athlete,
                                 der.differentRegionCourseCount, der.totalRegionRuns,
-                                courseCount, totalCourseCount, der.positionDelta));
+                                courseCount, totalCourseCount, der.positionDelta, firstRuns));
             }
         }
     }

@@ -78,4 +78,18 @@ public class ResultDao
             return null;
         });
     }
+
+    public String getFirstRuns(int athleteId)
+    {
+        String sql = "select JSON_ARRAYAGG(course_id) as json_courses, JSON_ARRAYAGG(unix_timestamp(first_run)) as json_first_runs " +
+                "from " +
+                "( " +
+                "    select athlete_id, course_id, min(date) as first_run  " +
+                "    from result  " +
+                "    group by athlete_id, course_id  " +
+                "    having athlete_id = :athleteId " +
+                ") as sub1; ";
+        return jdbc.queryForObject(sql, new MapSqlParameterSource("athleteId", athleteId), (rs, rowNum) ->
+                String.format("[%s,%s]", rs.getString("json_courses"), rs.getString("json_first_runs")));
+    }
 }
