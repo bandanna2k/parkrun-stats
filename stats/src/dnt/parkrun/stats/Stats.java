@@ -26,6 +26,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -130,8 +131,11 @@ public class Stats
 
         downloadAthleteCourseSummaries(differentEventRecords);
 
-        try (HtmlWriter writer = HtmlWriter.newInstance(date))
+        try (HtmlWriter writer = HtmlWriter.newInstance(date);
+             InputStream inputStream = this.getClass().getResourceAsStream("/dialog.html"))
         {
+            writer.writeRawString(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
+
             writer.writer.writeStartElement("p");
             writer.writer.writeAttribute("align", "right");
             writer.writer.writeCharacters(new SimpleDateFormat("yyyy MMM dd hh:mm").format(new Date()));

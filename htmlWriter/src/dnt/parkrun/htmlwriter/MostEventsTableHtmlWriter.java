@@ -53,6 +53,9 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         writer.writeCharacters("Total Runs");
         endElement("th");
 
+        startElement("th");
+        endElement("th");
+
         endElement("tr");
         endElement("thead");
     }
@@ -130,6 +133,13 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         // Total region runs
         startElement("td");
         writer.writeCharacters(String.valueOf(record.totalRuns));
+        endElement("td");
+
+        // Total region runs
+        startElement("td");
+        startElement("button", "onclick", "dialog.showModal()", "style", "blank");
+        writer.writeCharacters("\uD83D\uDCC8");
+        endElement("div");
         endElement("td");
 
         endElement("tr");

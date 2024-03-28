@@ -33,6 +33,12 @@ public class InvariantTest
     }
 
     @Test
+    public void eventsNotInTheDatabase()
+    {
+
+    }
+
+    @Test
     public void courseEventSummaryWithoutVolunteers()
     {
         String sql = "select distinct ces.course_id, ces.date, ev.athlete_id \n" +
