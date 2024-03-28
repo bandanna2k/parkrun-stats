@@ -25,19 +25,23 @@
 
         // Start dates
         var startDates = [];
-        for (let [courseId, course] of courseIdToCourse)
-        {
-            startDates.push({'x': course.startDate, 'name': course.longName});
-        }
-        startDates.sort((r1, r2) => {
-            if(r1.x > r2.x) return 1;
-            if(r1.x < r2.x) return -1;
-            return 0;
-        });
-        var i = 1;
-        for(let record of startDates)
-        {
-            record.y = i++;
+        function refreshStartDates() {
+            startDates.splice(0, startDates.length);
+            for (let [courseId, course] of courseIdToCourse)
+            {
+                startDates.push({'x': course.startDate, 'name': course.longName});
+            }
+            startDates.sort((r1, r2) => {
+                if(r1.x > r2.x) return 1;
+                if(r1.x < r2.x) return -1;
+                return 0;
+            });
+            var i = 1;
+            for(let record of startDates)
+            {
+                record.y = i++;
+            }
+            chart.update();
         }
 
         var firstRuns = [];
@@ -58,7 +62,6 @@
             {
                 record.y = i++;
             }
-            console.log(firstRuns);
             chart.update();
         }
 
@@ -102,6 +105,9 @@
           ]
         },
         options: {
+            animation: {
+                duration: 2000,
+            },
             layout: {
                 padding:
                 {

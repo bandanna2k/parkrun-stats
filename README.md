@@ -16,15 +16,19 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Minor
 
+- Get name into chart
+
+- Attendance records - Add pending course
+
 - Invariant - region event count > global event count
 
 - Add dialog to correct place in HTML file.
 
-- Speed up first events query.
-
 - Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables.
 
 - Change 'How are we doing test to assume next event number'
+
+- Countryman count
 
 ## Ideas
 

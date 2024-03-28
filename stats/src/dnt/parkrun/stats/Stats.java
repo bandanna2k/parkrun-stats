@@ -35,8 +35,7 @@ import java.util.stream.Collectors;
 import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
 import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
-import static dnt.parkrun.datastructures.Course.Status.RUNNING;
-import static dnt.parkrun.datastructures.Course.Status.STOPPED;
+import static dnt.parkrun.datastructures.Course.Status.*;
 import static dnt.parkrun.region.Region.getNzRegionRunCount;
 import static java.util.Collections.emptyList;
 
@@ -509,11 +508,11 @@ public class Stats
         try (AttendanceRecordsTableHtmlWriter tableWriter = new AttendanceRecordsTableHtmlWriter(writer.writer))
         {
             tableWriter.writer.writeStartElement("tbody");
-            List<AttendanceRecord> attendanceRecords = getAttendanceRecords().stream()
-                    .filter(ar -> ar.recordEventFinishers != 0)
+            List<AttendanceRecord> attendanceRecords = generateAndGetAttendanceRecords().stream()
                     .peek(ar -> {
                         Course course = courseRepository.getCourseFromName(ar.courseName);
-                        if(course.status == STOPPED) ar.courseSmallTest = "no longer takes place";
+                        if(course.status == PENDING) ar.courseSmallTest = "not started yet";
+                        else if(course.status == STOPPED) ar.courseSmallTest = "no longer takes place";
                         else if(ar.recentEventDate.before(date)) ar.courseSmallTest = "not run this week";
                     })
                     .collect(Collectors.toList());
@@ -526,7 +525,7 @@ public class Stats
         }
     }
 
-    private List<AttendanceRecord> getAttendanceRecords()
+    private List<AttendanceRecord> generateAndGetAttendanceRecords()
     {
         System.out.println("* Generating attendance record table *");
         attendanceRecordsDao.generateAttendanceRecordTable();

@@ -139,7 +139,9 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         startElement("td");
         startElement("span", "onclick",
                 "dialog.showModal();" +
-                        "setFirstRuns(" + record.firstRuns + ");");
+                        "setFirstRuns(" + record.firstRuns + ");" +
+                        "refreshStartDates();"
+        );
         writer.writeCharacters("\uD83D\uDCC8");
         endElement("div");
         endElement("td");
