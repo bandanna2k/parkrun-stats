@@ -477,6 +477,12 @@ public class Stats
 
     private void writeMostEvents(HtmlWriter writer, List<MostEventsDao.MostEventsRecord> differentEventRecords) throws XMLStreamException
     {
+        System.out.print("Getting first runs ");
+        HashMap<Integer, String> athleteIdToFirstRuns = new HashMap<>();
+        mostEventsDao.getFirstRuns().forEach(object ->
+                athleteIdToFirstRuns.put((int)object[0], String.format("[%s,%s]", object[1], object[2])));
+        System.out.println("DONE");
+
         try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer))
         {
             for (MostEventsDao.MostEventsRecord der : differentEventRecords)
@@ -489,12 +495,10 @@ public class Stats
 
                 mostEventsDao.updateDifferentCourseRecord(athlete.athleteId, courseCount, totalCourseCount);
 
-                System.out.println("Getting first runs for " + athlete.name);
-                String firstRuns = true ? "[[],[]]" : resultDao.getFirstRuns(athlete.athleteId);
                 tableWriter.writeMostEventRecord(
                         new MostEventsTableHtmlWriter.Record(athlete,
                                 der.differentRegionCourseCount, der.totalRegionRuns,
-                                courseCount, totalCourseCount, der.positionDelta, firstRuns));
+                                courseCount, totalCourseCount, der.positionDelta, athleteIdToFirstRuns.get(der.athleteId)));
             }
         }
     }

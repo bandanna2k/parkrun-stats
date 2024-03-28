@@ -12,13 +12,15 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Major
 
+- Parsers can break half way through. Collate records first then stream records.
+
 ## Minor
+
+- Invariant - region event count > global event count
 
 - Add dialog to correct place in HTML file.
 
 - Speed up first events query.
-
-- Invariants - parser all working
 
 - Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables.
 
@@ -394,12 +396,18 @@ from
 ) as sub1;
 ```
 ```
-select JSON_ARRAYAGG(course_id), JSON_ARRAYAGG(unix_timestamp(first_run)) 
-from
+select athlete_id, json_course_ids, json_first_runs
+from most_events_for_region_2024_03_23
+join 
 (
-    select athlete_id, course_id, min(date) as first_run 
-    from result 
-    group by athlete_id, course_id 
-    having athlete_id = 414811
-) as sub1;
+    select athlete_id, JSON_ARRAYAGG(course_id) as json_course_ids, JSON_ARRAYAGG(unix_timestamp(first_run)) as json_first_runs
+    from
+    (
+        select athlete_id, course_id, min(date) as first_run 
+        from parkrun_stats.result 
+        group by athlete_id, course_id 
+    ) as sub1
+    group by athlete_id
+) as sub2 using (athlete_id)\G
+limit 2\G; 
 ```

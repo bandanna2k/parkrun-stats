@@ -144,6 +144,28 @@ public class MostEventsDao extends BaseDao
                 ));
     }
 
+    public List<Object[]> getFirstRuns()
+    {
+        String sql = "select athlete_id, json_course_ids, json_first_runs " +
+                "from most_events_for_region_2024_03_23 " +
+                "join  " +
+                "( " +
+                "    select athlete_id, JSON_ARRAYAGG(course_id) as json_course_ids, JSON_ARRAYAGG(unix_timestamp(first_run)) as json_first_runs " +
+                "    from " +
+                "    ( " +
+                "        select athlete_id, course_id, min(date) as first_run  " +
+                "        from parkrun_stats.result  " +
+                "        group by athlete_id, course_id  " +
+                "    ) as sub1 " +
+                "    group by athlete_id " +
+                ") as sub2 using (athlete_id)";
+        return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> new Object[] {
+            rs.getInt("athlete_id"),
+            rs.getString("json_course_ids"),
+            rs.getString("json_first_runs")
+        });
+    }
+
     public static class MostEventsRecord
     {
         public final String name;
