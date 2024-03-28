@@ -139,7 +139,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         startElement("td");
         startElement("span", "onclick",
                 "dialog.showModal();" +
-                        "setFirstRuns(" + record.firstRuns + ");" +
+                        "setFirstRuns('" + record.athlete.name.replace("'", "\\'") + "'," + record.firstRuns + ");" +
                         "refreshStartDates();"
         );
         writer.writeCharacters("\uD83D\uDCC8");

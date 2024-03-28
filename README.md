@@ -16,8 +16,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Minor
 
-- Get name into chart
-
 - Attendance records - Add pending course
 
 - Invariant - region event count > global event count

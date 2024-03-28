@@ -11,5 +11,6 @@
     <orderEntry type="module" module-name="dataStructures" />
     <orderEntry type="module" module-name="common" />
     <orderEntry type="module" module-name="pindex" />
+    <orderEntry type="library" name="jsoup" level="project" />
   </component>
 </module>

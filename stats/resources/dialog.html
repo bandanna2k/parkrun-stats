@@ -23,8 +23,10 @@
             courseIdToCourse.set(courseId, { 'startDate': (courses[0][i]*1000), 'longName': courses[2][i] } );
         }
 
-        // Start dates
         var startDates = [];
+        var firstRuns = [];
+
+        // Start dates
         function refreshStartDates() {
             startDates.splice(0, startDates.length);
             for (let [courseId, course] of courseIdToCourse)
@@ -44,8 +46,8 @@
             chart.update();
         }
 
-        var firstRuns = [];
-        function setFirstRuns(firstRunsIn) {
+        function setFirstRuns(nameIn,firstRunsIn) {
+            chart.options.plugins.title.text = nameIn + " - Start Dates / First Runs";
             firstRuns.splice(0, firstRuns.length);
             for(var i = 0 ; i < firstRunsIn[0].length ; i++)
             {
@@ -117,9 +119,8 @@
             },
             plugins: {
                 title: {
-                display: true,
-                text: 'Start Dates / Run Dates'
-              },
+                    display: true,
+                },
                 datalabels:
                 {
                     backgroundColor: function(context) {
