@@ -137,7 +137,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 
         // Total region runs
         startElement("td");
-        startElement("button", "onclick", "dialog.showModal()", "style", "blank");
+        startElement("span", "onclick", "dialog.showModal()");
         writer.writeCharacters("\uD83D\uDCC8");
         endElement("div");
         endElement("td");
