@@ -7,6 +7,7 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.Closeable;
 
 import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
+import static dnt.parkrun.datastructures.Country.NZ;
 
 public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 {
@@ -109,7 +110,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         // Name
         startElement("td");
         writer.writeStartElement("a");
-        writer.writeAttribute("href", generateAthleteEventSummaryUrl("parkrun.co.nz", record.athlete.athleteId).toString());
+        writer.writeAttribute("href", generateAthleteEventSummaryUrl(NZ.baseUrl, record.athlete.athleteId).toString());
         writer.writeAttribute("target", String.valueOf(record.athlete.name));
         writer.writeCharacters(record.athlete.name);
         endElement("a");

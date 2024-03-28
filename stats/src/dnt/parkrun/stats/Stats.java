@@ -30,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
@@ -130,10 +131,9 @@ public class Stats
 
         downloadAthleteCourseSummaries(differentEventRecords);
 
-        try (HtmlWriter writer = HtmlWriter.newInstance(date);
-             InputStream inputStream = this.getClass().getResourceAsStream("/dialog.html"))
+        try (HtmlWriter writer = HtmlWriter.newInstance(date))
         {
-            writer.writeRawString(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
+            writer.writer.writeCharacters("{{dialog}}");
 
             writer.writer.writeStartElement("p");
             writer.writer.writeAttribute("align", "right");
@@ -167,14 +167,38 @@ public class Stats
                  OutputStreamWriter osw = new OutputStreamWriter(fos);
                  BufferedWriter writer = new BufferedWriter(osw))
             {
+                final Object[][] replacements = new Object[][]{
+                        {"Cornwall parkrun", (Supplier<String>) () -> "Cornwall Park parkrun"},
+                        {"{{dialog}}", (Supplier<String>) () -> {
+                            InputStream inputStream = this.getClass().getResourceAsStream("/dialog.html");
+                            try
+                            {
+                                return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+                            }
+                            catch (IOException e)
+                            {
+                                throw new RuntimeException(e);
+                            }
+                        }}
+                };
+
                 String line;
                 while (null != (line = reader.readLine()))
                 {
-                    String lineModified = line.replace("Cornwall parkrun", "Cornwall Park parkrun");
+                    String lineModified = line;
+                    for (Object[] replacement : replacements)
+                    {
+                        final String criteria = (String) replacement[0];
+                        if(line.contains(criteria))
+                        {
+                            lineModified = lineModified.replace(criteria, ((Supplier<String>)replacement[1]).get());
+                        }
+                    }
                     writer.write(lineModified + "\n");
                 }
             }
         }
+
         new ProcessBuilder("xdg-open", htmlFileModified.getAbsolutePath()).start();
     }
 

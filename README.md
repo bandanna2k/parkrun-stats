@@ -16,11 +16,7 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Minor
 
-- Attendance records - Add pending course
-
 - Invariant - region event count > global event count
-
-- Add dialog to correct place in HTML file.
 
 - Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables.
 

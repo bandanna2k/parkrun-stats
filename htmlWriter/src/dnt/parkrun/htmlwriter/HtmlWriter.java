@@ -11,25 +11,22 @@ import java.util.Date;
 
 public class HtmlWriter extends BaseWriter
 {
-    private final FileOutputStream fos;
     private final Date date;
 
     public static HtmlWriter newInstance(Date date) throws IOException, XMLStreamException
     {
         File file = new File("stats_" + DateConverter.formatDateForDbTable(date) + ".html");
-        FileOutputStream fos = new FileOutputStream(file);
 
         XMLStreamWriter writer = XMLOutputFactory
                 .newInstance()
                 .createXMLStreamWriter(
-                        new OutputStreamWriter(fos, StandardCharsets.UTF_8));
-        return new HtmlWriter(fos, writer, date);
+                        new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
+        return new HtmlWriter(writer, date);
     }
 
-    private HtmlWriter(FileOutputStream fos, XMLStreamWriter writer, Date date) throws XMLStreamException, IOException
+    private HtmlWriter(XMLStreamWriter writer, Date date) throws XMLStreamException, IOException
     {
         super(writer);
-        this.fos = fos;
         this.date = date;
 
         startHtml();
@@ -62,12 +59,6 @@ public class HtmlWriter extends BaseWriter
         endElement("script");
 
         startElement("body");
-    }
-
-    public void writeRawString(String input) throws IOException
-    {
-        fos.flush();
-        fos.write(input.getBytes(StandardCharsets.UTF_8));
     }
 
     @Override
