@@ -1919,6 +1919,18 @@
           "EventLongName": "Mountain Goat Trail parkrun",
           "countrycode": 98
         }
+      },
+      {
+        "id": 0,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point"
+        },
+        "properties": {
+          "eventname": "oakgrove",
+          "EventLongName": "Oak Grove parkrun",
+          "countrycode": 98
+        }
       }
     ]
   }

@@ -33,7 +33,8 @@ public class AthleteCourseSummaryDao extends BaseDao
                 "create table if not exists " + tableName + " ( " +
                         "    athlete_id       INT               NOT NULL," +
                         "    course_id        INT               NOT NULL," +
-                        "    run_count        INT               NOT NULL" +
+                        "    run_count        INT               NOT NULL," +
+                        "   PRIMARY KEY (athlete_id, course_id)" +
                         ") DEFAULT CHARSET=utf8mb4";
         jdbc.update(sql, EmptySqlParameterSource.INSTANCE);
     }

@@ -614,14 +614,6 @@ public class Stats
                     .build(courseRepository);
             parser.parse();
         }
-        for (int athlete_id : athletesToDownload)
-        {
-            Parser parser = new Parser.Builder()
-                    .url(generateAthleteEventSummaryUrl(PARKRUN_CO_NZ, athlete_id))
-                    .forEachAthleteCourseSummary(acsDao::writeAthleteCourseSummary)
-                    .build(courseRepository);
-            parser.parse();
-        }
 
         acsDao.getAthleteCourseSummariesMap().forEach(objects ->
         {
