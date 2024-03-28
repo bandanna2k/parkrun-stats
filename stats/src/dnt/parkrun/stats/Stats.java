@@ -39,6 +39,7 @@ import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.*;
 import static dnt.parkrun.region.Region.getNzRegionRunCount;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 
 public class Stats
 {
@@ -500,8 +501,11 @@ public class Stats
 
     private void writeMostEvents(HtmlWriter writer, List<MostEventsDao.MostEventsRecord> differentEventRecords) throws XMLStreamException
     {
+        System.out.print("Getting start dates ");
+        Map<Integer, Date> courseIdToStartDate = courseEventSummaryDao.getStartDates();
+
         System.out.print("Getting first runs ");
-        HashMap<Integer, String> athleteIdToFirstRuns = new HashMap<>();
+        Map<Integer, String> athleteIdToFirstRuns = new HashMap<>();
         mostEventsDao.getFirstRuns().forEach(object ->
                 athleteIdToFirstRuns.put((int)object[0], String.format("[%s,%s]", object[1], object[2])));
         System.out.println("DONE");
@@ -518,12 +522,21 @@ public class Stats
 
                 mostEventsDao.updateDifferentCourseRecord(athlete.athleteId, courseCount, totalCourseCount);
 
+                // Calculate regionnaire count
+                String firstRuns = athleteIdToFirstRuns.get(der.athleteId);
+                Map<Integer, String> courseIdToRunDate = convertFirstRunsToMap(firstRuns);
+
                 tableWriter.writeMostEventRecord(
                         new MostEventsTableHtmlWriter.Record(athlete,
                                 der.differentRegionCourseCount, der.totalRegionRuns,
-                                courseCount, totalCourseCount, der.positionDelta, athleteIdToFirstRuns.get(der.athleteId)));
+                                courseCount, totalCourseCount, der.positionDelta, firstRuns));
             }
         }
+    }
+
+    private static Map<Integer, String> convertFirstRunsToMap(String firstRuns)
+    {
+        return emptyMap();
     }
 
     private void writeAttendanceRecords(HtmlWriter writer) throws XMLStreamException

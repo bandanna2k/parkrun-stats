@@ -8,10 +8,7 @@ import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class CourseEventSummaryDao extends BaseDao
 {
@@ -84,5 +81,19 @@ public class CourseEventSummaryDao extends BaseDao
             return null;
         });
         return courseToCount;
+    }
+
+    public Map<Integer, Date> getStartDates()
+    {
+        Map<Integer, Date> result = new HashMap<>();
+        String sql = "select course_id, date " +
+                "from course join course_event_summary using (course_id)  " +
+                "where event_number = 1 " +
+                "order by date desc;";
+        jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> {
+            result.put(rs.getInt("course_id"), rs.getDate("date"));
+            return null;
+        });
+        return result;
     }
 }

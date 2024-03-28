@@ -366,7 +366,7 @@ order by different_region_course_count desc, total_region_volunteers desc, a.ath
 
 # Get all course start dates
 ```
-select course_long_name, course_id, date 
+select course_id, date 
 from course join course_event_summary using (course_id)  
 where event_number = 1 
 order by date desc;
