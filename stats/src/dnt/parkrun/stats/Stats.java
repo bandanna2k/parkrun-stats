@@ -42,7 +42,6 @@ import static java.util.Collections.emptyList;
 
 public class Stats
 {
-    public static final String PARKRUN_CO_NZ = "parkrun.co.nz";
     public static final int MIN_P_INDEX = 5;
     public static final Comparator<PIndexTableHtmlWriter.Record> PINDEX_RECORD_COMPARATOR = (pIndexRecord1, pIndexRecord2) ->
     {
@@ -142,10 +141,10 @@ public class Stats
 
             writeAttendanceRecords(writer);
 
-            writeMostEvents(writer, differentEventRecords);
-
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
+
+            writeMostEvents(writer, differentEventRecords);
 
             writeMostVolunteers(writer);
 
@@ -234,7 +233,7 @@ public class Stats
 
             // p-Index
             Set<Integer> regionalPIndexAthletes = new HashSet<>();
-            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, "p-Index (New Zealand)"))
+            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, "p-Index"))
             {
                 List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
                 for (Map.Entry<Integer, List<AthleteCourseSummary>> entry : athleteIdToAthleteCourseSummaries.entrySet())
@@ -689,7 +688,7 @@ public class Stats
             int athleteId = listOfAthletesToDownload.get(i - 1);
             System.out.printf("Downloading %d of %d ", i, countOfAthletesToDownload);
             Parser parser = new Parser.Builder()
-                    .url(generateAthleteEventSummaryUrl(PARKRUN_CO_NZ, athleteId))
+                    .url(generateAthleteEventSummaryUrl(NZ.baseUrl, athleteId))
                     .forEachAthleteCourseSummary(acsDao::writeAthleteCourseSummary)
                     .build(courseRepository);
             parser.parse();
