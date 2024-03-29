@@ -55,6 +55,10 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         endElement("th");
 
         startElement("th");
+        writer.writeCharacters("Regionnaire Count");
+        endElement("th");
+
+        startElement("th");
         endElement("th");
 
         endElement("tr");
@@ -136,6 +140,11 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         writer.writeCharacters(String.valueOf(record.totalRuns));
         endElement("td");
 
+        // Regionnaire count
+        startElement("td");
+        writer.writeCharacters(String.valueOf(record.regionnaireCount));
+        endElement("td");
+
         // Total region runs
         startElement("td");
         startElement("span", "onclick",
@@ -159,11 +168,12 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         public final int totalRuns;
         public final int positionDelta;
         public final String firstRuns;
+        public final int regionnaireCount;
 
         public Record(Athlete athlete,
                       int differentRegionCourseCount, int totalRegionRuns,
                       int differentCourseCount, int totalRuns,
-                      int positionDelta, String firstRuns)
+                      int positionDelta, String firstRuns, int regionnaireCount)
         {
             this.athlete = athlete;
             this.differentRegionCourseCount = differentRegionCourseCount;
@@ -172,6 +182,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             this.totalRuns = totalRuns;
             this.positionDelta = positionDelta;
             this.firstRuns = firstRuns;
+            this.regionnaireCount = regionnaireCount;
         }
 
         @Override
@@ -184,6 +195,8 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
                     ", differentCourseCount=" + differentCourseCount +
                     ", totalRuns=" + totalRuns +
                     ", positionDelta=" + positionDelta +
+                    ", firstRuns='" + firstRuns + '\'' +
+                    ", regionnaireCount=" + regionnaireCount +
                     '}';
         }
     }

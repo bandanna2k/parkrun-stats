@@ -12,17 +12,19 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Major
 
-- Parsers can break half way through. Collate records first then stream records.
+- Prove?? Parsers can break half way through. Collate records first then stream records.
 
 ## Minor
+
+- Do I need name/most global events in most events table?
+
+- Bug - When course not found, athlete course summary not finished.
 
 - Invariant - region event count > global event count
 
 - Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables.
 
 - Change 'How are we doing test to assume next event number'
-
-- Countryman count
 
 ## Ideas
 

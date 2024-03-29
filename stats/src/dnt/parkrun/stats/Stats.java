@@ -39,7 +39,6 @@ import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.*;
 import static dnt.parkrun.region.Region.getNzRegionRunCount;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 
 public class Stats
 {
@@ -522,21 +521,89 @@ public class Stats
 
                 mostEventsDao.updateDifferentCourseRecord(athlete.athleteId, courseCount, totalCourseCount);
 
+//                if(der.athleteId != 796322) continue;
+
                 // Calculate regionnaire count
-                String firstRuns = athleteIdToFirstRuns.get(der.athleteId);
-                Map<Integer, String> courseIdToRunDate = convertFirstRunsToMap(firstRuns);
+                final String firstRuns = athleteIdToFirstRuns.get(der.athleteId);
+                final int regionnaireCount = getRegionnaireCount(courseIdToStartDate, firstRuns);
 
                 tableWriter.writeMostEventRecord(
                         new MostEventsTableHtmlWriter.Record(athlete,
                                 der.differentRegionCourseCount, der.totalRegionRuns,
-                                courseCount, totalCourseCount, der.positionDelta, firstRuns));
+                                courseCount, totalCourseCount,
+                                der.positionDelta,
+                                firstRuns,
+                                regionnaireCount));
             }
         }
     }
 
-    private static Map<Integer, String> convertFirstRunsToMap(String firstRuns)
+    private int getRegionnaireCount(
+            Map<Integer, Date> courseIdToStartDate,
+            String firstRuns)
     {
-        return emptyMap();
+        class Record
+        {
+            final Course course;
+            final Date date;
+            Record(Course course, Date date)
+            {
+                this.course = course;
+                this.date = date;
+            }
+            @Override
+            public String toString()
+            {
+                return "Record{" +
+                        "course=" + course +
+                        ", date=" + date +
+                        '}';
+            }
+        }
+        List<Record> startDates = courseIdToStartDate.entrySet().stream().map(entry ->
+                new Record(courseRepository.getCourse(entry.getKey()), entry.getValue())).collect(Collectors.toList());
+        startDates.sort((r1, r2) -> {
+            if(r1.date.after(r2.date)) return 1;
+            if(r2.date.after(r1.date)) return -1;
+            return 0;
+        });
+
+        List<Record> listOfFirstRuns = new ArrayList<>();
+        String[] split = firstRuns.split("],");
+        assert split.length == 2;
+        String[] courseIds = split[0].replace("[","").replace("]","").split(",");
+        String[] dates = split[1].replace("[","").replace("]","").split(",");
+        assert courseIds.length == dates.length;
+        for (int i = 0; i < courseIds.length; i++)
+        {
+            Course course = courseRepository.getCourse(Integer.parseInt(courseIds[i].trim()));
+            Date firstRun = new Date(Long.parseLong(dates[i].trim())*1000);
+            listOfFirstRuns.add(new Record(course, firstRun));
+        }
+        listOfFirstRuns.sort((r1, r2) -> {
+            if(r1.date.after(r2.date)) return 1;
+            if(r2.date.after(r1.date)) return -1;
+            return 0;
+        });
+
+        final int totalEvents = courseIdToStartDate.size();
+        final int totalEventsRun = courseIds.length;
+        int regionnaireCount = 0;
+        while(!listOfFirstRuns.isEmpty())
+        {
+            Record firstRun = listOfFirstRuns.remove(0);
+            startDates.removeIf(record -> record.date.getTime() <= firstRun.date.getTime());
+
+            int courseThatHaventStartedYet = startDates.size();
+            int countOfEventsThereHaveBeen = totalEvents - courseThatHaventStartedYet;
+            int coursesDoneSoFar = totalEventsRun - listOfFirstRuns.size();
+
+            if(coursesDoneSoFar == countOfEventsThereHaveBeen)
+            {
+                regionnaireCount++;
+            }
+        }
+        return regionnaireCount;
     }
 
     private void writeAttendanceRecords(HtmlWriter writer) throws XMLStreamException
