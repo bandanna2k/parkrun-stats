@@ -8,18 +8,17 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.Closeable;
 
+import static dnt.parkrun.datastructures.Country.NZ;
+
 public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Closeable
 {
-
-    public static final String PARKRUN_CO_NZ = "parkrun.co.nz";
-
     public AttendanceRecordsTableHtmlWriter(XMLStreamWriter writer) throws XMLStreamException
     {
         super(writer);
 
         startElement("details");
         startElement("summary");
-        writer.writeCharacters("Attendance Records (New Zealand)");
+        writer.writeCharacters("Attendance Records");
         endElement("summary");
 
         writer.writeStartElement("table");
@@ -97,7 +96,7 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         // Course name
         startElement("td");
         writer.writeStartElement("a");
-        writer.writeAttribute("href", UrlGenerator.generateCourseEventSummaryUrl(PARKRUN_CO_NZ, record.courseName).toString());
+        writer.writeAttribute("href", UrlGenerator.generateCourseEventSummaryUrl(NZ.baseUrl, record.courseName).toString());
         writer.writeAttribute("target", String.valueOf(record.courseName));
         writer.writeCharacters(record.courseLongName);
         if(record.courseSmallTest != null)
@@ -112,7 +111,7 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         // Recent date
         startElement("td");
         startElement("a", "target", record.courseName,
-                "href", UrlGenerator.generateCourseEventUrl(PARKRUN_CO_NZ, record.courseName, record.recentEventNumber).toString());
+                "href", UrlGenerator.generateCourseEventUrl(NZ.baseUrl, record.courseName, record.recentEventNumber).toString());
         writer.writeCharacters(DateConverter.formatDateForHtml(record.recentEventDate));
         endElement("a");
         endElement("td");
@@ -137,7 +136,7 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         // Record Date
         startElement("td");
         startElement("a", "target", record.courseName, "href",
-                UrlGenerator.generateCourseEventUrl(PARKRUN_CO_NZ, record.courseName, record.recordEventNumber).toString());
+                UrlGenerator.generateCourseEventUrl(NZ.baseUrl, record.courseName, record.recordEventNumber).toString());
         writer.writeCharacters(DateConverter.formatDateForHtml(record.recordEventDate));
         endElement("a");
         endElement("td");

@@ -205,7 +205,7 @@ public class Stats
     private void writeMostVolunteers(HtmlWriter writer) throws XMLStreamException
     {
         MostVolunteersDao mostVolunteersDao = MostVolunteersDao.getOrCreate(statsDataSource, date);
-        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Events, Volunteering (New Zealand)"))
+        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Events, Volunteering"))
         {
             try (MostVolunteersTableHtmlWriter tableWriter = new MostVolunteersTableHtmlWriter(writer))
             {
@@ -220,7 +220,7 @@ public class Stats
 
     private void writePIndex(HtmlWriter writer) throws XMLStreamException
     {
-        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, " p-Index (New Zealand)"))
+        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, " p-Index"))
         {
             writer.writer.writeStartElement("p");
             writer.writer.writeAttribute("style", "margin-left:100px");
@@ -297,7 +297,7 @@ public class Stats
             }
 
             // Legacy p-Index
-            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, "Legacy p-Index (New Zealand)"))
+            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, "Legacy p-Index"))
             {
                 List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
                 for (Map.Entry<Integer, List<AthleteCourseSummary>> entry : athleteIdToAthleteCourseSummaries.entrySet())
@@ -395,7 +395,7 @@ public class Stats
     private void writeTop10Runs(HtmlWriter writer) throws XMLStreamException
     {
         Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
-        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Runs at Courses (New Zealand)"))
+        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Runs at Courses"))
         {
             try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, "New Zealand"))
             {
@@ -439,7 +439,7 @@ public class Stats
     private void writeTop10Volunteers(HtmlWriter writer) throws XMLStreamException
     {
         Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
-        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Volunteers at Courses (New Zealand)"))
+        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Volunteers at Courses"))
         {
             try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, "New Zealand"))
             {
