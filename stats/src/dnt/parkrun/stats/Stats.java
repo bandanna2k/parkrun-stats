@@ -689,6 +689,9 @@ public class Stats
             System.out.printf("Downloading %d of %d ", i, countOfAthletesToDownload);
             Parser parser = new Parser.Builder()
                     .url(generateAthleteEventSummaryUrl(NZ.baseUrl, athleteId))
+                    .courseNotFound(courseNotFound -> {
+                        throw new RuntimeException("Course not found. " + courseNotFound);
+                    })
                     .forEachAthleteCourseSummary(acsDao::writeAthleteCourseSummary)
                     .build(courseRepository);
             parser.parse();

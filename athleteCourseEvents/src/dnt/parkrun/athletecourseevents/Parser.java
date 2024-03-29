@@ -17,6 +17,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static dnt.parkrun.common.UrlExtractor.extractCourseFromUrl;
+
 public class Parser
 {
     private final Document doc;
@@ -83,13 +85,6 @@ public class Parser
                 consumer.accept(new AthleteCourseEvent(athlete, courseName, date, eventNumber, position, time));
             }
         }
-    }
-
-    private static String extractCourseFromUrl(String courseLink)
-    {
-        int start = courseLink.indexOf("/", 10) + 1;
-        int end = courseLink.indexOf("/", start);
-        return courseLink.substring(start, end);
     }
 
     private static String extractName(String nameWithId)

@@ -2,10 +2,7 @@ package dnt.parkrun.athletecoursesummary;
 
 
 import dnt.jsoupwrapper.JsoupWrapper;
-import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.AthleteCourseSummary;
-import dnt.parkrun.datastructures.Course;
-import dnt.parkrun.datastructures.CourseRepository;
+import dnt.parkrun.datastructures.*;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -17,20 +14,25 @@ import java.net.URL;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static dnt.parkrun.common.UrlExtractor.extractCourseFromUrl;
+
 public class Parser
 {
     private final Document doc;
     private final CourseRepository courseRepository;
     private final Consumer<AthleteCourseSummary> consumer;
-    private final Consumer<String> courseNotFoundConsumer;
+    private final Consumer<Course> courseNotFoundConsumer;
     private Athlete athlete;
 
-    private Parser(Document doc, CourseRepository courseRepository, Consumer<AthleteCourseSummary> consumer)
+    private Parser(Document doc,
+                   CourseRepository courseRepository,
+                   Consumer<AthleteCourseSummary> consumer,
+                   Consumer<Course> courseNotFoundConsumer)
     {
         this.doc = doc;
         this.courseRepository = courseRepository;
         this.consumer = consumer;
-        this.courseNotFoundConsumer = s -> System.out.println("WARNING Course not found: " + s);
+        this.courseNotFoundConsumer = courseNotFoundConsumer;
     }
 
     public void parse()
@@ -74,12 +76,16 @@ public class Parser
                         .childNode(0)   // a;
                         .attr("href");
 
-
                 Course course = courseRepository.getCourseFromLongName(courseLongName);
                 if(course == null)
                 {
-                    courseNotFoundConsumer.accept(courseLongName + " (" + athleteAtEvent + ")");
-                    throw new RuntimeException("Course not found. " + courseLongName);
+                    Course courseNotFound = new Course(
+                            Course.NO_COURSE_ID,
+                            extractCourseFromUrl(athleteAtEvent),
+                            Country.findFromUrl(athleteAtEvent),
+                            courseLongName,
+                            Course.Status.STOPPED);
+                    courseNotFoundConsumer.accept(courseNotFound);
                     //course = new Course(Integer.MIN_VALUE, courseLongName, Country.UNKNOWN, courseLongName, Course.Status.STOPPED);
                 }
                 Athlete athlete = Athlete.from(name, athleteId);
@@ -114,10 +120,11 @@ public class Parser
     {
         private Document doc;
         private Consumer<AthleteCourseSummary> consumer = es -> {};
+        private Consumer<Course> courseNotFoundConsumer = s -> System.out.println("WARNING Course not found: " + s);
 
         public Parser build(CourseRepository courseRepository)
         {
-            return new Parser(doc, courseRepository, consumer);
+            return new Parser(doc, courseRepository, consumer, courseNotFoundConsumer);
         }
 
         public Builder url(URL url)
@@ -129,6 +136,12 @@ public class Parser
         public Builder file(File file) throws IOException
         {
             this.doc = JsoupWrapper.newDocument(file);
+            return this;
+        }
+
+        public Builder courseNotFound(Consumer<Course> consumer)
+        {
+            this.courseNotFoundConsumer = consumer;
             return this;
         }
 

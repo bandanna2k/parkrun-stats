@@ -4,6 +4,8 @@ import java.util.Objects;
 
 public class Course
 {
+    public static final int NO_COURSE_ID = Integer.MIN_VALUE;
+
     public final String name;
     public final Country country;
     public final String longName;

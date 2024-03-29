@@ -56,6 +56,15 @@ public enum Country
         return countryCodeToCountry.get(countryCode);
     }
 
+    public static Country findFromUrl(String url)
+    {
+        for(Country country : values())
+        {
+            if(url.contains(country.baseUrl)) return country;
+        }
+        return UNKNOWN;
+    }
+
     public int getCountryCode()
     {
         return countryCode;
