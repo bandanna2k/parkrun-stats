@@ -11,8 +11,12 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
+
+import static dnt.parkrun.database.VolunteerDao.MIN_VOLUNTEER_COUNT;
 
 public class VolunteerDaoTest extends BaseDaoTest
 {
@@ -45,5 +49,24 @@ public class VolunteerDaoTest extends BaseDaoTest
         List<Volunteer> results = volunteerDao.getVolunteers();
         Assertions.assertThat(results).isNotEmpty();
         System.out.println(results);
+    }
+
+    @Test
+    public void shouldNotAccountTwoVolunteersOnTheSameDayAsTwoShouldBeOne()
+    {
+        Athlete athlete = Athlete.fromAthleteSummaryLink("Massimilino PAGININ", "https://www.parkrun.co.nz/parkrunner/7001007/");
+        athleteDao.insert(athlete);
+
+        Instant instant = Instant.EPOCH;
+        int courseId1 = 1;
+        int courseId2 = 1000;
+        for (int i = 0; i < MIN_VOLUNTEER_COUNT; i++)
+        {
+            volunteerDao.insert(new Volunteer(courseId1++, Date.from(instant), athlete));
+            volunteerDao.insert(new Volunteer(courseId2++, Date.from(instant), athlete));
+            instant = instant.plus(7, ChronoUnit.DAYS);
+        }
+
+        Assertions.assertThat(volunteerDao.getMostVolunteers().size()).isEqualTo(1);
     }
 }
