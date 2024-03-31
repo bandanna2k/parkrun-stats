@@ -4,14 +4,8 @@ import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
-import dnt.parkrun.database.AttendanceRecordsDao;
-import dnt.parkrun.database.CourseDao;
-import dnt.parkrun.database.CourseEventSummaryDao;
-import dnt.parkrun.database.ResultDao;
-import dnt.parkrun.database.stats.MostEventsDao;
-import dnt.parkrun.database.stats.MostVolunteersDao;
-import dnt.parkrun.database.stats.Top10RunsDao;
-import dnt.parkrun.database.stats.Top10VolunteersDao;
+import dnt.parkrun.database.*;
+import dnt.parkrun.database.stats.*;
 import dnt.parkrun.database.weekly.AthleteCourseSummaryDao;
 import dnt.parkrun.database.weekly.PIndexDao;
 import dnt.parkrun.database.weekly.Top10AtCourseDao;
@@ -56,7 +50,6 @@ public class Stats
         return 0;
     };
     private final CourseRepository courseRepository;
-    private MostEventsDao mostEventsDao;
     /*
             02/03/2024
      */
@@ -70,7 +63,6 @@ public class Stats
 
     private final Date date;
     private final Date lastWeek;
-    private final DataSource dataSource;
     private final DataSource statsDataSource;
     private final AttendanceRecordsDao attendanceRecordsDao;
     private final ResultDao resultDao;
@@ -79,6 +71,11 @@ public class Stats
     private final Top10VoluteersAtCourseDao top10VolunteerDao;
     private final CourseEventSummaryDao courseEventSummaryDao;
     private final PIndexDao pIndexDao;
+    private final VolunteerCountsDao volunteerCountsDao;
+    private MostEventsDao mostEventsDao;
+    private final MostVolunteersDao mostVolunteersDao;
+    private final VolunteerDao volunteerDao;
+
     private final Map<Integer, Athlete> athleteIdToAthlete = new HashMap<>();
     private final Map<Integer, List<AthleteCourseSummary>> athleteIdToAthleteCourseSummaries = new HashMap<>();
 
@@ -90,7 +87,7 @@ public class Stats
         lastWeek = new Date();
         lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
 
-        this.dataSource = dataSource;
+//        this.dataSource = dataSource;
         this.statsDataSource = statsDataSource;
         this.attendanceRecordsDao = new AttendanceRecordsDao(this.statsDataSource, this.date);
         this.acsDao = new AthleteCourseSummaryDao(statsDataSource, this.date);
@@ -98,6 +95,9 @@ public class Stats
         this.top10VolunteerDao = new Top10VoluteersAtCourseDao(statsDataSource, this.date);
         this.resultDao = new ResultDao(dataSource);
         this.pIndexDao = new PIndexDao(statsDataSource, date);
+        this.volunteerCountsDao = VolunteerCountsDao.getOrCreate(statsDataSource, this.date);
+        this.mostVolunteersDao = new MostVolunteersDao(statsDataSource);
+        this.volunteerDao = new VolunteerDao(statsDataSource);
 
         this.courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
@@ -205,15 +205,16 @@ public class Stats
 
     private void writeMostVolunteers(HtmlWriter writer) throws XMLStreamException
     {
-        MostVolunteersDao mostVolunteersDao = MostVolunteersDao.getOrCreate(statsDataSource, date);
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Events, Volunteering"))
         {
             try (MostVolunteersTableHtmlWriter tableWriter = new MostVolunteersTableHtmlWriter(writer))
             {
-                for (Object[] record : mostVolunteersDao.getMostVolunteers())
+                List<Object[]> mostVolunteers = volunteerCountsDao.getMostVolunteers();
+                assert !mostVolunteers.isEmpty() : "No records for Most Volunteers";
+                for (Object[] record : mostVolunteers)
                 {
                     tableWriter.writeRecord(new MostVolunteersTableHtmlWriter.Record(
-                            (Athlete)record[0], (int) record[1], (int) record[2]));
+                            (Athlete)record[0], (int) record[1], (int) record[2], (int) record[3]));
                 }
             }
         }
@@ -401,6 +402,7 @@ public class Stats
             try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, "New Zealand"))
             {
                 List<AtEvent> top10InRegion = top10Dao.getTop10InRegion();
+                assert !top10InRegion.isEmpty() : "Top 10 runs in NZ list is empty";
                 for (AtEvent r : top10InRegion)
                 {
                     top10InRegionHtmlWriter.writeRecord(new Top10InRegionHtmlWriter.Record(r.athlete, r.course.longName, r.count));
@@ -410,7 +412,7 @@ public class Stats
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
-            Top10RunsDao top10RunsDao = new Top10RunsDao(dataSource);
+            Top10RunsDao top10RunsDao = new Top10RunsDao(statsDataSource);
             List<Course> courses = courseRepository.getCourses(NZ).stream()
                     .filter(c -> c.status == RUNNING).collect(Collectors.toList());
             for (Course course : courses)
@@ -445,6 +447,7 @@ public class Stats
             try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, "New Zealand"))
             {
                 List<Object[]> top10VolunteersInRegion = top10VolunteerDao.getTop10VolunteersInRegion();
+                assert !top10VolunteersInRegion.isEmpty() : "Top 10 runs in NZ list is empty";
 
                 for (Object[] record : top10VolunteersInRegion)
                 {
@@ -472,7 +475,7 @@ public class Stats
             writer.writer.writeEndElement();
              */
 
-            Top10VolunteersDao top10VolunteersDao = new Top10VolunteersDao(dataSource);
+            Top10VolunteersDao top10VolunteersDao = new Top10VolunteersDao(statsDataSource);
             List<Course> courses = courseRepository.getCourses(NZ).stream()
                     .filter(c -> c.status == RUNNING).collect(Collectors.toList());
             for (Course course : courses)
@@ -664,21 +667,55 @@ public class Stats
         Set<Integer> athletesFromMostEventTable = differentEventRecords.stream().map(der -> der.athleteId).collect(Collectors.toSet());
         System.out.println("Size A " + athletesFromMostEventTable.size());
 
-        System.out.println("* Calculate athlete summaries that need to be downloaded (2. Results table) *");
-        Set<Integer> athletesFromResults = getAthletesFromDbWithMinimumPIndex(MIN_P_INDEX);
-        System.out.println("Size B " + athletesFromResults.size());
+        System.out.println("* Calculate athlete summaries that need to be downloaded (2. p-Index) *");
+        Set<Integer> athletesWithMinimumPIndex = getAthletesFromDbWithMinimumPIndex(MIN_P_INDEX);
+        System.out.println("Size B " + athletesWithMinimumPIndex.size());
 
-        Set<Integer> athletesInMostEventsNotInResults = new HashSet<>(athletesFromMostEventTable);
-        athletesInMostEventsNotInResults.removeAll(athletesFromResults);
-        System.out.println("Athletes in most events, not in results. " + athletesInMostEventsNotInResults.size());
+        System.out.println("* Calculate athlete summaries that need to be downloaded (3. Volunteer Counts) *");
+        Set<Integer> athletesFromVolunteers = volunteerDao.getMostVolunteers().stream()
+                .map(record -> ((Athlete)record[0]).athleteId).collect(Collectors.toSet());
+        System.out.println("Size C " + athletesFromVolunteers.size());
 
-        Set<Integer> athletesInResultsNotInMostEvents = new HashSet<>(athletesFromResults);
-        athletesInResultsNotInMostEvents.removeAll(athletesFromMostEventTable);
-        System.out.println("Athletes in results, not in most events. " + athletesInResultsNotInMostEvents.size());
+//        Set<Integer> athletesInMostEventsNotInResults = new HashSet<>(athletesFromMostEventTable);
+//        athletesInMostEventsNotInResults.removeAll(athletesFromResults);
+//        System.out.println("Athletes in most events, not in results. " + athletesInMostEventsNotInResults.size());
+//
+//        Set<Integer> athletesInResultsNotInMostEvents = new HashSet<>(athletesFromResults);
+//        athletesInResultsNotInMostEvents.removeAll(athletesFromMostEventTable);
+//        System.out.println("Athletes in results, not in most events. " + athletesInResultsNotInMostEvents.size());
 
         Set<Integer> athletesToDownload = new HashSet<>();
-        athletesToDownload.addAll(athletesFromMostEventTable);
-        athletesToDownload.addAll(athletesFromResults);
+        {
+            System.out.println("Merging athletes from most event");
+            int before = athletesToDownload.size();
+            athletesToDownload.addAll(athletesFromMostEventTable);
+            int after = athletesToDownload.size();
+            int added = athletesToDownload.size() - before;
+            int notAdded = athletesFromMostEventTable.size() - added;
+            System.out.println(String.format("Size before: %s, Size after: %s, Added: %d, Not added: %d",
+                    before, after, added, notAdded));
+        }
+        {
+            System.out.println("Merging athletes with pIndex");
+            int before = athletesToDownload.size();
+            athletesToDownload.addAll(athletesWithMinimumPIndex);
+            int after = athletesToDownload.size();
+            int added = athletesToDownload.size() - before;
+            int notAdded = athletesWithMinimumPIndex.size() - added;
+            System.out.println(String.format("Size before: %s, Size after: %s, Added: %d, Not added: %d",
+                    before, after, added, notAdded));
+        }
+        {
+            System.out.println("Merging athletes from most event volunteers");
+            int before = athletesToDownload.size();
+            athletesToDownload.addAll(athletesFromVolunteers);
+            int after = athletesToDownload.size();
+            int added = athletesToDownload.size() - before;
+            int notAdded = athletesFromVolunteers.size() - added;
+            System.out.println(String.format("Size before: %s, Size after: %s, Added: %d, Not added: %d",
+                    before, after, added, notAdded));
+        }
+
         Set<Integer> athletesAlreadyDownloaded = acsDao.getAthleteCourseSummaries().stream().map(acs -> (int) acs[0]).collect(Collectors.toSet());
         System.out.println("Athletes already downloaded. " + athletesAlreadyDownloaded.size());
         athletesToDownload.removeAll(athletesAlreadyDownloaded);
@@ -687,9 +724,11 @@ public class Stats
         List<Integer> listOfAthletesToDownload = new ArrayList<>(athletesToDownload);
         int countOfAthletesToDownload = listOfAthletesToDownload.size();
         System.out.println("Downloading athlete course summaries. Athletes too download. " + countOfAthletesToDownload);
+
         for (int i = 1; i <= countOfAthletesToDownload; i++)
         {
             int athleteId = listOfAthletesToDownload.get(i - 1);
+
             System.out.printf("Downloading %d of %d ", i, countOfAthletesToDownload);
             Parser parser = new Parser.Builder()
                     .url(generateAthleteEventSummaryUrl(NZ.baseUrl, athleteId))
@@ -697,6 +736,15 @@ public class Stats
                         throw new RuntimeException("Course not found. " + courseNotFound);
                     })
                     .forEachAthleteCourseSummary(acsDao::writeAthleteCourseSummary)
+                    .forEachVolunteerRecord(objects ->
+                    {
+                        String type = (String)objects[1];
+                        if("Total Credits".equals(type))
+                        {
+                            int count = (int) objects[2];
+                            volunteerCountsDao.insertVolunteerCount(athleteId, count);
+                        }
+                    })
                     .build(courseRepository);
             parser.parse();
         }

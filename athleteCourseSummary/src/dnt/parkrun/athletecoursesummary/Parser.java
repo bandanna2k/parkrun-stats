@@ -11,7 +11,6 @@ import org.jsoup.select.Elements;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static dnt.parkrun.common.UrlExtractor.extractCourseFromUrl;
@@ -22,14 +21,14 @@ public class Parser
     private final CourseRepository courseRepository;
     private final Consumer<AthleteCourseSummary> consumer;
     private final Consumer<Course> courseNotFoundConsumer;
-    private final BiConsumer<String, Integer> volunteerConsumer;
+    private final Consumer<Object[]> volunteerConsumer;
     private Athlete athlete;
 
     private Parser(Document doc,
                    CourseRepository courseRepository,
                    Consumer<AthleteCourseSummary> consumer,
                    Consumer<Course> courseNotFoundConsumer,
-                   BiConsumer<String, Integer> volunteerConsumer)
+                   Consumer<Object[]> volunteerConsumer)
     {
         this.doc = doc;
         this.courseRepository = courseRepository;
@@ -46,7 +45,7 @@ public class Parser
         athlete = Athlete.from(name, athleteId);
 
         parseEventSummary(name, athleteId);
-        parseEventVolunteerSummary(name, athleteId);
+        parseEventVolunteerSummary(athleteId);
     }
 
     private void parseEventSummary(String name, int athleteId)
@@ -105,7 +104,7 @@ public class Parser
         }
     }
 
-    private void parseEventVolunteerSummary(String name, int athleteId)
+    private void parseEventVolunteerSummary(int athleteId)
     {
         Element eventSummary = doc.getElementById("volunteer-summary");
         if(eventSummary == null)
@@ -135,7 +134,29 @@ public class Parser
                         .childNode(1)   // td
                         .childNode(0).toString());
 
-                volunteerConsumer.accept(volunteerType, count);
+                volunteerConsumer.accept(new Object[] { athleteId, volunteerType, count });
+            }
+        }
+
+        List<Node> footerTableRows = firstTable.childNodes().get(2).childNodes();
+        int footerRowCount = footerTableRows.size();
+
+        for (int i = 0; i < footerRowCount; i++)
+        {
+            Node row = footerTableRows.get(i);
+            if (row instanceof Element)
+            {
+                String volunteerType = row
+                        .childNode(0)   // td
+                        .childNode(0)   // strong
+                        .childNode(0).toString().trim();
+
+                int count = Integer.parseInt(row
+                        .childNode(1)   // td
+                        .childNode(0)   // strong
+                        .childNode(0).toString());
+
+                volunteerConsumer.accept(new Object[] { athleteId, volunteerType, count });
             }
         }
     }
@@ -165,7 +186,7 @@ public class Parser
         private Document doc;
         private Consumer<AthleteCourseSummary> consumer = es -> {};
         private Consumer<Course> courseNotFoundConsumer = s -> System.out.println("WARNING Course not found: " + s);
-        private BiConsumer<String, Integer> volunteerConsumer = (type, count) -> {};
+        private Consumer<Object[]> volunteerConsumer = record -> {};
 
         public Parser build(CourseRepository courseRepository)
         {
@@ -190,7 +211,7 @@ public class Parser
             return this;
         }
 
-        public Builder volunteer(BiConsumer<String, Integer> consumer)
+        public Builder forEachVolunteerRecord(Consumer<Object[]> consumer)
         {
             this.volunteerConsumer = consumer;
             return this;

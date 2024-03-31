@@ -11,10 +11,10 @@ import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static dnt.parkrun.datastructures.Country.NZ;
 
 public class AthleteCourseSummaryDao extends BaseDao
 {
@@ -34,6 +34,7 @@ public class AthleteCourseSummaryDao extends BaseDao
                         "    athlete_id       INT               NOT NULL," +
                         "    course_id        INT               NOT NULL," +
                         "    run_count        INT               NOT NULL," +
+                        "    global_volunteer_count     INT     NOT NULL        DEFAULT 0," +
                         "   PRIMARY KEY (athlete_id, course_id)" +
                         ") DEFAULT CHARSET=utf8mb4";
         jdbc.update(sql, EmptySqlParameterSource.INSTANCE);
@@ -87,17 +88,17 @@ public class AthleteCourseSummaryDao extends BaseDao
     public List<RunsAtEvent> getMostRunsInRegion()
     {
         String sql = "select athlete_id, name, course_long_name, run_count\n" +
-                "from athlete_course_summary_2024_03_09\n" + // TODO
+                "from " + tableName + // TODO
                 "\n" +
                 "right join course c using (course_long_name)\n" +
                 "right join athlete a using (athlete_id)\n" +
                 "\n" +
-                "where c.country_code = 65\n" +
+                "where c.country_code = " + NZ.countryCode +
                 "order by run_count desc limit 50;\n";
         return Collections.emptyList();
     }
 
-    public List<RunsAtEvent> getMostRunsAtEvent()
+    public List<RunsAtEvent> XgetMostRunsAtEvent()
     {
         // TODO Only includes pIndex and Most Events. Not necessarily the max runners.
         String sql =
@@ -106,7 +107,7 @@ public class AthleteCourseSummaryDao extends BaseDao
                         "left join\n" +
                         "(\n" +
                         "    select course_long_name, max(run_count) as max_run_count\n" +
-                        "    from athlete_course_summary_2024_03_09\n" + // TODO
+                        "    from " + tableName + // TODO
                         "    group by course_long_name\n" +
                         ") as sub1 using (course_long_name)\n" +
                         "left join\n" +
@@ -137,5 +138,25 @@ public class AthleteCourseSummaryDao extends BaseDao
                     rs.getInt("max_run_count")
             );
         });
+    }
+
+    public void XupdateAthleteCourseSummariesWithVolunteerCounts(Map<Integer, Integer> athleteToVolunteers)
+    {
+        String sql = "update " + tableName + " set " +
+                "global_volunteer_count = ? where athlete_id = ?";
+        List<Object[]> batch = new ArrayList<>();
+        athleteToVolunteers.forEach((athleteId, count) ->
+                batch.add(new Object[] { count, athleteId } ));
+        jdbc.getJdbcTemplate().batchUpdate(sql, batch);
+    }
+
+    public void updateAthleteCourseSummariesWithVolunteerCount(int athleteId, AtomicInteger volunteerCount)
+    {
+        String sql = "update " + tableName + " set " +
+                "global_volunteer_count = :volunteerCount where athlete_id = :athleteId";
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("volunteerCount", volunteerCount)
+                .addValue("athleteId", athleteId);
+        jdbc.update(sql, params);
     }
 }

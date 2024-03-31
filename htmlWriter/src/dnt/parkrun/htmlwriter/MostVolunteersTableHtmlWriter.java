@@ -41,6 +41,10 @@ public class MostVolunteersTableHtmlWriter extends BaseWriter implements Closeab
         writer.writeCharacters("Total Region Volunteers");
         endElement("th");
 
+        startElement("th");
+        writer.writeCharacters("Total Global Volunteers");
+        endElement("th");
+
         endElement("tr");
         endElement("thead");
     }
@@ -90,6 +94,11 @@ public class MostVolunteersTableHtmlWriter extends BaseWriter implements Closeab
         writer.writeCharacters(String.valueOf(record.totalRegionVolunteers));
         endElement("td");
 
+        // Total global volunteers
+        startElement("td");
+        writer.writeCharacters(String.valueOf(record.totalGlobalVolunteers));
+        endElement("td");
+
         endElement("tr");
     }
 
@@ -98,16 +107,20 @@ public class MostVolunteersTableHtmlWriter extends BaseWriter implements Closeab
         public final Athlete athlete;
         public final int differentRegionCourseCount;
         public final int totalRegionVolunteers;
+        public final int totalGlobalVolunteers;
+
         public int positionDelta;
         public boolean isNewEntry;
 
         public Record(Athlete athlete,
                       int differentRegionCourseCount,
-                      int totalRegionVolunteers)
+                      int totalRegionVolunteers,
+                      int totalGlobalVolunteers)
         {
             this.athlete = athlete;
             this.differentRegionCourseCount = differentRegionCourseCount;
             this.totalRegionVolunteers = totalRegionVolunteers;
+            this.totalGlobalVolunteers = totalGlobalVolunteers;
         }
 
         @Override
@@ -117,7 +130,9 @@ public class MostVolunteersTableHtmlWriter extends BaseWriter implements Closeab
                     "athlete=" + athlete +
                     ", differentRegionCourseCount=" + differentRegionCourseCount +
                     ", totalRegionVolunteers=" + totalRegionVolunteers +
+                    ", totalGlobalVolunteers=" + totalGlobalVolunteers +
                     ", positionDelta=" + positionDelta +
+                    ", isNewEntry=" + isNewEntry +
                     '}';
         }
     }

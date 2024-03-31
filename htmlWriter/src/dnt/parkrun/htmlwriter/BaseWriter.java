@@ -55,7 +55,7 @@ public abstract class BaseWriter implements Closeable
         startElement("td");
         if(isNewEntry)
         {
-            startElement("font", "color", "gold");
+            startElement("font", "color", "orange");
             startElement("abbr", "title", "New Entry");
             writer.writeCharacters("★");
             endElement("abbr");

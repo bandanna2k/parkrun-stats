@@ -24,7 +24,7 @@ public class ParserTest
         URL resource = this.getClass().getResource("/example.athlete.course.summary.html");
         new dnt.parkrun.athletecoursesummary.Parser.Builder()
                 .file(new File(resource.getFile()))
-                .volunteer(volunteerTypeToCount::put)
+                .forEachVolunteerRecord(record -> volunteerTypeToCount.put((String)record[1], (int)record[2]))
                 .forEachAthleteCourseSummary(x ->
                 {
                     counter.addAndGet(x.countOfRuns);
@@ -34,5 +34,6 @@ public class ParserTest
                 .parse();
         System.out.println("Total:" + counter.get());
         Assertions.assertThat(volunteerTypeToCount.get("Marshal")).isEqualTo(9);
+        Assertions.assertThat(volunteerTypeToCount.get("Total Credits")).isEqualTo(21);
     }
 }
