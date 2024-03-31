@@ -10,19 +10,20 @@ import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
 
-import static dnt.parkrun.database.VolunteerDao.MIN_VOLUNTEER_COUNT;
+import static dnt.parkrun.database.VolunteerDao.getMostVolunteersSubQuery1;
+import static dnt.parkrun.database.VolunteerDao.getMostVolunteersSubQuery2;
 
-public class VolunteerCountsDao extends BaseDao
+public class VolunteerCountDao extends BaseDao
 {
     private final Date date;
 
-    public static VolunteerCountsDao getOrCreate(DataSource dataSource, Date date)
+    public static VolunteerCountDao getOrCreate(DataSource dataSource, Date date)
     {
-        VolunteerCountsDao mostVolunteersDao = new VolunteerCountsDao(dataSource, date);
+        VolunteerCountDao mostVolunteersDao = new VolunteerCountDao(dataSource, date);
         mostVolunteersDao.init();
         return mostVolunteersDao;
     }
-    private VolunteerCountsDao(DataSource dataSource, Date date)
+    private VolunteerCountDao(DataSource dataSource, Date date)
     {
         super(dataSource);
         this.date = date;
@@ -54,7 +55,7 @@ public class VolunteerCountsDao extends BaseDao
 
     private String getTableName()
     {
-        return "volunteer_counts_" + DateConverter.formatDateForDbTable(date);
+        return "volunteer_count_" + DateConverter.formatDateForDbTable(date);
     }
 
     public List<Object[]> getMostVolunteers()
@@ -63,18 +64,11 @@ public class VolunteerCountsDao extends BaseDao
                 "from " + athleteTable() + " a\n" +
                 "join  \n" +
                 "(\n" +
-                "    select athlete_id, count(course_id) as count\n" +
-                "    from (select distinct athlete_id, course_id from " + volunteerTable() +") as sub1a\n" +
-                "    group by athlete_id\n" +
-                "    having count >= " + MIN_VOLUNTEER_COUNT + " " +
-                "    order by count desc, athlete_id asc \n" +
+                getMostVolunteersSubQuery1(volunteerTable()) +
                 ") as sub1 on sub1.athlete_id = a.athlete_id\n" +
                 "join\n" +
                 "(\n" +
-                "    select athlete_id, count(concat) as count\n" +
-                "    from (select athlete_id, concat(athlete_id, '-', course_id, '-', date) as concat from " + volunteerTable() + ") as sub2a\n" +
-                "    group by athlete_id\n" +
-                "    order by count desc, athlete_id asc \n" +
+                getMostVolunteersSubQuery2(volunteerTable()) +
                 ") as sub2 on sub2.athlete_id = a.athlete_id\n" +
                 "left join " + getTableName() + " vc on vc.athlete_id = a.athlete_id " +
                 "where a.name is not null\n" +

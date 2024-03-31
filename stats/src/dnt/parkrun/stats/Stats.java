@@ -6,7 +6,6 @@ import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.*;
 import dnt.parkrun.database.stats.MostEventsDao;
-import dnt.parkrun.database.stats.MostVolunteersDao;
 import dnt.parkrun.database.stats.Top10RunsDao;
 import dnt.parkrun.database.stats.Top10VolunteersDao;
 import dnt.parkrun.database.weekly.*;
@@ -71,9 +70,8 @@ public class Stats
     private final Top10VoluteersAtCourseDao top10VolunteerDao;
     private final CourseEventSummaryDao courseEventSummaryDao;
     private final PIndexDao pIndexDao;
-    private final VolunteerCountsDao volunteerCountsDao;
+    private final VolunteerCountDao volunteerCountDao;
     private MostEventsDao mostEventsDao;
-    private final MostVolunteersDao mostVolunteersDao;
     private final VolunteerDao volunteerDao;
 
     private final Map<Integer, Athlete> athleteIdToAthlete = new HashMap<>();
@@ -95,8 +93,7 @@ public class Stats
         this.top10VolunteerDao = new Top10VoluteersAtCourseDao(statsDataSource, this.date);
         this.resultDao = new ResultDao(dataSource);
         this.pIndexDao = new PIndexDao(statsDataSource, date);
-        this.volunteerCountsDao = VolunteerCountsDao.getOrCreate(statsDataSource, this.date);
-        this.mostVolunteersDao = new MostVolunteersDao(statsDataSource);
+        this.volunteerCountDao = VolunteerCountDao.getOrCreate(statsDataSource, this.date);
         this.volunteerDao = new VolunteerDao(statsDataSource);
 
         this.courseRepository = new CourseRepository();
@@ -209,7 +206,7 @@ public class Stats
         {
             try (MostVolunteersTableHtmlWriter tableWriter = new MostVolunteersTableHtmlWriter(writer))
             {
-                List<Object[]> mostVolunteers = volunteerCountsDao.getMostVolunteers();
+                List<Object[]> mostVolunteers = volunteerCountDao.getMostVolunteers();
                 assert !mostVolunteers.isEmpty() : "No records for Most Volunteers";
                 for (Object[] record : mostVolunteers)
                 {
@@ -742,7 +739,7 @@ public class Stats
                         if("Total Credits".equals(type))
                         {
                             int count = (int) objects[2];
-                            volunteerCountsDao.insertVolunteerCount(athleteId, count);
+                            volunteerCountDao.insertVolunteerCount(athleteId, count);
                         }
                     })
                     .build(courseRepository);
