@@ -7,20 +7,6 @@ Run MostEvents.main (this will fill a database with all region results from acti
 Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023 
 (this create a Most Events table, and an Attendance table, and output to HTML)
 
-
-
-
-As usual, let me know if something is missing or incorrect.
-
-I have added a chart to the Most Events (Extended) table that I've always wanted to see.
-It shows Start Dates against Run dates. It shows you if you are getting closer or further away from being a regionnaire.
-
-New features this week.
-
-- Most Events Volunteering
-- Regionnaire Count - Most Events (Extended)
-- Start Date/Run Date Chart - Most Events (Extended)
-
 # TODO
 
 ## Major
@@ -28,6 +14,8 @@ New features this week.
 - Prove?? Parsers can break half way through. Collate records first then stream records.
 
 ## Minor
+
+- Bug with volunteer count - I am recording volunteers on 1 day at all courses. Change to 1 day at any course.
 
 - NZ Totals not working. Could do with some invariants or asserts.
 

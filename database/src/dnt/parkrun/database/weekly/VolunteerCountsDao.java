@@ -1,4 +1,4 @@
-package dnt.parkrun.database.stats;
+package dnt.parkrun.database.weekly;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.BaseDao;

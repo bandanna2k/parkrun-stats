@@ -1,9 +1,6 @@
-package dnt.parkrun.database.weekly;
+package dnt.parkrun.database;
 
 import com.mysql.jdbc.Driver;
-import dnt.parkrun.database.AthleteDao;
-import dnt.parkrun.database.BaseDaoTest;
-import dnt.parkrun.database.VolunteerDao;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Volunteer;
 import org.assertj.core.api.Assertions;
