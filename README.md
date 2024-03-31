@@ -15,8 +15,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Minor
 
-- Give all DAO calls a test, not hard.
-
 - Bug with volunteer count - I am recording volunteers on 1 day at all courses. Change to 1 day at any course.
 
 - NZ Totals not working. Could do with some invariants or asserts.
