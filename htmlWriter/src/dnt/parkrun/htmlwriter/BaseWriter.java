@@ -44,25 +44,41 @@ public abstract class BaseWriter implements Closeable
         writer.writeCharacters("\n");
     }
 
-    protected void writeTableDataWithDelta(int delta) throws XMLStreamException
+    protected void writeTableDataWithDelta(int delta, boolean isNewEntry) throws XMLStreamException
     {
+        /*
+        ★⭐★
+☆✪✵✯٭✭✰⚝⚹❉❋✺✹✸
+✶✷✵✲✱✧✦⍟⊛⁕﹡❃❂✼✻⍣≛*✫
+         */
         // Up/Down
         startElement("td");
-        if(delta > 0)
+        if(isNewEntry)
         {
-            startElement("font", "color", "green");
-            startElement("abbr", "title", "+" + delta);
-            writer.writeCharacters("▲");
+            startElement("font", "color", "gold");
+            startElement("abbr", "title", "New Entry");
+            writer.writeCharacters("★");
             endElement("abbr");
             endElement("font");
         }
-        else if(delta < 0)
+        else
         {
-            startElement("font", "color", "red");
-            startElement("abbr", "title", String.valueOf(delta));
-            writer.writeCharacters("▼");
-            endElement("abbr");
-            endElement("font");
+            if (delta > 0)
+            {
+                startElement("font", "color", "green");
+                startElement("abbr", "title", "+" + delta);
+                writer.writeCharacters("▲");
+                endElement("abbr");
+                endElement("font");
+            }
+            else if (delta < 0)
+            {
+                startElement("font", "color", "red");
+                startElement("abbr", "title", String.valueOf(delta));
+                writer.writeCharacters("▼");
+                endElement("abbr");
+                endElement("font");
+            }
         }
         endElement("td");
     }

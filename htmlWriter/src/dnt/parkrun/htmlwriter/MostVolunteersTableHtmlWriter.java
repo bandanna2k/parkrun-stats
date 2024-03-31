@@ -69,7 +69,7 @@ public class MostVolunteersTableHtmlWriter extends BaseWriter implements Closeab
     {
         writer.writeStartElement("tr");
 
-        writeTableDataWithDelta(record.positionDelta);
+        writeTableDataWithDelta(record.positionDelta, record.isNewEntry);
 
         // Name
         startElement("td");
@@ -99,6 +99,7 @@ public class MostVolunteersTableHtmlWriter extends BaseWriter implements Closeab
         public final int differentRegionCourseCount;
         public final int totalRegionVolunteers;
         public int positionDelta;
+        public boolean isNewEntry;
 
         public Record(Athlete athlete,
                       int differentRegionCourseCount,

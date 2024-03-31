@@ -102,24 +102,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
        writer.writeStartElement("tr");
 
         // Up/Down
-        startElement("td");
-        if(record.positionDelta > 0)
-        {
-            startElement("font", "color", "green");
-            startElement("abbr", "title", "+" + record.positionDelta);
-            writer.writeCharacters("▲");
-            endElement("abbr");
-            endElement("font");
-        }
-        else if(record.positionDelta < 0)
-        {
-            startElement("font", "color", "red");
-            startElement("abbr", "title", String.valueOf(record.positionDelta));
-            writer.writeCharacters("▼");
-            endElement("abbr");
-            endElement("font");
-        }
-        endElement("td");
+        writeTableDataWithDelta(record.positionDelta, record.isNewEntry);
 
         // Name
         startElement("td");
@@ -182,14 +165,17 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         public final int totalRegionRuns;
         public final int differentCourseCount;
         public final int totalRuns;
-        public final int positionDelta;
         public final String firstRuns;
         public final int regionnaireCount;
+
+        public final int positionDelta;
+        public final boolean isNewEntry;
 
         public Record(Athlete athlete,
                       int differentRegionCourseCount, int totalRegionRuns,
                       int differentCourseCount, int totalRuns,
-                      int positionDelta, String firstRuns, int regionnaireCount)
+                      int positionDelta, boolean isNewEntry,
+                      String firstRuns, int regionnaireCount)
         {
             this.athlete = athlete;
             this.differentRegionCourseCount = differentRegionCourseCount;
@@ -197,6 +183,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             this.differentCourseCount = differentCourseCount;
             this.totalRuns = totalRuns;
             this.positionDelta = positionDelta;
+            this.isNewEntry = isNewEntry;
             this.firstRuns = firstRuns;
             this.regionnaireCount = regionnaireCount;
         }

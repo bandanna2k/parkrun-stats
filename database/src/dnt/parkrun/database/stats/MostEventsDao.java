@@ -174,7 +174,9 @@ public class MostEventsDao extends BaseDao
         public final int totalRegionRuns;
         public final int differentCourseCount;
         public final int totalRuns;
+
         public int positionDelta = 0;
+        public boolean isNewEntry = false;
 
         public MostEventsRecord(String name,
                                     int athleteId,
@@ -202,6 +204,7 @@ public class MostEventsDao extends BaseDao
                     ", differentCourseCount=" + differentCourseCount +
                     ", totalRuns=" + totalRuns +
                     ", positionDelta=" + positionDelta +
+                    ", isNewEntry=" + isNewEntry +
                     '}';
         }
     }

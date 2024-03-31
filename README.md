@@ -29,6 +29,8 @@ New features this week.
 
 ## Minor
 
+- New entries to tables
+
 - Revisit pIndex downloads. I don't think the criteria for downloading the athletes its correct.
 
 - Do I need name/most global events in most events table?

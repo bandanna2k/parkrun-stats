@@ -80,7 +80,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
     {
         startTableRowElement(record.isRegionalPIndexAthlete ? null : "#FFE9F0");
 
-        writeTableDataWithDelta(record.positionDelta);
+        writeTableDataWithDelta(record.positionDelta, record.isNewEntry);
 
         // Name
         startElement("td");
@@ -111,18 +111,6 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         endElement("tr");
     }
 
-    private void XstartTableElement(boolean isRegionalPIndexAthlete) throws XMLStreamException
-    {
-        if(isRegionalPIndexAthlete)
-        {
-            startElement("td");
-        }
-        else
-        {
-            startElement("td", "style", "background-color:#FFE9F0");
-        }
-    }
-
     private void startTableRowElement(String colorCode) throws XMLStreamException
     {
         if(colorCode == null)
@@ -142,6 +130,8 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         public final double homeRatio;
         public final PIndex.Result regionPIndex;
         public final boolean isRegionalPIndexAthlete;
+
+        public boolean isNewEntry;
         public int positionDelta;
 
         public Record(Athlete athlete, PIndex.Result globalPIndex, double homeRatio, PIndex.Result regionPIndex)
@@ -165,7 +155,10 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
                     "athlete=" + athlete +
                     ", globalPIndex=" + globalPIndex +
                     ", homeRatio=" + homeRatio +
+                    ", regionPIndex=" + regionPIndex +
                     ", isRegionalPIndexAthlete=" + isRegionalPIndexAthlete +
+                    ", positionDelta=" + positionDelta +
+                    ", isNewEntry=" + isNewEntry +
                     '}';
         }
     }

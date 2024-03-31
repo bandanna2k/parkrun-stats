@@ -532,7 +532,7 @@ public class Stats
                         new MostEventsTableHtmlWriter.Record(athlete,
                                 der.differentRegionCourseCount, der.totalRegionRuns,
                                 courseCount, totalCourseCount,
-                                der.positionDelta,
+                                der.positionDelta, der.isNewEntry,
                                 firstRuns,
                                 regionnaireCount));
             }
@@ -769,17 +769,21 @@ public class Stats
     {
         for (int indexThisWeek = 0; indexThisWeek < differentEventRecords.size(); indexThisWeek++)
         {
+            MostEventsDao.MostEventsRecord thisWeek = differentEventRecords.get(indexThisWeek);
+
+            boolean found = false;
             for (int indexLastWeek = 0; indexLastWeek < differentEventRecordsFromLastWeek.size(); indexLastWeek++)
             {
-                MostEventsDao.MostEventsRecord thisWeek = differentEventRecords.get(indexThisWeek);
                 MostEventsDao.MostEventsRecord lastWeek = differentEventRecordsFromLastWeek.get(indexLastWeek);
 
                 if (thisWeek.athleteId == lastWeek.athleteId)
                 {
-                    // Found athlete
+                    found = true;
                     thisWeek.positionDelta = indexLastWeek - indexThisWeek;
+                    break;
                 }
             }
+            if(!found) thisWeek.isNewEntry = true;
         }
     }
 
@@ -805,17 +809,21 @@ public class Stats
     {
         for (int indexThisWeek = 0; indexThisWeek < pIndexRecords.size(); indexThisWeek++)
         {
+            PIndexTableHtmlWriter.Record thisWeek = pIndexRecords.get(indexThisWeek);
+
+            boolean found = false;
             for (int indexLastWeek = 0; indexLastWeek < pIndexRecordsLastWeek.size(); indexLastWeek++)
             {
-                PIndexTableHtmlWriter.Record thisWeek = pIndexRecords.get(indexThisWeek);
                 PIndexTableHtmlWriter.Record lastWeek = pIndexRecordsLastWeek.get(indexLastWeek);
 
                 if (thisWeek.athlete.athleteId == lastWeek.athlete.athleteId)
                 {
-                    // Found athlete
+                    found = true;
                     thisWeek.positionDelta = indexLastWeek - indexThisWeek;
+                    break;
                 }
             }
+            if(!found) thisWeek.isNewEntry = true;
         }
     }
 
