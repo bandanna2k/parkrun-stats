@@ -2,11 +2,14 @@ package dnt.parkrun.athletecoursesummary;
 
 
 import dnt.parkrun.datastructures.CourseRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ParserTest
@@ -16,10 +19,12 @@ public class ParserTest
     {
         AtomicInteger counter = new AtomicInteger(0);
 
+        Map<String, Integer> volunteerTypeToCount = new HashMap<>();
         CourseRepository courseRepository = new CourseRepository();
         URL resource = this.getClass().getResource("/example.athlete.course.summary.html");
         new dnt.parkrun.athletecoursesummary.Parser.Builder()
                 .file(new File(resource.getFile()))
+                .volunteer(volunteerTypeToCount::put)
                 .forEachAthleteCourseSummary(x ->
                 {
                     counter.addAndGet(x.countOfRuns);
@@ -28,7 +33,6 @@ public class ParserTest
                 .build(courseRepository)
                 .parse();
         System.out.println("Total:" + counter.get());
+        Assertions.assertThat(volunteerTypeToCount.get("Marshal")).isEqualTo(9);
     }
-
-
 }

@@ -9,9 +9,9 @@ import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static dnt.parkrun.common.UrlExtractor.extractCourseFromUrl;
@@ -22,17 +22,20 @@ public class Parser
     private final CourseRepository courseRepository;
     private final Consumer<AthleteCourseSummary> consumer;
     private final Consumer<Course> courseNotFoundConsumer;
+    private final BiConsumer<String, Integer> volunteerConsumer;
     private Athlete athlete;
 
     private Parser(Document doc,
                    CourseRepository courseRepository,
                    Consumer<AthleteCourseSummary> consumer,
-                   Consumer<Course> courseNotFoundConsumer)
+                   Consumer<Course> courseNotFoundConsumer,
+                   BiConsumer<String, Integer> volunteerConsumer)
     {
         this.doc = doc;
         this.courseRepository = courseRepository;
         this.consumer = consumer;
         this.courseNotFoundConsumer = courseNotFoundConsumer;
+        this.volunteerConsumer = volunteerConsumer;
     }
 
     public void parse()
@@ -42,6 +45,12 @@ public class Parser
         int athleteId = extractAthleteId(nameElements.text());
         athlete = Athlete.from(name, athleteId);
 
+        parseEventSummary(name, athleteId);
+        parseEventVolunteerSummary(name, athleteId);
+    }
+
+    private void parseEventSummary(String name, int athleteId)
+    {
         Element eventSummary = doc.getElementById("event-summary");
         if(eventSummary == null)
         {
@@ -96,6 +105,41 @@ public class Parser
         }
     }
 
+    private void parseEventVolunteerSummary(String name, int athleteId)
+    {
+        Element eventSummary = doc.getElementById("volunteer-summary");
+        if(eventSummary == null)
+        {
+            System.out.println("WARNING No volunteer summary. Probable runner only.");
+            return;
+        }
+
+        Elements summaries = eventSummary.parents();
+        Elements tableElements = summaries.select("table");
+
+        Element firstTable = tableElements.get(0);
+
+        List<Node> firstTableRows = firstTable.childNodes().get(1).childNodes();
+        int numRows = firstTableRows.size();
+
+        for (int i = 0; i < numRows; i++)
+        {
+            Node row = firstTableRows.get(i);
+            if (row instanceof Element)
+            {
+                String volunteerType = row
+                        .childNode(0)   // td
+                        .childNode(0).toString().trim();
+
+                int count = Integer.parseInt(row
+                        .childNode(1)   // td
+                        .childNode(0).toString());
+
+                volunteerConsumer.accept(volunteerType, count);
+            }
+        }
+    }
+
     private static String extractName(String nameWithId)
     {
         int indexOf = nameWithId.indexOf("(");
@@ -121,10 +165,11 @@ public class Parser
         private Document doc;
         private Consumer<AthleteCourseSummary> consumer = es -> {};
         private Consumer<Course> courseNotFoundConsumer = s -> System.out.println("WARNING Course not found: " + s);
+        private BiConsumer<String, Integer> volunteerConsumer = (type, count) -> {};
 
         public Parser build(CourseRepository courseRepository)
         {
-            return new Parser(doc, courseRepository, consumer, courseNotFoundConsumer);
+            return new Parser(doc, courseRepository, consumer, courseNotFoundConsumer, volunteerConsumer);
         }
 
         public Builder url(URL url)
@@ -133,7 +178,7 @@ public class Parser
             return this;
         }
 
-        public Builder file(File file) throws IOException
+        public Builder file(File file)
         {
             this.doc = JsoupWrapper.newDocument(file);
             return this;
@@ -142,6 +187,12 @@ public class Parser
         public Builder courseNotFound(Consumer<Course> consumer)
         {
             this.courseNotFoundConsumer = consumer;
+            return this;
+        }
+
+        public Builder volunteer(BiConsumer<String, Integer> consumer)
+        {
+            this.volunteerConsumer = consumer;
             return this;
         }
 

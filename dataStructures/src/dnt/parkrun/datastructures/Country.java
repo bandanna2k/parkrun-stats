@@ -1,7 +1,10 @@
 package dnt.parkrun.datastructures;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public enum Country
 {
@@ -58,7 +61,8 @@ public enum Country
 
     public static Country findFromUrl(String url)
     {
-        for(Country country : values())
+        List<Country> list = Arrays.stream(values()).filter(c -> c.baseUrl != null).collect(Collectors.toList());
+        for(Country country : list)
         {
             if(url.contains(country.baseUrl)) return country;
         }
