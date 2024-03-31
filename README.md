@@ -8,6 +8,19 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 (this create a Most Events table, and an Attendance table, and output to HTML)
 
 
+
+
+As usual, let me know if something is missing or incorrect.
+
+I have added a chart to the Most Events (Extended) table that I've always wanted to see.
+It shows Start Dates against Run dates. It shows you if you are getting closer or further away from being a regionnaire.
+
+New features this week.
+
+- Most Events Volunteering
+- Regionnaire Count - Most Events (Extended)
+- Start Date/Run Date Chart - Most Events (Extended)
+
 # TODO
 
 ## Major
@@ -15,6 +28,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 - Prove?? Parsers can break half way through. Collate records first then stream records.
 
 ## Minor
+
+- Revisit pIndex downloads. I don't think the criteria for downloading the athletes its correct.
 
 - Do I need name/most global events in most events table?
 

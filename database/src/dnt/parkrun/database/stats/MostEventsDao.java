@@ -147,7 +147,7 @@ public class MostEventsDao extends BaseDao
     public List<Object[]> getFirstRuns()
     {
         String sql = "select athlete_id, json_course_ids, json_first_runs " +
-                "from most_events_for_region_2024_03_23 " +
+                "from " + getTableName() + " " +
                 "join  " +
                 "( " +
                 "    select athlete_id, JSON_ARRAYAGG(course_id) as json_course_ids, JSON_ARRAYAGG(unix_timestamp(first_run)) as json_first_runs " +

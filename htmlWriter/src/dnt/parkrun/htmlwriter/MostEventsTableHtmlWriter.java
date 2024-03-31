@@ -11,13 +11,16 @@ import static dnt.parkrun.datastructures.Country.NZ;
 
 public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 {
-    public MostEventsTableHtmlWriter(XMLStreamWriter writer) throws XMLStreamException
+    private final boolean extended;
+
+    public MostEventsTableHtmlWriter(XMLStreamWriter writer, boolean extended) throws XMLStreamException
     {
         super(writer);
+        this.extended = extended;
 
         startElement("details");
         startElement("summary");
-        writer.writeCharacters("Most Events (Extended)");
+        writer.writeCharacters(extended ? "Most Events (Extended)" : "Most Events");
         endElement("summary");
 
         startElement("table", "class", "sortable most-events");
@@ -54,12 +57,19 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         writer.writeCharacters("Total Runs");
         endElement("th");
 
-        startElement("th");
-        writer.writeCharacters("Regionnaire Count");
-        endElement("th");
+        if(extended)
+        {
+            startElement("th");
+            writer.writeCharacters("Regionnaire Count");
+            endElement("th");
+        }
 
-        startElement("th");
-        endElement("th");
+        if(extended)
+        {
+            // Chart
+            startElement("th");
+            endElement("th");
+        }
 
         endElement("tr");
         endElement("thead");
@@ -140,21 +150,27 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         writer.writeCharacters(String.valueOf(record.totalRuns));
         endElement("td");
 
-        // Regionnaire count
-        startElement("td");
-        writer.writeCharacters(String.valueOf(record.regionnaireCount));
-        endElement("td");
+        if(extended)
+        {
+            // Regionnaire count
+            startElement("td");
+            writer.writeCharacters(String.valueOf(record.regionnaireCount));
+            endElement("td");
+        }
 
-        // Total region runs
-        startElement("td");
-        startElement("span", "onclick",
-                "dialog.showModal();" +
-                        "setFirstRuns('" + record.athlete.name.replace("'", "\\'") + "'," + record.firstRuns + ");" +
-                        "refreshStartDates();"
-        );
-        writer.writeCharacters("\uD83D\uDCC8");
-        endElement("div");
-        endElement("td");
+        if(extended)
+        {
+            // Total region runs
+            startElement("td");
+            startElement("span", "onclick",
+                    "dialog.showModal();" +
+                            "setFirstRuns('" + record.athlete.name.replace("'", "\\'") + "'," + record.firstRuns + ");" +
+                            "refreshStartDates();"
+            );
+            writer.writeCharacters("\uD83D\uDCC8");
+            endElement("div");
+            endElement("td");
+        }
 
         endElement("tr");
     }

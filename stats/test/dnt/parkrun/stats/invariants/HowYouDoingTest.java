@@ -124,8 +124,6 @@ public class HowYouDoingTest
                     .build();
             reader.read();
 
-            courseRepository.addCourse(new Course(8888888, "Shenzhen", Country.UNKNOWN, "Shenzhen", Course.Status.STOPPED));
-
             courseRepository.forEachCourse(course -> {
                 if(course.status != Course.Status.STOPPED)
                 {
@@ -155,7 +153,7 @@ public class HowYouDoingTest
             softly.assertThat(areResultsIn(new Course(12346, "cloverpoint", Country.CANADA, "cloverpoint", Course.Status.RUNNING)))
                     .describedAs("cloverpoint results not in")
                     .isEqualTo(true);
-            softly.assertThat(new Course(12347, "ambleside", Country.CANADA, "ambleside", Course.Status.RUNNING))
+            softly.assertThat(areResultsIn(new Course(12347, "ambleside", Country.CANADA, "ambleside", Course.Status.RUNNING)))
                     .describedAs("ambleside results not in")
                     .isEqualTo(true);
             softly.assertAll();
@@ -163,7 +161,7 @@ public class HowYouDoingTest
         public boolean areResultsIn(Course course) throws IOException
         {
             dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(course)
-                    .url(UrlGenerator.generateCourseLatestResultsUrl("parkrun.ca", course.name))
+                    .url(UrlGenerator.generateCourseLatestResultsUrl(Country.CANADA.baseUrl, course.name))
                     .build();
             parser.parse();
 

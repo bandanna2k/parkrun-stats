@@ -141,10 +141,12 @@ public class Stats
 
             writeAttendanceRecords(writer);
 
+            writeMostEvents(writer, differentEventRecords, false);
+
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
-            writeMostEvents(writer, differentEventRecords);
+            writeMostEvents(writer, differentEventRecords, true);
 
             writeMostVolunteers(writer);
 
@@ -497,7 +499,7 @@ public class Stats
         }
     }
 
-    private void writeMostEvents(HtmlWriter writer, List<MostEventsDao.MostEventsRecord> differentEventRecords) throws XMLStreamException
+    private void writeMostEvents(HtmlWriter writer, List<MostEventsDao.MostEventsRecord> differentEventRecords, boolean extended) throws XMLStreamException
     {
         System.out.print("Getting start dates ");
         Map<Integer, Date> courseIdToStartDate = courseEventSummaryDao.getStartDates();
@@ -508,7 +510,7 @@ public class Stats
                 athleteIdToFirstRuns.put((int)object[0], String.format("[%s,%s]", object[1], object[2])));
         System.out.println("DONE");
 
-        try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer))
+        try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, extended))
         {
             for (MostEventsDao.MostEventsRecord der : differentEventRecords)
             {
@@ -523,8 +525,8 @@ public class Stats
 //                if(der.athleteId != 796322) continue;
 
                 // Calculate regionnaire count
-                final String firstRuns = athleteIdToFirstRuns.get(der.athleteId);
-                final int regionnaireCount = getRegionnaireCount(courseIdToStartDate, firstRuns);
+                final String firstRuns = extended ? athleteIdToFirstRuns.get(der.athleteId) : null;
+                final int regionnaireCount = extended ? getRegionnaireCount(courseIdToStartDate, firstRuns) : -1;
 
                 tableWriter.writeMostEventRecord(
                         new MostEventsTableHtmlWriter.Record(athlete,
@@ -575,7 +577,9 @@ public class Stats
         assert courseIds.length == dates.length;
         for (int i = 0; i < courseIds.length; i++)
         {
-            Course course = courseRepository.getCourse(Integer.parseInt(courseIds[i].trim()));
+            int courseId = Integer.parseInt(courseIds[i].trim());
+            Course course = courseRepository.getCourse(courseId);
+            assert course != null : "Course ID not found " + courseId;
             Date firstRun = new Date(Long.parseLong(dates[i].trim())*1000);
             listOfFirstRuns.add(new Record(course, firstRun));
         }
