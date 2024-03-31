@@ -10,7 +10,7 @@ import java.util.List;
 
 public class VolunteerDao extends BaseDao
 {
-    public static final String MIN_VOLUNTEER_COUNT = "20";
+    public static final int MIN_VOLUNTEER_COUNT = 20;
 
     public VolunteerDao(DataSource dataSource)
     {
@@ -46,7 +46,7 @@ public class VolunteerDao extends BaseDao
                 "join\n" +
                 "(\n" +
                 "    select athlete_id, count(concat) as count\n" +
-                "    from (select athlete_id, concat(athlete_id, '-', course_id, '-', date) as concat from " + volunteerTable() + ") as sub2a\n" +
+                "    from (select distinct athlete_id, concat(athlete_id, '-', date) as concat from " + volunteerTable() + ") as sub2a\n" +
                 "    group by athlete_id\n" +
                 "    order by count desc, athlete_id asc \n" +
                 ") as sub2 on sub2.athlete_id = a.athlete_id\n" +
