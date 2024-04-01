@@ -48,7 +48,12 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         endElement("th");
 
         startElement("th");
-        writer.writeCharacters("Home Ratio");
+        information("Home Ratio",
+                "The ratio of runs ran in a persons home parkrun NZ province. " +
+                        "Home parkrun is the parkrun a person has attended the most. " +
+                        "Must be in NZ, otherwise they are in the legacy table. " +
+                        "E.g. For Bob who has run 11 runs, 10 in Invercargill and 1 in Wellington, " +
+                        "Bob's home ratio will be 0.909");
         endElement("th");
 
         endElement("tr");
