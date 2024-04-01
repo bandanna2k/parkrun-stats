@@ -79,7 +79,7 @@ public class ResultDao
         });
     }
 
-    public String getFirstRuns(int athleteId)
+    public String getFirstRunsJsonArrays(int athleteId)
     {
         String sql = "select JSON_ARRAYAGG(course_id) as json_courses, JSON_ARRAYAGG(unix_timestamp(first_run)) as json_first_runs " +
                 "from " +

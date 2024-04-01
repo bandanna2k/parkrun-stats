@@ -78,7 +78,7 @@ public class Time
         }
     }
 
-    public long getTotalSeconds()
+    public int getTotalSeconds()
     {
         return (hours * 3600) + (mins * 60) + seconds;
     }
