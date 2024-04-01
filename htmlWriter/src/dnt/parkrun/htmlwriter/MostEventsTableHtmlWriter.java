@@ -68,6 +68,14 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 
         if(extended)
         {
+            startElement("th");
+            information("Events Needed (Max)",
+                    "Events needed to be regionnaire. (Maximum events this person has ever needed to become a regionnaire.");
+            endElement("th");
+        }
+
+        if(extended)
+        {
             // Chart
             startElement("th");
             endElement("th");
@@ -145,7 +153,14 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 
         if(extended)
         {
-            // Total region runs
+            // Runs needed
+            startElement("td");
+            writer.writeCharacters(record.runsNeeded);
+            endElement("td");
+        }
+
+        if(extended)
+        {
             startElement("td");
             startElement("span", "class", "click-me",
                     "onclick",
@@ -173,12 +188,13 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 
         public final int positionDelta;
         public final boolean isNewEntry;
+        public final String runsNeeded;
 
         public Record(Athlete athlete,
                       int differentRegionCourseCount, int totalRegionRuns,
                       int differentCourseCount, int totalRuns,
                       int positionDelta, boolean isNewEntry,
-                      String firstRuns, int regionnaireCount)
+                      String firstRuns, int regionnaireCount, String runsNeeded)
         {
             this.athlete = athlete;
             this.differentRegionCourseCount = differentRegionCourseCount;
@@ -189,6 +205,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             this.isNewEntry = isNewEntry;
             this.firstRuns = firstRuns;
             this.regionnaireCount = regionnaireCount;
+            this.runsNeeded = runsNeeded;
         }
 
         @Override

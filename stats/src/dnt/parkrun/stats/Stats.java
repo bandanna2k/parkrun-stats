@@ -527,6 +527,7 @@ public class Stats
                 // Calculate regionnaire count
                 final String firstRuns = extended ? athleteIdToFirstRuns.get(der.athleteId) : null;
                 final int regionnaireCount = extended ? getRegionnaireCount(courseIdToStartDate, firstRuns) : -1;
+                final String runsNeeded = extended ? getRunsNeeded(courseIdToStartDate, firstRuns) : null;
 
                 tableWriter.writeMostEventRecord(
                         new MostEventsTableHtmlWriter.Record(athlete,
@@ -534,9 +535,89 @@ public class Stats
                                 courseCount, totalCourseCount,
                                 der.positionDelta, der.isNewEntry,
                                 firstRuns,
-                                regionnaireCount));
+                                regionnaireCount,
+                                runsNeeded));
             }
         }
+    }
+
+    private String getRunsNeeded(Map<Integer, Date> courseIdToStartDate, String firstRuns)
+    {
+        class Record
+        {
+            final Course course;
+            final Date date;
+            Record(Course course, Date date)
+            {
+                this.course = course;
+                this.date = date;
+            }
+            @Override
+            public String toString()
+            {
+                return "Record{" +
+                        "course=" + course +
+                        ", date=" + date +
+                        '}';
+            }
+        }
+        List<Record> startDates = courseIdToStartDate.entrySet().stream().map(entry ->
+                new Record(courseRepository.getCourse(entry.getKey()), entry.getValue())).collect(Collectors.toList());
+        startDates.sort((r1, r2) -> {
+            if(r1.date.after(r2.date)) return 1;
+            if(r2.date.after(r1.date)) return -1;
+            return 0;
+        });
+
+        List<Record> listOfFirstRuns = new ArrayList<>();
+        String[] split = firstRuns.split("],");
+        assert split.length == 2;
+        String[] courseIds = split[0].replace("[","").replace("]","").split(",");
+        String[] dates = split[1].replace("[","").replace("]","").split(",");
+        assert courseIds.length == dates.length;
+        for (int i = 0; i < courseIds.length; i++)
+        {
+            int courseId = Integer.parseInt(courseIds[i].trim());
+            Course course = courseRepository.getCourse(courseId);
+            assert course != null : "Course ID not found " + courseId;
+            Date firstRun = new Date(Long.parseLong(dates[i].trim())*1000);
+            listOfFirstRuns.add(new Record(course, firstRun));
+        }
+        listOfFirstRuns.sort((r1, r2) -> {
+            if(r1.date.after(r2.date)) return 1;
+            if(r2.date.after(r1.date)) return -1;
+            return 0;
+        });
+
+        int maxBehind = -1;
+        int behindNow = -1;
+        final int totalEvents = courseIdToStartDate.size();
+        final int totalEventsRun = courseIds.length;
+        while(!startDates.isEmpty())
+        {
+            Record startDate = startDates.remove(0);
+            listOfFirstRuns.removeIf(record -> record.date.getTime() <= startDate.date.getTime());
+
+            int courseThatHaventStartedYet = startDates.size();
+            int countOfEventsThereHaveBeen = totalEvents - courseThatHaventStartedYet;
+            int coursesDoneSoFar = totalEventsRun - listOfFirstRuns.size();
+
+            behindNow = countOfEventsThereHaveBeen - coursesDoneSoFar;
+            maxBehind = Math.max(behindNow, maxBehind);
+        }
+        while(!listOfFirstRuns.isEmpty())
+        {
+            Record firstRun = listOfFirstRuns.remove(0);
+            startDates.removeIf(record -> record.date.getTime() <= firstRun.date.getTime());
+
+            int courseThatHaventStartedYet = startDates.size();
+            int countOfEventsThereHaveBeen = totalEvents - courseThatHaventStartedYet;
+            int coursesDoneSoFar = totalEventsRun - listOfFirstRuns.size();
+
+            behindNow = countOfEventsThereHaveBeen - coursesDoneSoFar;
+            maxBehind = Math.max(behindNow, maxBehind);
+        }
+        return behindNow + " (" + maxBehind + ")";
     }
 
     private int getRegionnaireCount(

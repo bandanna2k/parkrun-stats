@@ -154,7 +154,7 @@ public class MostEventsDao extends BaseDao
                 "    from " +
                 "    ( " +
                 "        select athlete_id, course_id, min(date) as first_run  " +
-                "        from parkrun_stats.result  " +
+                "        from " + resultTable() +"  " +
                 "        group by athlete_id, course_id  " +
                 "    ) as sub1 " +
                 "    group by athlete_id " +
