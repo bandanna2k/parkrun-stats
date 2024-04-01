@@ -15,9 +15,11 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Minor
 
-- Give all DAO calls a test, not hard.
+- Info for regionnaire count
 
-- Bug with volunteer count - I am recording volunteers on 1 day at all courses. Change to 1 day at any course.
+- Hover cursor
+
+- Give all DAO calls a test, not hard.
 
 - NZ Totals not working. Could do with some invariants or asserts.
 
@@ -418,3 +420,24 @@ join
 ) as sub2 using (athlete_id)\G
 limit 2\G; 
 ```
+
+I make it David SCOBIE (8), David DRUMMOND (8), Donna CLEARWATER (7), Hannah OLDROYD (7), Deborah CLEARWATER (7) next closest, after Mark and Shelley.
+
+
+select athlete_id, count(course_id) as course_count
+from 
+(
+    select athlete_id, course_id, count(course_id) as count
+    from result
+    group by athlete_id, course_id
+    having count >= 3 and course_id in (4, 8, 15, 16, 19,      20, 22, 23, 25, 34,      37, 38, 46)
+    order by athlete_id desc
+) as sub1
+group by athlete_id
+having course_count >= 5
+order by course_count desc;
+
+select * 
+from course
+where course_id in (
+4, 8, 15, 16, 19,      20, 22, 23, 25, 34,      37, 38, 46)
