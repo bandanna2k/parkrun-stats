@@ -60,7 +60,9 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         if(extended)
         {
             startElement("th");
-            writer.writeCharacters("Regionnaire Count");
+            information("Regionnaire Count",
+                    "Regionnaire is someone who has completed all parkruns in a region. " +
+                            "This region being New Zealand. This count is how many times it has been achieved.");
             endElement("th");
         }
 

@@ -44,13 +44,17 @@ public abstract class BaseWriter implements Closeable
         writer.writeCharacters("\n");
     }
 
+    protected void information(String text, String hoverText) throws XMLStreamException
+    {
+        startElement("abbr",
+                "style", "border-bottom: 1px dotted;",
+                "title", hoverText);
+        writer.writeCharacters(text);
+        endElement("abbr");
+    }
+
     protected void writeTableDataWithDelta(int delta, boolean isNewEntry) throws XMLStreamException
     {
-        /*
-        ★⭐★
-☆✪✵✯٭✭✰⚝⚹❉❋✺✹✸
-✶✷✵✲✱✧✦⍟⊛⁕﹡❃❂✼✻⍣≛*✫
-         */
         // Up/Down
         startElement("td");
         if(isNewEntry)
