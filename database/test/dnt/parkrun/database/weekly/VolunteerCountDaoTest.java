@@ -36,6 +36,7 @@ public class VolunteerCountDaoTest extends BaseDaoTest
 
             jdbc.update("delete from event_volunteer", EmptySqlParameterSource.INSTANCE);
             jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);
+            jdbc.update("delete from volunteer_count_1970_01_01", EmptySqlParameterSource.INSTANCE);
         }
 
         @Test
