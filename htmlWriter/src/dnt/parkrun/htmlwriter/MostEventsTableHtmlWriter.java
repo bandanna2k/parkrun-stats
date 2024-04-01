@@ -147,7 +147,8 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         {
             // Total region runs
             startElement("td");
-            startElement("span", "onclick",
+            startElement("span", "class", "click-me",
+                    "onclick",
                     "dialog.showModal();" +
                             "setFirstRuns('" + record.athlete.name.replace("'", "\\'") + "'," + record.firstRuns + ");" +
                             "refreshStartDates();"

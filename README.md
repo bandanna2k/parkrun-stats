@@ -15,13 +15,7 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Minor
 
-- Info for regionnaire count
-
-- Hover cursor
-
 - Give all DAO calls a test, not hard.
-
-- NZ Totals not working. Could do with some invariants or asserts.
 
 - Revisit pIndex downloads. I don't think the criteria for downloading the athletes its correct.
 

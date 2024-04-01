@@ -82,3 +82,6 @@ dialog {
     height: 90%;
     border: solid gray 2px;
 }
+.click-me:hover {
+  cursor: pointer;
+}
