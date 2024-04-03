@@ -519,9 +519,6 @@ public class Stats
                 List<CourseDate> firstRuns = athleteIdToFirstRuns.computeIfAbsent(athleteId, k -> new ArrayList<>());
                 firstRuns.add(firstRun);
             });
-
-//            mostEventsDao.getFirstRuns().forEach(object ->
-//                    athleteIdToFirstRuns.put((int) object[0], String.format("[%s,%s]", object[1], object[2])));
             System.out.println("DONE");
         }
         else
@@ -590,29 +587,6 @@ public class Stats
             if(r2.date.after(r1.date)) return -1;
             return 0;
         });
-        return getRunsNeeded(courseRepository, startDates, firstRuns);
-    }
-    static Object[] getRunsNeeded(CourseRepository courseRepository, List<CourseDate> startDates, List<CourseDate> firstRuns)
-    {
-//        List<CourseDate> listOfFirstRuns = new ArrayList<>();
-//        String[] split = firstRuns.split("],");
-//        assert split.length == 2;
-//        String[] courseIds = split[0].replace("[","").replace("]","").split(",");
-//        String[] dates = split[1].replace("[","").replace("]","").split(",");
-//        assert courseIds.length == dates.length;
-//        for (int i = 0; i < courseIds.length; i++)
-//        {
-//            int courseId = Integer.parseInt(courseIds[i].trim());
-//            Course course = courseRepository.getCourse(courseId);
-//            assert course != null : "Course ID not found " + courseId;
-//            Date firstRun = new Date(Long.parseLong(dates[i].trim())*1000);
-//            listOfFirstRuns.add(new CourseDate(course, firstRun));
-//        }
-//        listOfFirstRuns.sort((r1, r2) -> {
-//            if(r1.date.after(r2.date)) return 1;
-//            if(r2.date.after(r1.date)) return -1;
-//            return 0;
-//        });
         return getRunsNeeded(startDates, firstRuns);
     }
     static Object[] getRunsNeeded(List<CourseDate> sortedStartDates, List<CourseDate> sortedFirstRuns)
@@ -661,34 +635,7 @@ public class Stats
             return 0;
         });
 
-        return getRegionnaireCount(courseRepository, startDates, firstRuns);
-    }
-    static int getRegionnaireCount(
-            CourseRepository courseRepository,
-            List<CourseDate> sortedStartDates,
-            List<CourseDate> sortedFirstRuns)
-    {
-//        List<CourseDate> listOfFirstRuns = new ArrayList<>();
-//        String[] split = firstRuns.split("],");
-//        assert split.length == 2;
-//        String[] courseIds = split[0].replace("[","").replace("]","").split(",");
-//        String[] dates = split[1].replace("[","").replace("]","").split(",");
-//        assert courseIds.length == dates.length;
-//        for (int i = 0; i < courseIds.length; i++)
-//        {
-//            int courseId = Integer.parseInt(courseIds[i].trim());
-//            Course course = courseRepository.getCourse(courseId);
-//            assert course != null : "Course ID not found " + courseId;
-//            Date firstRun = new Date(Long.parseLong(dates[i].trim())*1000);
-//            listOfFirstRuns.add(new CourseDate(course, firstRun));
-//        }
-//        listOfFirstRuns.sort((r1, r2) -> {
-//            if(r1.date.after(r2.date)) return 1;
-//            if(r2.date.after(r1.date)) return -1;
-//            return 0;
-//        });
-//
-        return getRegionnaireCount(sortedStartDates, sortedFirstRuns);
+        return getRegionnaireCount(startDates, firstRuns);
     }
     static int getRegionnaireCount(
             List<CourseDate> sortedStartDates,
