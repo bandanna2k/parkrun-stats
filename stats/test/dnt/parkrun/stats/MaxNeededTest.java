@@ -2,13 +2,13 @@ package dnt.parkrun.stats;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.Course;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static dnt.parkrun.datastructures.Country.NZ;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MaxNeededTest
 {
@@ -41,7 +41,7 @@ public class MaxNeededTest
                 new Stats.CourseDate(courses.get(3), DateConverter.parseWebsiteDate("22/03/2024"))
         ));
 
-        Assertions.assertThat(Stats.getRunsNeeded(sortedStartDates, sortedFirstRuns)).isEqualTo("0 (4)");
+        assertThat(Stats.getRunsNeeded(sortedStartDates, sortedFirstRuns)).isEqualTo(new Object[] { 0, 4 } );
     }
 
     @Test
@@ -55,7 +55,7 @@ public class MaxNeededTest
         ));
         List<Stats.CourseDate> sortedFirstRuns = new ArrayList<>();
 
-        Assertions.assertThat(Stats.getRunsNeeded(sortedStartDates, sortedFirstRuns)).isEqualTo("4 (4)");
+        assertThat(Stats.getRunsNeeded(sortedStartDates, sortedFirstRuns)).isEqualTo(new Object[] { 4, 4 } );
     }
 
     @Test
@@ -74,6 +74,28 @@ public class MaxNeededTest
                 new Stats.CourseDate(courses.get(3), DateConverter.parseWebsiteDate("22/02/2024"))
         ));
 
-        Assertions.assertThat(Stats.getRunsNeeded(sortedStartDates, sortedFirstRuns)).isEqualTo("0 (1)");
+        assertThat(Stats.getRunsNeeded(sortedStartDates, sortedFirstRuns)).isEqualTo(new Object[] { 0, 1 } );
+    }
+
+    @Test
+    public void shouldCalculateRunsNeededWithStoppedRun()
+    {
+        List<Stats.CourseDate> sortedStartDates = new ArrayList<>(List.of(
+                new Stats.CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/01/2024")),
+                new Stats.CourseDate(courses.get(1), DateConverter.parseWebsiteDate("15/01/2024")),
+                new Stats.CourseDate(courses.get(2), DateConverter.parseWebsiteDate("01/02/2024")),
+                new Stats.CourseDate(courses.get(3), DateConverter.parseWebsiteDate("15/02/2024"))
+        ));
+        List<Stats.CourseDate> sortedStopDates = new ArrayList<>(List.of(
+                new Stats.CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/02/2024"))
+        ));
+        List<Stats.CourseDate> sortedFirstRuns = new ArrayList<>(List.of(
+                new Stats.CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/03/2024")),
+                new Stats.CourseDate(courses.get(1), DateConverter.parseWebsiteDate("08/03/2024")),
+                new Stats.CourseDate(courses.get(2), DateConverter.parseWebsiteDate("15/03/2024")),
+                new Stats.CourseDate(courses.get(3), DateConverter.parseWebsiteDate("22/03/2024"))
+        ));
+
+        assertThat(Stats.getRunsNeeded(sortedStartDates, sortedFirstRuns)).isEqualTo(new Object[] { 0, 3 } );
     }
 }

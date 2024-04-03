@@ -524,10 +524,23 @@ public class Stats
 
 //                if(der.athleteId != 796322) continue;
 
-                // Calculate regionnaire count
-                final String firstRuns = extended ? athleteIdToFirstRuns.get(der.athleteId) : null;
-                final int regionnaireCount = extended ? getRegionnaireCount(courseRepository, courseIdToStartDate, firstRuns) : -1;
-                final String runsNeeded = extended ? getRunsNeeded(courseRepository, courseIdToStartDate, firstRuns) : null;
+                final String firstRuns;
+                final int regionnaireCount;
+                final String runsNeeded;
+                if (extended)
+                {
+                    firstRuns = athleteIdToFirstRuns.get(der.athleteId);
+                    regionnaireCount = getRegionnaireCount(courseRepository, courseIdToStartDate, firstRuns);
+
+                    Object[] result = getRunsNeeded(courseRepository, courseIdToStartDate, firstRuns);
+                    runsNeeded = result[0] + " (" + result[1] + ")";
+                }
+                else
+                {
+                    runsNeeded = null;
+                    firstRuns = null;
+                    regionnaireCount = -1;
+                }
 
                 tableWriter.writeMostEventRecord(
                         new MostEventsTableHtmlWriter.Record(athlete,
@@ -540,7 +553,7 @@ public class Stats
             }
         }
     }
-    static String getRunsNeeded(CourseRepository courseRepository, Map<Integer, Date> courseIdToStartDate, String firstRuns)
+    static Object[] getRunsNeeded(CourseRepository courseRepository, Map<Integer, Date> courseIdToStartDate, String firstRuns)
     {
         List<CourseDate> startDates = courseIdToStartDate.entrySet().stream().map(entry ->
                 new CourseDate(courseRepository.getCourse(entry.getKey()), entry.getValue())).collect(Collectors.toList());
@@ -551,7 +564,7 @@ public class Stats
         });
         return getRunsNeeded(courseRepository, startDates, firstRuns);
     }
-    static String getRunsNeeded(CourseRepository courseRepository, List<CourseDate> startDates, String firstRuns)
+    static Object[] getRunsNeeded(CourseRepository courseRepository, List<CourseDate> startDates, String firstRuns)
     {
         List<CourseDate> listOfFirstRuns = new ArrayList<>();
         String[] split = firstRuns.split("],");
@@ -574,7 +587,7 @@ public class Stats
         });
         return getRunsNeeded(startDates, listOfFirstRuns);
     }
-    static String getRunsNeeded(List<CourseDate> sortedStartDates, List<CourseDate> sortedFirstRuns)
+    static Object[] getRunsNeeded(List<CourseDate> sortedStartDates, List<CourseDate> sortedFirstRuns)
     {
         int maxBehind = -1;
         int behindNow = -1;
@@ -604,7 +617,7 @@ public class Stats
             behindNow = countOfEventsThereHaveBeen - coursesDoneSoFar;
             maxBehind = Math.max(behindNow, maxBehind);
         }
-        return behindNow + " (" + maxBehind + ")";
+        return new Object[] { behindNow, maxBehind };
     }
 
     static int getRegionnaireCount(
