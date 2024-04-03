@@ -77,6 +77,7 @@ public class Stats
 
     private final Map<Integer, Athlete> athleteIdToAthlete = new HashMap<>();
     private final Map<Integer, List<AthleteCourseSummary>> athleteIdToAthleteCourseSummaries = new HashMap<>();
+    private final List<CourseDate> startDates = new ArrayList<>();
 
     private Stats(DataSource dataSource,
                   DataSource statsDataSource,
@@ -113,6 +114,10 @@ public class Stats
 
     private void generateStats() throws IOException, XMLStreamException
     {
+        System.out.print("Getting start dates ");
+        startDates.addAll(courseEventSummaryDao.getCourseStartDates());
+        System.out.println("Done");
+
         System.out.println("* Generating most events table *");
         this.mostEventsDao = MostEventsDao.getOrCreate(statsDataSource, date);
         this.mostEventsDao.populateMostEventsTable();
@@ -130,6 +135,15 @@ public class Stats
 
         try (HtmlWriter writer = HtmlWriter.newInstance(date))
         {
+            String startDatesJs = "[" +
+                    "[" + startDates.stream().map(fr -> String.valueOf(fr.date.getTime() / 1000)).collect(Collectors.joining(",")) + "]," +
+                    "[" + startDates.stream().map(fr -> String.valueOf(fr.course.courseId)).collect(Collectors.joining(",")) + "]," +
+                    "['" + startDates.stream().map(fr -> courseRepository.getCourse(fr.course.courseId).longName).collect(Collectors.joining("','")) + "']" +
+                    "]";
+            writer.writer.writeStartElement("script");
+            writer.writer.writeCharacters("const courses = " + startDatesJs + ";");
+            writer.writer.writeEndElement();
+
             writer.writer.writeCharacters("{{dialog}}");
 
             writer.writer.writeStartElement("p");
@@ -488,13 +502,9 @@ public class Stats
 
     private void writeMostEvents(HtmlWriter writer, List<MostEventsDao.MostEventsRecord> differentEventRecords, boolean extended) throws XMLStreamException
     {
-        final List<CourseDate> startDates;
         final Map<Integer, List<CourseDate>> athleteIdToFirstRuns;
         if(extended)
         {
-            System.out.print("Getting start dates ");
-            startDates = courseEventSummaryDao.getCourseStartDates();
-
             System.out.print("Getting first runs ");
             athleteIdToFirstRuns = new HashMap<>();
 
@@ -509,7 +519,6 @@ public class Stats
         }
         else
         {
-            startDates = emptyList();
             athleteIdToFirstRuns = emptyMap();
         }
 

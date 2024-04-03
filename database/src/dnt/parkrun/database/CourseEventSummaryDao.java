@@ -107,7 +107,7 @@ public class CourseEventSummaryDao extends BaseDao
                 "from course " +
                 "join course_event_summary using (course_id)  \n" +
                 "where event_number = 1 \n" +
-                "order by date desc;\n";
+                "order by date asc;\n";
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE,
                 (rs, rowNum) ->
                         new CourseDate(
