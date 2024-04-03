@@ -540,36 +540,20 @@ public class Stats
             }
         }
     }
-
     static String getRunsNeeded(CourseRepository courseRepository, Map<Integer, Date> courseIdToStartDate, String firstRuns)
     {
-        class Record
-        {
-            final Course course;
-            final Date date;
-            Record(Course course, Date date)
-            {
-                this.course = course;
-                this.date = date;
-            }
-            @Override
-            public String toString()
-            {
-                return "Record{" +
-                        "course=" + course +
-                        ", date=" + date +
-                        '}';
-            }
-        }
-        List<Record> startDates = courseIdToStartDate.entrySet().stream().map(entry ->
-                new Record(courseRepository.getCourse(entry.getKey()), entry.getValue())).collect(Collectors.toList());
+        List<CourseDate> startDates = courseIdToStartDate.entrySet().stream().map(entry ->
+                new CourseDate(courseRepository.getCourse(entry.getKey()), entry.getValue())).collect(Collectors.toList());
         startDates.sort((r1, r2) -> {
             if(r1.date.after(r2.date)) return 1;
             if(r2.date.after(r1.date)) return -1;
             return 0;
         });
-
-        List<Record> listOfFirstRuns = new ArrayList<>();
+        return getRunsNeeded(courseRepository, startDates, firstRuns);
+    }
+    static String getRunsNeeded(CourseRepository courseRepository, List<CourseDate> startDates, String firstRuns)
+    {
+        List<CourseDate> listOfFirstRuns = new ArrayList<>();
         String[] split = firstRuns.split("],");
         assert split.length == 2;
         String[] courseIds = split[0].replace("[","").replace("]","").split(",");
@@ -581,38 +565,41 @@ public class Stats
             Course course = courseRepository.getCourse(courseId);
             assert course != null : "Course ID not found " + courseId;
             Date firstRun = new Date(Long.parseLong(dates[i].trim())*1000);
-            listOfFirstRuns.add(new Record(course, firstRun));
+            listOfFirstRuns.add(new CourseDate(course, firstRun));
         }
         listOfFirstRuns.sort((r1, r2) -> {
             if(r1.date.after(r2.date)) return 1;
             if(r2.date.after(r1.date)) return -1;
             return 0;
         });
-
+        return getRunsNeeded(startDates, listOfFirstRuns);
+    }
+    static String getRunsNeeded(List<CourseDate> sortedStartDates, List<CourseDate> sortedFirstRuns)
+    {
         int maxBehind = -1;
         int behindNow = -1;
-        final int totalEvents = courseIdToStartDate.size();
-        final int totalEventsRun = courseIds.length;
-        while(!startDates.isEmpty())
+        final int totalEvents = sortedStartDates.size();
+        final int totalEventsRun = sortedFirstRuns.size();
+        while(!sortedStartDates.isEmpty())
         {
-            Record startDate = startDates.remove(0);
-            listOfFirstRuns.removeIf(record -> record.date.getTime() <= startDate.date.getTime());
+            CourseDate startDate = sortedStartDates.remove(0);
+            sortedFirstRuns.removeIf(record -> record.date.getTime() <= startDate.date.getTime());
 
-            int courseThatHaventStartedYet = startDates.size();
+            int courseThatHaventStartedYet = sortedStartDates.size();
             int countOfEventsThereHaveBeen = totalEvents - courseThatHaventStartedYet;
-            int coursesDoneSoFar = totalEventsRun - listOfFirstRuns.size();
+            int coursesDoneSoFar = totalEventsRun - sortedFirstRuns.size();
 
             behindNow = countOfEventsThereHaveBeen - coursesDoneSoFar;
             maxBehind = Math.max(behindNow, maxBehind);
         }
-        while(!listOfFirstRuns.isEmpty())
+        while(!sortedFirstRuns.isEmpty())
         {
-            Record firstRun = listOfFirstRuns.remove(0);
-            startDates.removeIf(record -> record.date.getTime() <= firstRun.date.getTime());
+            CourseDate firstRun = sortedFirstRuns.remove(0);
+            sortedStartDates.removeIf(record -> record.date.getTime() <= firstRun.date.getTime());
 
-            int courseThatHaventStartedYet = startDates.size();
+            int courseThatHaventStartedYet = sortedStartDates.size();
             int countOfEventsThereHaveBeen = totalEvents - courseThatHaventStartedYet;
-            int coursesDoneSoFar = totalEventsRun - listOfFirstRuns.size();
+            int coursesDoneSoFar = totalEventsRun - sortedFirstRuns.size();
 
             behindNow = countOfEventsThereHaveBeen - coursesDoneSoFar;
             maxBehind = Math.max(behindNow, maxBehind);
