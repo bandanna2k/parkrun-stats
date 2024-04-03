@@ -459,20 +459,6 @@ public class Stats
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
-            /*
-            try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, "New Zealand", "Volunteer"))
-            {
-                List<Object[]> top10 = top10VolunteerDao.getTop10VolunteersInRegion();
-                for (Object[] vir : top10)
-                {
-                    top10atCourse.writeRecord(new Top10AtCourseHtmlWriter.Record((Athlete)vir[0], (int)vir[1], null));
-                }
-            }
-
-            writer.writer.writeStartElement("hr");
-            writer.writer.writeEndElement();
-             */
-
             Top10VolunteersDao top10VolunteersDao = new Top10VolunteersDao(statsDataSource);
             List<Course> courses = courseRepository.getCourses(NZ).stream()
                     .filter(c -> c.status == RUNNING).collect(Collectors.toList());
@@ -550,9 +536,14 @@ public class Stats
                     listOfFirstRuns = athleteIdToFirstRuns.get(der.athleteId);
                     listOfFirstRuns.sort(CourseDate.COMPARATOR);
 
-                    regionnaireCount = getRegionnaireCount(courseRepository, courseIdToStartDate, new ArrayList<>(listOfFirstRuns));
+                    List<CourseDate> startDates = courseIdToStartDate.entrySet().stream().map(entry ->
+                                    new CourseDate(courseRepository.getCourse(entry.getKey()), entry.getValue()))
+                            .sorted(CourseDate.COMPARATOR)
+                            .collect(Collectors.toList());
 
-                    Object[] result = getRunsNeeded(courseRepository, courseIdToStartDate, new ArrayList<>(listOfFirstRuns));
+                    regionnaireCount = getRegionnaireCount(new ArrayList<>(startDates), new ArrayList<>(listOfFirstRuns));
+
+                    Object[] result = getRunsNeeded(new ArrayList<>(startDates), new ArrayList<>(listOfFirstRuns));
                     runsNeeded = result[0] + " (" + result[1] + ")";
 
                     firstRuns = "[" +
@@ -578,17 +569,7 @@ public class Stats
             }
         }
     }
-    static Object[] getRunsNeeded(CourseRepository courseRepository, Map<Integer, Date> courseIdToStartDate, List<CourseDate> firstRuns)
-    {
-        List<CourseDate> startDates = courseIdToStartDate.entrySet().stream().map(entry ->
-                new CourseDate(courseRepository.getCourse(entry.getKey()), entry.getValue())).collect(Collectors.toList());
-        startDates.sort((r1, r2) -> {
-            if(r1.date.after(r2.date)) return 1;
-            if(r2.date.after(r1.date)) return -1;
-            return 0;
-        });
-        return getRunsNeeded(startDates, firstRuns);
-    }
+
     static Object[] getRunsNeeded(List<CourseDate> sortedStartDates, List<CourseDate> sortedFirstRuns)
     {
         int maxBehind = -1;
@@ -622,21 +603,6 @@ public class Stats
         return new Object[] { behindNow, maxBehind };
     }
 
-    static int getRegionnaireCount(
-            CourseRepository courseRepository,
-            Map<Integer, Date> courseIdToStartDate,
-            List<CourseDate> firstRuns)
-    {
-        List<CourseDate> startDates = courseIdToStartDate.entrySet().stream().map(entry ->
-                new CourseDate(courseRepository.getCourse(entry.getKey()), entry.getValue())).collect(Collectors.toList());
-        startDates.sort((r1, r2) -> {
-            if(r1.date.after(r2.date)) return 1;
-            if(r2.date.after(r1.date)) return -1;
-            return 0;
-        });
-
-        return getRegionnaireCount(startDates, firstRuns);
-    }
     static int getRegionnaireCount(
             List<CourseDate> sortedStartDates,
             List<CourseDate> sortedFirstRuns)
