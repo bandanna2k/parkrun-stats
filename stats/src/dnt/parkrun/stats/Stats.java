@@ -526,8 +526,8 @@ public class Stats
 
                 // Calculate regionnaire count
                 final String firstRuns = extended ? athleteIdToFirstRuns.get(der.athleteId) : null;
-                final int regionnaireCount = extended ? getRegionnaireCount(courseIdToStartDate, firstRuns) : -1;
-                final String runsNeeded = extended ? getRunsNeeded(courseIdToStartDate, firstRuns) : null;
+                final int regionnaireCount = extended ? getRegionnaireCount(courseRepository, courseIdToStartDate, firstRuns) : -1;
+                final String runsNeeded = extended ? getRunsNeeded(courseRepository, courseIdToStartDate, firstRuns) : null;
 
                 tableWriter.writeMostEventRecord(
                         new MostEventsTableHtmlWriter.Record(athlete,
@@ -541,7 +541,7 @@ public class Stats
         }
     }
 
-    private String getRunsNeeded(Map<Integer, Date> courseIdToStartDate, String firstRuns)
+    static String getRunsNeeded(CourseRepository courseRepository, Map<Integer, Date> courseIdToStartDate, String firstRuns)
     {
         class Record
         {
@@ -620,37 +620,27 @@ public class Stats
         return behindNow + " (" + maxBehind + ")";
     }
 
-    private int getRegionnaireCount(
+    static int getRegionnaireCount(
+            CourseRepository courseRepository,
             Map<Integer, Date> courseIdToStartDate,
             String firstRuns)
     {
-        class Record
-        {
-            final Course course;
-            final Date date;
-            Record(Course course, Date date)
-            {
-                this.course = course;
-                this.date = date;
-            }
-            @Override
-            public String toString()
-            {
-                return "Record{" +
-                        "course=" + course +
-                        ", date=" + date +
-                        '}';
-            }
-        }
-        List<Record> startDates = courseIdToStartDate.entrySet().stream().map(entry ->
-                new Record(courseRepository.getCourse(entry.getKey()), entry.getValue())).collect(Collectors.toList());
+        List<CourseDate> startDates = courseIdToStartDate.entrySet().stream().map(entry ->
+                new CourseDate(courseRepository.getCourse(entry.getKey()), entry.getValue())).collect(Collectors.toList());
         startDates.sort((r1, r2) -> {
             if(r1.date.after(r2.date)) return 1;
             if(r2.date.after(r1.date)) return -1;
             return 0;
         });
 
-        List<Record> listOfFirstRuns = new ArrayList<>();
+        return getRegionnaireCount(courseRepository, startDates, firstRuns);
+    }
+    static int getRegionnaireCount(
+            CourseRepository courseRepository,
+            List<CourseDate> sortedStartDates,
+            String firstRuns)
+    {
+        List<CourseDate> listOfFirstRuns = new ArrayList<>();
         String[] split = firstRuns.split("],");
         assert split.length == 2;
         String[] courseIds = split[0].replace("[","").replace("]","").split(",");
@@ -662,7 +652,7 @@ public class Stats
             Course course = courseRepository.getCourse(courseId);
             assert course != null : "Course ID not found " + courseId;
             Date firstRun = new Date(Long.parseLong(dates[i].trim())*1000);
-            listOfFirstRuns.add(new Record(course, firstRun));
+            listOfFirstRuns.add(new CourseDate(course, firstRun));
         }
         listOfFirstRuns.sort((r1, r2) -> {
             if(r1.date.after(r2.date)) return 1;
@@ -670,17 +660,23 @@ public class Stats
             return 0;
         });
 
-        final int totalEvents = courseIdToStartDate.size();
-        final int totalEventsRun = courseIds.length;
+        return getRegionnaireCount(sortedStartDates, listOfFirstRuns);
+    }
+    static int getRegionnaireCount(
+            List<CourseDate> sortedStartDates,
+            List<CourseDate> sortedFirstRuns)
+    {
+        final int totalEvents = sortedStartDates.size();
+        final int totalEventsRun = sortedFirstRuns.size();
         int regionnaireCount = 0;
-        while(!listOfFirstRuns.isEmpty())
+        while(!sortedFirstRuns.isEmpty())
         {
-            Record firstRun = listOfFirstRuns.remove(0);
-            startDates.removeIf(record -> record.date.getTime() <= firstRun.date.getTime());
+            CourseDate firstRun = sortedFirstRuns.remove(0);
+            sortedStartDates.removeIf(record -> record.date.getTime() <= firstRun.date.getTime());
 
-            int courseThatHaventStartedYet = startDates.size();
+            int courseThatHaventStartedYet = sortedStartDates.size();
             int countOfEventsThereHaveBeen = totalEvents - courseThatHaventStartedYet;
-            int coursesDoneSoFar = totalEventsRun - listOfFirstRuns.size();
+            int coursesDoneSoFar = totalEventsRun - sortedFirstRuns.size();
 
             if(coursesDoneSoFar == countOfEventsThereHaveBeen)
             {
@@ -974,4 +970,25 @@ public class Stats
         }
         throw new UnsupportedOperationException();
     }
+
+    static class CourseDate
+    {
+        final Course course;
+        final Date date;
+
+        CourseDate(Course course, Date date)
+        {
+            this.course = course;
+            this.date = date;
+        }
+        @Override
+        public String toString()
+        {
+            return  "CourseDate{" +
+                    "course=" + course +
+                    ", date=" + date +
+                    '}';
+        }
+    }
+
 }

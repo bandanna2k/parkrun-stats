@@ -103,6 +103,23 @@
             },
             backgroundColor: 'blue',
             borderColor: 'blue',
+          },
+          {
+            label: 'Stop Dates',
+            data: [
+                { 'x': 1647043200000, 'y': 1, 'name': 'Porirua' }
+            ],
+            borderWidth: 1,
+            datalabels:
+            {
+                offset: 10,
+                align: '-150',
+                formatter: function(value, context) {
+                    return value.name;
+                }
+            },
+            backgroundColor: 'purple',
+            borderColor: 'purple',
           }
           ]
         },
