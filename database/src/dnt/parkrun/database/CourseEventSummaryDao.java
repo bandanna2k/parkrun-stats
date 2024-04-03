@@ -1,14 +1,14 @@
 package dnt.parkrun.database;
 
-import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.Course;
-import dnt.parkrun.datastructures.CourseEventSummary;
-import dnt.parkrun.datastructures.CourseRepository;
+import dnt.parkrun.datastructures.*;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import javax.sql.DataSource;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class CourseEventSummaryDao extends BaseDao
 {
@@ -83,17 +83,36 @@ public class CourseEventSummaryDao extends BaseDao
         return courseToCount;
     }
 
-    public Map<Integer, Date> getStartDates()
+//    public Map<Integer, Date> getStartDates()
+//    {
+//        Map<Integer, Date> result = new HashMap<>();
+//        String sql = "select course_id, date " +
+//                "from course join course_event_summary using (course_id)  " +
+//                "where event_number = 1 " +
+//                "order by date desc;";
+//        jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> {
+//            result.put(rs.getInt("course_id"), rs.getDate("date"));
+//            return null;
+//        });
+//        return result;
+//    }
+//
+
+    /**
+     * Course Start Dates sorted.
+     */
+    public List<CourseDate> getCourseStartDates()
     {
-        Map<Integer, Date> result = new HashMap<>();
-        String sql = "select course_id, date " +
-                "from course join course_event_summary using (course_id)  " +
-                "where event_number = 1 " +
-                "order by date desc;";
-        jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> {
-            result.put(rs.getInt("course_id"), rs.getDate("date"));
-            return null;
-        });
-        return result;
+        String sql = "select course_id, date \n" +
+                "from course " +
+                "join course_event_summary using (course_id)  \n" +
+                "where event_number = 1 \n" +
+                "order by date desc;\n";
+        return jdbc.query(sql, EmptySqlParameterSource.INSTANCE,
+                (rs, rowNum) ->
+                        new CourseDate(
+                                courseRepository.getCourse(rs.getInt("course_id")),
+                                rs.getDate("date"))
+        );
     }
 }

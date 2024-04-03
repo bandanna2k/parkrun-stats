@@ -2,6 +2,7 @@ package dnt.parkrun.stats;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.Course;
+import dnt.parkrun.datastructures.CourseDate;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
@@ -28,17 +29,17 @@ public class RegionnaireCountTest
     @Test
     public void shouldCalculateRegionnaireCount()
     {
-        List<Stats.CourseDate> sortedStartDates = new ArrayList<>(List.of(
-                new Stats.CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/01/2024")),
-                new Stats.CourseDate(courses.get(1), DateConverter.parseWebsiteDate("15/01/2024")),
-                new Stats.CourseDate(courses.get(1), DateConverter.parseWebsiteDate("01/02/2024")),
-                new Stats.CourseDate(courses.get(1), DateConverter.parseWebsiteDate("15/02/2024"))
+        List<CourseDate> sortedStartDates = new ArrayList<>(List.of(
+                new CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/01/2024")),
+                new CourseDate(courses.get(1), DateConverter.parseWebsiteDate("15/01/2024")),
+                new CourseDate(courses.get(1), DateConverter.parseWebsiteDate("01/02/2024")),
+                new CourseDate(courses.get(1), DateConverter.parseWebsiteDate("15/02/2024"))
         ));
-        List<Stats.CourseDate> sortedFirstRuns = new ArrayList<>(List.of(
-                new Stats.CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/03/2024")),
-                new Stats.CourseDate(courses.get(1), DateConverter.parseWebsiteDate("08/03/2024")),
-                new Stats.CourseDate(courses.get(2), DateConverter.parseWebsiteDate("15/03/2024")),
-                new Stats.CourseDate(courses.get(3), DateConverter.parseWebsiteDate("22/03/2024"))
+        List<CourseDate> sortedFirstRuns = new ArrayList<>(List.of(
+                new CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/03/2024")),
+                new CourseDate(courses.get(1), DateConverter.parseWebsiteDate("08/03/2024")),
+                new CourseDate(courses.get(2), DateConverter.parseWebsiteDate("15/03/2024")),
+                new CourseDate(courses.get(3), DateConverter.parseWebsiteDate("22/03/2024"))
         ));
 
         Assertions.assertThat(Stats.getRegionnaireCount(sortedStartDates, sortedFirstRuns)).isEqualTo(1);
@@ -48,13 +49,13 @@ public class RegionnaireCountTest
     @Test
     public void shouldCalculateRegionnaireCountWithNoRuns()
     {
-        List<Stats.CourseDate> sortedStartDates = new ArrayList<>(List.of(
-                new Stats.CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/01/2024")),
-                new Stats.CourseDate(courses.get(1), DateConverter.parseWebsiteDate("15/01/2024")),
-                new Stats.CourseDate(courses.get(2), DateConverter.parseWebsiteDate("01/02/2024")),
-                new Stats.CourseDate(courses.get(3), DateConverter.parseWebsiteDate("15/02/2024"))
+        List<CourseDate> sortedStartDates = new ArrayList<>(List.of(
+                new CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/01/2024")),
+                new CourseDate(courses.get(1), DateConverter.parseWebsiteDate("15/01/2024")),
+                new CourseDate(courses.get(2), DateConverter.parseWebsiteDate("01/02/2024")),
+                new CourseDate(courses.get(3), DateConverter.parseWebsiteDate("15/02/2024"))
         ));
-        List<Stats.CourseDate> sortedFirstRuns = new ArrayList<>();
+        List<CourseDate> sortedFirstRuns = new ArrayList<>();
 
         Assertions.assertThat(Stats.getRegionnaireCount(sortedStartDates, sortedFirstRuns)).isEqualTo(0);
     }
@@ -62,17 +63,17 @@ public class RegionnaireCountTest
     @Test
     public void shouldCalculateMaxRegionnaireCount()
     {
-        List<Stats.CourseDate> sortedStartDates = new ArrayList<>(List.of(
-                new Stats.CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/01/2024")),
-                new Stats.CourseDate(courses.get(1), DateConverter.parseWebsiteDate("15/01/2024")),
-                new Stats.CourseDate(courses.get(2), DateConverter.parseWebsiteDate("01/02/2024")),
-                new Stats.CourseDate(courses.get(3), DateConverter.parseWebsiteDate("15/02/2024"))
+        List<CourseDate> sortedStartDates = new ArrayList<>(List.of(
+                new CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/01/2024")),
+                new CourseDate(courses.get(1), DateConverter.parseWebsiteDate("15/01/2024")),
+                new CourseDate(courses.get(2), DateConverter.parseWebsiteDate("01/02/2024")),
+                new CourseDate(courses.get(3), DateConverter.parseWebsiteDate("15/02/2024"))
         ));
-        List<Stats.CourseDate> sortedFirstRuns = new ArrayList<>(List.of(
-                new Stats.CourseDate(courses.get(0), DateConverter.parseWebsiteDate("08/01/2024")),
-                new Stats.CourseDate(courses.get(1), DateConverter.parseWebsiteDate("22/01/2024")),
-                new Stats.CourseDate(courses.get(2), DateConverter.parseWebsiteDate("08/02/2024")),
-                new Stats.CourseDate(courses.get(3), DateConverter.parseWebsiteDate("22/02/2024"))
+        List<CourseDate> sortedFirstRuns = new ArrayList<>(List.of(
+                new CourseDate(courses.get(0), DateConverter.parseWebsiteDate("08/01/2024")),
+                new CourseDate(courses.get(1), DateConverter.parseWebsiteDate("22/01/2024")),
+                new CourseDate(courses.get(2), DateConverter.parseWebsiteDate("08/02/2024")),
+                new CourseDate(courses.get(3), DateConverter.parseWebsiteDate("22/02/2024"))
         ));
 
         Assertions.assertThat(Stats.getRegionnaireCount(sortedStartDates, sortedFirstRuns)).isEqualTo(4);
@@ -81,19 +82,19 @@ public class RegionnaireCountTest
     @Test
     public void shouldCalculateMaxRegionnaireCountWithStoppedRun()
     {
-        List<Stats.CourseDate> sortedStartDates = new ArrayList<>(List.of(
-                new Stats.CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/01/2024")),
-                new Stats.CourseDate(courses.get(1), DateConverter.parseWebsiteDate("15/01/2024")),
-                new Stats.CourseDate(courses.get(2), DateConverter.parseWebsiteDate("01/02/2024")),
-                new Stats.CourseDate(courses.get(3), DateConverter.parseWebsiteDate("15/02/2024"))
+        List<CourseDate> sortedStartDates = new ArrayList<>(List.of(
+                new CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/01/2024")),
+                new CourseDate(courses.get(1), DateConverter.parseWebsiteDate("15/01/2024")),
+                new CourseDate(courses.get(2), DateConverter.parseWebsiteDate("01/02/2024")),
+                new CourseDate(courses.get(3), DateConverter.parseWebsiteDate("15/02/2024"))
         ));
-        List<Stats.CourseDate> sortedStopDates = new ArrayList<>(List.of(
-                new Stats.CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/02/2024"))
+        List<CourseDate> sortedStopDates = new ArrayList<>(List.of(
+                new CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/02/2024"))
         ));
-        List<Stats.CourseDate> sortedFirstRuns = new ArrayList<>(List.of(
-                new Stats.CourseDate(courses.get(1), DateConverter.parseWebsiteDate("08/03/2024")),
-                new Stats.CourseDate(courses.get(2), DateConverter.parseWebsiteDate("15/03/2024")),
-                new Stats.CourseDate(courses.get(3), DateConverter.parseWebsiteDate("22/03/2024"))
+        List<CourseDate> sortedFirstRuns = new ArrayList<>(List.of(
+                new CourseDate(courses.get(1), DateConverter.parseWebsiteDate("08/03/2024")),
+                new CourseDate(courses.get(2), DateConverter.parseWebsiteDate("15/03/2024")),
+                new CourseDate(courses.get(3), DateConverter.parseWebsiteDate("22/03/2024"))
         ));
 
         Assertions.assertThat(Stats.getRegionnaireCount(sortedStartDates, sortedFirstRuns)).isEqualTo(1);

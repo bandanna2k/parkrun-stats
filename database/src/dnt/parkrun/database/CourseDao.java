@@ -79,7 +79,7 @@ public class CourseDao
                         new Course(
                                 rs.getInt("course_id"),
                                 rs.getString("course_name"),
-                                null,
+                                Country.valueOf(rs.getInt("country_code")),
                                 rs.getString("course_long_name"),
                                 Course.Status.fromDb(rs.getString("status"))
         ));

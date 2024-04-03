@@ -488,12 +488,12 @@ public class Stats
 
     private void writeMostEvents(HtmlWriter writer, List<MostEventsDao.MostEventsRecord> differentEventRecords, boolean extended) throws XMLStreamException
     {
-        final Map<Integer, Date> courseIdToStartDate;
+        final List<CourseDate> startDates;
         final Map<Integer, List<CourseDate>> athleteIdToFirstRuns;
         if(extended)
         {
             System.out.print("Getting start dates ");
-            courseIdToStartDate = courseEventSummaryDao.getStartDates();
+            startDates = courseEventSummaryDao.getCourseStartDates();
 
             System.out.print("Getting first runs ");
             athleteIdToFirstRuns = new HashMap<>();
@@ -509,7 +509,7 @@ public class Stats
         }
         else
         {
-            courseIdToStartDate = emptyMap();
+            startDates = emptyList();
             athleteIdToFirstRuns = emptyMap();
         }
 
@@ -535,11 +535,6 @@ public class Stats
                 {
                     listOfFirstRuns = athleteIdToFirstRuns.get(der.athleteId);
                     listOfFirstRuns.sort(CourseDate.COMPARATOR);
-
-                    List<CourseDate> startDates = courseIdToStartDate.entrySet().stream().map(entry ->
-                                    new CourseDate(courseRepository.getCourse(entry.getKey()), entry.getValue()))
-                            .sorted(CourseDate.COMPARATOR)
-                            .collect(Collectors.toList());
 
                     regionnaireCount = getRegionnaireCount(new ArrayList<>(startDates), new ArrayList<>(listOfFirstRuns));
 
@@ -911,32 +906,4 @@ public class Stats
         }
         throw new UnsupportedOperationException();
     }
-
-    static class CourseDate
-    {
-        static final Comparator<CourseDate> COMPARATOR = (r1, r2) ->
-        {
-            if (r1.date.after(r2.date)) return 1;
-            if (r2.date.after(r1.date)) return -1;
-            return 0;
-        };
-
-        final Course course;
-        final Date date;
-
-        CourseDate(Course course, Date date)
-        {
-            this.course = course;
-            this.date = date;
-        }
-        @Override
-        public String toString()
-        {
-            return  "CourseDate{" +
-                    "course=" + course +
-                    ", date=" + date +
-                    '}';
-        }
-    }
-
 }
