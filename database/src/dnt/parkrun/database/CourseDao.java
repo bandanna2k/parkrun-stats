@@ -16,17 +16,15 @@ public class CourseDao
 {
 
     private final NamedParameterJdbcOperations jdbc;
-
-    public CourseDao(DataSource dataSource)
-    {
-        jdbc = new NamedParameterJdbcTemplate(dataSource);
-    }
+    private final CourseRepository courseRepository;
 
     /*
         Adds course to DB and populates CourseRepository
      */
     public CourseDao(DataSource dataSource, CourseRepository courseRepository)
     {
+        this.courseRepository = courseRepository;
+
         jdbc = new NamedParameterJdbcTemplate(dataSource);
         jdbc.query(
                 "select course_id, course_name, course_long_name, country_code, status " +
@@ -48,8 +46,11 @@ public class CourseDao
                 });
     }
 
-    public void insert(Course course)
+    public Course insert(Course course)
     {
+        assert courseRepository.getCourseFromName(course.name) == null &&
+                courseRepository.getCourseFromLongName(course.longName) == null
+                : "Course already exists";
         try
         {
             String sql = "insert ignore into course (" +
@@ -64,11 +65,15 @@ public class CourseDao
                     .addValue("country", course.country.getCountryDbCode())
                     .addValue("status", course.getStatusDbCode())
             );
+            Course result = getCourse(course.name);
+            courseRepository.addCourse(result);
+            return result;
         }
         catch (DuplicateKeyException ex)
         {
             // System.out.println("DEBUG: Duplicate key for athlete: " + athlete);
         }
+        throw new RuntimeException("Should not get here.");
     }
 
     public Course getCourse(String courseName)
