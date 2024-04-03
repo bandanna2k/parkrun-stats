@@ -32,6 +32,7 @@ import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.*;
 import static dnt.parkrun.region.Region.getNzRegionRunCount;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 
 public class Stats
 {
@@ -501,14 +502,33 @@ public class Stats
 
     private void writeMostEvents(HtmlWriter writer, List<MostEventsDao.MostEventsRecord> differentEventRecords, boolean extended) throws XMLStreamException
     {
-        System.out.print("Getting start dates ");
-        Map<Integer, Date> courseIdToStartDate = courseEventSummaryDao.getStartDates();
+        final Map<Integer, Date> courseIdToStartDate;
+        final Map<Integer, List<CourseDate>> athleteIdToFirstRuns;
+        if(extended)
+        {
+            System.out.print("Getting start dates ");
+            courseIdToStartDate = courseEventSummaryDao.getStartDates();
 
-        System.out.print("Getting first runs ");
-        Map<Integer, String> athleteIdToFirstRuns = new HashMap<>();
-        mostEventsDao.getFirstRuns().forEach(object ->
-                athleteIdToFirstRuns.put((int)object[0], String.format("[%s,%s]", object[1], object[2])));
-        System.out.println("DONE");
+            System.out.print("Getting first runs ");
+            athleteIdToFirstRuns = new HashMap<>();
+
+            mostEventsDao.getFirstRuns().forEach(record ->
+            {
+                int athleteId = (int) record[0];
+                CourseDate firstRun = new CourseDate(courseRepository.getCourse((int) record[1]), (Date) record[2]);
+                List<CourseDate> firstRuns = athleteIdToFirstRuns.computeIfAbsent(athleteId, k -> new ArrayList<>());
+                firstRuns.add(firstRun);
+            });
+
+//            mostEventsDao.getFirstRuns().forEach(object ->
+//                    athleteIdToFirstRuns.put((int) object[0], String.format("[%s,%s]", object[1], object[2])));
+            System.out.println("DONE");
+        }
+        else
+        {
+            courseIdToStartDate = emptyMap();
+            athleteIdToFirstRuns = emptyMap();
+        }
 
         try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, extended))
         {
@@ -524,16 +544,24 @@ public class Stats
 
 //                if(der.athleteId != 796322) continue;
 
+                final List<CourseDate> listOfFirstRuns;
                 final String firstRuns;
                 final int regionnaireCount;
                 final String runsNeeded;
                 if (extended)
                 {
-                    firstRuns = athleteIdToFirstRuns.get(der.athleteId);
-                    regionnaireCount = getRegionnaireCount(courseRepository, courseIdToStartDate, firstRuns);
+                    listOfFirstRuns = athleteIdToFirstRuns.get(der.athleteId);
+                    listOfFirstRuns.sort(CourseDate.COMPARATOR);
 
-                    Object[] result = getRunsNeeded(courseRepository, courseIdToStartDate, firstRuns);
+                    regionnaireCount = getRegionnaireCount(courseRepository, courseIdToStartDate, new ArrayList<>(listOfFirstRuns));
+
+                    Object[] result = getRunsNeeded(courseRepository, courseIdToStartDate, new ArrayList<>(listOfFirstRuns));
                     runsNeeded = result[0] + " (" + result[1] + ")";
+
+                    firstRuns = "[" +
+                            "[" + listOfFirstRuns.stream().map(fr -> String.valueOf(fr.course.courseId)).collect(Collectors.joining(",")) + "]," +
+                            "[" + listOfFirstRuns.stream().map(fr -> String.valueOf(fr.date.getTime() / 1000)).collect(Collectors.joining(",")) + "]" +
+                            "]";
                 }
                 else
                 {
@@ -553,7 +581,7 @@ public class Stats
             }
         }
     }
-    static Object[] getRunsNeeded(CourseRepository courseRepository, Map<Integer, Date> courseIdToStartDate, String firstRuns)
+    static Object[] getRunsNeeded(CourseRepository courseRepository, Map<Integer, Date> courseIdToStartDate, List<CourseDate> firstRuns)
     {
         List<CourseDate> startDates = courseIdToStartDate.entrySet().stream().map(entry ->
                 new CourseDate(courseRepository.getCourse(entry.getKey()), entry.getValue())).collect(Collectors.toList());
@@ -564,28 +592,28 @@ public class Stats
         });
         return getRunsNeeded(courseRepository, startDates, firstRuns);
     }
-    static Object[] getRunsNeeded(CourseRepository courseRepository, List<CourseDate> startDates, String firstRuns)
+    static Object[] getRunsNeeded(CourseRepository courseRepository, List<CourseDate> startDates, List<CourseDate> firstRuns)
     {
-        List<CourseDate> listOfFirstRuns = new ArrayList<>();
-        String[] split = firstRuns.split("],");
-        assert split.length == 2;
-        String[] courseIds = split[0].replace("[","").replace("]","").split(",");
-        String[] dates = split[1].replace("[","").replace("]","").split(",");
-        assert courseIds.length == dates.length;
-        for (int i = 0; i < courseIds.length; i++)
-        {
-            int courseId = Integer.parseInt(courseIds[i].trim());
-            Course course = courseRepository.getCourse(courseId);
-            assert course != null : "Course ID not found " + courseId;
-            Date firstRun = new Date(Long.parseLong(dates[i].trim())*1000);
-            listOfFirstRuns.add(new CourseDate(course, firstRun));
-        }
-        listOfFirstRuns.sort((r1, r2) -> {
-            if(r1.date.after(r2.date)) return 1;
-            if(r2.date.after(r1.date)) return -1;
-            return 0;
-        });
-        return getRunsNeeded(startDates, listOfFirstRuns);
+//        List<CourseDate> listOfFirstRuns = new ArrayList<>();
+//        String[] split = firstRuns.split("],");
+//        assert split.length == 2;
+//        String[] courseIds = split[0].replace("[","").replace("]","").split(",");
+//        String[] dates = split[1].replace("[","").replace("]","").split(",");
+//        assert courseIds.length == dates.length;
+//        for (int i = 0; i < courseIds.length; i++)
+//        {
+//            int courseId = Integer.parseInt(courseIds[i].trim());
+//            Course course = courseRepository.getCourse(courseId);
+//            assert course != null : "Course ID not found " + courseId;
+//            Date firstRun = new Date(Long.parseLong(dates[i].trim())*1000);
+//            listOfFirstRuns.add(new CourseDate(course, firstRun));
+//        }
+//        listOfFirstRuns.sort((r1, r2) -> {
+//            if(r1.date.after(r2.date)) return 1;
+//            if(r2.date.after(r1.date)) return -1;
+//            return 0;
+//        });
+        return getRunsNeeded(startDates, firstRuns);
     }
     static Object[] getRunsNeeded(List<CourseDate> sortedStartDates, List<CourseDate> sortedFirstRuns)
     {
@@ -623,7 +651,7 @@ public class Stats
     static int getRegionnaireCount(
             CourseRepository courseRepository,
             Map<Integer, Date> courseIdToStartDate,
-            String firstRuns)
+            List<CourseDate> firstRuns)
     {
         List<CourseDate> startDates = courseIdToStartDate.entrySet().stream().map(entry ->
                 new CourseDate(courseRepository.getCourse(entry.getKey()), entry.getValue())).collect(Collectors.toList());
@@ -638,29 +666,29 @@ public class Stats
     static int getRegionnaireCount(
             CourseRepository courseRepository,
             List<CourseDate> sortedStartDates,
-            String firstRuns)
+            List<CourseDate> sortedFirstRuns)
     {
-        List<CourseDate> listOfFirstRuns = new ArrayList<>();
-        String[] split = firstRuns.split("],");
-        assert split.length == 2;
-        String[] courseIds = split[0].replace("[","").replace("]","").split(",");
-        String[] dates = split[1].replace("[","").replace("]","").split(",");
-        assert courseIds.length == dates.length;
-        for (int i = 0; i < courseIds.length; i++)
-        {
-            int courseId = Integer.parseInt(courseIds[i].trim());
-            Course course = courseRepository.getCourse(courseId);
-            assert course != null : "Course ID not found " + courseId;
-            Date firstRun = new Date(Long.parseLong(dates[i].trim())*1000);
-            listOfFirstRuns.add(new CourseDate(course, firstRun));
-        }
-        listOfFirstRuns.sort((r1, r2) -> {
-            if(r1.date.after(r2.date)) return 1;
-            if(r2.date.after(r1.date)) return -1;
-            return 0;
-        });
-
-        return getRegionnaireCount(sortedStartDates, listOfFirstRuns);
+//        List<CourseDate> listOfFirstRuns = new ArrayList<>();
+//        String[] split = firstRuns.split("],");
+//        assert split.length == 2;
+//        String[] courseIds = split[0].replace("[","").replace("]","").split(",");
+//        String[] dates = split[1].replace("[","").replace("]","").split(",");
+//        assert courseIds.length == dates.length;
+//        for (int i = 0; i < courseIds.length; i++)
+//        {
+//            int courseId = Integer.parseInt(courseIds[i].trim());
+//            Course course = courseRepository.getCourse(courseId);
+//            assert course != null : "Course ID not found " + courseId;
+//            Date firstRun = new Date(Long.parseLong(dates[i].trim())*1000);
+//            listOfFirstRuns.add(new CourseDate(course, firstRun));
+//        }
+//        listOfFirstRuns.sort((r1, r2) -> {
+//            if(r1.date.after(r2.date)) return 1;
+//            if(r2.date.after(r1.date)) return -1;
+//            return 0;
+//        });
+//
+        return getRegionnaireCount(sortedStartDates, sortedFirstRuns);
     }
     static int getRegionnaireCount(
             List<CourseDate> sortedStartDates,
@@ -973,6 +1001,13 @@ public class Stats
 
     static class CourseDate
     {
+        static final Comparator<CourseDate> COMPARATOR = (r1, r2) ->
+        {
+            if (r1.date.after(r2.date)) return 1;
+            if (r2.date.after(r1.date)) return -1;
+            return 0;
+        };
+
         final Course course;
         final Date date;
 
