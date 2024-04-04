@@ -17,7 +17,7 @@ public class VolunteerCountDao extends BaseDao
 {
     private final Date date;
 
-    public static VolunteerCountDao getOrCreate(DataSource dataSource, Date date)
+    public static VolunteerCountDao getInstance(DataSource dataSource, Date date)
     {
         VolunteerCountDao mostVolunteersDao = new VolunteerCountDao(dataSource, date);
         mostVolunteersDao.init();

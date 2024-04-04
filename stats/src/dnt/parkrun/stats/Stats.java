@@ -90,12 +90,12 @@ public class Stats
 //        this.dataSource = dataSource;
         this.statsDataSource = statsDataSource;
         this.attendanceRecordsDao = new AttendanceRecordsDao(this.statsDataSource, this.date);
-        this.acsDao = new AthleteCourseSummaryDao(statsDataSource, this.date);
+        this.acsDao = AthleteCourseSummaryDao.getInstance(statsDataSource, this.date);
         this.top10Dao = new Top10AtCourseDao(statsDataSource, this.date);
         this.top10VolunteerDao = new Top10VoluteersAtCourseDao(statsDataSource, this.date);
         this.resultDao = new ResultDao(dataSource);
         this.pIndexDao = new PIndexDao(statsDataSource, date);
-        this.volunteerCountDao = VolunteerCountDao.getOrCreate(statsDataSource, this.date);
+        this.volunteerCountDao = VolunteerCountDao.getInstance(statsDataSource, this.date);
         this.volunteerDao = new VolunteerDao(statsDataSource);
 
         this.courseRepository = new CourseRepository();
@@ -735,7 +735,8 @@ public class Stats
                     before, after, added, notAdded));
         }
 
-        Set<Integer> athletesAlreadyDownloaded = acsDao.getAthleteCourseSummaries().stream().map(acs -> (int) acs[0]).collect(Collectors.toSet());
+        Set<Integer> athletesAlreadyDownloaded = acsDao.getAthleteCourseSummaries().stream()
+                .map(acs -> (int) acs[1]).collect(Collectors.toSet());
         System.out.println("Athletes already downloaded. " + athletesAlreadyDownloaded.size());
         athletesToDownload.removeAll(athletesAlreadyDownloaded);
         System.out.println("Athletes too download. " + athletesToDownload.size());
@@ -768,7 +769,7 @@ public class Stats
             parser.parse();
         }
 
-        acsDao.getAthleteCourseSummariesMap().forEach(objects ->
+        acsDao.getAthleteCourseSummaries().forEach(objects ->
         {
             Athlete athlete = Athlete.from((String) objects[0], (int) objects[1]);
             List<AthleteCourseSummary> summaries = athleteIdToAthleteCourseSummaries.get(athlete.athleteId);

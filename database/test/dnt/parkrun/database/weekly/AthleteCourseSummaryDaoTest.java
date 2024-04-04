@@ -30,10 +30,10 @@ public class AthleteCourseSummaryDaoTest extends BaseDaoTest
                 "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
 
         this.athleteDao = new AthleteDao(dataSource);
-        this.acsDao = new AthleteCourseSummaryDao(dataSource, new Date());
+        this.acsDao = AthleteCourseSummaryDao.getInstance(dataSource, new Date());
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);
-        jdbc.update("delete from " + acsDao.tableName, EmptySqlParameterSource.INSTANCE);
+        jdbc.update("delete from " + acsDao.tableName(), EmptySqlParameterSource.INSTANCE);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class AthleteCourseSummaryDaoTest extends BaseDaoTest
                 new AthleteCourseSummary(athlete2, ELLIÐAÁRDALUR, 1)
         );
 
-        List<Object[]> actualSummaries = acsDao.getAthleteCourseSummariesMap();
+        List<Object[]> actualSummaries = acsDao.getAthleteCourseSummaries();
         assertThat(actualSummaries.size()).isEqualTo(3);
 
         Object[] cornwallAcs = actualSummaries.get(1);
