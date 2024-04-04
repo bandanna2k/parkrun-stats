@@ -136,9 +136,9 @@ public class Stats
         try (HtmlWriter writer = HtmlWriter.newInstance(date))
         {
             String startDatesJs = "[" +
-                    "[" + startDates.stream().map(fr -> String.valueOf(fr.date.getTime() / 1000)).collect(Collectors.joining(",")) + "]," +
-                    "[" + startDates.stream().map(fr -> String.valueOf(fr.course.courseId)).collect(Collectors.joining(",")) + "]," +
-                    "['" + startDates.stream().map(fr -> courseRepository.getCourse(fr.course.courseId).longName).collect(Collectors.joining("','")) + "']" +
+                    "[" + startDates.stream().map(sd -> String.valueOf(sd.date.getTime() / 1000)).collect(Collectors.joining(",")) + "]," +
+                    "[" + startDates.stream().map(sd -> String.valueOf(sd.course.courseId)).collect(Collectors.joining(",")) + "]," +
+                    "['" + startDates.stream().map(sd -> courseRepository.getCourse(sd.course.courseId).longName).collect(Collectors.joining("','")) + "']" +
                     "]";
             writer.writer.writeStartElement("script");
             writer.writer.writeCharacters("const courses = " + startDatesJs + ";");
