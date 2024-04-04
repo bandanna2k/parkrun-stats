@@ -1,6 +1,7 @@
-package dnt.parkrun.database;
+package dnt.parkrun.database.weekly;
 
 import dnt.parkrun.common.DateConverter;
+import dnt.parkrun.database.BaseDao;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 
@@ -12,45 +13,56 @@ import static dnt.parkrun.datastructures.Country.NZ;
 
 public class AttendanceRecordsDao extends BaseDao
 {
-    private final String attendanceRecordTableName;
+    private final Date date;
 
-    public AttendanceRecordsDao(DataSource dataSource, Date date)
+    private AttendanceRecordsDao(DataSource dataSource, Date date)
     {
         super(dataSource);
-        attendanceRecordTableName = "attendance_records_for_region_" + DateConverter.formatDateForDbTable(date);
+        this.date = date;
     }
 
-    public void generateAttendanceRecordTable()
+    public static AttendanceRecordsDao getInstance(DataSource dataSource, Date date)
+    {
+        AttendanceRecordsDao attendanceRecordsDao = new AttendanceRecordsDao(dataSource, date);
+        attendanceRecordsDao.generateAttendanceRecordTable();
+        return attendanceRecordsDao;
+    }
+    String tableName()
+    {
+        return "attendance_records_for_region_" + DateConverter.formatDateForDbTable(date);
+    }
+
+    private void generateAttendanceRecordTable()
     {
         String sql =
-                "create table if not exists " + attendanceRecordTableName + " as " +
+                "create table if not exists " + tableName() + " as " +
                 "select course_long_name, c.course_id, c.country_code, " +
                         "            max as record_event_finishers, ces.date as record_event_date, ces.event_number as record_event_number, " +
                         "            sub3.recent_event_finishers, sub3.recent_event_date, sub3.recent_event_number " +
-                        "from parkrun_stats.course c " +
+                        "from " + courseTable() + " c " +
                         "left join " +
                         "(" +
                         "    select course_id, max(count) as max" +
                         "    from" +
                         "    (" +
                         "        select course_id, date, count(position) as count" +
-                        "        from parkrun_stats.result" +
+                        "        from " + resultTable() +
                         "        group by course_id, date" +
                         "    ) as sub1" +
                         "    group by course_id" +
                         "    order by course_id asc" +
                         ") as sub2 on c.course_id = sub2.course_id " +
-                        "left join parkrun_stats.course_event_summary ces " +
+                        "left join " + courseEventSummaryTable() + " ces " +
                         "on c.course_id = ces.course_id " +
                         "and ces.finishers = sub2.max " +
                         "left join " +
                         "( " +
                         "    select ces.course_id, ces.event_number as recent_event_number, finishers as recent_event_finishers, recent_event_date " +
-                        "    from parkrun_stats.course_event_summary ces " +
+                        "    from " + courseEventSummaryTable() + " ces " +
                         "    join " +
                         "    ( " +
                         "        select course_id, max(date) as recent_event_date " +
-                        "        from parkrun_stats.course_event_summary " +
+                        "        from " + courseEventSummaryTable() +
                         "        group by course_id " +
                         "    ) as sub4 on ces.course_id = sub4.course_id and ces.date = sub4.recent_event_date " +
                         ") as sub3 on c.course_id = sub3.course_id " +

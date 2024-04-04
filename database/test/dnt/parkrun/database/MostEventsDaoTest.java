@@ -3,6 +3,7 @@ package dnt.parkrun.database;
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.stats.MostEventsDao;
+import dnt.parkrun.database.weekly.AttendanceRecordsDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;

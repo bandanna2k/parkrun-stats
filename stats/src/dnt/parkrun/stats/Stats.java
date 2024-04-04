@@ -4,7 +4,10 @@ import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
-import dnt.parkrun.database.*;
+import dnt.parkrun.database.CourseDao;
+import dnt.parkrun.database.CourseEventSummaryDao;
+import dnt.parkrun.database.ResultDao;
+import dnt.parkrun.database.VolunteerDao;
 import dnt.parkrun.database.stats.MostEventsDao;
 import dnt.parkrun.database.stats.Top10RunsDao;
 import dnt.parkrun.database.stats.Top10VolunteersDao;
@@ -89,7 +92,7 @@ public class Stats
 
 //        this.dataSource = dataSource;
         this.statsDataSource = statsDataSource;
-        this.attendanceRecordsDao = new AttendanceRecordsDao(this.statsDataSource, this.date);
+        this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(this.statsDataSource, this.date);
         this.acsDao = AthleteCourseSummaryDao.getInstance(statsDataSource, this.date);
         this.top10Dao = new Top10AtCourseDao(statsDataSource, this.date);
         this.top10VolunteerDao = new Top10VoluteersAtCourseDao(statsDataSource, this.date);
@@ -656,10 +659,8 @@ public class Stats
 
     private List<AttendanceRecord> generateAndGetAttendanceRecords()
     {
-        System.out.println("* Generating attendance record table *");
-        attendanceRecordsDao.generateAttendanceRecordTable();
+        System.out.println("* Fetching attendance records *");
         List<AttendanceRecord> attendanceRecords = attendanceRecordsDao.getAttendanceRecords(date);
-//        attendanceRecords.forEach(System.out::println);
 
         System.out.println("* Calculate attendance deltas *");
         List<AttendanceRecord> attendanceRecordsFromLastWeek = getAttendanceRecordsForLastWeek();
