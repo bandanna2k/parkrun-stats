@@ -7,13 +7,14 @@ import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static dnt.parkrun.datastructures.Country.NZ;
 
 public class RegionnaireCountTest
 {
-    private List<Course> courses = getCourses();
+    private final List<Course> courses = getCourses();
 
     private List<Course> getCourses()
     {
@@ -42,7 +43,7 @@ public class RegionnaireCountTest
                 new CourseDate(courses.get(3), DateConverter.parseWebsiteDate("22/03/2024"))
         ));
 
-        Assertions.assertThat(Stats.getRegionnaireCount(sortedStartDates, sortedFirstRuns)).isEqualTo(1);
+        Assertions.assertThat(Stats.getRegionnaireCount(sortedStartDates, Collections.emptyList(), sortedFirstRuns)).isEqualTo(1);
     }
 
 
@@ -57,7 +58,7 @@ public class RegionnaireCountTest
         ));
         List<CourseDate> sortedFirstRuns = new ArrayList<>();
 
-        Assertions.assertThat(Stats.getRegionnaireCount(sortedStartDates, sortedFirstRuns)).isEqualTo(0);
+        Assertions.assertThat(Stats.getRegionnaireCount(sortedStartDates, Collections.emptyList(), sortedFirstRuns)).isEqualTo(0);
     }
 
     @Test
@@ -76,7 +77,7 @@ public class RegionnaireCountTest
                 new CourseDate(courses.get(3), DateConverter.parseWebsiteDate("22/02/2024"))
         ));
 
-        Assertions.assertThat(Stats.getRegionnaireCount(sortedStartDates, sortedFirstRuns)).isEqualTo(4);
+        Assertions.assertThat(Stats.getRegionnaireCount(sortedStartDates, Collections.emptyList(), sortedFirstRuns)).isEqualTo(4);
     }
 
     @Test
@@ -97,6 +98,6 @@ public class RegionnaireCountTest
                 new CourseDate(courses.get(3), DateConverter.parseWebsiteDate("22/03/2024"))
         ));
 
-        Assertions.assertThat(Stats.getRegionnaireCount(sortedStartDates, sortedFirstRuns)).isEqualTo(1);
+        Assertions.assertThat(Stats.getRegionnaireCount(sortedStartDates, sortedStopDates, sortedFirstRuns)).isEqualTo(1);
     }
 }

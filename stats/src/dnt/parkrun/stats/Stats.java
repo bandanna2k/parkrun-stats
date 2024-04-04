@@ -549,7 +549,7 @@ public class Stats
                     listOfFirstRuns = athleteIdToFirstRuns.get(der.athleteId);
                     listOfFirstRuns.sort(CourseDate.COMPARATOR);
 
-                    regionnaireCount = getRegionnaireCount(new ArrayList<>(startDates), new ArrayList<>(listOfFirstRuns));
+                    regionnaireCount = getRegionnaireCount(new ArrayList<>(startDates), emptyList(), new ArrayList<>(listOfFirstRuns));
 
                     Object[] result = getRunsNeeded(new ArrayList<>(startDates), new ArrayList<>(listOfFirstRuns));
                     runsNeeded = result[0] + " (" + result[1] + ")";
@@ -613,21 +613,27 @@ public class Stats
 
     static int getRegionnaireCount(
             List<CourseDate> sortedStartDates,
+            List<CourseDate> sortedStopDates,
             List<CourseDate> sortedFirstRuns)
     {
         final int totalEvents = sortedStartDates.size();
+        final int totalEventsStopped = sortedStopDates.size();
         final int totalEventsRun = sortedFirstRuns.size();
         int regionnaireCount = 0;
         while(!sortedFirstRuns.isEmpty())
         {
             CourseDate firstRun = sortedFirstRuns.remove(0);
             sortedStartDates.removeIf(record -> record.date.getTime() <= firstRun.date.getTime());
+            sortedStopDates.removeIf(record -> record.date.getTime() <= firstRun.date.getTime());
 
-            int courseThatHaventStartedYet = sortedStartDates.size();
-            int countOfEventsThereHaveBeen = totalEvents - courseThatHaventStartedYet;
-            int coursesDoneSoFar = totalEventsRun - sortedFirstRuns.size();
+            // Courses running
+            int coursesThatAreStopped = totalEventsStopped - sortedStopDates.size();
+            int courseThatAreRunning = totalEvents - coursesThatAreStopped - sortedStartDates.size();
 
-            if(coursesDoneSoFar == countOfEventsThereHaveBeen)
+            // Athlete Runs
+            int coursesRunSoFar = totalEventsRun - sortedFirstRuns.size();
+
+            if(coursesRunSoFar == courseThatAreRunning)
             {
                 regionnaireCount++;
             }

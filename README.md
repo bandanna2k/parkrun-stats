@@ -15,8 +15,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Minor
 
-- Give all DAO calls a test, not hard.
-
 - Revisit pIndex downloads. I don't think the criteria for downloading the athletes its correct.
 
 - Do I need name/most global events in most events table?
