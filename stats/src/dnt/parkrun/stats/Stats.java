@@ -71,7 +71,7 @@ public class Stats
     private final ResultDao resultDao;
     private final AthleteCourseSummaryDao acsDao;
     private final Top10AtCourseDao top10Dao;
-    private final Top10VoluteersAtCourseDao top10VolunteerDao;
+    private final Top10VolunteersAtCourseDao top10VolunteerDao;
     private final CourseEventSummaryDao courseEventSummaryDao;
     private final PIndexDao pIndexDao;
     private final VolunteerCountDao volunteerCountDao;
@@ -95,7 +95,7 @@ public class Stats
         this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(statsDataSource, this.date);
         this.acsDao = AthleteCourseSummaryDao.getInstance(statsDataSource, this.date);
         this.top10Dao = Top10AtCourseDao.getInstance(statsDataSource, this.date);
-        this.top10VolunteerDao = Top10VoluteersAtCourseDao.getInstance(statsDataSource, this.date);
+        this.top10VolunteerDao = Top10VolunteersAtCourseDao.getInstance(statsDataSource, this.date);
         this.pIndexDao = PIndexDao.getInstance(statsDataSource, date);
         this.volunteerCountDao = VolunteerCountDao.getInstance(statsDataSource, this.date);
 

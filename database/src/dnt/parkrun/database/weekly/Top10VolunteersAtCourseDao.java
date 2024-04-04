@@ -14,21 +14,21 @@ import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
 
-public class Top10VoluteersAtCourseDao extends BaseDao
+public class Top10VolunteersAtCourseDao extends BaseDao
 {
     private final Date date;
 
-    private Top10VoluteersAtCourseDao(DataSource dataSource, Date date)
+    private Top10VolunteersAtCourseDao(DataSource dataSource, Date date)
     {
         super(dataSource);
         this.date = date;
     }
 
-    public static Top10VoluteersAtCourseDao getInstance(DataSource dataSource, Date date)
+    public static Top10VolunteersAtCourseDao getInstance(DataSource dataSource, Date date)
     {
-        Top10VoluteersAtCourseDao top10VoluteersAtCourseDao = new Top10VoluteersAtCourseDao(dataSource, date);
-        top10VoluteersAtCourseDao.createTable();
-        return top10VoluteersAtCourseDao;
+        Top10VolunteersAtCourseDao top10VolunteersAtCourseDao = new Top10VolunteersAtCourseDao(dataSource, date);
+        top10VolunteersAtCourseDao.createTable();
+        return top10VolunteersAtCourseDao;
     }
 
     String tableName()
