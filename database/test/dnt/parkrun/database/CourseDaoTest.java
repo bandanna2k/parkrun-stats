@@ -10,8 +10,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
+import java.util.List;
 
-import static dnt.parkrun.datastructures.Country.NZ;
+import static dnt.parkrun.datastructures.Country.*;
 import static dnt.parkrun.datastructures.Course.Status.RUNNING;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,11 +27,12 @@ public class CourseDaoTest extends BaseDaoTest
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
-        courseRepository = new CourseRepository();
-        courseDao = new CourseDao(dataSource, courseRepository);
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);
         jdbc.update("delete from course", EmptySqlParameterSource.INSTANCE);
+
+        courseRepository = new CourseRepository();
+        courseDao = new CourseDao(dataSource, courseRepository);
     }
 
     @Test
@@ -40,5 +42,37 @@ public class CourseDaoTest extends BaseDaoTest
         System.out.println(course);
         assertThat(course.courseId).isGreaterThan(0);
         assertThat(course.name).isEqualTo("otakiriver");
+    }
+
+    @Test
+    public void shouldGetCourseByName()
+    {
+        Course course = courseDao.insert(new Course(9999, "otakiriver", NZ, "\u014ctaki River parkrun", RUNNING));
+
+        assertThat(courseDao.getCourse("otaki")).isNull();
+        assertThat(courseDao.getCourse("otakiriver")).isNotNull();
+    }
+
+
+    @Test
+    public void shouldGetCoursesForCountry()
+    {
+        courseDao.insert(CORNWALL);
+        courseDao.insert(ELLIÐAÁRDALUR);
+
+        {
+            List<Course> courses = courseDao.getCourses(NZ);
+            assertThat(courses.size()).isEqualTo(1);
+            assertThat(courses.get(0).name).isEqualTo("cornwall");
+        }
+        {
+            List<Course> courses = courseDao.getCourses(UNKNOWN);
+            assertThat(courses.size()).isEqualTo(1);
+            assertThat(courses.get(0).name).isEqualTo("ellidaardalur");
+        }
+        {
+            List<Course> courses = courseDao.getCourses(USA);
+            assertThat(courses.size()).isEqualTo(0);
+        }
     }
 }

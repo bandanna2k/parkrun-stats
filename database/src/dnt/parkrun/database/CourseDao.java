@@ -4,6 +4,7 @@ import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -78,16 +79,23 @@ public class CourseDao
 
     public Course getCourse(String courseName)
     {
-        return jdbc.queryForObject("select * from course where course_name = :courseName",
-                new MapSqlParameterSource("courseName", courseName),
-                (rs, rowNum) ->
-                        new Course(
-                                rs.getInt("course_id"),
-                                rs.getString("course_name"),
-                                Country.valueOf(rs.getInt("country_code")),
-                                rs.getString("course_long_name"),
-                                Course.Status.fromDb(rs.getString("status"))
-        ));
+        try
+        {
+            return jdbc.queryForObject("select * from course where course_name = :courseName",
+                    new MapSqlParameterSource("courseName", courseName),
+                    (rs, rowNum) ->
+                            new Course(
+                                    rs.getInt("course_id"),
+                                    rs.getString("course_name"),
+                                    Country.valueOf(rs.getInt("country_code")),
+                                    rs.getString("course_long_name"),
+                                    Course.Status.fromDb(rs.getString("status"))
+                            ));
+        }
+        catch (EmptyResultDataAccessException ex)
+        {
+            return null;
+        }
     }
 
     public List<Course> getCourses(Country country)

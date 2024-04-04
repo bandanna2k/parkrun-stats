@@ -9,15 +9,16 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 
+import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Country.UNKNOWN;
 import static org.junit.Assume.assumeTrue;
 
 public abstract class BaseDaoTest
 {
     public static final Course ELLIÐAÁRDALUR =
-            new Course(9999, "Elliðaárdalur", UNKNOWN, "Elliðaárdalur", Course.Status.RUNNING);
+            new Course(9999, "ellidaardalur", UNKNOWN, "Elliðaárdalur", Course.Status.RUNNING);
     public static final Course CORNWALL =
-            new Course(9998, "Cornwall Park", UNKNOWN, "Cornwall Park", Course.Status.RUNNING);
+            new Course(9998, "cornwall", NZ, "Cornwall Park", Course.Status.RUNNING);
     @BeforeClass
     public static void beforeClass()
     {
