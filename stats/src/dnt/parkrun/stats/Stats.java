@@ -97,7 +97,7 @@ public class Stats
         this.top10Dao = new Top10AtCourseDao(statsDataSource, this.date);
         this.top10VolunteerDao = new Top10VoluteersAtCourseDao(statsDataSource, this.date);
         this.resultDao = new ResultDao(dataSource);
-        this.pIndexDao = new PIndexDao(statsDataSource, date);
+        this.pIndexDao = PIndexDao.getInstance(statsDataSource, date);
         this.volunteerCountDao = VolunteerCountDao.getInstance(statsDataSource, this.date);
         this.volunteerDao = new VolunteerDao(statsDataSource);
 

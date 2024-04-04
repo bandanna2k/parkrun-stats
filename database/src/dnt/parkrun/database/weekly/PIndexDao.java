@@ -15,11 +15,17 @@ public class PIndexDao extends BaseDao
 {
     private final Date date;
 
-    public PIndexDao(DataSource statsDataSource, Date date)
+    private PIndexDao(DataSource statsDataSource, Date date)
     {
         super(statsDataSource);
         this.date = date;
-        createTable();
+    }
+
+    public static PIndexDao getInstance(DataSource statsDataSource, Date date)
+    {
+        PIndexDao pIndexDao = new PIndexDao(statsDataSource, date);
+        pIndexDao.createTable();
+        return pIndexDao;
     }
 
     private static String getTableName(Date date)
