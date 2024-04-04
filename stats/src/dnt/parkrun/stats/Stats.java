@@ -92,13 +92,14 @@ public class Stats
 
 //        this.dataSource = dataSource;
         this.statsDataSource = statsDataSource;
-        this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(this.statsDataSource, this.date);
+        this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(statsDataSource, this.date);
         this.acsDao = AthleteCourseSummaryDao.getInstance(statsDataSource, this.date);
-        this.top10Dao = new Top10AtCourseDao(statsDataSource, this.date);
+        this.top10Dao = Top10AtCourseDao.getInstance(statsDataSource, this.date);
         this.top10VolunteerDao = new Top10VoluteersAtCourseDao(statsDataSource, this.date);
-        this.resultDao = new ResultDao(dataSource);
         this.pIndexDao = PIndexDao.getInstance(statsDataSource, date);
         this.volunteerCountDao = VolunteerCountDao.getInstance(statsDataSource, this.date);
+
+        this.resultDao = new ResultDao(dataSource);
         this.volunteerDao = new VolunteerDao(statsDataSource);
 
         this.courseRepository = new CourseRepository();

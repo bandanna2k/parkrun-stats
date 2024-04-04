@@ -16,20 +16,31 @@ import java.util.List;
 
 public class Top10AtCourseDao extends BaseDao
 {
-    final String tableName;
+    private final Date date;
 
-    public Top10AtCourseDao(DataSource dataSource, Date date)
+    private Top10AtCourseDao(DataSource dataSource, Date date)
     {
         super(dataSource);
-        tableName = "top_10_at_course_" + DateConverter.formatDateForDbTable(date);
-
+        this.date = date;
         createTable();
     }
 
-    public void createTable()
+    public static Top10AtCourseDao getInstance(DataSource dataSource, Date date)
+    {
+        Top10AtCourseDao top10AtCourseDao = new Top10AtCourseDao(dataSource, date);
+        top10AtCourseDao.createTable();
+        return top10AtCourseDao;
+    }
+
+    String tableName()
+    {
+        return "top_10_at_course_" + DateConverter.formatDateForDbTable(date);
+    }
+
+    private void createTable()
     {
         String sql =
-                "create table if not exists " + tableName + " ( " +
+                "create table if not exists " + tableName() + " ( " +
                         "    athlete_id       INT               NOT NULL," +
                         "    course_id        INT               NOT NULL," +
                         "    run_count        INT               NOT NULL" +
@@ -39,7 +50,7 @@ public class Top10AtCourseDao extends BaseDao
 
     public void writeRunsAtEvents(List<AtEvent> runsAtEvents)
     {
-        String sql = "insert into " + tableName + " (" +
+        String sql = "insert into " + tableName() + " (" +
                 "athlete_id, course_id, run_count" +
                 ") values ( " +
                 ":athleteId, :courseId, :runCount" +
@@ -61,7 +72,7 @@ public class Top10AtCourseDao extends BaseDao
     public List<AtEvent> getTop10AtCourse(String courseName)
     {
         String sql = "        select a.athlete_id, a.name, c.course_id, c.course_name, c.course_long_name, c.country_code, run_count \n" +
-                "        from " + tableName +
+                "        from " + tableName() +
                 "        join " + courseTable() + " c using (course_id)\n" +
                 "        join " + athleteTable() + " a using (athlete_id)\n" +
                 "where " +
@@ -82,7 +93,7 @@ public class Top10AtCourseDao extends BaseDao
     public List<AtEvent> getTop10InRegion()
     {
         String sql = "select a.name, a.athlete_id, c.course_id, c.course_name, c.country_code, c.course_long_name, run_count\n" +
-                " from " + tableName +
+                " from " + tableName() +
                 " join " + athleteTable() + " a using (athlete_id)\n" +
                 " join " + courseTable() + " c using (course_id)\n" +
                 " order by run_count desc\n" +
