@@ -54,7 +54,7 @@ public class AthleteCourseSummaryDao extends BaseDao
     {
         List<Object[]> results = new ArrayList<>();
         String sql = "select * from " + athleteTable()  +
-                " join " + tableName + " using (athlete_id)";
+                " join " + tableName + " using (athlete_id) order by athlete_id asc, course_id asc";
         jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             results.add(new Object[]{

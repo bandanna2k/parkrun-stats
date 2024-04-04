@@ -69,8 +69,12 @@ public class AthleteCourseSummaryDaoTest extends BaseDaoTest
         );
 
         List<Object[]> actualSummaries = acsDao.getAthleteCourseSummariesMap();
-        assertThat(actualSummaries).isNotEmpty();
+        assertThat(actualSummaries.size()).isEqualTo(3);
 
-        System.out.println(actualSummaries);
+        Object[] cornwallAcs = actualSummaries.get(1);
+        assertThat(cornwallAcs[0]).isEqualTo("Bob Te WILLIGA");
+        assertThat(cornwallAcs[1]).isEqualTo(12345);
+        assertThat(cornwallAcs[2]).isEqualTo(9999);
+        assertThat(cornwallAcs[3]).isEqualTo(20);
     }
 }
