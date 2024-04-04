@@ -233,7 +233,7 @@ public class Stats
             try (MostVolunteersTableHtmlWriter tableWriter = new MostVolunteersTableHtmlWriter(writer))
             {
                 List<Object[]> mostVolunteers = volunteerCountDao.getMostVolunteers();
-                if(mostVolunteers.isEmpty()) System.out.println("WARNING: No records for Most Volunteers");
+                assert !mostVolunteers.isEmpty() : "WARNING: No records for Most Volunteers";
                 for (Object[] record : mostVolunteers)
                 {
                     tableWriter.writeRecord(new MostVolunteersTableHtmlWriter.Record(
@@ -425,7 +425,7 @@ public class Stats
             try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, "New Zealand"))
             {
                 List<AtEvent> top10InRegion = top10Dao.getTop10InRegion();
-                if (top10InRegion.isEmpty()) System.out.println("WARNING: Top 10 runs in NZ list is empty");
+                assert !top10InRegion.isEmpty() : "WARNING: Top 10 runs in NZ list is empty";
                 for (AtEvent r : top10InRegion)
                 {
                     top10InRegionHtmlWriter.writeRecord(new Top10InRegionHtmlWriter.Record(r.athlete, r.course.longName, r.count));
@@ -470,7 +470,7 @@ public class Stats
             try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, "New Zealand"))
             {
                 List<Object[]> top10VolunteersInRegion = top10VolunteerDao.getTop10VolunteersInRegion();
-                if(top10VolunteersInRegion.isEmpty()) System.out.println("WARNING: Top 10 runs in NZ list is empty");
+                assert !top10VolunteersInRegion.isEmpty() : "WARNING: Top 10 runs in NZ list is empty";
 
                 for (Object[] record : top10VolunteersInRegion)
                 {
@@ -690,7 +690,7 @@ public class Stats
         }
         catch (Exception ex)
         {
-            System.out.println("WARNING No attendance records for last week.");
+            assert false : "WARNING No attendance records for last week.";
         }
         return emptyList();
     }

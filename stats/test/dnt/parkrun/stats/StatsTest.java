@@ -22,6 +22,8 @@ public class StatsTest
     @Before
     public void setUp() throws Exception
     {
+        Stats.class.getClassLoader().setClassAssertionStatus(Stats.class.getName(), false);
+
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
 
