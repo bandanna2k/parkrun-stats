@@ -16,20 +16,30 @@ import java.util.List;
 
 public class Top10VoluteersAtCourseDao extends BaseDao
 {
-    final String tableName;
+    private final Date date;
 
-    public Top10VoluteersAtCourseDao(DataSource dataSource, Date date)
+    private Top10VoluteersAtCourseDao(DataSource dataSource, Date date)
     {
         super(dataSource);
-        tableName = "top_10_volunteers_at_course_" + DateConverter.formatDateForDbTable(date);
+        this.date = date;
+    }
 
-        createTable();
+    public static Top10VoluteersAtCourseDao getInstance(DataSource dataSource, Date date)
+    {
+        Top10VoluteersAtCourseDao top10VoluteersAtCourseDao = new Top10VoluteersAtCourseDao(dataSource, date);
+        top10VoluteersAtCourseDao.createTable();
+        return top10VoluteersAtCourseDao;
+    }
+
+    String tableName()
+    {
+        return "top_10_volunteers_at_course_" + DateConverter.formatDateForDbTable(date);
     }
 
     public void createTable()
     {
         String sql =
-                "create table if not exists " + tableName + " ( " +
+                "create table if not exists " + tableName() + " ( " +
                         "    athlete_id       INT               NOT NULL," +
                         "    course_id        INT               NOT NULL," +
                         "    volunteer_count  INT               NOT NULL" +
@@ -39,17 +49,12 @@ public class Top10VoluteersAtCourseDao extends BaseDao
 
     public void writeVolunteersAtEvents(List<AtEvent> volunteersAtEvents)
     {
-        String sql = "insert into " + tableName + " (" +
+        String sql = "insert into " + tableName() + " (" +
                 "athlete_id, course_id, volunteer_count" +
                 ") values ( " +
                 ":athleteId, :courseId, :volunteerCount" +
                 ")";
         volunteersAtEvents.forEach(volunteersAtEvent -> {
-//            jdbc.batchUpdate(sql, new MapSqlParameterSource()
-//                    .addValue("athleteId", runsAtEvent.athlete.athleteId)
-//                    .addValue("courseId", runsAtEvent.course.courseId)
-//                    .addValue("runCount", runsAtEvent.runCount)
-//            );
             jdbc.update(sql, new MapSqlParameterSource()
                     .addValue("athleteId", volunteersAtEvent.athlete.athleteId)
                     .addValue("courseId", volunteersAtEvent.course.courseId)
@@ -61,7 +66,7 @@ public class Top10VoluteersAtCourseDao extends BaseDao
     public List<AtEvent> getTop10VolunteersAtCourse(String courseName)
     {
         String sql = "        select a.athlete_id, a.name, c.course_id, c.course_name, c.course_long_name, c.country_code, volunteer_count \n" +
-                "        from " + tableName +
+                "        from " + tableName() +
                 "        join " + courseTable() + " c using (course_id)\n" +
                 "        join " + athleteTable() + " a using (athlete_id)\n" +
                 "where " +
@@ -86,7 +91,7 @@ public class Top10VoluteersAtCourseDao extends BaseDao
                 "join " +
                 "(" +
                 "    select athlete_id, course_id, sum(volunteer_count) as total_volunteer_count\n" +
-                "    from " + tableName +
+                "    from " + tableName() +
                 "    group by athlete_id, course_id\n" +
                 "    order by total_volunteer_count desc\n" +
                 "    limit 20" +

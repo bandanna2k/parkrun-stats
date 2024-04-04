@@ -95,7 +95,7 @@ public class Stats
         this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(statsDataSource, this.date);
         this.acsDao = AthleteCourseSummaryDao.getInstance(statsDataSource, this.date);
         this.top10Dao = Top10AtCourseDao.getInstance(statsDataSource, this.date);
-        this.top10VolunteerDao = new Top10VoluteersAtCourseDao(statsDataSource, this.date);
+        this.top10VolunteerDao = Top10VoluteersAtCourseDao.getInstance(statsDataSource, this.date);
         this.pIndexDao = PIndexDao.getInstance(statsDataSource, date);
         this.volunteerCountDao = VolunteerCountDao.getInstance(statsDataSource, this.date);
 
