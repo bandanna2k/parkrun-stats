@@ -115,4 +115,22 @@ public class CourseEventSummaryDao extends BaseDao
                                 rs.getDate("date"))
         );
     }
+
+    public List<CourseDate> getCourseStopDates(Country country)
+    {
+        String sql = "select course_id, max(date) as max_date\n" +
+                "from (select * from " + courseTable() + " where status = :stoppedStatus and country_code = :countryCode) as sub1\n" +
+                "join " + courseEventSummaryTable() + " using (course_id)\n" +
+                "group by course_id\n" +
+                "order by max_date asc";
+        return jdbc.query(sql,
+                new MapSqlParameterSource()
+                        .addValue("stoppedStatus", Course.Status.STOPPED.getStatusForDb())
+                        .addValue("countryCode", country.countryCode),
+                (rs, rowNum) ->
+                        new CourseDate(
+                                courseRepository.getCourse(rs.getInt("course_id")),
+                                rs.getDate("max_date"))
+        );
+    }
 }

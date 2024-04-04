@@ -81,6 +81,7 @@ public class Stats
     private final Map<Integer, Athlete> athleteIdToAthlete = new HashMap<>();
     private final Map<Integer, List<AthleteCourseSummary>> athleteIdToAthleteCourseSummaries = new HashMap<>();
     private final List<CourseDate> startDates = new ArrayList<>();
+    private final List<CourseDate> stopDates = new ArrayList<>();
 
     private Stats(DataSource dataSource,
                   DataSource statsDataSource,
@@ -120,6 +121,10 @@ public class Stats
     {
         System.out.print("Getting start dates ");
         startDates.addAll(courseEventSummaryDao.getCourseStartDates());
+        System.out.println("Done");
+
+        System.out.print("Getting stop dates ");
+        stopDates.addAll(courseEventSummaryDao.getCourseStopDates(NZ));
         System.out.println("Done");
 
         System.out.println("* Generating most events table *");
@@ -549,7 +554,7 @@ public class Stats
                     listOfFirstRuns = athleteIdToFirstRuns.get(der.athleteId);
                     listOfFirstRuns.sort(CourseDate.COMPARATOR);
 
-                    regionnaireCount = getRegionnaireCount(new ArrayList<>(startDates), emptyList(), new ArrayList<>(listOfFirstRuns));
+                    regionnaireCount = getRegionnaireCount(new ArrayList<>(startDates), new ArrayList<>(stopDates), new ArrayList<>(listOfFirstRuns));
 
                     Object[] result = getRunsNeeded(new ArrayList<>(startDates), new ArrayList<>(listOfFirstRuns));
                     runsNeeded = result[0] + " (" + result[1] + ")";
