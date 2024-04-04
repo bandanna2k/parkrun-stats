@@ -9,7 +9,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 
-public class AttendanceRecordsDaoTest extends BaseDaoTest
+public class MostEventsDaoTest extends BaseDaoTest
 {
     private AttendanceRecordsDao dao;
     private MostEventsDao mostEventsDao;
