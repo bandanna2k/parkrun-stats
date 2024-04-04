@@ -554,7 +554,7 @@ public class Stats
                     listOfFirstRuns = athleteIdToFirstRuns.get(der.athleteId);
                     listOfFirstRuns.sort(CourseDate.COMPARATOR);
 
-                    regionnaireCount = getRegionnaireCount(new ArrayList<>(startDates), new ArrayList<>(stopDates), new ArrayList<>(listOfFirstRuns));
+                    regionnaireCount = getRegionnaireCount(new ArrayList<>(startDates), new ArrayList<>(), new ArrayList<>(listOfFirstRuns));
 
                     Object[] result = getRunsNeeded(new ArrayList<>(startDates), new ArrayList<>(listOfFirstRuns));
                     runsNeeded = result[0] + " (" + result[1] + ")";
