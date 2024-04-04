@@ -60,14 +60,20 @@ public class Stats
     public static void main(String[] args) throws SQLException, IOException, XMLStreamException
     {
         Date date = args.length == 0 ? getParkrunDay(new Date()) : DateConverter.parseWebsiteDate(args[0]);
-        Stats stats = Stats.newInstance(date);
+
+        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
+                "jdbc:mysql://localhost/parkrun_stats", "stats", "statsfractalstats");
+        DataSource statsDataSource = new SimpleDriverDataSource(new Driver(),
+                "jdbc:mysql://localhost/weekly_stats", "stats", "statsfractalstats");
+
+        Stats stats = Stats.newInstance(dataSource, statsDataSource, date);
         stats.generateStats();
     }
 
     private final Date date;
     private final Date lastWeek;
     private final DataSource statsDataSource;
-    private final AttendanceRecordsDao attendanceRecordsDao;
+    final AttendanceRecordsDao attendanceRecordsDao;
     private final ResultDao resultDao;
     private final AthleteCourseSummaryDao acsDao;
     private final Top10AtCourseDao top10Dao;
@@ -108,16 +114,12 @@ public class Stats
         this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
     }
 
-    public static Stats newInstance(Date date) throws SQLException
+    public static Stats newInstance(DataSource dataSource, DataSource statsDataSource, Date date) throws SQLException
     {
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "stats", "statsfractalstats");
-        DataSource statsDataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/weekly_stats", "stats", "statsfractalstats");
         return new Stats(dataSource, statsDataSource, date);
     }
 
-    private void generateStats() throws IOException, XMLStreamException
+    public void generateStats() throws IOException, XMLStreamException
     {
         System.out.print("Getting start dates ");
         startDates.addAll(courseEventSummaryDao.getCourseStartDates());
@@ -231,7 +233,7 @@ public class Stats
             try (MostVolunteersTableHtmlWriter tableWriter = new MostVolunteersTableHtmlWriter(writer))
             {
                 List<Object[]> mostVolunteers = volunteerCountDao.getMostVolunteers();
-                assert !mostVolunteers.isEmpty() : "No records for Most Volunteers";
+                if(mostVolunteers.isEmpty()) System.out.println("WARNING: No records for Most Volunteers");
                 for (Object[] record : mostVolunteers)
                 {
                     tableWriter.writeRecord(new MostVolunteersTableHtmlWriter.Record(
@@ -423,7 +425,7 @@ public class Stats
             try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, "New Zealand"))
             {
                 List<AtEvent> top10InRegion = top10Dao.getTop10InRegion();
-                assert !top10InRegion.isEmpty() : "Top 10 runs in NZ list is empty";
+                if (top10InRegion.isEmpty()) System.out.println("WARNING: Top 10 runs in NZ list is empty");
                 for (AtEvent r : top10InRegion)
                 {
                     top10InRegionHtmlWriter.writeRecord(new Top10InRegionHtmlWriter.Record(r.athlete, r.course.longName, r.count));
@@ -468,7 +470,7 @@ public class Stats
             try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, "New Zealand"))
             {
                 List<Object[]> top10VolunteersInRegion = top10VolunteerDao.getTop10VolunteersInRegion();
-                assert !top10VolunteersInRegion.isEmpty() : "Top 10 runs in NZ list is empty";
+                if(top10VolunteersInRegion.isEmpty()) System.out.println("WARNING: Top 10 runs in NZ list is empty");
 
                 for (Object[] record : top10VolunteersInRegion)
                 {

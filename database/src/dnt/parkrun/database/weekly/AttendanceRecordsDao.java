@@ -27,7 +27,7 @@ public class AttendanceRecordsDao extends BaseDao
         attendanceRecordsDao.generateAttendanceRecordTable();
         return attendanceRecordsDao;
     }
-    String tableName()
+    public String tableName()
     {
         return "attendance_records_for_region_" + DateConverter.formatDateForDbTable(date);
     }

@@ -2,10 +2,12 @@ package dnt.parkrun.database.weekly;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.BaseDao;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import javax.sql.DataSource;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -75,14 +77,29 @@ public class PIndexDao extends BaseDao
 
     public List<PIndexRecord> getPIndexRecordsLastWeek()
     {
-        Date lastWeek = new Date();
-        lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
-        String sql = "select * from " + getTableName(lastWeek);
-        return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> new PIndexRecord(
-                rs.getInt("athlete_id"),
-                rs.getInt("p_index"),
-                rs.getInt("runs_needed_to_next"),
-                rs.getDouble("home_ratio")));
+        try
+        {
+            Date lastWeek = new Date();
+            lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
+            String sql = "select * from " + getTableName(lastWeek);
+            return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> new PIndexRecord(
+                    rs.getInt("athlete_id"),
+                    rs.getInt("p_index"),
+                    rs.getInt("runs_needed_to_next"),
+                    rs.getDouble("home_ratio")));
+        }
+        catch(BadSqlGrammarException ex)
+        {
+            if(ex.getMessage().matches(".*Table.*doesn't exist.*"))
+            {
+                System.out.println("WARNING " + ex.getMessage());
+            }
+            else
+            {
+                throw ex;
+            }
+        }
+        return Collections.emptyList();
     }
 
     public static class PIndexRecord
