@@ -1,16 +1,13 @@
 package dnt.parkrun.courseevent;
 
-import dnt.jsoupwrapper.JsoupWrapper;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.*;
+import dnt.parkrun.webpageprovider.WebpageProvider;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
@@ -114,34 +111,20 @@ public class Parser
 
     public static class Builder
     {
-        private final JsoupWrapper jsoupWrapper;
-        private Document doc;
         private Consumer<Athlete> athleteConsumer = r -> {};
         private Consumer<Result> resultConsumer = r -> {};
         private Consumer<Volunteer> volunteerConsumer = r -> {};
         private final Course course;
+        private WebpageProvider webpageProvider;
 
         public Builder(Course course)
         {
             this.course = course;
-            this.jsoupWrapper = new JsoupWrapper(true);
         }
 
         public Parser build()
         {
-            return new Parser(doc, course, athleteConsumer, resultConsumer, volunteerConsumer);
-        }
-
-        public Builder url(URL url) throws IOException
-        {
-            this.doc = jsoupWrapper.newDocument(url);
-            return this;
-        }
-
-        public Builder file(File file)
-        {
-            this.doc = jsoupWrapper.newDocument(file);
-            return this;
+            return new Parser(webpageProvider.getDocument(), course, athleteConsumer, resultConsumer, volunteerConsumer);
         }
 
         public Builder forEachAthlete(Consumer<Athlete> consumer)
@@ -159,6 +142,12 @@ public class Parser
         public Builder forEachVolunteer(Consumer<Volunteer> consumer)
         {
             this.volunteerConsumer = consumer;
+            return this;
+        }
+
+        public Builder webpageProvider(WebpageProvider websiteProvider)
+        {
+            this.webpageProvider = websiteProvider;
             return this;
         }
     }

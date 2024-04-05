@@ -15,5 +15,7 @@
     <orderEntry type="library" name="jsoup" level="project" />
     <orderEntry type="module" module-name="common" />
     <orderEntry type="module" module-name="jsoupWrapper" />
+    <orderEntry type="module" module-name="webpageProvider" />
+    <orderEntry type="module" module-name="fileWebpageProvider" scope="TEST" />
   </component>
 </module>

@@ -19,5 +19,7 @@
     <orderEntry type="library" name="springframework.spring.jdbc" level="project" />
     <orderEntry type="module" module-name="database" />
     <orderEntry type="module" module-name="common" />
+    <orderEntry type="module" module-name="fileWebpageProvider" />
+    <orderEntry type="module" module-name="webpageProvider" />
   </component>
 </module>

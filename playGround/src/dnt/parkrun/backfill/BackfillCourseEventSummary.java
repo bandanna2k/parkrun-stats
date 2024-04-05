@@ -7,6 +7,7 @@ import dnt.parkrun.courses.reader.EventsJsonFileReader;
 import dnt.parkrun.database.CourseEventSummaryDao;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
+import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -58,7 +59,7 @@ public class BackfillCourseEventSummary
         {
             System.out.println("* Collecting summary for " + course + " *");
             Parser parser = new Parser.Builder()
-                    .url(urlGenerator.generateCourseEventSummaryUrl(course.name))
+                    .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventSummaryUrl(course.name)))
                     .forEachCourseEvent(ces ->
                     {
                         System.out.println(ces);

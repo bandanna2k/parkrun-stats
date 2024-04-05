@@ -2,6 +2,7 @@ package dnt.parkrun.courseevent;
 
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
+import dnt.parkrun.filewebpageprovider.FileWebpageProvider;
 import org.junit.Test;
 
 import java.io.File;
@@ -19,7 +20,7 @@ public class ParserTest
                 .forEachAthlete(x -> System.out.println("Athlete: " + x))
                 .forEachResult(x -> System.out.println("Result: " + x))
                 .forEachVolunteer(x -> System.out.println("Volunteer: " + x))
-                .file(new File(resource.getFile()))
+                .webpageProvider(new FileWebpageProvider(new File(resource.getFile())))
                 .build();
         parser.parse();
     }
@@ -32,7 +33,7 @@ public class ParserTest
                 .forEachAthlete(x -> System.out.println("Athlete: " + x))
                 .forEachResult(x -> System.out.println("Result: " + x))
                 .forEachVolunteer(x -> System.out.println("Volunteer: " + x))
-                .file(new File(resource.getFile()))
+                .webpageProvider(new FileWebpageProvider(new File(resource.getFile())))
                 .build();
         parser.parse();
     }

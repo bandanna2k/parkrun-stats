@@ -9,13 +9,12 @@ import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.CourseRepository;
+import dnt.parkrun.webpageprovider.WebpageProviderFactory;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +48,7 @@ public class MostEvents
     private final CourseEventSummaryDao courseEventSummaryDao;
     private final ResultDao resultDao;
     private final VolunteerDao volunteerDao;
+    private final WebpageProviderFactory webpageProviderFactory;
 
     private MostEvents(DataSource dataSource,
                        List<Object[]> listOfCourseAndStatus) throws SQLException
@@ -60,7 +60,8 @@ public class MostEvents
         this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
         this.resultDao = new ResultDao(dataSource);
         this.volunteerDao = new VolunteerDao(dataSource);
-        urlGenerator = new UrlGenerator(NZ.baseUrl);
+        this.urlGenerator = new UrlGenerator(NZ.baseUrl);
+        this.webpageProviderFactory = new WebpageProviderFactory(urlGenerator);
     }
 
     public static MostEvents newInstance(DataSource dataSource,
@@ -93,8 +94,6 @@ public class MostEvents
         System.out.println("* Get course summaries from Web *");
         List<CourseEventSummary> courseEventSummariesFromWeb = getCourseEventSummariesFromWeb();
 
-        if(true) throw new RuntimeException("Not testable");
-
         System.out.println("* Filtering existing course event summaries *");
         courseEventSummariesFromWeb.removeAll(courseEventSummariesFromDao);
 
@@ -116,7 +115,7 @@ public class MostEvents
                 try
                 {
                     dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(ces.course)
-                            .url(urlGenerator.generateCourseEventUrl(ces.course.name, ces.eventNumber))
+                            .webpageProvider(webpageProviderFactory.createCourseEventWebpageProvider(ces.course.name, ces.eventNumber))
                             .forEachAthlete(athleteDao::insert)
                             .forEachResult(resultDao::insert)
                             .forEachVolunteer(volunteerDao::insert)
@@ -167,10 +166,9 @@ public class MostEvents
         {
             System.out.printf("* Processing %s *\n", course);
             System.out.println(System.getProperty("user.dir"));
-            URL url = urlGenerator.generateCourseEventSummaryUrl(course.name);
             Parser courseEventSummaryParser = new Parser.Builder()
                     .course(course)
-                    .url(new File("resources/cornwall/course.event.summary.html").getAbsoluteFile().toURI().toURL())
+                    .webpageProvider(webpageProviderFactory.createCourseEventSummaryWebpageProvider(course.name))
                     .forEachCourseEvent(results::add)
                     .build();
             courseEventSummaryParser.parse();

@@ -10,6 +10,7 @@ import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.CourseRepository;
+import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
@@ -63,7 +64,7 @@ public class HowYouDoingTest
             new Parser.Builder()
                     .course(course)
                     .forEachCourseEvent(courseEventSummaries::add)
-                    .url(urlGenerator.generateCourseEventSummaryUrl(course.name))
+                    .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventSummaryUrl(course.name)))
                     .build()
                     .parse();
             if(courseEventSummaries.isEmpty())
@@ -164,7 +165,7 @@ public class HowYouDoingTest
         {
             UrlGenerator urlGenerator = new UrlGenerator(Country.CANADA.baseUrl);
             dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(course)
-                    .url(urlGenerator.generateCourseLatestResultsUrl(course.name))
+                    .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseLatestResultsUrl(course.name)))
                     .build();
             parser.parse();
 

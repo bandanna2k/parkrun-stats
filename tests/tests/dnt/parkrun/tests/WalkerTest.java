@@ -6,6 +6,7 @@ import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.datastructures.Result;
+import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -44,7 +45,7 @@ public class WalkerTest
         URL courseEventSummaryUrl = new URL("https://" + course.country.baseUrl + "/" + course.name + "/results/eventhistory/");
         Parser courseEventSummaryParser = new Parser.Builder()
                 .course(course)
-                .url(courseEventSummaryUrl)
+                .webpageProvider(new WebpageProviderImpl(courseEventSummaryUrl))
                 .forEachCourseEvent(events::add)
                 .build();
         courseEventSummaryParser.parse();
@@ -60,7 +61,7 @@ public class WalkerTest
         List<Result> results = new ArrayList<>();
         URL courseEventUrl = new URL("https://" + course.country.baseUrl + "/" + course.name + "/results/" + event.eventNumber + "/");
         dnt.parkrun.courseevent.Parser courseEventParser = new dnt.parkrun.courseevent.Parser.Builder(null)
-                .url(courseEventUrl)
+                .webpageProvider(new WebpageProviderImpl(courseEventUrl))
                 .forEachResult(results::add)
                 .build();
         courseEventParser.parse();

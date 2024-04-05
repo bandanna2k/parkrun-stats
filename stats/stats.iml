@@ -22,5 +22,6 @@
     <orderEntry type="module" module-name="pindex" />
     <orderEntry type="module" module-name="courses" scope="TEST" />
     <orderEntry type="module" module-name="courseEvent" scope="TEST" />
+    <orderEntry type="module" module-name="webpageProvider" scope="TEST" />
   </component>
 </module>

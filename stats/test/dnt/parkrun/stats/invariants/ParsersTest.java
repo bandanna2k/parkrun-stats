@@ -5,6 +5,7 @@ import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.datastructures.*;
+import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -28,7 +29,7 @@ public class ParsersTest
     {
         List<CourseEventSummary> listOfCourseEvents = new ArrayList<>();
         dnt.parkrun.courseeventsummary.Parser parser = new dnt.parkrun.courseeventsummary.Parser.Builder()
-                .url(urlGenerator.generateCourseEventSummaryUrl(CORNWALL.name))
+                .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventSummaryUrl(CORNWALL.name)))
                 .forEachCourseEvent(listOfCourseEvents::add)
                 .course(CORNWALL)
                 .build();
@@ -47,7 +48,7 @@ public class ParsersTest
         List<Volunteer> listOfVolunteers = new ArrayList<>();
         List<Athlete> listOfAthletes = new ArrayList<>();
         dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(courseRepository.getCourse(CORNWALL.courseId))
-                .url(urlGenerator.generateCourseEventUrl("cornwall", 1))
+                .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(CORNWALL.name, 1)))
                 .forEachAthlete(listOfAthletes::add)
                 .forEachVolunteer(listOfVolunteers::add)
                 .build();

@@ -10,6 +10,7 @@ import dnt.parkrun.database.VolunteerDao;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.CourseRepository;
+import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
@@ -55,7 +56,7 @@ public class BackfillVolunteersForACourse
         {
             System.out.printf("Downloading %d of %d ", counter++, size);
             Parser parser = new Parser.Builder(ces.course)
-                    .url(urlGenerator.generateCourseEventUrl(backfillCourse.name, ces.eventNumber))
+                    .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(backfillCourse.name, ces.eventNumber)))
                     .forEachVolunteer(v ->
                     {
                         athleteDao.insert(v.athlete);
