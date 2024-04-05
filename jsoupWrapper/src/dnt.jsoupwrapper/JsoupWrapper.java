@@ -8,11 +8,22 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Random;
 
-public abstract class JsoupWrapper
+public class JsoupWrapper
 {
     private static final Random RANDOM = new Random();
 
-    public static Document newDocument(URL url)
+    public final boolean shouldSleep;
+
+    public JsoupWrapper()
+    {
+        this(true);
+    }
+    public JsoupWrapper(boolean shouldSleep)
+    {
+        this.shouldSleep = shouldSleep;
+    }
+
+    public Document newDocument(URL url)
     {
         int counter = 2;
         Document document = null;
@@ -21,12 +32,21 @@ public abstract class JsoupWrapper
             counter--;
             try
             {
-                int sleepTime = 3000 + RANDOM.nextInt(3000);
-                System.out.print("Sleeping for " + sleepTime + " ... ");
-                Thread.sleep(sleepTime);
-                System.out.print("Loading URL: " + url + " ");
-                document = Jsoup.parse(url, 5000);
-                System.out.println("Done");
+                if(shouldSleep)
+                {
+                    int sleepTime = 3000 + RANDOM.nextInt(3000);
+                    System.out.print("Sleeping for " + sleepTime + " ... ");
+                    Thread.sleep(sleepTime);
+                    System.out.print("Loading URL: " + url + " ");
+                    document = Jsoup.parse(url, 5000);
+                    System.out.println("Done");
+                }
+                else
+                {
+                    System.out.print("Loading URL: " + url + " ");
+                    document = Jsoup.parse(url, 5000);
+                    System.out.println("Done");
+                }
             }
             catch(Exception ex)
             {
@@ -36,7 +56,7 @@ public abstract class JsoupWrapper
         return document;
     }
 
-    public static Document newDocument(File file)
+    public Document newDocument(File file)
     {
         try
         {

@@ -122,9 +122,19 @@ public class Parser
 
     public static class Builder
     {
+        private final JsoupWrapper jsoupWrapper;
         private Document doc;
         private Consumer<CourseEventSummary> consumer = ehr -> {};
         private Course course;
+
+        public Builder()
+        {
+            this(true);
+        }
+        public Builder(boolean shouldSleep)
+        {
+            this.jsoupWrapper = new JsoupWrapper(shouldSleep);
+        }
 
         public Parser build()
         {
@@ -133,13 +143,13 @@ public class Parser
 
         public Builder url(URL url) throws IOException
         {
-            this.doc = JsoupWrapper.newDocument(url);
+            this.doc = jsoupWrapper.newDocument(url);
             return this;
         }
 
         public Builder file(File file)
         {
-            this.doc = JsoupWrapper.newDocument(file);
+            this.doc = jsoupWrapper.newDocument(file);
             return this;
         }
 

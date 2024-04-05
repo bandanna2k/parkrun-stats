@@ -183,6 +183,7 @@ public class Parser
 
     public static class Builder
     {
+        private final JsoupWrapper jsoupWrapper = new JsoupWrapper(true);
         private Document doc;
         private Consumer<AthleteCourseSummary> consumer = es -> {};
         private Consumer<Course> courseNotFoundConsumer = s -> System.out.println("WARNING Course not found: " + s);
@@ -195,13 +196,13 @@ public class Parser
 
         public Builder url(URL url)
         {
-            this.doc = JsoupWrapper.newDocument(url);
+            this.doc = jsoupWrapper.newDocument(url);
             return this;
         }
 
         public Builder file(File file)
         {
-            this.doc = JsoupWrapper.newDocument(file);
+            this.doc = jsoupWrapper.newDocument(file);
             return this;
         }
 

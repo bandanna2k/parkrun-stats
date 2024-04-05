@@ -11,8 +11,10 @@ import dnt.parkrun.datastructures.CourseRepository;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,9 +26,19 @@ import static dnt.parkrun.datastructures.Country.NZ;
 
 public class MostEvents
 {
+    private final List<Object[]> listOfCourseAndStatus;
+
     public static void main(String[] args) throws SQLException, IOException
     {
-        MostEvents mostEvents = MostEvents.newInstance();
+        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
+                "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+        MostEvents mostEvents = MostEvents.newInstance(
+                dataSource,
+                List.of(
+                        new Object[] { "events.json", Course.Status.RUNNING },
+                        new Object[] { "events.missing.json", Course.Status.STOPPED }
+                        ));
+
         mostEvents.collectMostEventRecords();
     }
 
@@ -38,8 +50,10 @@ public class MostEvents
     private final ResultDao resultDao;
     private final VolunteerDao volunteerDao;
 
-    private MostEvents(DataSource dataSource) throws SQLException
+    private MostEvents(DataSource dataSource,
+                       List<Object[]> listOfCourseAndStatus) throws SQLException
     {
+        this.listOfCourseAndStatus = listOfCourseAndStatus;
         this.courseRepository = new CourseRepository();
         this.courseDao = new CourseDao(dataSource, courseRepository);
         this.athleteDao = new AthleteDao(dataSource);
@@ -48,18 +62,21 @@ public class MostEvents
         this.volunteerDao = new VolunteerDao(dataSource);
     }
 
-    public static MostEvents newInstance() throws SQLException
+    public static MostEvents newInstance(DataSource dataSource,
+                                         List<Object[]> listOfCourseAndStatus) throws SQLException
     {
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
-        return new MostEvents(dataSource);
+        return new MostEvents(dataSource, listOfCourseAndStatus);
     }
 
     public void collectMostEventRecords() throws IOException
     {
         System.out.println("* Adding courses *");
-        addCourses("events.json", Course.Status.RUNNING);
-        addCourses("events.missing.json", Course.Status.STOPPED);
+        for (Object[] eventFiles : listOfCourseAndStatus)
+        {
+            String file = (String) eventFiles[0];
+            Course.Status status = (Course.Status) eventFiles[1];
+            addCourses(file, status);
+        }
 
         System.out.println("* Filter courses *");
         Arrays.stream(Country.values())
@@ -74,6 +91,8 @@ public class MostEvents
 
         System.out.println("* Get course summaries from Web *");
         List<CourseEventSummary> courseEventSummariesFromWeb = getCourseEventSummariesFromWeb();
+
+        if(true) throw new RuntimeException("Not testable");
 
         System.out.println("* Filtering existing course event summaries *");
         courseEventSummariesFromWeb.removeAll(courseEventSummariesFromDao);
@@ -131,8 +150,7 @@ public class MostEvents
                     Course doesItExistCourse = courseRepository.getCourseFromName(course.name); // Bit weird
                     if(doesItExistCourse == null)
                     {
-                        System.out.println("NEW COURSE " + course);
-                        courseRepository.addCourse(course);
+                        System.out.println("INFO Adding new course " + course);
                         courseDao.insert(course);
                     }
                 })
@@ -147,10 +165,11 @@ public class MostEvents
         for (Course course : courseRepository.getCourses(NZ))
         {
             System.out.printf("* Processing %s *\n", course);
-
+            System.out.println(System.getProperty("user.dir"));
+            URL url = generateCourseEventSummaryUrl(course.country.baseUrl, course.name);
             Parser courseEventSummaryParser = new Parser.Builder()
                     .course(course)
-                    .url(generateCourseEventSummaryUrl(course.country.baseUrl, course.name))
+                    .url(new File("resources/cornwall/course.event.summary.html").getAbsoluteFile().toURI().toURL())
                     .forEachCourseEvent(results::add)
                     .build();
             courseEventSummaryParser.parse();
