@@ -162,7 +162,7 @@ public class MostEvents
 
     private List<CourseEventSummary> getCourseEventSummariesFromWeb() throws IOException
     {
-        List<CourseEventSummary> results = new ArrayList<>();
+        List<CourseEventSummary> courseEventSummaries = new ArrayList<>();
         for (Course course : courseRepository.getCourses(NZ))
         {
             System.out.printf("* Processing %s *\n", course);
@@ -170,10 +170,14 @@ public class MostEvents
             Parser courseEventSummaryParser = new Parser.Builder()
                     .course(course)
                     .webpageProvider(webpageProviderFactory.createCourseEventSummaryWebpageProvider(course.name))
-                    .forEachCourseEvent(results::add)
+                    .forEachCourseEvent(e ->
+                    {
+                        System.out.println(e);
+                        courseEventSummaries.add(e);
+                    })
                     .build();
             courseEventSummaryParser.parse();
         }
-        return results;
+        return courseEventSummaries;
     }
 }
