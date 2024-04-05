@@ -3,9 +3,16 @@ package dnt.parkrun.common;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public abstract class UrlGenerator
+public class UrlGenerator
 {
-    public static URL generateCourseEventSummaryUrl(String countryBaseUrl, String courseName)
+    private final String countryBaseUrl;
+
+    public UrlGenerator(String countryBaseUrl)
+    {
+        this.countryBaseUrl = countryBaseUrl;
+    }
+
+    public URL generateCourseEventSummaryUrl(String courseName)
     {
         try
         {
@@ -17,11 +24,11 @@ public abstract class UrlGenerator
         }
     }
 
-    public static URL generateCourseEventUrl(String countryUrl, String courseName, int eventNumber)
+    public URL generateCourseEventUrl(String courseName, int eventNumber)
     {
         try
         {
-            return new URL("https://" + countryUrl + "/" + courseName + "/results/" + eventNumber + "/");
+            return new URL("https://" + countryBaseUrl + "/" + courseName + "/results/" + eventNumber + "/");
         }
         catch (MalformedURLException e)
         {
@@ -29,7 +36,7 @@ public abstract class UrlGenerator
         }
     }
 
-    public static URL generateAthleteEventSummaryUrl(String countryBaseUrl, int athleteId)
+    public URL generateAthleteEventSummaryUrl(int athleteId)
     {
         try
         {
@@ -41,7 +48,7 @@ public abstract class UrlGenerator
         }
     }
 
-    public static URL generateAthleteEventUrl(String countryBaseUrl, String countryUrl, int athleteId)
+    public URL generateAthleteEventUrl(String countryUrl, int athleteId)
     {
         try
         {
@@ -56,7 +63,7 @@ public abstract class UrlGenerator
     /*
         https://www.parkrun.ca/shawniganhills/results/latestresults/
      */
-    public static URL generateCourseLatestResultsUrl(String countryBaseUrl, String courseName)
+    public URL generateCourseLatestResultsUrl(String courseName)
     {
         try
         {
@@ -69,7 +76,7 @@ public abstract class UrlGenerator
     }
 
 
-    public static URL generateCourseUrl(String countryBaseUrl, String courseName)
+    public URL generateCourseUrl(String courseName)
     {
         try
         {
@@ -84,7 +91,7 @@ public abstract class UrlGenerator
     /*
         https://www.parkrun.co.nz/parkrunner/414811/all/
      */
-    public static URL generateAthleteUrl(String countryBaseUrl, int athleteId)
+    public URL generateAthleteUrl(int athleteId)
     {
         try
         {

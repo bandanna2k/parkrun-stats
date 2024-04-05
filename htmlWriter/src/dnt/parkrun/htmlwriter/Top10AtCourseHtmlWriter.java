@@ -1,20 +1,24 @@
 package dnt.parkrun.htmlwriter;
 
+import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.datastructures.Athlete;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.Closeable;
 
-import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
-
 public class Top10AtCourseHtmlWriter extends BaseWriter implements Closeable
 {
+    private final UrlGenerator urlGenerator;
     private final String runOrVolunteer;
 
-    public Top10AtCourseHtmlWriter(XMLStreamWriter writer, String title, String runOrVolunteer) throws XMLStreamException
+    public Top10AtCourseHtmlWriter(XMLStreamWriter writer,
+                                   UrlGenerator urlGenerator,
+                                   String title,
+                                   String runOrVolunteer) throws XMLStreamException
     {
         super(writer);
+        this.urlGenerator = urlGenerator;
         this.runOrVolunteer = runOrVolunteer;
         startElement("details", "style", "margin-left:10em");
         startElement("summary", "style", "font-size:24px");
@@ -69,7 +73,7 @@ public class Top10AtCourseHtmlWriter extends BaseWriter implements Closeable
         // Name
         startElement("td");
         writer.writeStartElement("a");
-        writer.writeAttribute("href", generateAthleteEventSummaryUrl("parkrun.co.nz", record.athlete.athleteId).toString());
+        writer.writeAttribute("href", urlGenerator.generateAthleteEventSummaryUrl(record.athlete.athleteId).toString());
         writer.writeAttribute("target", String.valueOf(record.athlete.name));
         writer.writeCharacters(record.athlete.name);
         endElement("a");

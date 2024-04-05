@@ -30,7 +30,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
-import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.*;
 import static dnt.parkrun.region.Region.getNzRegionRunCount;
@@ -88,6 +87,7 @@ public class Stats
     private final Map<Integer, List<AthleteCourseSummary>> athleteIdToAthleteCourseSummaries = new HashMap<>();
     private final List<CourseDate> startDates = new ArrayList<>();
     private final List<CourseDate> stopDates = new ArrayList<>();
+    private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
 
     private Stats(DataSource dataSource,
                   DataSource statsDataSource,
@@ -230,7 +230,7 @@ public class Stats
     {
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Events, Volunteering"))
         {
-            try (MostVolunteersTableHtmlWriter tableWriter = new MostVolunteersTableHtmlWriter(writer))
+            try (MostVolunteersTableHtmlWriter tableWriter = new MostVolunteersTableHtmlWriter(writer, urlGenerator))
             {
                 List<Object[]> mostVolunteers = volunteerCountDao.getMostVolunteers();
                 assert !mostVolunteers.isEmpty() : "WARNING: No records for Most Volunteers";
@@ -251,7 +251,7 @@ public class Stats
             writer.writer.writeAttribute("style", "margin-left:100px");
             writer.writer.writeCharacters("p-Index tables with credit to ");
             writer.writer.writeStartElement("a");
-            writer.writer.writeAttribute("href", UrlGenerator.generateAthleteUrl(NZ.baseUrl, 4225353).toString());
+            writer.writer.writeAttribute("href", urlGenerator.generateAthleteUrl(4225353).toString());
             writer.writer.writeAttribute("style", "color:inherit;text-decoration:none;");
             writer.writer.writeCharacters("Dan Joe");
             writer.writer.writeEndElement(); // a
@@ -259,7 +259,7 @@ public class Stats
 
             // p-Index
             Set<Integer> regionalPIndexAthletes = new HashSet<>();
-            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, "p-Index"))
+            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, urlGenerator, "p-Index"))
             {
                 List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
                 for (Map.Entry<Integer, List<AthleteCourseSummary>> entry : athleteIdToAthleteCourseSummaries.entrySet())
@@ -322,7 +322,7 @@ public class Stats
             }
 
             // Legacy p-Index
-            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, "Legacy p-Index"))
+            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, urlGenerator, "Legacy p-Index"))
             {
                 List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
                 for (Map.Entry<Integer, List<AthleteCourseSummary>> entry : athleteIdToAthleteCourseSummaries.entrySet())
@@ -422,7 +422,7 @@ public class Stats
         Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Runs at Courses"))
         {
-            try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, "New Zealand"))
+            try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, urlGenerator, "New Zealand"))
             {
                 List<AtEvent> top10InRegion = top10Dao.getTop10InRegion();
                 assert !top10InRegion.isEmpty() : "WARNING: Top 10 runs in NZ list is empty";
@@ -440,7 +440,7 @@ public class Stats
                     .filter(c -> c.status == RUNNING).collect(Collectors.toList());
             for (Course course : courses)
             {
-                try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, course.longName, "Run"))
+                try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, urlGenerator, course.longName, "Run"))
                 {
                     List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);
                     if (top10.isEmpty())
@@ -467,7 +467,7 @@ public class Stats
         Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Volunteers at Courses"))
         {
-            try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, "New Zealand"))
+            try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, urlGenerator,"New Zealand"))
             {
                 List<Object[]> top10VolunteersInRegion = top10VolunteerDao.getTop10VolunteersInRegion();
                 assert !top10VolunteersInRegion.isEmpty() : "WARNING: Top 10 runs in NZ list is empty";
@@ -489,7 +489,8 @@ public class Stats
                     .filter(c -> c.status == RUNNING).collect(Collectors.toList());
             for (Course course : courses)
             {
-                try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, course.longName, "Volunteer"))
+                try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(
+                        writer.writer, urlGenerator, course.longName, "Volunteer"))
                 {
                     List<AtEvent> top10 = top10VolunteerDao.getTop10VolunteersAtCourse(course.name);
                     if (top10.isEmpty())
@@ -533,7 +534,7 @@ public class Stats
             athleteIdToFirstRuns = emptyMap();
         }
 
-        try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, extended))
+        try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, urlGenerator, extended))
         {
             for (MostEventsDao.MostEventsRecord der : differentEventRecords)
             {
@@ -651,7 +652,7 @@ public class Stats
     private void writeAttendanceRecords(HtmlWriter writer) throws XMLStreamException
     {
         // Read attendance records from, and write html table
-        try (AttendanceRecordsTableHtmlWriter tableWriter = new AttendanceRecordsTableHtmlWriter(writer.writer))
+        try (AttendanceRecordsTableHtmlWriter tableWriter = new AttendanceRecordsTableHtmlWriter(writer.writer, urlGenerator))
         {
             tableWriter.writer.writeStartElement("tbody");
             List<AttendanceRecord> attendanceRecords = generateAndGetAttendanceRecords().stream()
@@ -766,7 +767,7 @@ public class Stats
 
             System.out.printf("Downloading %d of %d ", i, countOfAthletesToDownload);
             Parser parser = new Parser.Builder()
-                    .url(generateAthleteEventSummaryUrl(NZ.baseUrl, athleteId))
+                    .url(urlGenerator.generateAthleteEventSummaryUrl(athleteId))
                     .courseNotFound(courseNotFound -> {
                         throw new RuntimeException("Course not found. " + courseNotFound);
                     })

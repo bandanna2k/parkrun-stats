@@ -1,6 +1,7 @@
 package dnt.parkrun.mostevents;
 
 import com.mysql.jdbc.Driver;
+import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
 import dnt.parkrun.database.*;
@@ -20,13 +21,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static dnt.parkrun.common.UrlGenerator.generateCourseEventSummaryUrl;
-import static dnt.parkrun.common.UrlGenerator.generateCourseEventUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 
 public class MostEvents
 {
     private final List<Object[]> listOfCourseAndStatus;
+    private final UrlGenerator urlGenerator;
 
     public static void main(String[] args) throws SQLException, IOException
     {
@@ -60,6 +60,7 @@ public class MostEvents
         this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
         this.resultDao = new ResultDao(dataSource);
         this.volunteerDao = new VolunteerDao(dataSource);
+        urlGenerator = new UrlGenerator(NZ.baseUrl);
     }
 
     public static MostEvents newInstance(DataSource dataSource,
@@ -115,7 +116,7 @@ public class MostEvents
                 try
                 {
                     dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(ces.course)
-                            .url(generateCourseEventUrl(ces.course.country.baseUrl, ces.course.name, ces.eventNumber))
+                            .url(urlGenerator.generateCourseEventUrl(ces.course.name, ces.eventNumber))
                             .forEachAthlete(athleteDao::insert)
                             .forEachResult(resultDao::insert)
                             .forEachVolunteer(volunteerDao::insert)
@@ -166,7 +167,7 @@ public class MostEvents
         {
             System.out.printf("* Processing %s *\n", course);
             System.out.println(System.getProperty("user.dir"));
-            URL url = generateCourseEventSummaryUrl(course.country.baseUrl, course.name);
+            URL url = urlGenerator.generateCourseEventSummaryUrl(course.name);
             Parser courseEventSummaryParser = new Parser.Builder()
                     .course(course)
                     .url(new File("resources/cornwall/course.event.summary.html").getAbsoluteFile().toURI().toURL())

@@ -1,5 +1,6 @@
 package dnt.parkrun.htmlwriter;
 
+import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.pindex.PIndex;
 
@@ -7,14 +8,14 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.Closeable;
 
-import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
-import static dnt.parkrun.datastructures.Country.NZ;
-
 public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
 {
-    public PIndexTableHtmlWriter(XMLStreamWriter writer, String title) throws XMLStreamException
+    private final UrlGenerator urlGenerator;
+
+    public PIndexTableHtmlWriter(XMLStreamWriter writer, UrlGenerator urlGenerator, String title) throws XMLStreamException
     {
         super(writer);
+        this.urlGenerator = urlGenerator;
 
         startElement("details", "style", "margin-left:10em");
         startElement("summary", "style", "font-size:24px");
@@ -90,7 +91,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         // Name
         startElement("td");
         writer.writeStartElement("a");
-        writer.writeAttribute("href", generateAthleteEventSummaryUrl(NZ.baseUrl, record.athlete.athleteId).toString());
+        writer.writeAttribute("href", urlGenerator.generateAthleteEventSummaryUrl(record.athlete.athleteId).toString());
         writer.writeAttribute("target", String.valueOf(record.athlete.name));
         writer.writeCharacters(record.athlete.name);
         endElement("a");

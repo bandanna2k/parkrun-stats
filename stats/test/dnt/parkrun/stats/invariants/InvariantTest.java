@@ -5,7 +5,6 @@ import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.AthleteDao;
 import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.CourseRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
@@ -19,8 +18,11 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static dnt.parkrun.datastructures.Country.NZ;
+
 public class InvariantTest
 {
+    private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
     private DataSource dataSource;
     private NamedParameterJdbcTemplate jdbc;
 
@@ -103,7 +105,7 @@ public class InvariantTest
         {
             int nonameAthleteId = (int) object[0];
             Parser parser = new Parser.Builder()
-                    .url(UrlGenerator.generateAthleteEventSummaryUrl(Country.NZ.baseUrl, nonameAthleteId))
+                    .url(urlGenerator.generateAthleteEventSummaryUrl(nonameAthleteId))
                     .build(new CourseRepository());
             try
             {

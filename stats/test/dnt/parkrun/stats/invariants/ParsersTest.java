@@ -21,12 +21,14 @@ public class ParsersTest
 {
     private static final Course CORNWALL = new Course(2, "cornwall", NZ, "Cornwall parkrun", Course.Status.RUNNING);
 
+    private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
+
     @Test
     public void testCourseSummary() throws IOException
     {
         List<CourseEventSummary> listOfCourseEvents = new ArrayList<>();
         dnt.parkrun.courseeventsummary.Parser parser = new dnt.parkrun.courseeventsummary.Parser.Builder()
-                .url(UrlGenerator.generateCourseEventSummaryUrl(NZ.baseUrl, CORNWALL.name))
+                .url(urlGenerator.generateCourseEventSummaryUrl(CORNWALL.name))
                 .forEachCourseEvent(listOfCourseEvents::add)
                 .course(CORNWALL)
                 .build();
@@ -45,7 +47,7 @@ public class ParsersTest
         List<Volunteer> listOfVolunteers = new ArrayList<>();
         List<Athlete> listOfAthletes = new ArrayList<>();
         dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(courseRepository.getCourse(CORNWALL.courseId))
-                .url(UrlGenerator.generateCourseEventUrl(NZ.baseUrl, "cornwall", 1))
+                .url(urlGenerator.generateCourseEventUrl("cornwall", 1))
                 .forEachAthlete(listOfAthletes::add)
                 .forEachVolunteer(listOfVolunteers::add)
                 .build();
@@ -65,7 +67,7 @@ public class ParsersTest
 
         List<AthleteCourseSummary> list = new ArrayList<>();
         Parser parser = new Parser.Builder()
-                .url(UrlGenerator.generateAthleteEventSummaryUrl(NZ.baseUrl, 414811))
+                .url(urlGenerator.generateAthleteEventSummaryUrl(414811))
                 .forEachAthleteCourseSummary(list::add)
                 .build(courseRepository);
         parser.parse();

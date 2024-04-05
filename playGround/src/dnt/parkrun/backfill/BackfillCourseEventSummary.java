@@ -22,6 +22,8 @@ import static dnt.parkrun.datastructures.Country.NZ;
 @Deprecated
 public class BackfillCourseEventSummary
 {
+    private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
+
     private NamedParameterJdbcTemplate jdbc;
 
     public static void main(String[] args) throws IOException, SQLException
@@ -56,7 +58,7 @@ public class BackfillCourseEventSummary
         {
             System.out.println("* Collecting summary for " + course + " *");
             Parser parser = new Parser.Builder()
-                    .url(UrlGenerator.generateCourseEventSummaryUrl("parkrun.co.nz", course.name))
+                    .url(urlGenerator.generateCourseEventSummaryUrl(course.name))
                     .forEachCourseEvent(ces ->
                     {
                         System.out.println(ces);

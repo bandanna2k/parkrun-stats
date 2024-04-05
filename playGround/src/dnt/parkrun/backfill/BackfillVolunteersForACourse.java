@@ -24,6 +24,8 @@ import static dnt.parkrun.datastructures.Country.NZ;
 @Deprecated
 public class BackfillVolunteersForACourse
 {
+    private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
+
     private NamedParameterJdbcTemplate jdbc;
 
     public static void main(String[] args) throws IOException, SQLException
@@ -53,7 +55,7 @@ public class BackfillVolunteersForACourse
         {
             System.out.printf("Downloading %d of %d ", counter++, size);
             Parser parser = new Parser.Builder(ces.course)
-                    .url(UrlGenerator.generateCourseEventUrl(NZ.baseUrl, backfillCourse.name, ces.eventNumber))
+                    .url(urlGenerator.generateCourseEventUrl(backfillCourse.name, ces.eventNumber))
                     .forEachVolunteer(v ->
                     {
                         athleteDao.insert(v.athlete);

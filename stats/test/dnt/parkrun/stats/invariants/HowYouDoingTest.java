@@ -28,7 +28,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import static dnt.parkrun.common.DateConverter.ONE_DAY_IN_MILLIS;
-import static dnt.parkrun.common.UrlGenerator.generateCourseEventSummaryUrl;
+import static dnt.parkrun.datastructures.Country.NZ;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -49,7 +49,7 @@ public class HowYouDoingTest
             CourseRepository courseRepository = new CourseRepository();
             CourseDao courseDao = new CourseDao(dataSource, courseRepository);
 
-            return courseDao.getCourses(Country.NZ).stream()
+            return courseDao.getCourses(NZ).stream()
                     .filter(c -> c.status == Course.Status.RUNNING)
                     .toArray();
         }
@@ -57,11 +57,13 @@ public class HowYouDoingTest
         @Test
         public void howManyResultsAreInTest() throws IOException
         {
+            UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
+
             List<CourseEventSummary> courseEventSummaries = new ArrayList<>();
             new Parser.Builder()
                     .course(course)
                     .forEachCourseEvent(courseEventSummaries::add)
-                    .url(generateCourseEventSummaryUrl(course.country.baseUrl, course.name))
+                    .url(urlGenerator.generateCourseEventSummaryUrl(course.name))
                     .build()
                     .parse();
             if(courseEventSummaries.isEmpty())
@@ -160,8 +162,9 @@ public class HowYouDoingTest
         }
         public boolean areResultsIn(Course course) throws IOException
         {
+            UrlGenerator urlGenerator = new UrlGenerator(Country.CANADA.baseUrl);
             dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(course)
-                    .url(UrlGenerator.generateCourseLatestResultsUrl(Country.CANADA.baseUrl, course.name))
+                    .url(urlGenerator.generateCourseLatestResultsUrl(course.name))
                     .build();
             parser.parse();
 

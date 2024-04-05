@@ -8,13 +8,14 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.Closeable;
 
-import static dnt.parkrun.datastructures.Country.NZ;
-
 public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Closeable
 {
-    public AttendanceRecordsTableHtmlWriter(XMLStreamWriter writer) throws XMLStreamException
+    private final UrlGenerator urlGenerator;
+
+    public AttendanceRecordsTableHtmlWriter(XMLStreamWriter writer, UrlGenerator urlGenerator) throws XMLStreamException
     {
         super(writer);
+        this.urlGenerator = urlGenerator;
 
         startElement("details");
         startElement("summary");
@@ -96,7 +97,7 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         // Course name
         startElement("td");
         writer.writeStartElement("a");
-        writer.writeAttribute("href", UrlGenerator.generateCourseEventSummaryUrl(NZ.baseUrl, record.courseName).toString());
+        writer.writeAttribute("href", urlGenerator.generateCourseEventSummaryUrl(record.courseName).toString());
         writer.writeAttribute("target", String.valueOf(record.courseName));
         writer.writeCharacters(record.courseLongName);
         if(record.courseSmallTest != null)
@@ -111,7 +112,7 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         // Recent date
         startElement("td");
         startElement("a", "target", record.courseName,
-                "href", UrlGenerator.generateCourseEventUrl(NZ.baseUrl, record.courseName, record.recentEventNumber).toString());
+                "href", urlGenerator.generateCourseEventUrl(record.courseName, record.recentEventNumber).toString());
         writer.writeCharacters(DateConverter.formatDateForHtml(record.recentEventDate));
         endElement("a");
         endElement("td");
@@ -136,7 +137,7 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         // Record Date
         startElement("td");
         startElement("a", "target", record.courseName, "href",
-                UrlGenerator.generateCourseEventUrl(NZ.baseUrl, record.courseName, record.recordEventNumber).toString());
+                urlGenerator.generateCourseEventUrl(record.courseName, record.recordEventNumber).toString());
         writer.writeCharacters(DateConverter.formatDateForHtml(record.recordEventDate));
         endElement("a");
         endElement("td");

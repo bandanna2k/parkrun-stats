@@ -3,6 +3,7 @@ package dnt.parkrun.addathleteevents;
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecourseevents.AthleteCourseEvent;
 import dnt.parkrun.athletecoursesummary.Parser;
+import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
 import dnt.parkrun.datastructures.*;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -16,13 +17,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static dnt.parkrun.common.UrlGenerator.generateAthleteEventSummaryUrl;
+import static dnt.parkrun.datastructures.Country.NZ;
 import static java.util.Optional.empty;
 
 @Deprecated // Wrong solution
 public class AddAthleteEvents
 {
-    private static final String PARKRUN_CO_NZ = "parkrun.co.nz";
+    private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
 
     private final CourseRepository courseRepository;
 
@@ -71,7 +72,7 @@ public class AddAthleteEvents
         for (Integer athleteId : athletes)
         {
             Parser parser = new Parser.Builder()
-                    .url(generateAthleteEventSummaryUrl(PARKRUN_CO_NZ, athleteId))
+                    .url(urlGenerator.generateAthleteEventSummaryUrl(athleteId))
                     .forEachAthleteCourseSummary(courseSummaries::add)
                     .build(courseRepository);
             parser.parse();
