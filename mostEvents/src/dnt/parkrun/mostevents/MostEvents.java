@@ -10,6 +10,7 @@ import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.webpageprovider.WebpageProviderFactory;
+import dnt.parkrun.webpageprovider.WebpageProviderFactoryImpl;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
@@ -25,7 +26,6 @@ import static dnt.parkrun.datastructures.Country.NZ;
 public class MostEvents
 {
     private final List<Object[]> listOfCourseAndStatus;
-    private final UrlGenerator urlGenerator;
 
     public static void main(String[] args) throws SQLException, IOException
     {
@@ -36,7 +36,7 @@ public class MostEvents
                 List.of(
                         new Object[] { "events.json", Course.Status.RUNNING },
                         new Object[] { "events.missing.json", Course.Status.STOPPED }
-                        ));
+                        ), new WebpageProviderFactoryImpl(new UrlGenerator(NZ.baseUrl)));
 
         mostEvents.collectMostEventRecords();
     }
@@ -51,7 +51,8 @@ public class MostEvents
     private final WebpageProviderFactory webpageProviderFactory;
 
     private MostEvents(DataSource dataSource,
-                       List<Object[]> listOfCourseAndStatus) throws SQLException
+                       List<Object[]> listOfCourseAndStatus,
+                       WebpageProviderFactory webpageProviderFactory) throws SQLException
     {
         this.listOfCourseAndStatus = listOfCourseAndStatus;
         this.courseRepository = new CourseRepository();
@@ -60,14 +61,14 @@ public class MostEvents
         this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
         this.resultDao = new ResultDao(dataSource);
         this.volunteerDao = new VolunteerDao(dataSource);
-        this.urlGenerator = new UrlGenerator(NZ.baseUrl);
-        this.webpageProviderFactory = new WebpageProviderFactory(urlGenerator);
+        this.webpageProviderFactory = webpageProviderFactory;
     }
 
     public static MostEvents newInstance(DataSource dataSource,
-                                         List<Object[]> listOfCourseAndStatus) throws SQLException
+                                         List<Object[]> listOfCourseAndStatus,
+                                         WebpageProviderFactory webpageProviderFactory) throws SQLException
     {
-        return new MostEvents(dataSource, listOfCourseAndStatus);
+        return new MostEvents(dataSource, listOfCourseAndStatus, webpageProviderFactory);
     }
 
     public void collectMostEventRecords() throws IOException

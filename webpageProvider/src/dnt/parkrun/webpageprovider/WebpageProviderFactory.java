@@ -1,23 +1,8 @@
 package dnt.parkrun.webpageprovider;
 
-import dnt.parkrun.common.UrlGenerator;
-
-public class WebpageProviderFactory
+public interface WebpageProviderFactory
 {
-    private final UrlGenerator urlGenerator;
+    WebpageProvider createCourseEventWebpageProvider(String courseName, int eventNumber);
 
-    public WebpageProviderFactory(UrlGenerator urlGenerator)
-    {
-        this.urlGenerator = urlGenerator;
-    }
-
-    public WebpageProvider createCourseEventWebpageProvider(String name, int eventNumber)
-    {
-        return new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(name, eventNumber));
-    }
-
-    public WebpageProvider createCourseEventSummaryWebpageProvider(String courseName)
-    {
-        return new WebpageProviderImpl(urlGenerator.generateCourseEventSummaryUrl(courseName));
-    }
+    WebpageProvider createCourseEventSummaryWebpageProvider(String courseName);
 }
