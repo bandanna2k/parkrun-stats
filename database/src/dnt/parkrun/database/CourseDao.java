@@ -15,7 +15,6 @@ import java.util.List;
 
 public class CourseDao
 {
-
     private final NamedParameterJdbcOperations jdbc;
     private final CourseRepository courseRepository;
 

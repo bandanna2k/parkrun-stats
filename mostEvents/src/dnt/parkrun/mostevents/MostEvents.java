@@ -160,7 +160,7 @@ public class MostEvents
         reader.read();
     }
 
-    private List<CourseEventSummary> getCourseEventSummariesFromWeb() throws IOException
+    private List<CourseEventSummary> getCourseEventSummariesFromWeb()
     {
         List<CourseEventSummary> courseEventSummaries = new ArrayList<>();
         for (Course course : courseRepository.getCourses(NZ))

@@ -23,6 +23,17 @@
           "EventLongName": "Cornwall parkrun",
           "countrycode": 65
         }
+      },
+      {
+        "id": 1,
+        "type": "Feature",
+        "geometry": {
+        },
+        "properties": {
+          "eventname": "lowerhutt",
+          "EventLongName": "Lower Hutt parkrun",
+          "countrycode": 65
+        }
       }
     ]
   }
