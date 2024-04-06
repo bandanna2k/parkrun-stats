@@ -38,7 +38,7 @@ public class WeekendResults
                         new Object[] { "events.missing.json", Course.Status.STOPPED }
                         ), new WebpageProviderFactoryImpl(new UrlGenerator(NZ.baseUrl)));
 
-        weekendResults.collectMostEventRecords();
+        weekendResults.fetchWeekendResults();
     }
 
     private final CourseRepository courseRepository;
@@ -71,7 +71,7 @@ public class WeekendResults
         return new WeekendResults(dataSource, listOfCourseAndStatus, webpageProviderFactory);
     }
 
-    public void collectMostEventRecords() throws IOException
+    public void fetchWeekendResults() throws IOException
     {
         System.out.println("* Adding courses *");
         for (Object[] eventFiles : listOfCourseAndStatus)

@@ -45,9 +45,9 @@ public class WeekendResultsTest
     }
 
     @Test
-    public void testMostEvents() throws IOException
+    public void testFetchWeekendResults() throws IOException
     {
-        weekendResults.collectMostEventRecords();
+        weekendResults.fetchWeekendResults();
     }
 
     private static class TestWebpageProviderFactory implements WebpageProviderFactory
