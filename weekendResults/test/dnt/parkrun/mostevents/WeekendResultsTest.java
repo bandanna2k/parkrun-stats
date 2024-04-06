@@ -5,6 +5,7 @@ import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.filewebpageprovider.FileWebpageProvider;
 import dnt.parkrun.webpageprovider.WebpageProvider;
 import dnt.parkrun.webpageprovider.WebpageProviderFactory;
+import dnt.parkrun.weekendresults.WeekendResults;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
@@ -17,10 +18,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-public class MostEventsTest
+public class WeekendResultsTest
 {
     private DataSource dataSource;
-    private MostEvents mostEvents;
+    private WeekendResults weekendResults;
 
     @Before
     public void setUp() throws Exception
@@ -28,7 +29,7 @@ public class MostEventsTest
         dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
 
-        mostEvents = MostEvents.newInstance(
+        weekendResults = WeekendResults.newInstance(
                 dataSource,
                 List.of(
                         new Object[]{"test/test.events.json", Course.Status.RUNNING},
@@ -46,7 +47,7 @@ public class MostEventsTest
     @Test
     public void testMostEvents() throws IOException
     {
-        mostEvents.collectMostEventRecords();
+        weekendResults.collectMostEventRecords();
     }
 
     private static class TestWebpageProviderFactory implements WebpageProviderFactory
