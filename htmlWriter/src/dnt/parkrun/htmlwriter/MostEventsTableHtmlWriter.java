@@ -9,6 +9,8 @@ import java.io.Closeable;
 
 public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 {
+    private static boolean FEATURE_FOR_MAX_FROM_REGIONNAIRE = false;
+
     private final UrlGenerator urlGenerator;
     private final boolean extended;
 
@@ -66,7 +68,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             endElement("th");
         }
 
-        if(extended)
+        if(extended && FEATURE_FOR_MAX_FROM_REGIONNAIRE)
         {
             startElement("th");
             information("Events Needed (Max)",
@@ -151,9 +153,9 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             endElement("td");
         }
 
-        if(extended)
+        if(extended && FEATURE_FOR_MAX_FROM_REGIONNAIRE)
         {
-            // Runs needed
+            // Max courses needed
             startElement("td");
             writer.writeCharacters(record.runsNeeded);
             endElement("td");
