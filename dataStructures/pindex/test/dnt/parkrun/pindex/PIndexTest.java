@@ -25,16 +25,15 @@ public class PIndexTest
     @Test
     public void testPIndex()
     {
-//        testPIndex(3,2,  2, 2, 4, 4, 4);
-//        testPIndex(1, 2, 20);
-//        testPIndex(0, 1);
-//        testPIndex(1,  2, 1, 1, 1, 1);
-//        testPIndex(2,  3, 2, 2, 2, 2);
-//        testPIndex(4,  5, 5, 5, 5, 5);
-//        testPIndex(3,  4, 100, 4, 4, 3);
-//        testPIndex(4,  9, 4, 4, 4, 4);
+        testPIndex(3,2,  2, 2, 4, 4, 4);
+        testPIndex(1, 2, 20);
+        testPIndex(0, 1);
+        testPIndex(1,  2, 1, 1, 1, 1);
+        testPIndex(2,  3, 2, 2, 2, 2);
+        testPIndex(4,  5, 5, 5, 5, 5);
+        testPIndex(3,  4, 100, 4, 4, 3);
+        testPIndex(4,  9, 4, 4, 4, 4);
 
-        //                                                                  1   2   3   4   5   6 (1)(1)(7)
         testPIndex(8,  9, 94, 57, 19, 17, 13, 9, 8, 8, 2, 1, 1, 1);
     }
     private void testPIndex(int expectedPIndex, int expectedNeededForNextPIndex, int ... countOfRuns)
