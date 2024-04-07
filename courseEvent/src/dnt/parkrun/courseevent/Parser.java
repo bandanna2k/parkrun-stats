@@ -72,23 +72,49 @@ public class Parser
                 Athlete athlete = Athlete.fromAthleteAtCourseLink(name, athleteAtEventLink.attr("href"));
                 athleteConsumer.accept(athlete);
 
+                // 2 - Gender
+                Node genderNode = row
+                        .childNode(2)   // td
+                        .childNode(0);   // div
+                final Gender gender;
+                if(genderNode.childNodes().isEmpty())
+                {
+                    gender = null;
+                }
+                else
+                {
+                    gender = Gender.from(genderNode.childNode(0).toString().trim());
+                }
+
+                // 3 - Age group / age grade
+                Node ageGroupNode = row
+                        .childNode(3)   // td
+                        .childNode(0);
+                final AgeGroup ageGroup;
+                final Double ageGrade;
+                if(ageGroupNode.childNodes().isEmpty())
+                {
+                    ageGroup = AgeGroup.UNKNOWN;
+                    ageGrade = null;
+                }
+                else
+                {
+                    ageGroup = AgeGroup.from(ageGroupNode.childNode(0).toString().trim());
+
+                    Node ageGradeNode = row
+                            .childNode(3)   // td
+                            .childNode(1)
+                            .childNode(0);
+                    ageGrade = extractAgeGroup(ageGradeNode.toString());
+                }
+
                 Node timeDiv = row
                         .childNode(5)   // td
                         .childNode(0);   // div compact
 
-                if(!timeDiv.childNodes().isEmpty())
-                {
-                    Node timeNode = row
-                            .childNode(5)   // td
-                            .childNode(0)   // div compact
-                            .childNode(0);  //  value
-                    Time time = Time.from(timeNode.toString());
-                    resultConsumer.accept(new Result(course.courseId, date, position, athlete, time));
-                }
-                else
-                {
-                    resultConsumer.accept(new Result(course.courseId, date, position, athlete, Time.NO_TIME));
-                }
+                final Time time = timeDiv.childNodes().isEmpty() ? null : Time.from(timeDiv.childNode(0).toString());
+
+                resultConsumer.accept(new Result(course.courseId, date, position, athlete, time, gender, ageGroup, ageGrade));
             }
         }
 
@@ -108,6 +134,11 @@ public class Parser
     }
 
     public Date getDate() { return this.date; }
+
+    public static double extractAgeGroup(String input)
+    {
+        return Double.parseDouble(input.substring(0, input.indexOf('%')));
+    }
 
     public static class Builder
     {

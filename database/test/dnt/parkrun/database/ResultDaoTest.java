@@ -1,8 +1,6 @@
 package dnt.parkrun.database;
 
-import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.Result;
-import dnt.parkrun.datastructures.Time;
+import dnt.parkrun.datastructures.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
@@ -36,7 +34,7 @@ public class ResultDaoTest extends BaseDaoTest
         Athlete athlete = Athlete.fromAthleteSummaryLink("Davey JONES", "https://www.parkrun.co.nz/parkrunner/902393/");
         athleteDao.insert(athlete);
 
-        Result result = new Result(500, new Date(), 1, athlete, Time.from("1:30:02"));
+        Result result = new Result(500, new Date(), 1, athlete, Time.from("1:30:02"), Gender.Male, AgeGroup.VW45_49, 71.09);
         resultDao.insert(result);
 
         List<Result> results = resultDao.getResults();
@@ -55,7 +53,7 @@ public class ResultDaoTest extends BaseDaoTest
         {
             Time fastTime = Time.from("20:00");
             Time fastishTime = Time.from(fastTime.getTotalSeconds() + i);
-            Result result = new Result(500, Date.from(instant), i, athlete, fastishTime);
+            Result result = new Result(500, Date.from(instant), i, athlete, fastishTime, Gender.Male, AgeGroup.JM11_14, 66.0);
             resultDao.insert(result);
 
             instant.plus(7, ChronoUnit.DAYS);
@@ -77,7 +75,7 @@ public class ResultDaoTest extends BaseDaoTest
         {
             Time fastTime = Time.from("20:00");
             Time fastishTime = Time.from(fastTime.getTotalSeconds() + i);
-            Result result = new Result(500, Date.from(instant), i, athlete, fastishTime);
+            Result result = new Result(500, Date.from(instant), i, athlete, fastishTime, Gender.Female, AgeGroup.SM25_29, 66.6);
             resultDao.insert(result);
 
             instant.plus(7, ChronoUnit.DAYS);

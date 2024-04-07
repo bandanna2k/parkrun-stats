@@ -36,8 +36,8 @@ public class ResultDao
                             rs.getString("name"),
                             rs.getInt("athlete_id")
                     ),
-                    Time.from(rs.getInt("time_seconds"))     // TODO Needs converting to int
-            );
+                    Time.from(rs.getInt("time_seconds")),     // TODO Needs converting to int
+                    null, null, null);
         });
         return query;
     }
@@ -72,8 +72,8 @@ public class ResultDao
                             rs.getString("name"),
                             rs.getInt("athlete_id")
                     ),
-                    Time.from(rs.getInt("time_seconds"))
-            );
+                    Time.from(rs.getInt("time_seconds")),
+                    null, null, null);
             consumer.accept(result);
             return null;
         });

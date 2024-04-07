@@ -13,6 +13,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Prove?? Parsers can break half way through. Collate records first then stream records.
 
+- Retrieve result.age group and result.age grade
+
 ## Minor
 
 - Bug - Top 10 in region is always empty on first run so assert kicks in.  
