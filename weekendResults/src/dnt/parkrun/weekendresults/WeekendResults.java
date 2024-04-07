@@ -166,15 +166,10 @@ public class WeekendResults
         for (Course course : courseRepository.getCourses(NZ))
         {
             System.out.printf("* Processing %s *\n", course);
-            System.out.println(System.getProperty("user.dir"));
             Parser courseEventSummaryParser = new Parser.Builder()
                     .course(course)
                     .webpageProvider(webpageProviderFactory.createCourseEventSummaryWebpageProvider(course.name))
-                    .forEachCourseEvent(e ->
-                    {
-                        System.out.println(e);
-                        courseEventSummaries.add(e);
-                    })
+                    .forEachCourseEvent(courseEventSummaries::add)
                     .build();
             courseEventSummaryParser.parse();
         }
