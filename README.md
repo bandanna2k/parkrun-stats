@@ -15,6 +15,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Minor
 
+- Bug - Top 10 in region is always empty on first run so assert kicks in.  
+
 - Revisit pIndex downloads. I don't think the criteria for downloading the athletes its correct.
 
 - Do I need name/most global events in most events table?

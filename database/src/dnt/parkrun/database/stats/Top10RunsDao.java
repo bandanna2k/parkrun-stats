@@ -30,7 +30,7 @@ public class Top10RunsDao extends BaseDao
                         "    having\n" +
                         "        athlete_id > 0\n" +
                         "        and course_id = :courseId\n" +
-                        "    order by run_count desc\n" +
+                        "    order by run_count desc, athlete_id asc\n" +
                         "    limit 20\n" +
                         ") as sub1 using (athlete_id)\n" +
                         "join " + courseTable() + " c using (course_id)";
