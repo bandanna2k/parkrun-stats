@@ -3,6 +3,7 @@ package dnt.parkrun.datastructures;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public enum AgeGroup
 {
@@ -61,7 +62,13 @@ public enum AgeGroup
 
     VM85_89("VM85-89", 35),
     VW85_89("VW85-89", 36),
-            ;
+
+    VM90_94("VM90-94", 37),
+    VW90_94("VW90-94", 38),
+
+    VM95_99("VM95-99", 39),
+    VW95_99("VW95-99", 40),
+    ;
 
 
     public final String textOnWebpage;
@@ -77,6 +84,7 @@ public enum AgeGroup
     private static Map<String, AgeGroup> textOnWebpageToAgeGroup = new HashMap<>();
     static
     {
+        assert Arrays.stream(values()).map(Enum -> Enum.dbCode).collect(Collectors.toSet()).size() == values().length;
         Arrays.stream(values()).forEach(ageGroup -> textOnWebpageToAgeGroup.put(ageGroup.textOnWebpage, ageGroup));
     }
 

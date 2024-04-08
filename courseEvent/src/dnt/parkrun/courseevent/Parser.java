@@ -91,11 +91,11 @@ public class Parser
                         .childNode(3)   // td
                         .childNode(0);
                 final AgeGroup ageGroup;
-                final Double ageGrade;
+                final double ageGrade;
                 if(ageGroupNode.childNodes().isEmpty())
                 {
                     ageGroup = AgeGroup.UNKNOWN;
-                    ageGrade = null;
+                    ageGrade = 0;
                 }
                 else
                 {

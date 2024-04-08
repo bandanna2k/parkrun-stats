@@ -45,6 +45,8 @@ result (
     date            DATE                NOT NULL,
     position        INT                 NOT NULL,
     athlete_id      BIGINT              NOT NULL,
+    age_group       INT                 NOT NULL,
+    age_grade       INT                 NOT NULL,
     time_seconds    INT                 NOT NULL,
 
     PRIMARY KEY (course_id, date, position)

@@ -15,6 +15,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Retrieve result.age group and result.age grade
 
+- Make work well on mobile
+
 ## Minor
 
 - Bug - Top 10 in region is always empty on first run so assert kicks in.  

@@ -11,9 +11,9 @@ public class Result
     public final Time time;
     public final Gender gender;
     public final AgeGroup ageGroup;
-    public final Integer ageGrade;
+    public final int ageGrade;
 
-    public Result(int courseId, Date date, int position, Athlete athlete, Time time, Gender gender, AgeGroup ageGroup, Double ageGrade)
+    public Result(int courseId, Date date, int position, Athlete athlete, Time time, Gender gender, AgeGroup ageGroup, double ageGrade)
     {
         this.courseId = courseId;
         this.date = date;
@@ -22,7 +22,7 @@ public class Result
         this.time = time;
         this.gender = gender;
         this.ageGroup = ageGroup;
-        this.ageGrade = ageGrade == null ? null : (int)(ageGrade * 100.0d);
+        this.ageGrade = (int)(ageGrade * 100.0d);
     }
 
     @Override

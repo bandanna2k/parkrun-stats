@@ -1,5 +1,6 @@
 package dnt.parkrun.database;
 
+import dnt.parkrun.datastructures.AgeGroup;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.datastructures.Time;
@@ -9,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -37,7 +39,7 @@ public class ResultDao
                             rs.getInt("athlete_id")
                     ),
                     Time.from(rs.getInt("time_seconds")),     // TODO Needs converting to int
-                    null, null, null);
+                    null, AgeGroup.UNKNOWN, 0);
         });
         return query;
     }
@@ -73,7 +75,7 @@ public class ResultDao
                             rs.getInt("athlete_id")
                     ),
                     Time.from(rs.getInt("time_seconds")),
-                    null, null, null);
+                    null, AgeGroup.UNKNOWN, 0);
             consumer.accept(result);
             return null;
         });
@@ -91,5 +93,24 @@ public class ResultDao
                 ") as sub1; ";
         return jdbc.queryForObject(sql, new MapSqlParameterSource("athleteId", athleteId), (rs, rowNum) ->
                 String.format("[%s,%s]", rs.getString("json_courses"), rs.getString("json_first_runs")));
+    }
+
+    @Deprecated
+    public void backfillUpdateResultWithAgeGroup(Athlete athlete, int courseId, Date date, AgeGroup ageGroup, Integer ageGrade)
+    {
+        String sql = "update result " +
+                "set " +
+                "   age_group = :ageGroup, " +
+                "   age_grade = :ageGrade " +
+                "where athlete_id = :athleteId " +
+                " and course_id = :courseId " +
+                " and date = :date ";
+        jdbc.update(sql, new MapSqlParameterSource()
+                .addValue("athleteId", athlete.athleteId)
+                .addValue("courseId", courseId)
+                .addValue("date", date)
+                .addValue("ageGroup", ageGroup.dbCode)
+                .addValue("ageGrade", ageGrade)
+        );
     }
 }
