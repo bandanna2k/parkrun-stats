@@ -17,10 +17,18 @@ table {
 summary {
     font-size:32px;
     padding:20px;
+    text-align:center;
 }
 table a {
     color:inherit;
     text-decoration:none;
+}
+@media screen and (max-width: 600px) {
+  td, th {
+    display: flex;
+    padding:8px;
+    text-align:center;
+  }
 }
 td,th {
     padding:8px;
