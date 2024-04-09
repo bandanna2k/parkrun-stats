@@ -1,7 +1,7 @@
 body {
     background:#f2f2f2;
     font:400 14px 'Arial';
-    padding:20px;
+    text-align:center;
 }
 table {
     border-spacing: 1;
@@ -10,14 +10,16 @@ table {
     border-radius:6px;
     overflow:hidden;
     max-width:800px;
-    width:100%;
     margin:0 auto;
     position:relative;
 }
 summary {
-    font-size:32px;
-    padding:20px;
+    font-size:24px;
+    padding:10px;
     text-align:center;
+}
+summary .details2 {
+    font-size:20px;
 }
 table a {
     color:inherit;

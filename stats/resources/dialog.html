@@ -70,6 +70,23 @@
         data: {
           datasets: [
           {
+            label: 'Stop Dates',
+            data: [
+                { 'x': 1670025600000, 'y': 1, 'name': 'Porirua' }
+            ],
+            borderWidth: 1,
+            datalabels:
+            {
+                offset: 10,
+                align: '-150',
+                formatter: function(value, context) {
+                    return value.name;
+                }
+            },
+            backgroundColor: 'purple',
+            borderColor: 'purple',
+          },
+          {
             label: 'Start Dates',
             data: startDates,
             borderWidth: 1,
@@ -98,23 +115,6 @@
             },
             backgroundColor: 'blue',
             borderColor: 'blue',
-          },
-          {
-            label: 'Stop Dates',
-            data: [
-                { 'x': 1670025600000, 'y': 1, 'name': 'Porirua' }
-            ],
-            borderWidth: 1,
-            datalabels:
-            {
-                offset: 10,
-                align: '-150',
-                formatter: function(value, context) {
-                    return value.name;
-                }
-            },
-            backgroundColor: 'purple',
-            borderColor: 'purple',
           }
           ]
         },

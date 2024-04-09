@@ -248,7 +248,6 @@ public class Stats
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, " p-Index"))
         {
             writer.writer.writeStartElement("p");
-            writer.writer.writeAttribute("style", "margin-left:100px");
             writer.writer.writeCharacters("p-Index tables with credit to ");
             writer.writer.writeStartElement("a");
             writer.writer.writeAttribute("href", urlGenerator.generateAthleteUrl(4225353).toString());

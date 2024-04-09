@@ -18,7 +18,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         this.urlGenerator = urlGenerator;
 
         startSubDetails();
-        startElement("summary", "style", "font-size:24px");
+        startElement("summary", "style", "font-size:20px");
         writer.writeCharacters(title);
         endElement("summary");
 

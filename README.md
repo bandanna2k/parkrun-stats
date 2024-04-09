@@ -23,6 +23,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Revisit pIndex downloads. I don't think the criteria for downloading the athletes its correct.
 
+- Add stop dates as java code
+
 - Do I need name/most global events in most events table?
 
 - Bug - When course not found, athlete course summary not finished.
