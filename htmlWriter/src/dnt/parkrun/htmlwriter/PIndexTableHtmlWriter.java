@@ -17,7 +17,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         super(writer);
         this.urlGenerator = urlGenerator;
 
-        startElement("details", "style", "margin-left:10em");
+        startSubDetails();
         startElement("summary", "style", "font-size:24px");
         writer.writeCharacters(title);
         endElement("summary");
@@ -74,7 +74,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
             endElement("p");
             endElement("center");
 
-            endElement("details");
+            endSubDetails();
         }
         catch (XMLStreamException e)
         {

@@ -17,7 +17,7 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         super(writer);
         this.urlGenerator = urlGenerator;
 
-        startElement("details");
+        startDetails();
         startElement("summary");
         writer.writeCharacters("Attendance Records");
         endElement("summary");
@@ -77,7 +77,7 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
             endElement("p");
             endElement("center");
 
-            endElement("details");
+            endDetails();
         }
         catch (XMLStreamException e)
         {

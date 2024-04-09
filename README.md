@@ -19,8 +19,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Minor
 
-- Bug - Why is 1311970 not getting collected for pIndex.
-
 - Bug - Top 10 in region is always empty on first run so assert kicks in.  
 
 - Revisit pIndex downloads. I don't think the criteria for downloading the athletes its correct.
@@ -34,6 +32,10 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 - Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables.
 
 - Change 'How are we doing test to assume next event number'
+
+## Fixed Bugs
+
+- Bug - Why is 1311970 not getting collected for pIndex. No bug. 1311970 has NZ pIndex of 5 (needs to be 6)
 
 ## Ideas
 

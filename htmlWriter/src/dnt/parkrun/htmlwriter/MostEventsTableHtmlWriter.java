@@ -20,7 +20,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         this.urlGenerator = urlGenerator;
         this.extended = extended;
 
-        startElement("details");
+        startDetails();
         startElement("summary");
         writer.writeCharacters(extended ? "Most Events (Extended)" : "Most Events");
         endElement("summary");
@@ -100,7 +100,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             endElement("p");
             endElement("center");
 
-            endElement("details");
+            endDetails();
 
         }
         catch (XMLStreamException e)

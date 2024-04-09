@@ -10,7 +10,7 @@ public class CollapsableTitleHtmlWriter extends BaseWriter implements Closeable
     {
         super(writer);
 
-        startElement("details");
+        startDetails();
         startElement("summary");
         writer.writeCharacters(title);
         endElement("summary");
@@ -21,7 +21,7 @@ public class CollapsableTitleHtmlWriter extends BaseWriter implements Closeable
     {
         try
         {
-            endElement("details");
+            endDetails();
         }
         catch (XMLStreamException e)
         {

@@ -53,6 +53,23 @@ public abstract class BaseWriter implements Closeable
         endElement("abbr");
     }
 
+    protected void startDetails() throws XMLStreamException
+    {
+        startElement("details", "name", "details1");
+    }
+    protected void endDetails() throws XMLStreamException
+    {
+        endElement("details");
+    }
+    protected void startSubDetails() throws XMLStreamException
+    {
+        startElement("details", "name", "details2");
+    }
+    protected void endSubDetails() throws XMLStreamException
+    {
+        endElement("details");
+    }
+
     protected void writeTableDataWithDelta(int delta, boolean isNewEntry) throws XMLStreamException
     {
         // Up/Down

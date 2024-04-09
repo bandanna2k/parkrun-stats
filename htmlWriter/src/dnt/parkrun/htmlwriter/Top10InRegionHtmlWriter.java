@@ -15,7 +15,7 @@ public class Top10InRegionHtmlWriter extends BaseWriter implements Closeable
     {
         super(writer);
         this.urlGenerator = urlGenerator;
-        startElement("details", "style", "margin-left:10em");
+        startSubDetails();
         startElement("summary", "style", "font-size:24px");
         writer.writeCharacters(courseLongName);
         endElement("summary");
@@ -53,7 +53,7 @@ public class Top10InRegionHtmlWriter extends BaseWriter implements Closeable
         {
             endElement("table");
 
-            endElement("details");
+            endSubDetails();
         }
         catch (XMLStreamException e)
         {
