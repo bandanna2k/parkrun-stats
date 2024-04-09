@@ -21,7 +21,7 @@ public class Top10AtCourseHtmlWriter extends BaseWriter implements Closeable
         this.urlGenerator = urlGenerator;
         this.runOrVolunteer = runOrVolunteer;
         startSubDetails();
-        startElement("summary", "style", "font-size:20px");
+        startElement("summary", "class", "sub");
         writer.writeCharacters(title);
         endElement("summary");
 
