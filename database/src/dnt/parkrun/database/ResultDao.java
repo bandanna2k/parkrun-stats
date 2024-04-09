@@ -1,9 +1,6 @@
 package dnt.parkrun.database;
 
-import dnt.parkrun.datastructures.AgeGroup;
-import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.Result;
-import dnt.parkrun.datastructures.Time;
+import dnt.parkrun.datastructures.*;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -27,9 +24,12 @@ public class ResultDao
     List<Result> getResults()
     {
         String sql = "select * from result " +
-                "right join athlete using (athlete_id)";
+                "right join athlete using (athlete_id) " +
+                "order by course_id asc, date desc, position asc, athlete_id asc";
         List<Result> query = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
+            Integer ageGroup = rs.getInt("age_group");
+            Integer ageGrade = rs.getInt("age_grade");
             return new Result(
                     rs.getInt("course_id"),
                     rs.getDate("date"),
@@ -39,7 +39,8 @@ public class ResultDao
                             rs.getInt("athlete_id")
                     ),
                     Time.from(rs.getInt("time_seconds")),     // TODO Needs converting to int
-                    null, AgeGroup.UNKNOWN, 0);
+                    AgeGroup.from(ageGroup),
+                    AgeGrade.newInstanceFromDb(ageGrade));
         });
         return query;
     }
@@ -47,9 +48,9 @@ public class ResultDao
     public void insert(Result result)
     {
         String sql = "insert into result (" +
-                "athlete_id, course_id, date, position, time_seconds" +
+                "athlete_id, course_id, date, position, time_seconds, age_group, age_grade" +
                 ") values ( " +
-                ":athleteId, :courseId, :date, :position, :time_seconds" +
+                ":athleteId, :courseId, :date, :position, :time_seconds, :ageGroup, :ageGrade" +
                 ")";
         jdbc.update(sql, new MapSqlParameterSource()
                 .addValue("athleteId", result.athlete.athleteId)
@@ -57,6 +58,8 @@ public class ResultDao
                 .addValue("date", result.date)
                 .addValue("position", result.position)
                 .addValue("time_seconds", result.time.getTotalSeconds())
+                .addValue("ageGroup", result.ageGroup.dbCode)
+                .addValue("ageGrade", result.ageGrade.getAgeGradeForDb())
         );
     }
 
@@ -75,7 +78,8 @@ public class ResultDao
                             rs.getInt("athlete_id")
                     ),
                     Time.from(rs.getInt("time_seconds")),
-                    null, AgeGroup.UNKNOWN, 0);
+                    AgeGroup.from(rs.getInt("age_group")),
+                    AgeGrade.newInstanceFromDb(rs.getInt("age_grade")));
             consumer.accept(result);
             return null;
         });
@@ -96,7 +100,7 @@ public class ResultDao
     }
 
     @Deprecated
-    public void backfillUpdateResultWithAgeGroup(Athlete athlete, int courseId, Date date, AgeGroup ageGroup, Integer ageGrade)
+    public void backfillUpdateResultWithAgeGroup(Athlete athlete, int courseId, Date date, AgeGroup ageGroup, AgeGrade ageGrade)
     {
         String sql = "update result " +
                 "set " +
@@ -110,7 +114,7 @@ public class ResultDao
                 .addValue("courseId", courseId)
                 .addValue("date", date)
                 .addValue("ageGroup", ageGroup.dbCode)
-                .addValue("ageGrade", ageGrade)
+                .addValue("ageGrade", ageGrade.ageGrade)
         );
     }
 }

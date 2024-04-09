@@ -4,33 +4,37 @@ import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.filewebpageprovider.FileWebpageProvider;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.io.File;
 import java.net.URL;
+import java.sql.SQLException;
 
+@RunWith(Parameterized.class)
 public class ParserTest
 {
     private Course cornwall = new Course(27, "Cornwall", Country.NZ, "Cornwall", Course.Status.RUNNING);
 
-    @Test
-    public void shouldParseWithUnknowns()
+    @Parameterized.Parameter(0)
+    public String resource;
+
+    @Parameterized.Parameters(name = "{0}")
+    public static Object[] data() throws SQLException
     {
-        URL resource = this.getClass().getResource("/example.event.with.unknowns.html");
-        parseResource(resource);
+        return new Object[] {
+                ("/example.event.with.unknowns.html"),
+                ("/example.event.with.hour.plus.times.html"),
+                ("/example.event.with.no.gender.html"),
+                ("/example.event.with.assist.athlete.html"),
+                ("/example.event.with.triple.dash.athlete.html"),
+        };
     }
 
     @Test
-    public void shouldParseWithHourPlusRunners()
+    public void testExample()
     {
-        URL resource = this.getClass().getResource("/example.event.with.hour.plus.times.html");
-        parseResource(resource);
-    }
-
-    @Test
-    public void shouldParseWithNoGender()
-    {
-        URL resource = this.getClass().getResource("/example.event.with.no.gender.html");
-        parseResource(resource);
+        parseResource(this.getClass().getResource(resource));
     }
 
     private void parseResource(URL resource)

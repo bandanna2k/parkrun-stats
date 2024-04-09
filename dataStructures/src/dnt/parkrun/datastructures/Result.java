@@ -9,20 +9,18 @@ public class Result
     public final int position;
     public final Athlete athlete;
     public final Time time;
-    public final Gender gender;
     public final AgeGroup ageGroup;
-    public final int ageGrade;
+    public final AgeGrade ageGrade;
 
-    public Result(int courseId, Date date, int position, Athlete athlete, Time time, Gender gender, AgeGroup ageGroup, double ageGrade)
+    public Result(int courseId, Date date, int position, Athlete athlete, Time time, AgeGroup ageGroup, AgeGrade ageGrade)
     {
         this.courseId = courseId;
         this.date = date;
         this.position = position;
         this.athlete = athlete;
         this.time = time;
-        this.gender = gender;
         this.ageGroup = ageGroup;
-        this.ageGrade = (int)(ageGrade * 100.0d);
+        this.ageGrade = ageGrade;
     }
 
     @Override
@@ -34,7 +32,6 @@ public class Result
                 ", position=" + position +
                 ", athlete=" + athlete +
                 ", time=" + time +
-                ", gender=" + gender +
                 ", ageGroup=" + ageGroup +
                 ", ageGrade=" + ageGrade +
                 '}';

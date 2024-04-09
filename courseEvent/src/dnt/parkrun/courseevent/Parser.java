@@ -91,21 +91,29 @@ public class Parser
                         .childNode(3)   // td
                         .childNode(0);
                 final AgeGroup ageGroup;
-                final double ageGrade;
+                final AgeGrade ageGrade;
                 if(ageGroupNode.childNodes().isEmpty())
                 {
                     ageGroup = AgeGroup.UNKNOWN;
-                    ageGrade = 0;
+                    ageGrade = AgeGrade.newInstanceNoAgeGrade();
                 }
                 else
                 {
                     ageGroup = AgeGroup.from(ageGroupNode.childNode(0).toString().trim());
 
-                    Node ageGradeNode = row
-                            .childNode(3)   // td
-                            .childNode(1)
-                            .childNode(0);
-                    ageGrade = extractAgeGroup(ageGradeNode.toString());
+                    if(ageGroup == AgeGroup.SM_TRIPLE_DASH ||
+                        ageGroup == AgeGroup.SW_TRIPLE_DASH)
+                    {
+                        ageGrade = AgeGrade.newInstanceNoAgeGrade();
+                    }
+                    else
+                    {
+                        Node ageGradeNode = row
+                                .childNode(3)   // td
+                                .childNode(1)
+                                .childNode(0);
+                        ageGrade = AgeGrade.newInstance(ageGradeNode.toString());
+                    }
                 }
 
                 Node timeDiv = row
@@ -114,7 +122,7 @@ public class Parser
 
                 final Time time = timeDiv.childNodes().isEmpty() ? null : Time.from(timeDiv.childNode(0).toString());
 
-                resultConsumer.accept(new Result(course.courseId, date, position, athlete, time, gender, ageGroup, ageGrade));
+                resultConsumer.accept(new Result(course.courseId, date, position, athlete, time, ageGroup, ageGrade));
             }
         }
 
@@ -135,10 +143,6 @@ public class Parser
 
     public Date getDate() { return this.date; }
 
-    public static double extractAgeGroup(String input)
-    {
-        return Double.parseDouble(input.substring(0, input.indexOf('%')));
-    }
 
     public static class Builder
     {

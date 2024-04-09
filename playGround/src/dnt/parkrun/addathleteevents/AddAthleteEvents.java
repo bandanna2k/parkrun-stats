@@ -117,7 +117,7 @@ public class AddAthleteEvents
                 course, ace.eventNumber, ace.date, 0, empty(), empty());
         System.out.println(courseEventSummary);
 
-        Result result = new Result(course.courseId, ace.date, ace.position, ace.athlete, ace.time, null, AgeGroup.UNKNOWN, 0);
+        Result result = new Result(course.courseId, ace.date, ace.position, ace.athlete, ace.time, AgeGroup.UNKNOWN, AgeGrade.newInstanceNoAgeGrade());
         System.out.println(result);
     }
 }

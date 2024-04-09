@@ -6,6 +6,7 @@ import dnt.parkrun.courseevent.Parser;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.CourseEventSummaryDao;
 import dnt.parkrun.database.ResultDao;
+import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.datastructures.Result;
@@ -39,10 +40,17 @@ public class BackfillResults
 
         ResultDao resultDao = new ResultDao(dataSource);
 
-        courseRepository.getCourses(NZ).forEach(backfillCourse ->
+        for (Course backfillCourse : courseRepository.getCourses(NZ))
         {
             List<CourseEventSummary> courseEventSummaries = new CourseEventSummaryDao(dataSource, courseRepository).getCourseEventSummaries()
                     .stream().filter(ces -> ces.course.courseId == backfillCourse.courseId).collect(Collectors.toList());
+
+            if (backfillCourse.name.startsWith("a")) continue;
+            if (backfillCourse.name.startsWith("b")) continue;
+            if (backfillCourse.name.startsWith("c")) continue;
+            if (backfillCourse.name.startsWith("d")) continue;
+            if (backfillCourse.name.startsWith("e")) continue;
+            if (backfillCourse.name.equals("flaxmere")) continue;
 
             int counter = 1;
             int size = courseEventSummaries.size();
@@ -50,7 +58,7 @@ public class BackfillResults
             {
                 System.out.printf("Downloading %d of %d ", counter++, size);
 
-                if(backfillCourse.name.equals("anderson") && ces.eventNumber < 347) continue;
+                if (backfillCourse.name.equals("foster") && ces.eventNumber < 231) continue;
 
                 Parser parser = new Parser.Builder(ces.course)
                         .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(backfillCourse.name, ces.eventNumber)))
@@ -58,7 +66,7 @@ public class BackfillResults
                         .build();
                 parser.parse();
             }
-        });
+        }
     }
 
     private void updateResult(ResultDao resultDao, Result r)

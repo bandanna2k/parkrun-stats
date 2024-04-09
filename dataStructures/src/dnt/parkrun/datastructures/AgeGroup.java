@@ -68,6 +68,15 @@ public enum AgeGroup
 
     VM95_99("VM95-99", 39),
     VW95_99("VW95-99", 40),
+
+    VM100_PLUS("VM100+", 41),
+    VW100_PLUS("VW100+", 42),
+
+    SM_TRIPLE_DASH("SM---", 43),
+    SW_TRIPLE_DASH("SW---", 44),
+
+    MWC("MWC", 45),
+    WWC("WWC", 46),
     ;
 
 
@@ -86,12 +95,27 @@ public enum AgeGroup
     {
         assert Arrays.stream(values()).map(Enum -> Enum.dbCode).collect(Collectors.toSet()).size() == values().length;
         Arrays.stream(values()).forEach(ageGroup -> textOnWebpageToAgeGroup.put(ageGroup.textOnWebpage, ageGroup));
+        assert values().length == textOnWebpageToAgeGroup.size();
+    }
+    private static Map<Integer, AgeGroup> dbCodeToAgeGroup = new HashMap<>();
+    static
+    {
+        Arrays.stream(values()).forEach(ageGroup -> dbCodeToAgeGroup.put(ageGroup.dbCode, ageGroup));
+        assert values().length == dbCodeToAgeGroup.size();
     }
 
     public static AgeGroup from(String textOnWebpage)
     {
         AgeGroup ageGroup = textOnWebpageToAgeGroup.get(textOnWebpage);
         assert ageGroup != null : "Age group not found: " + textOnWebpage;
+        return ageGroup;
+    }
+
+    public static AgeGroup from(Integer dbCode)
+    {
+        if(dbCode == null) return null;
+        AgeGroup ageGroup = dbCodeToAgeGroup.get(dbCode);
+        assert ageGroup != null : "Age group not found: " + dbCode;
         return ageGroup;
     }
 }
