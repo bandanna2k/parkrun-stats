@@ -835,6 +835,7 @@ public class Stats
                 }
             }
         });
+        System.out.println(athleteToCourseCount.get(1311970));
 
         Set<Integer> athletes = new HashSet<>();
         athleteToCourseCount.forEach((athleteId, courseToCount) ->

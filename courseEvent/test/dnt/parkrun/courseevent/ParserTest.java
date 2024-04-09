@@ -28,6 +28,7 @@ public class ParserTest
                 ("/example.event.with.no.gender.html"),
                 ("/example.event.with.assist.athlete.html"),
                 ("/example.event.with.triple.dash.athlete.html"),
+                ("/example.event.with.santa.claus.html"),
         };
     }
 

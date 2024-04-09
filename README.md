@@ -19,8 +19,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Minor
 
-- Deal with Assisted in the age grade
-
 - Bug - Why is 1311970 not getting collected for pIndex.
 
 - Bug - Top 10 in region is always empty on first run so assert kicks in.  

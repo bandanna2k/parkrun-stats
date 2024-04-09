@@ -101,18 +101,19 @@ public class Parser
                 {
                     ageGroup = AgeGroup.from(ageGroupNode.childNode(0).toString().trim());
 
-                    if(ageGroup == AgeGroup.SM_TRIPLE_DASH ||
-                        ageGroup == AgeGroup.SW_TRIPLE_DASH)
+                    Node ageGradeNode = row
+                            .childNode(3);   // td
+                    if(ageGradeNode.childNodes().size() <= 1)
                     {
                         ageGrade = AgeGrade.newInstanceNoAgeGrade();
                     }
                     else
                     {
-                        Node ageGradeNode = row
+                        Node ageGradeNode2 = row
                                 .childNode(3)   // td
                                 .childNode(1)
                                 .childNode(0);
-                        ageGrade = AgeGrade.newInstance(ageGradeNode.toString());
+                        ageGrade = AgeGrade.newInstance(ageGradeNode2.toString());
                     }
                 }
 

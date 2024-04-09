@@ -50,7 +50,8 @@ public class BackfillResults
             if (backfillCourse.name.startsWith("c")) continue;
             if (backfillCourse.name.startsWith("d")) continue;
             if (backfillCourse.name.startsWith("e")) continue;
-            if (backfillCourse.name.equals("flaxmere")) continue;
+            if (backfillCourse.name.startsWith("f")) continue;
+            if (backfillCourse.name.startsWith("g")) continue;
 
             int counter = 1;
             int size = courseEventSummaries.size();
