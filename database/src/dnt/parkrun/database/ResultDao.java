@@ -66,7 +66,7 @@ public class ResultDao
     public void tableScan(Consumer<Result> consumer)
     {
         String sql = "select * from result " +
-                "right join athlete using (athlete_id)";
+                "join athlete using (athlete_id)";
         jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             Result result = new Result(
@@ -78,8 +78,8 @@ public class ResultDao
                             rs.getInt("athlete_id")
                     ),
                     Time.from(rs.getInt("time_seconds")),
-                    AgeGroup.from(rs.getInt("age_group")),
-                    AgeGrade.newInstanceFromDb(rs.getInt("age_grade")));
+                    rs.getString("age_group") == null ? null : AgeGroup.from(rs.getInt("age_group")),
+                    rs.getString("age_grade") == null ? null : AgeGrade.newInstanceFromDb(rs.getInt("age_grade")));
             consumer.accept(result);
             return null;
         });

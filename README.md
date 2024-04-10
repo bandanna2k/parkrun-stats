@@ -21,21 +21,23 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 - Bug - Top 10 in region is always empty on first run so assert kicks in.  
 
-- Revisit pIndex downloads. I don't think the criteria for downloading the athletes its correct.
-
 - Add stop dates as java code
 
 - Do I need name/most global events in most events table?
 
 - Bug - When course not found, athlete course summary not finished.
 
-- Invariant - region event count > global event count
+- Invariant - region event count < global event count
 
 - Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables.
 
 - Change 'How are we doing test to assume next event number'
 
-## Fixed Bugs
+## Fixed Issues
+
+- Question - Revisit pIndex downloads. 
+I don't think the criteria for downloading the athletes its correct. 
+Criteria is NZ regional pIndex > 5 (so 6 onwards)
 
 - Bug - Why is 1311970 not getting collected for pIndex. No bug. 1311970 has NZ pIndex of 5 (needs to be 6)
 

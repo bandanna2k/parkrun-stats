@@ -2,7 +2,9 @@ package dnt.parkrun.courseevent;
 
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
+import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.filewebpageprovider.FileWebpageProvider;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -10,6 +12,8 @@ import org.junit.runners.Parameterized;
 import java.io.File;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(Parameterized.class)
 public class ParserTest
@@ -29,6 +33,7 @@ public class ParserTest
                 ("/example.event.with.assist.athlete.html"),
                 ("/example.event.with.triple.dash.athlete.html"),
                 ("/example.event.with.santa.claus.html"),
+                ("/example.event.with.blank.details.html"),
         };
     }
 
@@ -40,12 +45,18 @@ public class ParserTest
 
     private void parseResource(URL resource)
     {
+        List<Result> results = new ArrayList<>();
         Parser parser = new Parser.Builder(cornwall)
                 .forEachAthlete(x -> System.out.println("Athlete: " + x))
-                .forEachResult(x -> System.out.println("Result: " + x))
+                .forEachResult(results::add)
                 .forEachVolunteer(x -> System.out.println("Volunteer: " + x))
                 .webpageProvider(new FileWebpageProvider(new File(resource.getFile())))
                 .build();
         parser.parse();
+
+        results.forEach(r -> {
+            Assertions.assertThat(r.ageGrade).isNotNull();
+            Assertions.assertThat(r.ageGroup).isNotNull();
+        });
     }
 }
