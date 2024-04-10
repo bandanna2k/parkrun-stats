@@ -11,19 +11,17 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Major
 
-- Prove?? Parsers can break half way through. Collate records first then stream records.
-
-- Retrieve result.age group and result.age grade
-
-- Make work well on mobile
-
 ## Minor
 
-- Invariant - Random invariant - Check that DB event history matches Web event history
-
-- Bug - Top 10 in region is always empty on first run so assert kicks in.  
+- Bug - Top 10 in region is always empty on first run so assert kicks in.
 
 - Add stop dates as java code
+
+- Prove?? Parsers can break half way through. Collate records first then stream records.
+
+- Make work better on mobile
+
+- Invariant - Random invariant - Check that DB event history matches Web event history
 
 - Do I need name/most global events in most events table?
 

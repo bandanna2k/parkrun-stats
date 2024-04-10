@@ -56,7 +56,7 @@ public class ResultDao
                 .addValue("courseId", result.courseId)
                 .addValue("date", result.date)
                 .addValue("position", result.position)
-                .addValue("time_seconds", result.time.getTotalSeconds())
+                .addValue("time_seconds", result.time == null ? 0 : result.time.getTotalSeconds())
                 .addValue("ageGroup", result.ageGroup.dbCode)
                 .addValue("ageGrade", result.ageGrade.getAgeGradeForDb())
         );
