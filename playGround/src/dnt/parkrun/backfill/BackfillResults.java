@@ -143,6 +143,6 @@ public class BackfillResults
 
     private void updateResult(ResultDao resultDao, Result r)
     {
-        resultDao.backfillUpdateResultWithAgeGroup(r.athlete, r.courseId, r.date, r.ageGroup, r.ageGrade);
+        resultDao.backfillUpdateResultWithAgeGroup(r);
     }
 }

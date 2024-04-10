@@ -19,6 +19,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023
 
 ## Minor
 
+- Invariant - Random invariant - Check that DB event history matches Web event history
+
 - Bug - Top 10 in region is always empty on first run so assert kicks in.  
 
 - Add stop dates as java code

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static java.time.Instant.EPOCH;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,8 +35,11 @@ public class ResultDaoTest extends BaseDaoTest
         Athlete athlete = Athlete.fromAthleteSummaryLink("Davey JONES", "https://www.parkrun.co.nz/parkrunner/902393/");
         athleteDao.insert(athlete);
 
-        Result result = new Result(500, new Date(), 1, athlete, Time.from("1:30:02"), AgeGroup.VW45_49, AgeGrade.newInstance(71.09));
+        Result result = new Result(500, new Date(EPOCH.plus(7, DAYS).getEpochSecond()), 1, athlete, Time.from("1:30:02"), AgeGroup.VW45_49, AgeGrade.newInstance(71.09));
         resultDao.insert(result);
+
+        Result resultNull = new Result(501, new Date(EPOCH.plus(14, DAYS).getEpochSecond()), 1, athlete, null, AgeGroup.VW45_49, AgeGrade.newInstance(71.09));
+        resultDao.insert(resultNull);
 
         List<Result> results = resultDao.getResults();
         assertThat(results).isNotEmpty();
@@ -48,7 +52,7 @@ public class ResultDaoTest extends BaseDaoTest
         Athlete athlete = Athlete.fromAthleteSummaryLink("Davey JONES", "https://www.parkrun.co.nz/parkrunner/902393/");
         athleteDao.insert(athlete);
 
-        Instant epoch = Instant.EPOCH;
+        Instant epoch = EPOCH;
         resultDao.insert(new Result(
                 500, new Date(epoch.plus(7, DAYS).getEpochSecond()), 1, athlete, Time.from("1:30:02"), AgeGroup.VW45_49,
                 AgeGrade.newInstanceAssisted()));
@@ -76,7 +80,7 @@ public class ResultDaoTest extends BaseDaoTest
         Athlete athlete = Athlete.fromAthleteSummaryLink("Davey JONES", "https://www.parkrun.co.nz/parkrunner/902393/");
         athleteDao.insert(athlete);
 
-        Instant instant = Instant.EPOCH;
+        Instant instant = EPOCH;
         for (int i = 0; i < 100; i++)
         {
             Time fastTime = Time.from("20:00");
@@ -98,7 +102,7 @@ public class ResultDaoTest extends BaseDaoTest
         Athlete athlete = Athlete.fromAthleteSummaryLink("Davey JONES", "https://www.parkrun.co.nz/parkrunner/902393/");
         athleteDao.insert(athlete);
 
-        Instant instant = Instant.EPOCH.plus(7, DAYS);
+        Instant instant = EPOCH.plus(7, DAYS);
         for (int i = 0; i < 10; i++)
         {
             Time fastTime = Time.from("20:00");

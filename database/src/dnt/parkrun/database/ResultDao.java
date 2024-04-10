@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
-import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -100,21 +99,25 @@ public class ResultDao
     }
 
     @Deprecated
-    public void backfillUpdateResultWithAgeGroup(Athlete athlete, int courseId, Date date, AgeGroup ageGroup, AgeGrade ageGrade)
+    public void backfillUpdateResultWithAgeGroup(Result result)
     {
         String sql = "update result " +
                 "set " +
+                "   athlete_id = :athleteId," +
                 "   age_group = :ageGroup, " +
-                "   age_grade = :ageGrade " +
-                "where athlete_id = :athleteId " +
-                " and course_id = :courseId " +
-                " and date = :date ";
+                "   age_grade = :ageGrade, " +
+                "   time_seconds = :timeSeconds " +
+                "where course_id = :courseId " +
+                " and date = :date " +
+                " and position = :position";
         jdbc.update(sql, new MapSqlParameterSource()
-                .addValue("athleteId", athlete.athleteId)
-                .addValue("courseId", courseId)
-                .addValue("date", date)
-                .addValue("ageGroup", ageGroup.dbCode)
-                .addValue("ageGrade", ageGrade.ageGrade)
+                .addValue("athleteId", result.athlete.athleteId)
+                .addValue("courseId", result.courseId)
+                .addValue("date", result.date)
+                .addValue("position", result.position)
+                .addValue("ageGroup", result.ageGroup.dbCode)
+                .addValue("ageGrade", result.ageGrade.getAgeGradeForDb())
+                .addValue("timeSeconds", null == result.time ? 0 : result.time.getTotalSeconds())
         );
     }
 }
