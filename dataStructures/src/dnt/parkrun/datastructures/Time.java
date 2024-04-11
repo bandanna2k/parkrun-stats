@@ -1,5 +1,7 @@
 package dnt.parkrun.datastructures;
 
+import java.util.Objects;
+
 public class Time
 {
     public static final int NO_TIME_SECONDS = 0;
@@ -17,6 +19,27 @@ public class Time
         this.hours = hours;
         this.mins = mins;
         this.seconds = seconds;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        Time time = (Time) o;
+        return hours == time.hours && mins == time.mins && seconds == time.seconds;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(hours, mins, seconds);
     }
 
     @Override

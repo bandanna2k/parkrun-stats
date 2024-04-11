@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,10 +36,10 @@ public class ResultDaoTest extends BaseDaoTest
         Athlete athlete = Athlete.fromAthleteSummaryLink("Davey JONES", "https://www.parkrun.co.nz/parkrunner/902393/");
         athleteDao.insert(athlete);
 
-        Result result = new Result(500, new Date(EPOCH.plus(7, DAYS).getEpochSecond()), 1, athlete, Time.from("1:30:02"), AgeGroup.VW45_49, AgeGrade.newInstance(71.09));
+        Result result = new Result(500, new Date(EPOCH.plus(7, DAYS).getEpochSecond()), 1, athlete, Time.from("1:30:02"), AgeGroup.VW45_49, AgeGrade.newInstance(new BigDecimal("68.49")));
         resultDao.insert(result);
 
-        Result resultNull = new Result(501, new Date(EPOCH.plus(14, DAYS).getEpochSecond()), 1, athlete, null, AgeGroup.VW45_49, AgeGrade.newInstance(71.09));
+        Result resultNull = new Result(501, new Date(EPOCH.plus(14, DAYS).getEpochSecond()), 1, athlete, null, AgeGroup.VW45_49, AgeGrade.newInstance(new BigDecimal("68.49")));
         resultDao.insert(resultNull);
 
         List<Result> results = resultDao.getResults();
@@ -61,17 +62,17 @@ public class ResultDaoTest extends BaseDaoTest
                 AgeGrade.newInstanceNoAgeGrade()));
         resultDao.insert(new Result(
                 500, new Date(epoch.plus(21, DAYS).getEpochSecond()), 3, athlete, Time.from("1:32:04"), AgeGroup.VW45_49,
-                AgeGrade.newInstance(71.09)));
+                AgeGrade.newInstance(new BigDecimal("68.49"))));
 
         List<Result> results = resultDao.getResults();
         assertThat(results).isNotEmpty();
 
         assertThat(results.get(0).ageGrade.assisted).isEqualTo(true);
-        assertThat(results.get(0).ageGrade.ageGrade).isEqualTo(-1);
+        assertThat(results.get(0).ageGrade.ageGrade).isEqualTo(new BigDecimal("-1"));
         assertThat(results.get(1).ageGrade.assisted).isEqualTo(false);
-        assertThat(results.get(1).ageGrade.ageGrade).isEqualTo(0);
+        assertThat(results.get(1).ageGrade.ageGrade).isEqualTo(BigDecimal.ZERO);
         assertThat(results.get(2).ageGrade.assisted).isEqualTo(false);
-        assertThat(results.get(2).ageGrade.ageGrade).isEqualTo(71.09);
+        assertThat(results.get(2).ageGrade.ageGrade).isEqualTo(new BigDecimal("68.49"));
     }
 
     @Test
@@ -85,7 +86,7 @@ public class ResultDaoTest extends BaseDaoTest
         {
             Time fastTime = Time.from("20:00");
             Time fastishTime = Time.from(fastTime.getTotalSeconds() + i);
-            Result result = new Result(500, Date.from(instant), i, athlete, fastishTime, AgeGroup.JM11_14, AgeGrade.newInstance(66.0));
+            Result result = new Result(500, Date.from(instant), i, athlete, fastishTime, AgeGroup.JM11_14, AgeGrade.newInstance(new BigDecimal("66.0")));
             resultDao.insert(result);
 
             instant.plus(7, DAYS);
@@ -107,7 +108,7 @@ public class ResultDaoTest extends BaseDaoTest
         {
             Time fastTime = Time.from("20:00");
             Time fastishTime = Time.from(fastTime.getTotalSeconds() + i);
-            Result result = new Result(500, Date.from(instant), i, athlete, fastishTime, AgeGroup.SM25_29, AgeGrade.newInstance(66.6));
+            Result result = new Result(500, Date.from(instant), i, athlete, fastishTime, AgeGroup.SM25_29, AgeGrade.newInstance(new BigDecimal("66.6")));
             resultDao.insert(result);
 
             instant.plus(7, DAYS);

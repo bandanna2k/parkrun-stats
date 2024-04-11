@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -43,6 +44,35 @@ public class ResultDao
         });
         return query;
     }
+
+    public List<Result> getResults(int courseId, Date date)
+    {
+        String sql = "select * from result " +
+                "left join athlete using (athlete_id) " +
+                "where course_id = :courseId " +
+                "  and date = :date " +
+                "order by course_id asc, date desc, position asc, athlete_id asc";
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("courseId", courseId)
+                .addValue("date", date);
+        return jdbc.query(sql, params, (rs, rowNum) ->
+        {
+            Integer ageGroup = rs.getInt("age_group");
+            Integer ageGrade = rs.getInt("age_grade");
+            return new Result(
+                    rs.getInt("course_id"),
+                    rs.getDate("date"),
+                    rs.getInt("position"),
+                    Athlete.from(
+                            rs.getString("name"),
+                            rs.getInt("athlete_id")
+                    ),
+                    Time.from(rs.getInt("time_seconds")),     // TODO Needs converting to int
+                    AgeGroup.from(ageGroup),
+                    AgeGrade.newInstanceFromDb(ageGrade));
+        });
+    }
+
 
     public void insert(Result result)
     {
@@ -119,5 +149,16 @@ public class ResultDao
                 .addValue("ageGrade", result.ageGrade.getAgeGradeForDb())
                 .addValue("timeSeconds", null == result.time ? 0 : result.time.getTotalSeconds())
         );
+    }
+
+    public void deleteResults(Integer courseId, Date date)
+    {
+        String sql = "delete from result " +
+                "where course_id = :courseId " +
+                "  and date = :date ";
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("courseId", courseId)
+                .addValue("date", date);
+        jdbc.update(sql, params);
     }
 }
