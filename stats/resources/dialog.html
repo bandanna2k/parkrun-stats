@@ -1,6 +1,6 @@
 <dialog id="dialog">
 
-    <span onclick="dialog.close()" class="blank">X</span>
+    <p style="text-align:left;margin-left:10px"><span onclick="dialog.close()">X</span></p>
 
     <canvas id="myChart"></canvas>
 
@@ -20,6 +20,7 @@
 
         var startDates = [];
         var firstRuns = [];
+        var regionnaireRuns = [];
 
         // Start dates
         function refreshStartDates() {
@@ -44,10 +45,24 @@
         function setFirstRuns(nameIn,firstRunsIn) {
             chart.options.plugins.title.text = nameIn + " - Start Dates / First Runs";
             firstRuns.splice(0, firstRuns.length);
+            regionnaireRuns.splice(0, regionnaireRuns.length);
+
+            const regionnaireRunsSet = new Set();
             for(var i = 0 ; i < firstRunsIn[0].length ; i++)
             {
                 const course = courseIdToCourse.get(firstRunsIn[0][i]);
-                firstRuns.push({'x': (firstRunsIn[1][i]*1000), 'name': course.longName});
+                let firstRunDate = null;
+                if(firstRunsIn[1][i] < 0)
+                {
+                    firstRunDate = -(firstRunsIn[1][i]*1000);
+                    regionnaireRunsSet.add(firstRunDate);
+                }
+                else
+                {
+                    firstRunDate = firstRunsIn[1][i]*1000;
+                }
+
+                firstRuns.push({'x': firstRunDate, 'name': course.longName});
             }
             firstRuns.sort((r1, r2) => {
                 if(r1.x > r2.x) return 1;
@@ -58,6 +73,11 @@
             for(let record of firstRuns)
             {
                 record.y = i++;
+
+                if(regionnaireRunsSet.has(record.x))
+                {
+                    regionnaireRuns.push({'x': record.x, 'y': record.y})
+                }
             }
             chart.update();
         }
@@ -87,6 +107,21 @@
             borderColor: 'purple',
           },
           {
+            label: 'First Run Date',
+            data: firstRuns,
+            borderWidth: 1,
+            datalabels:
+            {
+                offset: 10,
+                align: '45',
+                formatter: function(value, context) {
+                    return value.name;
+                }
+            },
+            backgroundColor: 'blue',
+            borderColor: 'blue',
+          },
+          {
             label: 'Start Dates',
             data: startDates,
             borderWidth: 1,
@@ -102,19 +137,18 @@
             borderColor: '#ff0077',
           },
           {
-            label: 'First Run Date',
-            data: firstRuns,
-            borderWidth: 1,
+            label: 'Regionnaire Dates',
+            data: regionnaireRuns,
+            borderWidth: 8,
+            backgroundColor: 'cyan',
+            borderColor: 'cyan',
+            showLine: false,
             datalabels:
             {
-                offset: 10,
-                align: '45',
-                formatter: function(value, context) {
-                    return value.name;
+                labels: {
+                    title: null
                 }
-            },
-            backgroundColor: 'blue',
-            borderColor: 'blue',
+            }
           }
           ]
         },

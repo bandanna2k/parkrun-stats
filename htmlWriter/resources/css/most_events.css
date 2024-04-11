@@ -20,6 +20,9 @@
         text-align:center;
     }
 }
+.close p {
+    text-align:left;
+}
 body {
     background:#f2f2f2;
     font:400 14px 'Arial';

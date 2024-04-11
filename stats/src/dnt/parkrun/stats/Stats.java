@@ -557,13 +557,19 @@ public class Stats
                     listOfFirstRuns.sort(CourseDate.COMPARATOR);
 
                     regionnaireCount = getRegionnaireCount(new ArrayList<>(startDates), new ArrayList<>(), new ArrayList<>(listOfFirstRuns));
+                    List<CourseDate> listOfRegionnaireDates = getListOfRegionnaireDates(new ArrayList<>(startDates), new ArrayList<>(), new ArrayList<>(listOfFirstRuns));
 
                     Object[] result = getRunsNeeded(new ArrayList<>(startDates), new ArrayList<>(listOfFirstRuns));
                     runsNeeded = result[0] + " (" + result[1] + ")";
 
+                    String firstRunDatesHtmlString = listOfFirstRuns.stream().map(fr ->
+                    {
+                        int multiplier = listOfRegionnaireDates.contains(fr) ? -1 : 1;
+                        return String.valueOf(multiplier * fr.date.getTime() / 1000);
+                    }).collect(Collectors.joining(","));
                     firstRuns = "[" +
                             "[" + listOfFirstRuns.stream().map(fr -> String.valueOf(fr.course.courseId)).collect(Collectors.joining(",")) + "]," +
-                            "[" + listOfFirstRuns.stream().map(fr -> String.valueOf(fr.date.getTime() / 1000)).collect(Collectors.joining(",")) + "]" +
+                            "[" + firstRunDatesHtmlString + "]" +
                             "]";
                 }
                 else
@@ -623,10 +629,17 @@ public class Stats
             List<CourseDate> sortedStopDates,
             List<CourseDate> sortedFirstRuns)
     {
+        return getListOfRegionnaireDates(sortedStartDates, sortedStopDates, sortedFirstRuns).size();
+    }
+    static List<CourseDate> getListOfRegionnaireDates(
+            List<CourseDate> sortedStartDates,
+            List<CourseDate> sortedStopDates,
+            List<CourseDate> sortedFirstRuns)
+        {
         final int totalEvents = sortedStartDates.size();
         final int totalEventsStopped = sortedStopDates.size();
         final int totalEventsRun = sortedFirstRuns.size();
-        int regionnaireCount = 0;
+        List<CourseDate> regionnaireDates = new ArrayList<>();
         while(!sortedFirstRuns.isEmpty())
         {
             CourseDate firstRun = sortedFirstRuns.remove(0);
@@ -642,10 +655,10 @@ public class Stats
 
             if(coursesRunSoFar == courseThatAreRunning)
             {
-                regionnaireCount++;
+                regionnaireDates.add(firstRun);
             }
         }
-        return regionnaireCount;
+        return regionnaireDates;
     }
 
     private void writeAttendanceRecords(HtmlWriter writer) throws XMLStreamException
