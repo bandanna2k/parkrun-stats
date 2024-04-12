@@ -86,7 +86,7 @@ public class HowYouDoingTest
     public static class NewCourseTest
     {
         @Test
-        public void areCourseUpToDate() throws IOException, SQLException
+        public void areCoursesUpToDate() throws IOException, SQLException
         {
             DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                     "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
