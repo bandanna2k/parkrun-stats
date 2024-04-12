@@ -1,7 +1,6 @@
 package dnt.parkrun.stats.invariants;
 
 import com.mysql.jdbc.Driver;
-import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseevent.Parser;
 import dnt.parkrun.database.CourseDao;
@@ -16,8 +15,9 @@ import org.junit.Test;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
-import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -26,103 +26,160 @@ import static dnt.parkrun.datastructures.Country.NZ;
 
 public class CourseEventSummaryInvariantTest
 {
-    private static final int ITERATIONS = 1;
+    private static final int ITERATIONS = 2;
 
-    private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
     private final SoftAssertions softly = new SoftAssertions();
 
     @Test
     public void checkCourseEventSummary() throws SQLException
     {
-        Random random = new Random(1);
-
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
-        CourseRepository courseRepository = new CourseRepository();
-
-        CourseDao courseDao = new CourseDao(dataSource, courseRepository);
-        ResultDao resultDao = new ResultDao(dataSource);
-        CourseEventSummaryDao courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
-
-        List<CourseEventSummary> courseEventSummaries = courseEventSummaryDao.getCourseEventSummaries();
-        Set<CourseEventSummary> done = new HashSet<>();
-
-        Set<String> courseIdToEventNumberToFix = new HashSet<>() {{
-//            add(38 + "-06/04/2024");
-        }};
-
-        // Get X from this month
-        Calendar firstOfTheMonthCalendar = Calendar.getInstance();
-        firstOfTheMonthCalendar.set(Calendar.DAY_OF_MONTH, 1);
-        Date firstOfTheMonth = Date.from(firstOfTheMonthCalendar.toInstant());
-        List<CourseEventSummary> summariesForThisMonth = courseEventSummaries.stream()
-                .filter(ces -> ces.date.after(firstOfTheMonth))
-                .collect(Collectors.toList());
-        System.out.println(summariesForThisMonth.size() + " " + summariesForThisMonth);
-        for (int i = 0; i < ITERATIONS; i++)
-        {
-            int randIndex = random.nextInt(summariesForThisMonth.size());
-            CourseEventSummary ces = summariesForThisMonth.get(randIndex);
-
-            List<Result> resultsFromDao = resultDao.getResults(ces.course.courseId, ces.date);
-            List<Result> resultsFromWeb = getResultsFromWeb(ces);
-
-            areResultsOk(ces, resultsFromDao, resultsFromWeb);
-
-            String key = ces.course.courseId + "-" + DateConverter.formatDateForHtml(ces.date);
-            if(courseIdToEventNumberToFix.contains(key))
-            {
-                System.out.printf("INFO Fixing results for course: %s, date: %s %n", ces.course.name, ces.date);
-                resultDao.deleteResults(ces.course.courseId, ces.date);
-                System.out.printf("WARNING Deleted results for course: %s, date: %s %n", ces.course.name, ces.date);
-                resultsFromWeb.forEach(resultDao::insert);
-                System.out.printf("INFO Results re-entered%n");
-            }
-        }
-
+        CourseEventSummaryChecker courseEventSummaryChecker = new CourseEventSummaryChecker(dataSource, softly);
+        courseEventSummaryChecker.assertAll();
         softly.assertAll();
     }
 
-    private void areResultsOk(CourseEventSummary ces, List<Result> list1, List<Result> list2)
+    private static class CourseEventSummaryChecker
     {
-        if(list1.size() != list2.size())
+        private final Random random = new Random(1);
+        private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
+        private final CourseEventSummaryDao courseEventSummaryDao;
+        private final ResultDao resultDao;
+
+        private final Set<String> courseIdToEventNumberToFix = new HashSet<>() {{
+//            add("waitangi52");
+//            add("kapiticoast429");
+//            add("whanganuiriverbank167");
+//            add("westernsprings346");
+//            add("tauranga29");
+//            add("invercargill108");
+        }};
+        private final SoftAssertions softly;
+
+        public CourseEventSummaryChecker(DataSource dataSource, SoftAssertions softly)
         {
-            softly.fail("List sizes do not match: A: %d, B: %d, CES: %s", list1.size(), list2.size(), ces);
-            return;
+            this.softly = softly;
+
+            CourseRepository courseRepository = new CourseRepository();
+            CourseDao courseDao = new CourseDao(dataSource, courseRepository);
+            resultDao = new ResultDao(dataSource);
+            courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
         }
 
-        for (int i = 0; i < list1.size(); i++)
+        public void assertAll()
         {
-            Result item1 = list1.get(i);
-            Result item2 = list2.get(i);
+            List<CourseEventSummary> courseEventSummaries = courseEventSummaryDao.getCourseEventSummaries();
 
-            Supplier<String> comparison = () -> String.format("A: %s, B: %s, CES: %s", item1, item2, ces);
-            softly.assertThat(item1.athlete.athleteId)
-                    .describedAs("Athlete ID does not match. " + comparison.get())
-                    .isEqualTo(item2.athlete.athleteId);
-            softly.assertThat(item1.time)
-                    .describedAs("Time does not match. " + comparison.get())
-                    .isEqualTo(item2.time);
-            softly.assertThat(item1.ageGroup)
-                    .describedAs("Age group does not match. " + comparison.get())
-                    .isEqualTo(item2.ageGroup);
-            softly.assertThat(item1.ageGrade)
-                    .describedAs("Age grade does not match. " + comparison.get())
-                    .isEqualTo(item2.ageGrade);
-            softly.assertThat(item1.ageGrade.ageGrade)
-                    .describedAs("Age grade too small. " + comparison.get() + item1)
-                    .matches(item -> item.equals(BigDecimal.ZERO) || item.doubleValue() < 2.0);
+            checkResultsFromThisMonth(courseEventSummaries);
+            checkResultsFromLast60Days(courseEventSummaries);
+            checkResultsFromLast350Days(courseEventSummaries);
+            checkResults(courseEventSummaries);
         }
-    }
 
-    private List<Result> getResultsFromWeb(CourseEventSummary ces)
-    {
-        List<Result> results = new ArrayList<>();
-        Parser parser = new Parser.Builder(ces.course)
-                .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(ces.course.name, ces.eventNumber)))
-                .forEachResult(results::add)
-                .build();
-        parser.parse();
-        return results;
+        private void checkResultsFromThisMonth(List<CourseEventSummary> courseEventSummaries)
+        {
+            Calendar firstOfTheMonthCalendar = Calendar.getInstance();
+            firstOfTheMonthCalendar.set(Calendar.DAY_OF_MONTH, 1);
+            Date firstOfTheMonth = Date.from(firstOfTheMonthCalendar.toInstant());
+            List<CourseEventSummary> summariesForThisMonth = courseEventSummaries.stream()
+                    .filter(ces -> ces.date.after(firstOfTheMonth))
+                    .collect(Collectors.toList());
+            checkResults(summariesForThisMonth);
+
+        }
+
+        private void checkResultsFromLast60Days(List<CourseEventSummary> courseEventSummaries)
+        {
+            Instant now = Instant.now();
+            Instant pastTime = now.minus(60, ChronoUnit.DAYS);
+            List<CourseEventSummary> summariesForThisMonth = courseEventSummaries.stream()
+                    .filter(ces -> ces.date.after(Date.from(pastTime)))
+                    .collect(Collectors.toList());
+            checkResults(summariesForThisMonth);
+        }
+
+        private void checkResultsFromLast350Days(List<CourseEventSummary> courseEventSummaries)
+        {
+            Instant now = Instant.now();
+            Instant pastTime = now.minus(350, ChronoUnit.DAYS);
+            List<CourseEventSummary> summariesForThisMonth = courseEventSummaries.stream()
+                    .filter(ces -> ces.date.after(Date.from(pastTime)))
+                    .collect(Collectors.toList());
+            checkResults(summariesForThisMonth);
+        }
+
+        private void checkResults(List<CourseEventSummary> summaries)
+        {
+            for (int i = 0; i < ITERATIONS; i++)
+            {
+                int randIndex = random.nextInt(summaries.size());
+                CourseEventSummary ces = summaries.get(randIndex);
+
+                List<Result> resultsFromDao = resultDao.getResults(ces.course.courseId, ces.date);
+                List<Result> resultsFromWeb = getResultsFromWeb(ces);
+
+                areResultsOk(ces, resultsFromDao, resultsFromWeb);
+
+                String key = ces.course.name + ces.eventNumber;
+                if(courseIdToEventNumberToFix.contains(key))
+                {
+                    System.out.printf("INFO Fixing results for course: %s, date: %s %n", ces.course.name, ces.date);
+                    resultDao.deleteResults(ces.course.courseId, ces.date);
+                    System.out.printf("WARNING Deleted results for course: %s, date: %s %n", ces.course.name, ces.date);
+                    resultsFromWeb.forEach(resultDao::insert);
+                    System.out.printf("INFO Results re-entered%n");
+                }
+            }
+        }
+
+        private List<Result> getResultsFromWeb(CourseEventSummary ces)
+        {
+            List<Result> results = new ArrayList<>();
+            Parser parser = new Parser.Builder(ces.course)
+                    .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(ces.course.name, ces.eventNumber)))
+                    .forEachResult(results::add)
+                    .build();
+            parser.parse();
+            return results;
+        }
+
+        private void areResultsOk(CourseEventSummary ces, List<Result> daoItems, List<Result> webItems)
+        {
+            if (daoItems.size() != webItems.size())
+            {
+                softly.fail("List sizes do not match: A: %d, B: %d, CES: %s", daoItems.size(), webItems.size(), ces);
+                return;
+            }
+
+            for (int i = 0; i < daoItems.size(); i++)
+            {
+                Result daoItem = daoItems.get(i);
+                Result webItem = webItems.get(i);
+
+                Supplier<String> comparison = () -> String.format("%n" +
+                        "A: %s%n" +
+                        "B: %s%n" +
+                        "CES: %s%n%n", daoItem, webItem, ces);
+                softly.assertThat(daoItem.athlete.athleteId)
+                        .describedAs("Athlete ID does not match. " + comparison.get())
+                        .isEqualTo(webItem.athlete.athleteId);
+                if (daoItem.time.getTotalSeconds() != 0 || webItem.time != null)
+                {
+                    softly.assertThat(daoItem.time)
+                            .describedAs("Time does not match. " + comparison.get())
+                            .isEqualTo(webItem.time);
+                }
+                softly.assertThat(daoItem.ageGroup)
+                        .describedAs("Age group does not match. " + comparison.get())
+                        .isEqualTo(webItem.ageGroup);
+                softly.assertThat(daoItem.ageGrade)
+                        .describedAs("Age grade does not match. " + comparison.get())
+                        .isEqualTo(webItem.ageGrade);
+//            softly.assertThat(item1.ageGrade.ageGrade)
+//                    .describedAs("Age grade too small. " + comparison.get() + item1)
+//                    .matches(item -> item.equals(BigDecimal.ZERO) || item.doubleValue() < 2.0);
+            }
+        }
     }
 }

@@ -1,17 +1,14 @@
 package dnt.parkrun.datastructures;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Objects;
 
 public class AgeGrade
 {
-    public static final BigDecimal ONE_HUNDRED = new BigDecimal(100);
     public final boolean assisted;
-    public final BigDecimal ageGrade;
+    public final double ageGrade;
 
 
-    private AgeGrade(boolean assisted, BigDecimal ageGrade)
+    private AgeGrade(boolean assisted, double ageGrade)
     {
         this.assisted = assisted;
         this.ageGrade = ageGrade;
@@ -19,10 +16,10 @@ public class AgeGrade
 
     public static AgeGrade newInstanceAssisted()
     {
-        return new AgeGrade(true, new BigDecimal(-1));
+        return new AgeGrade(true, -1.0);
     }
 
-    public static AgeGrade newInstance(BigDecimal ageGrade)
+    public static AgeGrade newInstance(double ageGrade)
     {
         return new AgeGrade(false, ageGrade);
     }
@@ -31,21 +28,20 @@ public class AgeGrade
     {
         if("Assisted".equals(ageGrade.trim())) return newInstanceAssisted();
         String substring = ageGrade.substring(0, ageGrade.indexOf('%'));
-        return newInstance(new BigDecimal(substring.trim()));
+        return newInstance(Double.parseDouble(substring.trim()));
     }
 
     public static AgeGrade newInstanceNoAgeGrade()
     {
-        return AgeGrade.newInstance(BigDecimal.ZERO);
+        return AgeGrade.newInstance(0.0);
     }
 
     public static AgeGrade newInstanceFromDb(int ageGradeFromDb)
     {
         if(ageGradeFromDb == 0) return newInstanceNoAgeGrade();
         if(ageGradeFromDb == -100) return newInstanceAssisted();
-        BigDecimal ageGrade = new BigDecimal(ageGradeFromDb)
-                .setScale(2, RoundingMode.HALF_UP)
-                .divide(ONE_HUNDRED, RoundingMode.HALF_UP);
+
+        double ageGrade = ageGradeFromDb / 100.0;
         return newInstance(ageGrade);
     }
 
@@ -81,6 +77,6 @@ public class AgeGrade
 
     public int getAgeGradeForDb()
     {
-        return ageGrade.multiply(ONE_HUNDRED).intValue();
+        return (int)(Math.round(ageGrade * 100.0));
     }
 }
