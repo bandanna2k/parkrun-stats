@@ -117,7 +117,8 @@ public class BackfillResults
 //            if (backfillCourse.name.startsWith("t")) continue;
 //            if (backfillCourse.name.startsWith("u")) continue;
 //            if (backfillCourse.name.startsWith("v")) continue;
-//            if (backfillCourse.name.startsWith("waitangi")) continue;
+            if (backfillCourse.name.startsWith("balclutha")) continue;
+            if (backfillCourse.name.startsWith("barrycurtis")) continue;
 //            if (backfillCourse.name.startsWith("wanaka")) continue;
 //            if (backfillCourse.name.startsWith("western")) continue;
 //            if (backfillCourse.name.startsWith("whakatane")) continue;
@@ -130,7 +131,7 @@ public class BackfillResults
             {
                 System.out.printf("Downloading %d of %d%n", counter++, size);
 
-//                if (backfillCourse.name.equals("whangarei") && ces.eventNumber < 342) continue;
+                if (backfillCourse.name.equals("blenheim") && ces.eventNumber < 108) continue;
 
                 Parser parser = new Parser.Builder(ces.course)
                         .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(backfillCourse.name, ces.eventNumber)))

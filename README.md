@@ -42,6 +42,10 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - Change 'How are we doing test to assume next event number'
 
+- Friends table
+
+- Most runs with table
+
 ## Fixed Issues
 
 - Question - Revisit pIndex downloads. 
@@ -456,3 +460,18 @@ select *
 from course
 where course_id in (
 4, 8, 15, 16, 19,      20, 22, 23, 25, 34,      37, 38, 46)
+
+# Most Runs With
+```
+select athlete_id1, athlete_id2, count(athlete_id1) as count
+from
+(
+    select r1.course_id, r1.date, r1.athlete_id as athlete_id1, r2.athlete_id as athlete_id2
+    from result r1
+    left join result r2
+    on r1.course_id = r2.course_id and r1.date = r2.date
+) as sub1
+group by athlete_id1, athlete_id2
+order by count
+limit 10;
+```

@@ -94,8 +94,13 @@ public class ResultDao
 
     public void tableScan(Consumer<Result> consumer)
     {
+        tableScan(consumer, "");
+    }
+    public void tableScan(Consumer<Result> consumer, String orderBy)
+    {
         String sql = "select * from result " +
-                "join athlete using (athlete_id)";
+                "join athlete using (athlete_id) " +
+                orderBy;
         jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             Result result = new Result(
