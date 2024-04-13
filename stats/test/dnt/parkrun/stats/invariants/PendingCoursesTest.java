@@ -1,4 +1,4 @@
-package dnt.parkrun.stats;
+package dnt.parkrun.stats.invariants;
 
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.UrlGenerator;

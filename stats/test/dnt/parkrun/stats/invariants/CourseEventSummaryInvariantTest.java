@@ -167,7 +167,13 @@ public class CourseEventSummaryInvariantTest
                 softly.assertThat(daoItem.athlete.athleteId)
                         .describedAs("Athlete ID does not match. " + comparison.get())
                         .isEqualTo(webItem.athlete.athleteId);
-                if (daoItem.time.getTotalSeconds() != 0 || webItem.time != null)
+                if(daoItem.time.getTotalSeconds() == 0 || webItem.time == null)
+                {
+                    softly.assertThat(daoItem.time.getTotalSeconds() == 0 && webItem.time == null)
+                            .describedAs("Zero time does not match. " + comparison.get())
+                            .isTrue();
+                }
+                else
                 {
                     softly.assertThat(daoItem.time)
                             .describedAs("Time does not match. " + comparison.get())
