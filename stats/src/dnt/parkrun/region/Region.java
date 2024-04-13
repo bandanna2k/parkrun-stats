@@ -119,7 +119,7 @@ public abstract class Region
 
     public static boolean isCantebury(Course course)
     {
-        String[] list = {"broadpark", "hagley", "pegasus", "foster"};
+        String[] list = {"broadpark", "hagley", "pegasus", "foster", "scarborough"};
         return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
     }
 
