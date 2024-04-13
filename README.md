@@ -2,10 +2,19 @@
 
 # What to run?
 
-Run MostEvents.main (this will fill a database with all region results from active parkruns)
+Run InvariantTest package, this makes sure 
+    results are in, 
+    course are up to date (can causes problems if new courses are not added),
+    parser are working (just encase the webpages have changed)
 
-Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023 
-(this create a Most Events table, and an Attendance table, and output to HTML)
+Run WeeklyResults.main, this will
+    fill a database with all region results from active parkruns
+    fill a database with all region volunteers from active parkruns
+
+Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
+   a Most Events table,
+   an Attendance table,
+   and output to HTML
 
 # TODO
 

@@ -29,7 +29,7 @@ public class BackfillResults
 
     public static void main(String[] args) throws IOException, SQLException
     {
-        new BackfillResults().backfill2();
+        new BackfillResults().backfill1();
     }
 
     private void backfill2() throws SQLException
@@ -96,41 +96,41 @@ public class BackfillResults
                     .stream().filter(ces -> ces.course.courseId == backfillCourse.courseId).collect(Collectors.toList());
 
             if (backfillCourse.name.startsWith("a")) continue;
-            if (backfillCourse.name.startsWith("b")) continue;
-            if (backfillCourse.name.startsWith("c")) continue;
-            if (backfillCourse.name.startsWith("d")) continue;
-            if (backfillCourse.name.startsWith("e")) continue;
-            if (backfillCourse.name.startsWith("f")) continue;
-            if (backfillCourse.name.startsWith("g")) continue;
-            if (backfillCourse.name.startsWith("h")) continue;
-            if (backfillCourse.name.startsWith("i")) continue;
-            if (backfillCourse.name.startsWith("j")) continue;
-            if (backfillCourse.name.startsWith("k")) continue;
-            if (backfillCourse.name.startsWith("l")) continue;
-            if (backfillCourse.name.startsWith("m")) continue;
-            if (backfillCourse.name.startsWith("n")) continue;
-            if (backfillCourse.name.startsWith("o")) continue;
-            if (backfillCourse.name.startsWith("p")) continue;
-            if (backfillCourse.name.startsWith("q")) continue;
-            if (backfillCourse.name.startsWith("r")) continue;
-            if (backfillCourse.name.startsWith("s")) continue;
-            if (backfillCourse.name.startsWith("t")) continue;
-            if (backfillCourse.name.startsWith("u")) continue;
-            if (backfillCourse.name.startsWith("v")) continue;
-            if (backfillCourse.name.startsWith("waitangi")) continue;
-            if (backfillCourse.name.startsWith("wanaka")) continue;
-            if (backfillCourse.name.startsWith("western")) continue;
-            if (backfillCourse.name.startsWith("whakatane")) continue;
-            if (backfillCourse.name.startsWith("whanganui")) continue;
+//            if (backfillCourse.name.startsWith("b")) continue;
+//            if (backfillCourse.name.startsWith("c")) continue;
+//            if (backfillCourse.name.startsWith("d")) continue;
+//            if (backfillCourse.name.startsWith("e")) continue;
+//            if (backfillCourse.name.startsWith("f")) continue;
+//            if (backfillCourse.name.startsWith("g")) continue;
+//            if (backfillCourse.name.startsWith("h")) continue;
+//            if (backfillCourse.name.startsWith("i")) continue;
+//            if (backfillCourse.name.startsWith("j")) continue;
+//            if (backfillCourse.name.startsWith("k")) continue;
+//            if (backfillCourse.name.startsWith("l")) continue;
+//            if (backfillCourse.name.startsWith("m")) continue;
+//            if (backfillCourse.name.startsWith("n")) continue;
+//            if (backfillCourse.name.startsWith("o")) continue;
+//            if (backfillCourse.name.startsWith("p")) continue;
+//            if (backfillCourse.name.startsWith("q")) continue;
+//            if (backfillCourse.name.startsWith("r")) continue;
+//            if (backfillCourse.name.startsWith("s")) continue;
+//            if (backfillCourse.name.startsWith("t")) continue;
+//            if (backfillCourse.name.startsWith("u")) continue;
+//            if (backfillCourse.name.startsWith("v")) continue;
+//            if (backfillCourse.name.startsWith("waitangi")) continue;
+//            if (backfillCourse.name.startsWith("wanaka")) continue;
+//            if (backfillCourse.name.startsWith("western")) continue;
+//            if (backfillCourse.name.startsWith("whakatane")) continue;
+//            if (backfillCourse.name.startsWith("whanganui")) continue;
 
             int counter = 1;
             int size = courseEventSummaries.size();
 
             for (CourseEventSummary ces : courseEventSummaries)
             {
-                System.out.printf("Downloading %d of %d ", counter++, size);
+                System.out.printf("Downloading %d of %d%n", counter++, size);
 
-                if (backfillCourse.name.equals("whangarei") && ces.eventNumber < 342) continue;
+//                if (backfillCourse.name.equals("whangarei") && ces.eventNumber < 342) continue;
 
                 Parser parser = new Parser.Builder(ces.course)
                         .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(backfillCourse.name, ces.eventNumber)))

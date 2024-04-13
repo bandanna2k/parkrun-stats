@@ -26,8 +26,6 @@ import static dnt.parkrun.datastructures.Country.NZ;
 
 public class CourseEventSummaryInvariantTest
 {
-    private static final int ITERATIONS = 2;
-
     private final SoftAssertions softly = new SoftAssertions();
 
     @Test
@@ -42,18 +40,23 @@ public class CourseEventSummaryInvariantTest
 
     private static class CourseEventSummaryChecker
     {
-        private final Random random = new Random(1);
+        private static final int ITERATIONS = 2;
+        private final Random random = new Random(2);
         private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
         private final CourseEventSummaryDao courseEventSummaryDao;
         private final ResultDao resultDao;
 
         private final Set<String> courseIdToEventNumberToFix = new HashSet<>() {{
-//            add("waitangi52");
-//            add("kapiticoast429");
+            add("foster367");
+            add("waitangi52");
+            add("kapiticoast429");
+            add("trenthammemorial103");
+            add("greytownwoodsidetrail245");
+            add("tauranga29");
+            add("invercargill108");
+
 //            add("whanganuiriverbank167");
 //            add("westernsprings346");
-//            add("tauranga29");
-//            add("invercargill108");
         }};
         private final SoftAssertions softly;
 
