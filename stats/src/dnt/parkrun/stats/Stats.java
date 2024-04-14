@@ -421,9 +421,25 @@ public class Stats
         Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Runs at Courses"))
         {
+            // Populate top 10 runs at courses
+            Top10RunsDao top10RunsDao = new Top10RunsDao(statsDataSource);
+            List<Course> courses = courseRepository.getCourses(NZ).stream()
+                    .filter(c -> c.status == RUNNING).collect(Collectors.toList());
+            for (Course course : courses)
+            {
+                List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);
+                if (top10.isEmpty())
+                {
+                    System.out.println("* Populating top 10 run table for " + course.longName);
+                    top10.addAll(top10RunsDao.getTop10AtEvent(course.courseId));
+                    top10Dao.writeRunsAtEvents(top10);
+                }
+            }
+
             try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, urlGenerator, "New Zealand"))
             {
                 List<AtEvent> top10InRegion = top10Dao.getTop10InRegion();
+
                 assert !top10InRegion.isEmpty() : "WARNING: Top 10 runs in NZ list is empty";
                 for (AtEvent r : top10InRegion)
                 {
@@ -434,21 +450,11 @@ public class Stats
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
-            Top10RunsDao top10RunsDao = new Top10RunsDao(statsDataSource);
-            List<Course> courses = courseRepository.getCourses(NZ).stream()
-                    .filter(c -> c.status == RUNNING).collect(Collectors.toList());
             for (Course course : courses)
             {
                 try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, urlGenerator, course.longName, "Run"))
                 {
                     List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);
-                    if (top10.isEmpty())
-                    {
-                        System.out.println("* Getting top 10 athletes for " + course.longName);
-                        top10.addAll(top10RunsDao.getTop10AtEvent(course.courseId));
-                        top10Dao.writeRunsAtEvents(top10);
-                    }
-
                     for (AtEvent rae : top10)
                     {
                         double courseCount = courseToCount.get(course.name);
@@ -466,6 +472,20 @@ public class Stats
         Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Volunteers at Courses"))
         {
+            Top10VolunteersDao top10VolunteersDao = new Top10VolunteersDao(statsDataSource);
+            List<Course> courses = courseRepository.getCourses(NZ).stream()
+                    .filter(c -> c.status == RUNNING).collect(Collectors.toList());
+            for (Course course : courses)
+            {
+                List<AtEvent> top10 = top10VolunteerDao.getTop10VolunteersAtCourse(course.name);
+                if (top10.isEmpty())
+                {
+                    System.out.println("* Populating top 10 volunteer table for " + course.longName);
+                    top10.addAll(top10VolunteersDao.getTop10VolunteersAtEvent(course.courseId));
+                    top10VolunteerDao.writeVolunteersAtEvents(top10);
+                }
+            }
+
             try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, urlGenerator,"New Zealand"))
             {
                 List<Object[]> top10VolunteersInRegion = top10VolunteerDao.getTop10VolunteersInRegion();
@@ -483,22 +503,12 @@ public class Stats
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
-            Top10VolunteersDao top10VolunteersDao = new Top10VolunteersDao(statsDataSource);
-            List<Course> courses = courseRepository.getCourses(NZ).stream()
-                    .filter(c -> c.status == RUNNING).collect(Collectors.toList());
             for (Course course : courses)
             {
                 try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(
                         writer.writer, urlGenerator, course.longName, "Volunteer"))
                 {
                     List<AtEvent> top10 = top10VolunteerDao.getTop10VolunteersAtCourse(course.name);
-                    if (top10.isEmpty())
-                    {
-                        System.out.println("* Getting top 10 volunteers for " + course.longName);
-                        top10.addAll(top10VolunteersDao.getTop10VolunteersAtEvent(course.courseId));
-                        top10VolunteerDao.writeVolunteersAtEvents(top10);
-                    }
-
                     for (AtEvent rae : top10)
                     {
                         double courseCount = courseToCount.get(course.name);
@@ -847,7 +857,6 @@ public class Stats
                 }
             }
         });
-        System.out.println(athleteToCourseCount.get(1311970));
 
         Set<Integer> athletes = new HashSet<>();
         athleteToCourseCount.forEach((athleteId, courseToCount) ->

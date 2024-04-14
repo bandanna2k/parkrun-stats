@@ -22,7 +22,9 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Bug - Top 10 in region is always empty on first run so assert kicks in.
+- Weekly Results - Assume next event number
+
+- Change 'How are we doing test to assume next event number'
 
 - Add stop dates as java code
 
@@ -40,11 +42,9 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables.
 
-- Change 'How are we doing test to assume next event number'
-
 - Friends table
 
-- Most runs with table
+- 'Most runs with other athletes' table
 
 ## Fixed Issues
 
