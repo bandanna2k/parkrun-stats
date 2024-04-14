@@ -41,20 +41,12 @@ public class CourseEventSummaryInvariantTest
     private static class CourseEventSummaryChecker
     {
         private static final int ITERATIONS = 2;
-        private final Random random = new Random(2);
+        private final Random random = new Random(); // SEED
         private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
         private final CourseEventSummaryDao courseEventSummaryDao;
         private final ResultDao resultDao;
 
         private final Set<String> courseIdToEventNumberToFix = new HashSet<>() {{
-            add("foster367");
-            add("waitangi52");
-            add("kapiticoast429");
-            add("trenthammemorial103");
-            add("greytownwoodsidetrail245");
-            add("tauranga29");
-            add("invercargill108");
-
 //            add("whanganuiriverbank167");
 //            add("westernsprings346");
         }};

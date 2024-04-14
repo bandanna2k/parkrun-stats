@@ -96,11 +96,11 @@ public class BackfillResults
                     .stream().filter(ces -> ces.course.courseId == backfillCourse.courseId).collect(Collectors.toList());
 
             if (backfillCourse.name.startsWith("a")) continue;
-//            if (backfillCourse.name.startsWith("b")) continue;
-//            if (backfillCourse.name.startsWith("c")) continue;
-//            if (backfillCourse.name.startsWith("d")) continue;
-//            if (backfillCourse.name.startsWith("e")) continue;
-//            if (backfillCourse.name.startsWith("f")) continue;
+            if (backfillCourse.name.startsWith("b")) continue;
+            if (backfillCourse.name.startsWith("c")) continue;
+            if (backfillCourse.name.startsWith("d")) continue;
+            if (backfillCourse.name.startsWith("e")) continue;
+            if (backfillCourse.name.startsWith("f")) continue;
 //            if (backfillCourse.name.startsWith("g")) continue;
 //            if (backfillCourse.name.startsWith("h")) continue;
 //            if (backfillCourse.name.startsWith("i")) continue;
@@ -117,9 +117,7 @@ public class BackfillResults
 //            if (backfillCourse.name.startsWith("t")) continue;
 //            if (backfillCourse.name.startsWith("u")) continue;
 //            if (backfillCourse.name.startsWith("v")) continue;
-            if (backfillCourse.name.startsWith("balclutha")) continue;
-            if (backfillCourse.name.startsWith("barrycurtis")) continue;
-//            if (backfillCourse.name.startsWith("wanaka")) continue;
+//            if (backfillCourse.name.startsWith("cambridge")) continue;
 //            if (backfillCourse.name.startsWith("western")) continue;
 //            if (backfillCourse.name.startsWith("whakatane")) continue;
 //            if (backfillCourse.name.startsWith("whanganui")) continue;
@@ -131,7 +129,7 @@ public class BackfillResults
             {
                 System.out.printf("Downloading %d of %d%n", counter++, size);
 
-                if (backfillCourse.name.equals("blenheim") && ces.eventNumber < 108) continue;
+                if (backfillCourse.name.equals("dunedin") && ces.eventNumber < 118) continue;
 
                 Parser parser = new Parser.Builder(ces.course)
                         .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(backfillCourse.name, ces.eventNumber)))
