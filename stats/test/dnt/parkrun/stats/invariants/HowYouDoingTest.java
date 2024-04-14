@@ -61,12 +61,13 @@ public class HowYouDoingTest
             UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
 
             List<CourseEventSummary> courseEventSummaries = new ArrayList<>();
-            new Parser.Builder()
+            Parser parser = new Parser.Builder()
                     .course(course)
                     .forEachCourseEvent(courseEventSummaries::add)
                     .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventSummaryUrl(course.name)))
-                    .build()
-                    .parse();
+                    .build();
+            parser.parse();
+
             if(courseEventSummaries.isEmpty())
             {
                 Assertions.fail("No results for " + course);
