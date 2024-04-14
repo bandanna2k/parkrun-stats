@@ -35,7 +35,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         startElement("tr");
 
         // Up arrows for max attendance
-        startElement("th");
+        startElement("th", "class", "dt");
         endElement("th");
 
         // Name

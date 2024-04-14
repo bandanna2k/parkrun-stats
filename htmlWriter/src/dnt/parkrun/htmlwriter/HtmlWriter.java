@@ -42,7 +42,7 @@ public class HtmlWriter extends BaseWriter
         writer.writeCharacters("New Zealand parkrun Statistics for Events on " + DateConverter.formatDateForHtml(date));
         endElement("title");
 
-        writer.writeStartElement("style");
+        writer.writeStartElement("style\n");
         try(BufferedReader reader1 = new BufferedReader(new InputStreamReader(
                 this.getClass().getResourceAsStream("/css/most_events.css"))))
         {

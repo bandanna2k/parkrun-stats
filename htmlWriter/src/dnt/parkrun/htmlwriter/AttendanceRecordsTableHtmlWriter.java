@@ -50,7 +50,7 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         endElement("th");
 
         // Up arrows for max attendance
-        startElement("th");
+        startElement("th", "class", "dt");
         endElement("th");
 
         startElement("th");
@@ -142,8 +142,8 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         endElement("a");
         endElement("td");
 
-        // Max delta
-        startElement("td");
+        // Up/Down
+        startElement("td", "class", "dt");
         if(record.maxAttendanceDelta > 0)
         {
             startElement("font", "color", "green");

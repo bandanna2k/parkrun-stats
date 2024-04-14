@@ -16,7 +16,7 @@ public class Top10InRegionHtmlWriter extends BaseWriter implements Closeable
         super(writer);
         this.urlGenerator = urlGenerator;
         startSubDetails();
-        startElement("summary", "class", "sub");
+        startElement("summary", "style", "font-size:16px;");
         writer.writeCharacters(courseLongName);
         endElement("summary");
 

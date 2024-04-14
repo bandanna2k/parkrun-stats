@@ -73,7 +73,7 @@ public abstract class BaseWriter implements Closeable
     protected void writeTableDataWithDelta(int delta, boolean isNewEntry) throws XMLStreamException
     {
         // Up/Down
-        startElement("td");
+        startElement("th", "class", "dt");
         if(isNewEntry)
         {
             startElement("font", "color", "orange");
