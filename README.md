@@ -22,6 +22,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- parkrun Best Friends
+
 - Bug - Why is the deltas on the pIndex a bit weird.
 
 - Weekly Results - Assume next event number
@@ -33,8 +35,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 - Add stop dates as java code
 
 - Prove?? Parsers can break half way through. Collate records first then stream records.
-
-- Make work better on mobile
 
 - Invariant - Random invariant - Check that DB event history matches Web event history
 
