@@ -245,7 +245,7 @@ public class Stats
 
     private void writePIndex(HtmlWriter writer) throws XMLStreamException
     {
-        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, " p-Index"))
+        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "p-Index Tables"))
         {
             writer.writer.writeStartElement("p");
             writer.writer.writeCharacters("p-Index tables with credit to ");
@@ -258,7 +258,7 @@ public class Stats
 
             // p-Index
             Set<Integer> regionalPIndexAthletes = new HashSet<>();
-            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, urlGenerator, "p-Index"))
+            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, urlGenerator, "New Zealand p-Index"))
             {
                 List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
                 for (Map.Entry<Integer, List<AthleteCourseSummary>> entry : athleteIdToAthleteCourseSummaries.entrySet())
