@@ -57,12 +57,11 @@ public class MostVolunteersTableHtmlWriter extends BaseWriter implements Closeab
         {
             endElement("table");
 
-//            startElement("center");
-//            startElement("p");
-//            writer.writeCharacters("* Hover over position arrows to see weekly movement.");
-//            endElement("p");
-//            endElement("center");
-
+            startElement("center");
+            startElement("p");
+            writer.writeCharacters("* For persons that have volunteered at 20 or more locations.");
+            endElement("p");
+            endElement("center");
         }
         catch (XMLStreamException e)
         {

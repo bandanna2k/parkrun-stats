@@ -96,6 +96,9 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 
             startElement("center");
             startElement("p");
+            writer.writeCharacters("* For runners that have run at 20 or more locations.");
+            endElement("p");
+            startElement("p");
             writer.writeCharacters("* Hover over position arrows to see weekly movement.");
             endElement("p");
             endElement("center");
