@@ -37,11 +37,11 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         writer.writeCharacters("Course");
         endElement("th");
 
-        startElement("th");
+        startElement("th", "class", "dt");
         writer.writeCharacters("Last Event Date");
         endElement("th");
 
-        startElement("th");
+        startElement("th", "class", "dt");
         writer.writeCharacters("Last Event Finishers");
         endElement("th");
 
@@ -109,16 +109,16 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         endElement("a");
         endElement("td");
 
-        // Recent date
-        startElement("td");
+        // Recent date (desktop only)
+        startElement("td", "class", "dt");
         startElement("a", "target", record.courseName,
                 "href", urlGenerator.generateCourseEventUrl(record.courseName, record.recentEventNumber).toString());
         writer.writeCharacters(DateConverter.formatDateForHtml(record.recentEventDate));
         endElement("a");
         endElement("td");
 
-        // Recent attendance
-        startElement("td");
+        // Recent attendance (desktop only)
+        startElement("td", "class", "dt");
         if(record.recentAttendanceDelta >= 0)
         {
             startElement("abbr", "title", "+" + record.recentAttendanceDelta);

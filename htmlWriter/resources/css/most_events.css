@@ -1,23 +1,14 @@
 @media screen and (max-width: 600px) {
     body {
-        background:#f2f2f2;
         font:400 10px 'Arial';
-        text-align:center;
     }
     summary {
         font-size:20px;
         padding:8px;
         text-align:center;
     }
-    .sub summary {
-        font-size:16px;
-        padding:4px;
-        text-align:center;
-    }
-    td, th {
-        display: flex;
-        padding:8px;
-        text-align:center;
+    .dt {
+        display:none;
     }
 }
 .close p {
@@ -54,7 +45,6 @@ table a {
 td,th {
     padding:8px;
     text-align:center;
-    white-space:nowrap;
 }
 .name-data td:nth-child(1) {
     font-weight:700;

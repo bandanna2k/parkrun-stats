@@ -22,7 +22,11 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- Bug - Why is the deltas on the pIndex a bit weird.
+
 - Weekly Results - Assume next event number
+
+- Unique runners at course
 
 - Change 'How are we doing test to assume next event number'
 
@@ -34,6 +38,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - Invariant - Random invariant - Check that DB event history matches Web event history
 
+- Add unique runs for runners
+
 - Do I need name/most global events in most events table?
 
 - Bug - When course not found, athlete course summary not finished.
@@ -42,9 +48,12 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables.
 
-- Friends table
+- Friends table including at what venues
 
 - 'Most runs with other athletes' table
+
+- Finish max regionnaire
+
 
 ## Fixed Issues
 

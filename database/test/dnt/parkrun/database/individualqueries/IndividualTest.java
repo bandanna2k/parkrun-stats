@@ -32,9 +32,10 @@ public class IndividualTest
     @Test
     public void howManyRunsWithOthers()
     {
-//        howManyRunsWithOthers(414811); // David North
-//        howManyRunsWithOthers(417537); // John Paynter
-        howManyRunsWithOthers(4072508);
+        System.out.println("David North");      howManyRunsWithOthers(414811);  System.out.println();
+        System.out.println("John Paynter");     howManyRunsWithOthers(417537);  System.out.println();
+        System.out.println("Zoe North");        howManyRunsWithOthers(4072508); System.out.println();
+        System.out.println("Martin Sullivan");  howManyRunsWithOthers(291411);  System.out.println();
     }
     public void howManyRunsWithOthers(int inputAthleteId)
     {

@@ -51,11 +51,11 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         writer.writeCharacters("Total Region Runs");
         endElement("th");
 
-        startElement("th");
+        startElement("th", "class", "dt");
         writer.writeCharacters("Worldwide Events");
         endElement("th");
 
-        startElement("th");
+        startElement("th", "class", "dt");
         writer.writeCharacters("Total Runs");
         endElement("th");
 
@@ -70,7 +70,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 
         if(extended && FEATURE_FOR_MAX_FROM_REGIONNAIRE)
         {
-            startElement("th");
+            startElement("th", "class", "dt");
             information("Events Needed (Max)",
                     "Events needed to be regionnaire. (Maximum events this person has ever needed to become a regionnaire.");
             endElement("th");
@@ -79,7 +79,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         if(extended)
         {
             // Chart
-            startElement("th");
+            startElement("th", "class", "dt");
             endElement("th");
         }
 
@@ -135,13 +135,13 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         writer.writeCharacters(String.valueOf(record.totalRegionRuns));
         endElement("td");
 
-        // Different courses
-        startElement("td");
+        // Different worldwide courses (desktop)
+        startElement("td", "class", "dt");
         writer.writeCharacters(String.valueOf(record.differentCourseCount));
         endElement("td");
 
-        // Total region runs
-        startElement("td");
+        // Total worldwide runs (desktop)
+        startElement("td", "class", "dt");
         writer.writeCharacters(String.valueOf(record.totalRuns));
         endElement("td");
 
@@ -156,14 +156,14 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         if(extended && FEATURE_FOR_MAX_FROM_REGIONNAIRE)
         {
             // Max courses needed
-            startElement("td");
+            startElement("td", "class", "dt");
             writer.writeCharacters(record.runsNeeded);
             endElement("td");
         }
 
         if(extended)
         {
-            startElement("td");
+            startElement("td", "class", "dt");
             startElement("span", "class", "click-me",
                     "onclick",
                     "dialog.showModal();" +
