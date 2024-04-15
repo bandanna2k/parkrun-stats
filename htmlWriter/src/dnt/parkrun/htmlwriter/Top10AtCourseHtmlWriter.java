@@ -6,6 +6,7 @@ import dnt.parkrun.datastructures.Athlete;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.Closeable;
+import java.util.Comparator;
 
 public class Top10AtCourseHtmlWriter extends BaseWriter implements Closeable
 {
@@ -86,7 +87,7 @@ public class Top10AtCourseHtmlWriter extends BaseWriter implements Closeable
 
         // Percentage
         startElement("td");
-        writer.writeCharacters(record.percentage);
+        writer.writeCharacters(String.format("%.1f", record.percentage));
         endElement("td");
 
         endElement("tr");
@@ -94,11 +95,22 @@ public class Top10AtCourseHtmlWriter extends BaseWriter implements Closeable
 
     public static class Record
     {
+        public static Comparator<Record> COMPARATOR = (r1, r2) ->
+        {
+            if (r1.percentage > r2.percentage) return -1;
+            if (r1.percentage < r2.percentage) return 1;
+            if (r1.runCount > r2.runCount) return -1;
+            if (r1.runCount < r2.runCount) return 1;
+            if (r1.athlete.athleteId > r2.athlete.athleteId) return 1;
+            if (r1.athlete.athleteId < r2.athlete.athleteId) return -1;
+            return 0;
+        };
+
         public final Athlete athlete;
         public final int runCount;
-        public final String percentage;
+        public final double percentage;
 
-        public Record(Athlete athlete, int runCount, String percentage)
+        public Record(Athlete athlete, int runCount, double percentage)
         {
             this.athlete = athlete;
             this.runCount = runCount;

@@ -22,7 +22,9 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- 90% club
+- Add course name to 90% club
+
+- Top 10 At Event comparator UT
 
 - Add stop dates as java code
 

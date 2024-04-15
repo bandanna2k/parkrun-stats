@@ -15,6 +15,7 @@ import dnt.parkrun.database.weekly.*;
 import dnt.parkrun.datastructures.*;
 import dnt.parkrun.datastructures.stats.AtEvent;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
+import dnt.parkrun.datastructures.stats.VolunteersAtEvent;
 import dnt.parkrun.htmlwriter.*;
 import dnt.parkrun.pindex.PIndex;
 import dnt.parkrun.stats.invariants.CourseEventSummaryChecker;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.*;
+import static dnt.parkrun.htmlwriter.Top10AtCourseHtmlWriter.Record.COMPARATOR;
 import static dnt.parkrun.region.Region.getNzRegionRunCount;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -463,6 +465,30 @@ public class Stats
                 }
             }
 
+            List<Top10AtCourseHtmlWriter.Record> clubDe90Percent = new ArrayList<>();
+            for (Course course : courses)
+            {
+                List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);
+                for (AtEvent rae : top10)
+                {
+                    double courseCount = courseToCount.get(course.name);
+                    double runCount = rae.count;
+                    double percentage = runCount * 100.0 / courseCount;
+                    if(percentage > 90 && runCount > 5)
+                    {
+                        clubDe90Percent.add(new Top10AtCourseHtmlWriter.Record(rae.athlete, rae.count, percentage));
+                    }
+                }
+            }
+            clubDe90Percent.sort(COMPARATOR);
+            try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, urlGenerator, "90% Club", "Run"))
+            {
+                for (Top10AtCourseHtmlWriter.Record record : clubDe90Percent)
+                {
+                    top10atCourse.writeRecord(record);
+                }
+            }
+
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
@@ -475,7 +501,7 @@ public class Stats
                     {
                         double courseCount = courseToCount.get(course.name);
                         double runCount = rae.count;
-                        String percentage = String.format("%.1f", runCount * 100 / courseCount);
+                        double percentage = runCount * 100.0 / courseCount;
                         top10atCourse.writeRecord(new Top10AtCourseHtmlWriter.Record(rae.athlete, rae.count, percentage));
                     }
                 }
@@ -516,6 +542,30 @@ public class Stats
                 }
             }
 
+            List<Top10AtCourseHtmlWriter.Record> clubDe90Percent = new ArrayList<>();
+            for (Course course : courses)
+            {
+                List<VolunteersAtEvent> top10 = top10VolunteersDao.getTop10VolunteersAtEvent(course.courseId);
+                for (AtEvent rae : top10)
+                {
+                    double courseCount = courseToCount.get(course.name);
+                    double runCount = rae.count;
+                    double percentage = runCount * 100.0 / courseCount;
+                    if(percentage > 90 && runCount > 5)
+                    {
+                        clubDe90Percent.add(new Top10AtCourseHtmlWriter.Record(rae.athlete, rae.count, percentage));
+                    }
+                }
+            }
+            clubDe90Percent.sort(COMPARATOR);
+            try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, urlGenerator, "90% Club", "Volunteer"))
+            {
+                for (Top10AtCourseHtmlWriter.Record record : clubDe90Percent)
+                {
+                    top10atCourse.writeRecord(record);
+                }
+            }
+
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
@@ -529,7 +579,7 @@ public class Stats
                     {
                         double courseCount = courseToCount.get(course.name);
                         double volunteerCount = rae.count;
-                        String percentage = String.format("%.1f", volunteerCount * 100 / courseCount);
+                        double percentage = volunteerCount * 100.0 / courseCount;
                         top10atCourse.writeRecord(new Top10AtCourseHtmlWriter.Record(rae.athlete, rae.count, percentage));
                     }
                 }
