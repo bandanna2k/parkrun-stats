@@ -22,15 +22,13 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Mobile - put up/down arrows into stats
-
 - Run invariant after launching webpage
 
 - Add stop dates as java code
 
 - Prove?? Parsers can break half way through. Collate records first then stream records.
 
-- Invariant - region event count < global event count
+- Invariant - region event count < global event count for volunteers
 
 - Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables.
 
@@ -48,6 +46,10 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 
 ## Issues Completed
+
+- 16/4/2024 Mobile - put up/down arrows into stats
+  Looks OK for attendance records.
+  Looks bad for most events, so didn't do it.
 
 - 15/4/2024 Do I need name/most global events in most events table?
   Attendance records has unnecessary fields. DONE

@@ -10,8 +10,8 @@ import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
 
-import static dnt.parkrun.database.VolunteerDao.getMostVolunteersSubQuery1;
 import static dnt.parkrun.database.VolunteerDao.getMostVolunteersSubQuery2;
+import static dnt.parkrun.database.VolunteerDao.getSqlForVolunteersAtDifferentCourse;
 
 public class VolunteerCountDao extends BaseDao
 {
@@ -60,24 +60,34 @@ public class VolunteerCountDao extends BaseDao
 
     public List<Object[]> getMostVolunteers()
     {
-        String sql = "select a.name, a.athlete_id, sub1.count as different_region_course_count, sub2.count as total_region_volunteers, vc.total_global_volunteer_count " +
-                "from " + athleteTable() + " a\n" +
-                "join  \n" +
-                "(\n" +
-                getMostVolunteersSubQuery1(volunteerTable()) +
-                ") as sub1 on sub1.athlete_id = a.athlete_id\n" +
-                "join\n" +
-                "(\n" +
-                getMostVolunteersSubQuery2(volunteerTable()) +
-                ") as sub2 on sub2.athlete_id = a.athlete_id\n" +
-                "left join " + getTableName() + " vc on vc.athlete_id = a.athlete_id " +
-                "where a.name is not null\n" +
-                "order by different_region_course_count desc, total_region_volunteers desc, a.athlete_id desc;\n";
-        return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> new Object[] {
+        String sql = STR."""
+select a.name, a.athlete_id, sub1.count as different_region_course_count, sub2.count as total_region_volunteers, vc.total_global_volunteer_count
+from \{athleteTable()} a
+join (
+    \{getSqlForVolunteersAtDifferentCourse(volunteerTable())}
+) as sub1 on sub1.athlete_id = a.athlete_id
+join (
+    \{getMostVolunteersSubQuery2(volunteerTable())}
+) as sub2 on sub2.athlete_id = a.athlete_id
+left join \{getTableName()} vc on vc.athlete_id = a.athlete_id where a.name is not null
+order by different_region_course_count desc, total_region_volunteers desc, a.athlete_id desc
+""";
+        List<Object[]> query = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> new Object[]{
                 Athlete.from(rs.getString("name"), rs.getInt("athlete_id")),
                 rs.getInt("different_region_course_count"),
                 rs.getInt("total_region_volunteers"),
                 rs.getInt("total_global_volunteer_count")
         });
+        query.forEach(result -> {
+//            Athlete athlete = (Athlete) result[0];
+            int regionCourseCount = (int)result[1];
+            int regionTotalVolunteers = (int)result[2];
+            int regionGlobalVolunteers = (int)result[3];
+            assert regionGlobalVolunteers >= regionTotalVolunteers;
+
+            // Not true. You can volunteer at 2 courses. Only 1 is counted for total. But course should be counted
+            assert regionCourseCount <= regionTotalVolunteers : "Global volunteers should be greated than regional volunteers.";
+        });
+        return query;
     }
 }

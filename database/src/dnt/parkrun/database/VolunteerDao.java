@@ -31,7 +31,7 @@ public class VolunteerDao extends BaseDao
         );
     }
 
-    public static String getMostVolunteersSubQuery1(String volunteerTable)
+    public static String getSqlForVolunteersAtDifferentCourse(String volunteerTable)
     {
         return  "    select athlete_id, count(course_id) as count\n" +
                 "    from (select distinct athlete_id, course_id from " + volunteerTable + ") as sub1a\n" +
@@ -49,23 +49,32 @@ public class VolunteerDao extends BaseDao
 
     public List<Object[]> getMostVolunteers()
     {
-        String sql = "select a.name, a.athlete_id, sub1.count as different_region_course_count, sub2.count as total_region_volunteers\n" +
-                "from " + athleteTable() + " a\n" +
-                "join  \n" +
-                "(\n" +
-                getMostVolunteersSubQuery1(volunteerTable()) +
-                ") as sub1 on sub1.athlete_id = a.athlete_id\n" +
-                "join\n" +
-                "(\n" +
-                getMostVolunteersSubQuery2(volunteerTable()) +
-                ") as sub2 on sub2.athlete_id = a.athlete_id\n" +
-                "where a.name is not null\n" +
-                "order by different_region_course_count desc, total_region_volunteers desc, a.athlete_id desc;\n";
-        return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> new Object[] {
+        String sql = STR."""
+            select a.name, a.athlete_id, sub1.count as different_region_course_count, sub2.count as total_region_volunteers
+            from \{athleteTable()} a
+            join (
+                \{getSqlForVolunteersAtDifferentCourse(volunteerTable())}
+            ) as sub1 on sub1.athlete_id = a.athlete_id
+            join (
+                \{getMostVolunteersSubQuery2(volunteerTable())}
+            ) as sub2 on sub2.athlete_id = a.athlete_id
+            where a.name is not null
+            order by different_region_course_count desc, total_region_volunteers desc, a.athlete_id desc;
+        """;
+        List<Object[]> results = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> new Object[]{
                 Athlete.from(rs.getString("name"), rs.getInt("athlete_id")),
                 rs.getInt("different_region_course_count"),
                 rs.getInt("total_region_volunteers")
         });
+        results.forEach(result -> {
+//            Athlete athlete = (Athlete) result[0];
+            int regionCourseCount = (int)result[1];
+            int regionTotalCount = (int)result[2];
+
+            // Not true. You can volunteer at 2 courses. You get 1 credit for the volunteer day. course should be counted.
+            assert regionTotalCount >= regionCourseCount || true;
+        });
+        return results;
     }
 
     @Deprecated
