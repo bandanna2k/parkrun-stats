@@ -9,7 +9,7 @@ import java.io.Closeable;
 
 public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 {
-    private static boolean FEATURE_FOR_MAX_FROM_REGIONNAIRE = false;
+    private static boolean FEATURE_FOR_MAX_FROM_REGIONNAIRE = true;
 
     private final UrlGenerator urlGenerator;
     private final boolean extended;

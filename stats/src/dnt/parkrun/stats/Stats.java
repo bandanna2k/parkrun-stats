@@ -574,7 +574,8 @@ public class Stats
                     regionnaireCount = getRegionnaireCount(new ArrayList<>(startDates), new ArrayList<>(), new ArrayList<>(listOfFirstRuns));
                     List<CourseDate> listOfRegionnaireDates = getListOfRegionnaireDates(new ArrayList<>(startDates), new ArrayList<>(), new ArrayList<>(listOfFirstRuns));
 
-                    Object[] result = getRunsNeeded(new ArrayList<>(startDates), new ArrayList<>(listOfFirstRuns));
+                    Object[] result = getRunsNeededAndMaxRunsNeeded(
+                            new ArrayList<>(startDates), new ArrayList<>(stopDates), new ArrayList<>(listOfFirstRuns));
                     runsNeeded = result[0] + " (" + result[1] + ")";
 
                     String firstRunDatesHtmlString = listOfFirstRuns.stream().map(fr ->
@@ -606,34 +607,42 @@ public class Stats
         }
     }
 
-    static Object[] getRunsNeeded(List<CourseDate> sortedStartDates, List<CourseDate> sortedFirstRuns)
+    static Object[] getRunsNeededAndMaxRunsNeeded(
+            List<CourseDate> sortedStartDates,
+            List<CourseDate> sortedStopDates,
+            List<CourseDate> sortedFirstRuns)
     {
         int maxBehind = -1;
         int behindNow = -1;
         final int totalEvents = sortedStartDates.size();
+        final int totalEventsStopped = sortedStopDates.size();
         final int totalEventsRun = sortedFirstRuns.size();
         while(!sortedStartDates.isEmpty())
         {
-            CourseDate startDate = sortedStartDates.remove(0);
+            CourseDate startDate = sortedStartDates.removeFirst();
             sortedFirstRuns.removeIf(record -> record.date.getTime() <= startDate.date.getTime());
+            sortedStopDates.removeIf(record -> record.date.getTime() <= startDate.date.getTime());
 
-            int courseThatHaventStartedYet = sortedStartDates.size();
-            int countOfEventsThereHaveBeen = totalEvents - courseThatHaventStartedYet;
-            int coursesDoneSoFar = totalEventsRun - sortedFirstRuns.size();
-
-            behindNow = countOfEventsThereHaveBeen - coursesDoneSoFar;
+            int coursesDone = totalEventsRun - sortedFirstRuns.size();
+            int coursesThatHaveStarted = totalEvents - sortedStartDates.size();
+            int coursesThatHaveStopped = totalEventsStopped - sortedStopDates.size();
+            int coursesRunning = coursesThatHaveStarted - coursesThatHaveStopped;
+            int coursesRunningDone = Math.max(0, coursesDone - coursesThatHaveStopped);
+            behindNow = coursesRunning - coursesRunningDone;
             maxBehind = Math.max(behindNow, maxBehind);
         }
         while(!sortedFirstRuns.isEmpty())
         {
-            CourseDate firstRun = sortedFirstRuns.remove(0);
+            CourseDate firstRun = sortedFirstRuns.removeFirst();
             sortedStartDates.removeIf(record -> record.date.getTime() <= firstRun.date.getTime());
+            sortedStopDates.removeIf(record -> record.date.getTime() <= firstRun.date.getTime());
 
-            int courseThatHaventStartedYet = sortedStartDates.size();
-            int countOfEventsThereHaveBeen = totalEvents - courseThatHaventStartedYet;
-            int coursesDoneSoFar = totalEventsRun - sortedFirstRuns.size();
-
-            behindNow = countOfEventsThereHaveBeen - coursesDoneSoFar;
+            int coursesDone = totalEventsRun - sortedFirstRuns.size();
+            int coursesThatHaveStarted = totalEvents - sortedStartDates.size();
+            int coursesThatHaveStopped = totalEventsStopped - sortedStopDates.size();
+            int coursesRunning = coursesThatHaveStarted - coursesThatHaveStopped;
+            int coursesRunningDone = Math.max(0, coursesDone - coursesThatHaveStopped);
+            behindNow = coursesRunning - coursesRunningDone;
             maxBehind = Math.max(behindNow, maxBehind);
         }
         return new Object[] { behindNow, maxBehind };

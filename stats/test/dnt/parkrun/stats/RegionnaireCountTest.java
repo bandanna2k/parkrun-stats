@@ -3,7 +3,6 @@ package dnt.parkrun.stats;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseDate;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -11,6 +10,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static dnt.parkrun.datastructures.Country.NZ;
+import static dnt.parkrun.stats.Stats.getRegionnaireCount;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class RegionnaireCountTest
 {
@@ -43,9 +44,8 @@ public class RegionnaireCountTest
                 new CourseDate(courses.get(3), DateConverter.parseWebsiteDate("22/03/2024"))
         ));
 
-        Assertions.assertThat(Stats.getRegionnaireCount(sortedStartDates, Collections.emptyList(), sortedFirstRuns)).isEqualTo(1);
+        assertThat(getRegionnaireCount(sortedStartDates, Collections.emptyList(), sortedFirstRuns)).isEqualTo(1);
     }
-
 
     @Test
     public void shouldCalculateRegionnaireCountWithNoRuns()
@@ -58,7 +58,7 @@ public class RegionnaireCountTest
         ));
         List<CourseDate> sortedFirstRuns = new ArrayList<>();
 
-        Assertions.assertThat(Stats.getRegionnaireCount(sortedStartDates, Collections.emptyList(), sortedFirstRuns)).isEqualTo(0);
+        assertThat(getRegionnaireCount(sortedStartDates, Collections.emptyList(), sortedFirstRuns)).isEqualTo(0);
     }
 
     @Test
@@ -77,7 +77,7 @@ public class RegionnaireCountTest
                 new CourseDate(courses.get(3), DateConverter.parseWebsiteDate("22/02/2024"))
         ));
 
-        Assertions.assertThat(Stats.getRegionnaireCount(sortedStartDates, Collections.emptyList(), sortedFirstRuns)).isEqualTo(4);
+        assertThat(getRegionnaireCount(sortedStartDates, Collections.emptyList(), sortedFirstRuns)).isEqualTo(4);
     }
 
     @Test
@@ -98,6 +98,6 @@ public class RegionnaireCountTest
                 new CourseDate(courses.get(3), DateConverter.parseWebsiteDate("22/03/2024"))
         ));
 
-        Assertions.assertThat(Stats.getRegionnaireCount(sortedStartDates, sortedStopDates, sortedFirstRuns)).isEqualTo(1);
+        assertThat(getRegionnaireCount(sortedStartDates, sortedStopDates, sortedFirstRuns)).isEqualTo(1);
     }
 }
