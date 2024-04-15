@@ -3,6 +3,7 @@ package dnt.parkrun.database.individualqueries;
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.database.AthleteDao;
 import dnt.parkrun.database.ResultDao;
+import dnt.parkrun.datastructures.Athlete;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -10,12 +11,14 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class IndividualTest
 {
-    AthleteDao athleteDao;
-    ResultDao resultDao;
+    private AthleteDao athleteDao;
+    private ResultDao resultDao;
+    private Map<Integer, Athlete> athleteToName;
 
     @Before
     public void setUp() throws Exception
@@ -24,6 +27,8 @@ public class IndividualTest
                 "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
         athleteDao = new AthleteDao(dataSource);
         resultDao = new ResultDao(dataSource);
+
+        athleteToName = athleteDao.getAllAthletes();
     }
 
     @Test
@@ -38,19 +43,26 @@ public class IndividualTest
     }
     public void howManyRunsWithOthers(Object[][] nameAndAthleteId)
     {
-        System.out.println(nameAndAthleteId);
-        List<HowManyRunsWithOthers> howManyRunsWithOthers = Arrays.stream(nameAndAthleteId).map(objects ->
-                new HowManyRunsWithOthers((int) objects[1])).collect(Collectors.toList());
-        System.out.println(howManyRunsWithOthers);
+        List<HowManyRunsWithOthers> processors = Arrays.stream(nameAndAthleteId).map(objects ->
+        {
+            int athleteId = (int) objects[1];
+            return new HowManyRunsWithOthers(athleteId);
+        }).collect(Collectors.toList());
         resultDao.tableScan(result -> {
-            howManyRunsWithOthers.stream().forEach(proceesor -> proceesor.visitInOrder(result));
+            processors.forEach(processor -> processor.visitInOrder(result));
         }, "order by course_id desc, date desc");
 
-        for (int i = 0; i < howManyRunsWithOthers.size(); i++)
+        for (HowManyRunsWithOthers processor : processors)
         {
-            Object[] objects = nameAndAthleteId[i];
-            System.out.println(objects[0]);
-            howManyRunsWithOthers.get(i).after();
+            Athlete athlete = athleteToName.get(processor.inputAthleteId);
+            List<AthleteIdCount> listOfRunsWithOthers = processor.after();
+
+            for (int j = 0; j < Math.min(20, listOfRunsWithOthers.size()); j++)
+            {
+                AthleteIdCount runWithOther = listOfRunsWithOthers.get(j);
+                Athlete otherAthlete = athleteToName.get(runWithOther.athleteId);
+                System.out.printf("%s has run %d times with %s.%n", athlete.name, runWithOther.count, otherAthlete.name);
+            }
             System.out.println();
         }
     }
@@ -58,12 +70,27 @@ public class IndividualTest
     @Test
     public void howManyRunsWithFriends()
     {
-        howManyRunsWithFriends(414811, new int[] { 4072508, 403732, 116306, 1 } );
+        howManyRunsWithFriends(414811, new int[] { 4072508, 403732, 116049, 1 } );
     }
     public void howManyRunsWithFriends(int inputAthleteId, int[] friendAthleteIds)
     {
         HowManyRunsWithFriends processor = new HowManyRunsWithFriends(inputAthleteId, friendAthleteIds);
         resultDao.tableScan(processor::visitInOrder, "order by course_id desc, date desc");
-        processor.after();
+        Athlete athlete = athleteToName.get(processor.inputAthleteId);
+        List<AthleteIdCount> runsWithFriends = processor.after();
+
+        for (AthleteIdCount runsWithFriend : runsWithFriends)
+        {
+            Athlete friend = athleteToName.get(runsWithFriend.athleteId);
+            if(friend == null)
+            {
+                System.out.println("Count not find friend with this ID. " + runsWithFriend.athleteId);
+                continue;
+            }
+
+            System.out.printf("%s. Your friend %s, you have ran with %d amount of times in NZ.%n",
+                    athlete.name, friend.name, runsWithFriend.count);
+        }
+        System.out.println();
     }
 }

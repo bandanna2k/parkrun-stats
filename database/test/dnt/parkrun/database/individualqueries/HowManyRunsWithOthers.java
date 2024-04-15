@@ -18,7 +18,7 @@ public class HowManyRunsWithOthers
     private final List<Integer> athleteIdsAtCourse = new ArrayList<>();
     private final AtomicBoolean didInputAthleteRun = new AtomicBoolean(false);
 
-    final int inputAthleteId;
+    public final int inputAthleteId;
 
     public HowManyRunsWithOthers(int inputAthleteId)
     {
@@ -66,19 +66,12 @@ public class HowManyRunsWithOthers
         athleteIdsAtCourse.add(result.athlete.athleteId);
     }
 
-    public void after()
+    public List<AthleteIdCount> after()
     {
-        List<AthleteIdCount> listOfCrossRuns = athleteIdToCount.entrySet().stream()
+        return athleteIdToCount.entrySet().stream()
                 .map(entry -> new AthleteIdCount(entry.getKey(), entry.getValue()))
                 .sorted(AthleteIdCount.COMPARATOR)
                 .collect(Collectors.toList());
-
-        for (int i = 0; i < Math.min(20, listOfCrossRuns.size()); i++)
-        {
-            AthleteIdCount athleteIdCount = listOfCrossRuns.get(i);
-            System.out.printf("%d:\t%d\t%d%n", i, athleteIdCount.athleteId, athleteIdCount.count);
-        }
-        System.out.println();
     }
 
     @Override

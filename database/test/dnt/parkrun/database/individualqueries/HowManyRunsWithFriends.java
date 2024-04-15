@@ -18,13 +18,13 @@ public class HowManyRunsWithFriends
     private final List<Integer> athleteIdsAtCourse = new ArrayList<>();
     private final AtomicBoolean didInputAthleteRun = new AtomicBoolean(false);
 
-    private final int inputAthleteId;
-    private final int[] friendAthleteIds;
+    public final int inputAthleteId;
+    private final Set<Integer> friendAthleteIds;
 
     public HowManyRunsWithFriends(int inputAthleteId, int[] friendAthleteIds)
     {
         this.inputAthleteId = inputAthleteId;
-        this.friendAthleteIds = friendAthleteIds;
+        this.friendAthleteIds = Arrays.stream(friendAthleteIds).boxed().collect(Collectors.toSet());
     }
 
     public void visitInOrder(Result result)
@@ -68,30 +68,22 @@ public class HowManyRunsWithFriends
         athleteIdsAtCourse.add(result.athlete.athleteId);
     }
 
-    public void after()
+    public List<AthleteIdCount> after()
     {
-        Arrays.stream(friendAthleteIds).forEach(friendAthleteId -> {
-            int count = athleteIdToCount.getOrDefault(friendAthleteId, 0);
-            System.out.println("Your friend " + friendAthleteId + ", you have ran with " + count + " amount of times in NZ.");
-        });
-
-        List<AthleteIdCount> listOfCrossRuns = athleteIdToCount.entrySet().stream()
-                .map(entry -> new AthleteIdCount(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
-        listOfCrossRuns.sort((r1, r2) -> {
-            if(r1.count < r2.count) return 1;
-            if(r1.count > r2.count) return -1;
-            if(r1.athleteId > r2.athleteId) return 1;
-            if(r1.athleteId < r2.athleteId) return -1;
-            return 0;
-        });
-
-        for (int i = 0; i < Math.min(20, listOfCrossRuns.size()); i++)
-        {
-            AthleteIdCount athleteIdCount = listOfCrossRuns.get(i);
-            System.out.printf("%d:\t%d\t%d%n", i, athleteIdCount.athleteId, athleteIdCount.count);
-        }
-        System.out.println();
+        return friendAthleteIds.stream().map(friendAthleteId -> {
+            Integer countOfRunsWithFriend = athleteIdToCount.get(friendAthleteId);
+            if(countOfRunsWithFriend == null)
+            {
+                return new AthleteIdCount(friendAthleteId, 0);
+            }
+            return new AthleteIdCount(friendAthleteId, countOfRunsWithFriend);
+        }).collect(Collectors.toList());
+//
+//        return athleteIdToCount.entrySet().stream()
+//                .filter(athleteIdToCount -> friendAthleteIds.contains(athleteIdToCount.getKey()))
+//                .map(entry -> new AthleteIdCount(entry.getKey(), entry.getValue()))
+//                .sorted(AthleteIdCount.COMPARATOR)
+//                .collect(Collectors.toList());
     }
 
     @Override
