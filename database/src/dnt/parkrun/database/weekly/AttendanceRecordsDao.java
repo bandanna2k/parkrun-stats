@@ -29,6 +29,10 @@ public class AttendanceRecordsDao extends BaseDao
     }
     public String tableName()
     {
+        return tableName(date);
+    }
+    public static String tableName(Date date)
+    {
         return "attendance_records_for_region_" + DateConverter.formatDateForDbTable(date);
     }
 
