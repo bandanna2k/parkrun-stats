@@ -32,7 +32,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
         startElement("tr");
 
         // Up/Down
-        startElement("th", "class", "dt");
+        startElement("th");
         endElement("th");
 
         // Name

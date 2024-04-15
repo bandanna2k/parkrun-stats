@@ -25,8 +25,8 @@ public class MostVolunteersTableHtmlWriter extends BaseWriter implements Closeab
         startElement("thead");
         startElement("tr");
 
-        // Up arrows for max attendance
-        startElement("th", "class", "dt");
+        // Up arrows
+        startElement("th");
         endElement("th");
 
         // Name
