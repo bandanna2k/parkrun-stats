@@ -98,6 +98,8 @@ public class CourseEventSummaryChecker
 
     private void checkResults(List<CourseEventSummary> summaries)
     {
+        if(summaries.isEmpty()) return;
+
         for (int i = 0; i < iterations; i++)
         {
             int randIndex = random.nextInt(summaries.size());
@@ -120,7 +122,7 @@ public class CourseEventSummaryChecker
         }
     }
 
-    private List<Result> getResultsFromWeb(CourseEventSummary ces)
+    protected List<Result> getResultsFromWeb(CourseEventSummary ces)
     {
         List<Result> results = new ArrayList<>();
         Parser parser = new Parser.Builder(ces.course)
@@ -156,7 +158,7 @@ public class CourseEventSummaryChecker
             {
                 if (daoItem.time.getTotalSeconds() != 0 || webItem.time != null)
                 {
-                    errors.add("Zero time does not match. " + comparison.get());
+                    errors.add("Zero times are not correct. Web should be null. DAO should be zero. " + comparison.get());
                 }
             }
             else

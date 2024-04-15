@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static dnt.parkrun.datastructures.Country.NZ;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class InvariantTest
 {
@@ -32,6 +33,16 @@ public class InvariantTest
         dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats", "stats", "statsfractalstats");
         jdbc = new NamedParameterJdbcTemplate(dataSource);
+    }
+
+    @Test
+    public void courseEventSummaryInvariantCheck() throws SQLException
+    {
+        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
+                "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+        CourseEventSummaryChecker courseEventSummaryChecker = new CourseEventSummaryChecker(dataSource, 1);
+        List<String> validate = courseEventSummaryChecker.validate();
+        assertThat(validate).isEmpty();
     }
 
     @Test

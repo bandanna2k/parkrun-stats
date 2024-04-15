@@ -24,8 +24,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - 90% club
 
-- UT for CES invariant
-
 - Add stop dates as java code
 
 - Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables. ???
