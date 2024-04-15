@@ -267,6 +267,13 @@ public class Stats
                     Athlete athlete = athleteIdToAthlete.get(athleteId);
                     List<AthleteCourseSummary> summariesForAthlete = entry.getValue();
 
+//                    summariesForAthlete.stream().forEach(summary -> {
+//                        if(summary.course.courseId == 21 && summary.countOfRuns >= 5)
+//                        {
+//                            System.out.printf("%s %d%n", athlete, summary.countOfRuns);
+//                        }
+//                    });
+
                     PIndex.Result globalPIndex = PIndex.pIndexAndNeeded(summariesForAthlete);
                     if (globalPIndex.pIndex <= MIN_P_INDEX)
                     {

@@ -21,11 +21,7 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 ## Major
 
 ## Minor
-
-- parkrun Best Friends
-
-- Bug - Why is the deltas on the pIndex a bit weird.
-
+ 
 - Unique runners at course
 
 - Add stop dates as java code
@@ -53,6 +49,14 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Issues Completed
 
+- 15/4/2024 - Can we optimise How are we doing test? 'How are we doing test to assume next event number' -
+  No, we are checking the Course Event summary for each cousre which has the finishers on it. Needs to be greater than 0.
+
+- 15/4/2024 Bug - Why is the deltas on the pIndex a bit weird.
+  No bug.
+  Phil O'Keefe went down -1 because Robert Gunther jumped up above him.
+  Tony Collins down -2 because he ran in Canada
+
 - 1/4/2024 - Question - Revisit pIndex downloads. 
 I don't think the criteria for downloading the athletes its correct. 
 Criteria is NZ regional pIndex > 5 (so 6 onwards) - This is correct.
@@ -60,9 +64,6 @@ Criteria is NZ regional pIndex > 5 (so 6 onwards) - This is correct.
 - 1/4/2024 - Bug - Why is 1311970 not getting collected for pIndex. No bug. 1311970 has NZ pIndex of 5 (needs to be 6)
 
 - 1/4/2024 - Issue - Can Weekly Results be optimised - Assume next event number (Can't assume, this downloads all missing events)
-
-- 15/4/2024 - Can we optimise How are we doing test? 'How are we doing test to assume next event number' -
-  No, we are checking the Course Event summary for each cousre which has the finishers on it. Needs to be greater than 0.
 
 ## Ideas
 
