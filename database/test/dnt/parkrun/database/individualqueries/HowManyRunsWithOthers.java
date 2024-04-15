@@ -8,6 +8,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import static dnt.parkrun.datastructures.Athlete.NO_ATHLETE_ID;
+
 public class HowManyRunsWithOthers
 {
     private final Map<Integer, Integer> athleteIdToCount = new HashMap<>();
@@ -68,10 +70,13 @@ public class HowManyRunsWithOthers
 
     public List<AthleteIdCount> after()
     {
-        return athleteIdToCount.entrySet().stream()
+        List<AthleteIdCount> results = athleteIdToCount.entrySet().stream()
                 .map(entry -> new AthleteIdCount(entry.getKey(), entry.getValue()))
                 .sorted(AthleteIdCount.COMPARATOR)
+                .limit(20)
                 .collect(Collectors.toList());
+        if(results.get(0).athleteId == NO_ATHLETE_ID) results.remove(0);
+        return results;
     }
 
     @Override

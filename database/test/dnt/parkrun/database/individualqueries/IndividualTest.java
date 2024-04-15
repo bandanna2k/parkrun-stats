@@ -32,6 +32,17 @@ public class IndividualTest
     }
 
     @Test
+    public void bestFriendsNz()
+    {
+        howManyRunsWithOthers(new Object[][] {
+                { "David NORTH", 414811 },
+                { "John PAYNTER", 417537 },
+                { "Zoe NORTH", 4072508 },
+                { "Martin SULLIVAN", 291411 }
+        });
+    }
+
+    @Test
     public void howManyRunsWithOthers()
     {
         howManyRunsWithOthers(new Object[][] {

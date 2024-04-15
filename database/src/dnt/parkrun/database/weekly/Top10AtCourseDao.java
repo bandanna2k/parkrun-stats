@@ -56,11 +56,6 @@ public class Top10AtCourseDao extends BaseDao
                 ":athleteId, :courseId, :runCount" +
                 ")";
         runsAtEvents.forEach(runsAtEvent -> {
-//            jdbc.batchUpdate(sql, new MapSqlParameterSource()
-//                    .addValue("athleteId", runsAtEvent.athlete.athleteId)
-//                    .addValue("courseId", runsAtEvent.course.courseId)
-//                    .addValue("runCount", runsAtEvent.runCount)
-//            );
             jdbc.update(sql, new MapSqlParameterSource()
                     .addValue("athleteId", runsAtEvent.athlete.athleteId)
                     .addValue("courseId", runsAtEvent.course.courseId)
@@ -92,13 +87,17 @@ public class Top10AtCourseDao extends BaseDao
 
     public List<AtEvent> getTop10InRegion()
     {
+        return getTop10InRegion(20);
+    }
+    public List<AtEvent> getTop10InRegion(int limit)
+    {
         String sql = "select a.name, a.athlete_id, c.course_id, c.course_name, c.country_code, c.course_long_name, run_count\n" +
                 " from " + tableName() +
                 " join " + athleteTable() + " a using (athlete_id)\n" +
                 " join " + courseTable() + " c using (course_id)\n" +
                 " order by run_count desc\n" +
-                " limit 20;";
-        return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> {
+                " limit :limit;";
+        return jdbc.query(sql, new MapSqlParameterSource("limit", limit), (rs, rowNum) -> {
             Athlete athlete = Athlete.from(rs.getString("name"), rs.getInt("athlete_id"));
             Course course = new Course(
                     rs.getInt("course_id"),
