@@ -686,16 +686,20 @@ public class Stats
             tableWriter.writer.writeStartElement("tbody");
             List<AttendanceRecord> attendanceRecords = generateAndGetAttendanceRecords().stream()
                     .peek(ar -> {
-                        Course course = courseRepository.getCourseFromName(ar.courseName);
+                        Course course = courseRepository.getCourse(ar.courseId);
                         if(course.status == PENDING) ar.courseSmallTest = "not started yet";
                         else if(course.status == STOPPED) ar.courseSmallTest = "no longer takes place";
                         else if(ar.recentEventDate.before(date)) ar.courseSmallTest = "not run this week";
                     })
                     .collect(Collectors.toList());
-            attendanceRecords.sort(Comparator.comparing(attendanceRecord -> attendanceRecord.courseName));
+            attendanceRecords.sort(Comparator.comparing(attendanceRecord ->
+            {
+                Course course = courseRepository.getCourse(attendanceRecord.courseId);
+                return course.name;
+            }));
             for (AttendanceRecord ar : attendanceRecords)
             {
-                tableWriter.writeAttendanceRecord(ar);
+                tableWriter.writeAttendanceRecord(ar, courseRepository.getCourse(ar.courseId));
             }
             tableWriter.writer.writeEndElement(); // tbody
         }
@@ -907,7 +911,7 @@ public class Stats
         {
             for (AttendanceRecord lastWeek : attendanceRecordsFromLastWeek)
             {
-                if (thisWeek.courseName.equals(lastWeek.courseName))
+                if (thisWeek.courseId == lastWeek.courseId)
                 {
                     // Found course
                     thisWeek.maxAttendanceDelta = thisWeek.recordEventFinishers - lastWeek.recordEventFinishers;

@@ -41,9 +41,9 @@ public class AttendanceRecordsDao extends BaseDao
     {
         String sql = STR."""
                 create table if not exists \{tableName()}
-                select course_long_name, c.course_id, c.country_code,
-                                    max as record_event_finishers, ces.date as record_event_date, ces.event_number as record_event_number,
-                                    sub3.recent_event_finishers, sub3.recent_event_date, sub3.recent_event_number
+                select c.course_id, c.country_code,
+                                    max as record_event_finishers, ces.date as record_event_date,
+                                    sub3.recent_event_finishers, sub3.recent_event_date
                         from  \{courseTable()} c
                         left join
                         (
@@ -80,15 +80,18 @@ public class AttendanceRecordsDao extends BaseDao
     public List<AttendanceRecord> getAttendanceRecords(Date date)
     {
         String attendanceTableName = "attendance_records_for_region_" + DateConverter.formatDateForDbTable(date);
-        String sql = "select c.course_long_name, c.course_name, " +
-                "recent_event_number, recent_event_date, recent_event_finishers, " +
-                "record_event_number, record_event_date, record_event_finishers " +
-                        "from " + attendanceTableName + " at " +
-                "left join " + courseTable() + " c using (course_id)";
+        String sql = STR."""
+            select c.course_id,
+                recent_ces.event_number as recent_event_number, recent_event_date, recent_event_finishers,
+                record_ces.event_number as record_event_number, record_event_date, record_event_finishers
+            from \{attendanceTableName} at
+            join \{courseTable()} c using (course_id)
+            join \{courseEventSummaryTable()} recent_ces on c.course_id = recent_ces.course_id and recent_ces.date = recent_event_date
+            join \{courseEventSummaryTable()} record_ces on c.course_id = record_ces.course_id and record_ces.date = record_event_date
+        """;
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
                 new AttendanceRecord(
-                        rs.getString("course_long_name"),
-                        rs.getString("course_name"),
+                        rs.getInt("course_id"),
                         rs.getInt("recent_event_number"),
                         rs.getDate("recent_event_date"),
                         rs.getInt("recent_event_finishers"),

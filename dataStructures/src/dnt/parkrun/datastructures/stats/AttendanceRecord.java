@@ -4,8 +4,7 @@ import java.sql.Date;
 
 public class AttendanceRecord
 {
-    public final String courseLongName;
-    public final String courseName;
+    public final int courseId;
     public String courseSmallTest;
 
     public final int recentEventFinishers;
@@ -20,12 +19,11 @@ public class AttendanceRecord
     public int maxAttendanceDelta = 0;
 
 
-    public AttendanceRecord(String courseLongName, String courseName,
+    public AttendanceRecord(int courseId,
                             int recentEventNumber, Date recentEventDate, int recentEventFinishers,
                             int recordEventNumber, Date recordEventDate, int recordEventFinishers)
     {
-        this.courseLongName = courseLongName;
-        this.courseName = courseName;
+        this.courseId = courseId;
         this.recentEventNumber = recentEventNumber;
         this.recentEventFinishers = recentEventFinishers;
         this.recentEventDate = recentEventDate;
@@ -38,10 +36,9 @@ public class AttendanceRecord
     public String toString()
     {
         return "AttendanceRecord{" +
-                "courseLongName='" + courseLongName + '\'' +
-                ", courseName='" + courseName + '\'' +
-                ", courseSmallTest='" + courseSmallTest + '\'' +
+                "courseSmallTest='" + courseSmallTest + '\'' +
                 ", recentEventFinishers=" + recentEventFinishers +
+                ", courseId=" + courseId +
                 ", recentEventNumber=" + recentEventNumber +
                 ", recentEventDate=" + recentEventDate +
                 ", recordEventFinishers=" + recordEventFinishers +

@@ -20,8 +20,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Major
 
-- Update java so I can use inline strings
-
 ## Minor
  
 - Unique runners at course
@@ -35,7 +33,7 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 - Add unique runs for runners
 
 - Do I need name/most global events in most events table?
-Attendance records has unnecessary fields.
+Attendance records has unnecessary fields. DONE
 Most events for region has unnecessary fields.
 
 - Bug - When course not found, athlete course summary not finished.

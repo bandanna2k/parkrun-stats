@@ -2,6 +2,7 @@ package dnt.parkrun.htmlwriter;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
+import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 
 import javax.xml.stream.XMLStreamException;
@@ -85,21 +86,21 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         }
     }
 
-    public void writeAttendanceRecord(AttendanceRecord record) throws XMLStreamException
+    public void writeAttendanceRecord(AttendanceRecord record, Course course) throws XMLStreamException
     {
-        writeRecord(record);
+        writeRecord(record, course);
     }
 
-    private void writeRecord(AttendanceRecord record) throws XMLStreamException
+    private void writeRecord(AttendanceRecord record, Course course) throws XMLStreamException
     {
         writer.writeStartElement("tr");
 
         // Course name
         startElement("td");
         writer.writeStartElement("a");
-        writer.writeAttribute("href", urlGenerator.generateCourseEventSummaryUrl(record.courseName).toString());
-        writer.writeAttribute("target", String.valueOf(record.courseName));
-        writer.writeCharacters(record.courseLongName);
+        writer.writeAttribute("href", urlGenerator.generateCourseEventSummaryUrl(course.name).toString());
+        writer.writeAttribute("target", course.name);
+        writer.writeCharacters(course.longName);
         if(record.courseSmallTest != null)
         {
             startElement("div", "class", "small-text");
@@ -111,8 +112,8 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
 
         // Recent date (desktop only)
         startElement("td", "class", "dt");
-        startElement("a", "target", record.courseName,
-                "href", urlGenerator.generateCourseEventUrl(record.courseName, record.recentEventNumber).toString());
+        startElement("a", "target", course.name,
+                "href", urlGenerator.generateCourseEventUrl(course.name, record.recentEventNumber).toString());
         writer.writeCharacters(DateConverter.formatDateForHtml(record.recentEventDate));
         endElement("a");
         endElement("td");
@@ -136,8 +137,8 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
 
         // Record Date
         startElement("td");
-        startElement("a", "target", record.courseName, "href",
-                urlGenerator.generateCourseEventUrl(record.courseName, record.recordEventNumber).toString());
+        startElement("a", "target", course.name, "href",
+                urlGenerator.generateCourseEventUrl(course.name, record.recordEventNumber).toString());
         writer.writeCharacters(DateConverter.formatDateForHtml(record.recordEventDate));
         endElement("a");
         endElement("td");
