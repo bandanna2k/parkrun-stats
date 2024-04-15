@@ -50,10 +50,6 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         writer.writeCharacters("Record Event Date");
         endElement("th");
 
-        // Up arrows for max attendance
-        startElement("th", "class", "dt");
-        endElement("th");
-
         startElement("th");
         writer.writeCharacters("Record Event Finishers");
         endElement("th");
@@ -143,29 +139,9 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         endElement("a");
         endElement("td");
 
-        // Up/Down
-        startElement("td", "class", "dt");
-        if(record.maxAttendanceDelta > 0)
-        {
-            startElement("font", "color", "green");
-            startElement("abbr", "title", "+" + record.maxAttendanceDelta);
-            writer.writeCharacters("▲");
-            endElement("abbr");
-            endElement("font");
-        }
-        else if(record.maxAttendanceDelta < 0)
-        {
-            // Probably won't happen, but keeps me honest
-            startElement("font", "color", "red");
-            startElement("abbr", "title", String.valueOf(record.maxAttendanceDelta));
-            writer.writeCharacters("▼");
-            endElement("abbr");
-            endElement("font");
-        }
-        endElement("td");
-
         // Max attendance
         startElement("td");
+        writeDelta(record.maxAttendanceDelta, false);
         writer.writeCharacters(String.valueOf(record.recordEventFinishers));
         endElement("td");
 

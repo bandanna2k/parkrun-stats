@@ -103,4 +103,36 @@ public abstract class BaseWriter implements Closeable
         }
         endElement("td");
     }
+
+    protected void writeDelta(int delta, boolean isNewEntry) throws XMLStreamException
+    {
+        // Up/Down
+        if(isNewEntry)
+        {
+            startElement("font", "color", "orange");
+            startElement("abbr", "title", "New Entry");
+            writer.writeCharacters("★ ");
+            endElement("abbr");
+            endElement("font");
+        }
+        else
+        {
+            if (delta > 0)
+            {
+                startElement("font", "color", "green");
+                startElement("abbr", "title", "+" + delta);
+                writer.writeCharacters("▲ ");
+                endElement("abbr");
+                endElement("font");
+            }
+            else if (delta < 0)
+            {
+                startElement("font", "color", "red");
+                startElement("abbr", "title", String.valueOf(delta));
+                writer.writeCharacters("▼ ");
+                endElement("abbr");
+                endElement("font");
+            }
+        }
+    }
 }
