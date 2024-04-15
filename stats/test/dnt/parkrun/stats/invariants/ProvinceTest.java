@@ -19,7 +19,7 @@ public class ProvinceTest
     public void allNzCoursesShouldHaveAProvince() throws SQLException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats", "stats", "statsfractalstats");
         CourseRepository courseRepository = new CourseRepository();
         CourseDao courseDao = new CourseDao(dataSource, courseRepository);
 

@@ -22,10 +22,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Do I need name/most global events in most events table?
-  Attendance records has unnecessary fields. DONE
-  Most events for region has unnecessary fields.
-
 - Finish max regionnaire
 
 - Run invariant after launching webpage
@@ -49,6 +45,10 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 
 ## Issues Completed
+
+- 15/4/2024 Do I need name/most global events in most events table?
+  Attendance records has unnecessary fields. DONE
+  Most events for region has unnecessary fields. DONE
 
 - 15/4/2024 - Bug - When course not found, athlete course summary not finished.
 Mitigated with invariant test that checks for new courses.

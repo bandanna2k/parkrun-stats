@@ -30,7 +30,7 @@ public class InvariantTest
     public void setUp() throws Exception
     {
         dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats", "stats", "statsfractalstats");
         jdbc = new NamedParameterJdbcTemplate(dataSource);
     }
 
