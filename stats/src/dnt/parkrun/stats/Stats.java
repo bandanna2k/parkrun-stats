@@ -554,15 +554,13 @@ public class Stats
         {
             for (MostEventsDao.MostEventsRecord der : differentEventRecords)
             {
-                Athlete athlete = athleteIdToAthlete.get(der.athleteId);
-                List<AthleteCourseSummary> athleteCourseSummaries = athleteIdToAthleteCourseSummaries.get(der.athleteId);
+                Athlete athlete = athleteIdToAthlete.get(der.athlete.athleteId);
+                List<AthleteCourseSummary> athleteCourseSummaries = athleteIdToAthleteCourseSummaries.get(der.athlete.athleteId);
 
                 int courseCount = athleteCourseSummaries.size();
                 int totalCourseCount = athleteCourseSummaries.stream().mapToInt(acs -> acs.countOfRuns).sum();
 
                 mostEventsDao.updateDifferentCourseRecord(athlete.athleteId, courseCount, totalCourseCount);
-
-//                if(der.athleteId != 796322) continue;
 
                 final List<CourseDate> listOfFirstRuns;
                 final String firstRuns;
@@ -570,7 +568,7 @@ public class Stats
                 final String runsNeeded;
                 if (extended)
                 {
-                    listOfFirstRuns = athleteIdToFirstRuns.get(der.athleteId);
+                    listOfFirstRuns = athleteIdToFirstRuns.get(der.athlete.athleteId);
                     listOfFirstRuns.sort(CourseDate.COMPARATOR);
 
                     regionnaireCount = getRegionnaireCount(new ArrayList<>(startDates), new ArrayList<>(), new ArrayList<>(listOfFirstRuns));
@@ -732,7 +730,7 @@ public class Stats
     private void downloadAthleteCourseSummaries(List<MostEventsDao.MostEventsRecord> differentEventRecords)
     {
         System.out.println("* Calculate athlete summaries that need to be downloaded (1. Most event table) *");
-        Set<Integer> athletesFromMostEventTable = differentEventRecords.stream().map(der -> der.athleteId).collect(Collectors.toSet());
+        Set<Integer> athletesFromMostEventTable = differentEventRecords.stream().map(der -> der.athlete.athleteId).collect(Collectors.toSet());
         System.out.println("Size A " + athletesFromMostEventTable.size());
 
         System.out.println("* Calculate athlete summaries that need to be downloaded (2. p-Index) *");
@@ -893,7 +891,7 @@ public class Stats
             {
                 MostEventsDao.MostEventsRecord lastWeek = differentEventRecordsFromLastWeek.get(indexLastWeek);
 
-                if (thisWeek.athleteId == lastWeek.athleteId)
+                if (thisWeek.athlete.athleteId == lastWeek.athlete.athleteId)
                 {
                     found = true;
                     thisWeek.positionDelta = indexLastWeek - indexThisWeek;

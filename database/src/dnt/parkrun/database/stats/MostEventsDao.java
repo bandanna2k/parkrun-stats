@@ -2,6 +2,7 @@ package dnt.parkrun.database.stats;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.BaseDao;
+import dnt.parkrun.datastructures.Athlete;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -45,7 +46,6 @@ public class MostEventsDao extends BaseDao
         String sql = STR."""
                 create table if not exists \{getTableName()} (
                       athlete_id                     INT             NOT NULL,
-                      name                           VARCHAR(255)    NOT NULL,
                       different_region_course_count  INT             NOT NULL,
                       total_region_runs              INT             NOT NULL,
                       different_course_count         INT             NOT NULL,
@@ -65,9 +65,9 @@ public class MostEventsDao extends BaseDao
         {
             String sql = STR."""
                 insert into \{getTableName()}(
-                    name, athlete_id, different_region_course_count, total_region_runs,
+                    athlete_id, different_region_course_count, total_region_runs,
                     different_course_count, total_runs)
-                select a.name, a.athlete_id,
+                select a.athlete_id,
                     sub1.count as different_region_course_count,
                     sub2.count as total_region_runs,
                     0 as different_course_count, 0 as total_runs from \{athleteTable()} a
@@ -139,17 +139,21 @@ public class MostEventsDao extends BaseDao
     }
     private List<MostEventsRecord> getMostEvents(Date date)
     {
-        String differentCourseCountTableName = "most_events_for_region_" + DateConverter.formatDateForDbTable(date);
-        String sql =
-                "select name, athlete_id, " +
-                        "different_region_course_count, total_region_runs," +
-                        "different_course_count, total_runs  " +
-                        "from " + differentCourseCountTableName +
-                        " order by different_region_course_count desc, total_region_runs desc, athlete_id asc ";
+        String mostEventsTable = "most_events_for_region_" + DateConverter.formatDateForDbTable(date);
+        String sql = STR."""
+        select a.name, a.athlete_id,
+            different_region_course_count, total_region_runs,
+            different_course_count, total_runs
+        from \{mostEventsTable}
+        join \{athleteTable()} a using (athlete_Id)
+        order by different_region_course_count desc, total_region_runs desc, athlete_id asc
+        """;
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
                 new MostEventsRecord(
-                        rs.getString("name"),
-                        rs.getInt("athlete_id"),
+                        Athlete.from(
+                                rs.getString("name"),
+                                rs.getInt("athlete_id")
+                        ),
                         rs.getInt("different_region_course_count"),
                         rs.getInt("total_region_runs"),
                         rs.getInt("different_course_count"),
@@ -179,8 +183,7 @@ public class MostEventsDao extends BaseDao
 
     public static class MostEventsRecord
     {
-        public final String name;
-        public final int athleteId;
+        public final Athlete athlete;
         public final int differentRegionCourseCount;
         public final int totalRegionRuns;
         public final int differentCourseCount;
@@ -189,15 +192,13 @@ public class MostEventsDao extends BaseDao
         public int positionDelta = 0;
         public boolean isNewEntry = false;
 
-        public MostEventsRecord(String name,
-                                    int athleteId,
-                                    int differentRegionCourseCount,
-                                    int totalRegionRuns,
-                                    int differentCourseCount,
-                                    int totalRuns)
+        public MostEventsRecord(Athlete athlete,
+                                int differentRegionCourseCount,
+                                int totalRegionRuns,
+                                int differentCourseCount,
+                                int totalRuns)
         {
-            this.name = name;
-            this.athleteId = athleteId;
+            this.athlete = athlete;
             this.differentRegionCourseCount = differentRegionCourseCount;
             this.totalRegionRuns = totalRegionRuns;
             this.differentCourseCount = differentCourseCount;
@@ -208,8 +209,7 @@ public class MostEventsDao extends BaseDao
         public String toString()
         {
             return "MostEventsRecord{" +
-                    "name='" + name + '\'' +
-                    ", athleteId=" + athleteId +
+                    "athleteId=" + athlete +
                     ", differentRegionCourseCount=" + differentRegionCourseCount +
                     ", totalRegionRuns=" + totalRegionRuns +
                     ", differentCourseCount=" + differentCourseCount +

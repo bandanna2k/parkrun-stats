@@ -21,7 +21,7 @@ public class AthleteDao
         jdbc = new NamedParameterJdbcTemplate(dataSource);
     }
 
-    public void insert(Athlete athlete)
+    public Athlete insert(Athlete athlete)
     {
         String sql = "insert into athlete (" +
                 "athlete_id, name" +
@@ -34,18 +34,18 @@ public class AthleteDao
                 .addValue("athleteId", athlete.athleteId)
                 .addValue("name", athlete.name)
         );
+        return getAthlete(athlete.athleteId);
     }
 
     public Athlete getAthlete(int athleteId)
     {
-        Athlete athlete = jdbc.queryForObject("select * from athlete",
+        return jdbc.queryForObject("select * from athlete where athlete_id = :athleteId",
                 new MapSqlParameterSource("athleteId", athleteId),
                 (rs, rowNum) ->
                         Athlete.from(
                                 rs.getString("name"),
                                 rs.getInt("athlete_id")
                         ));
-        return athlete;
     }
 
     // TODO: Write a test for me please.
