@@ -4,6 +4,7 @@ import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.BaseDao;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import javax.sql.DataSource;
 import java.util.Date;
@@ -38,41 +39,42 @@ public class AttendanceRecordsDao extends BaseDao
 
     private void generateAttendanceRecordTable()
     {
-        String sql =
-                "create table if not exists " + tableName() + " as " +
-                "select course_long_name, c.course_id, c.country_code, " +
-                        "            max as record_event_finishers, ces.date as record_event_date, ces.event_number as record_event_number, " +
-                        "            sub3.recent_event_finishers, sub3.recent_event_date, sub3.recent_event_number " +
-                        "from " + courseTable() + " c " +
-                        "left join " +
-                        "(" +
-                        "    select course_id, max(count) as max" +
-                        "    from" +
-                        "    (" +
-                        "        select course_id, date, count(position) as count" +
-                        "        from " + resultTable() +
-                        "        group by course_id, date" +
-                        "    ) as sub1" +
-                        "    group by course_id" +
-                        "    order by course_id asc" +
-                        ") as sub2 on c.course_id = sub2.course_id " +
-                        "left join " + courseEventSummaryTable() + " ces " +
-                        "on c.course_id = ces.course_id " +
-                        "and ces.finishers = sub2.max " +
-                        "left join " +
-                        "( " +
-                        "    select ces.course_id, ces.event_number as recent_event_number, finishers as recent_event_finishers, recent_event_date " +
-                        "    from " + courseEventSummaryTable() + " ces " +
-                        "    join " +
-                        "    ( " +
-                        "        select course_id, max(date) as recent_event_date " +
-                        "        from " + courseEventSummaryTable() +
-                        "        group by course_id " +
-                        "    ) as sub4 on ces.course_id = sub4.course_id and ces.date = sub4.recent_event_date " +
-                        ") as sub3 on c.course_id = sub3.course_id " +
-                        "where c.country_code = " + NZ.getCountryCode();
+        String sql = STR."""
+                create table if not exists \{tableName()}
+                select course_long_name, c.course_id, c.country_code,
+                                    max as record_event_finishers, ces.date as record_event_date, ces.event_number as record_event_number,
+                                    sub3.recent_event_finishers, sub3.recent_event_date, sub3.recent_event_number
+                        from  \{courseTable()} c
+                        left join
+                        (
+                            select course_id, max(count) as max
+                            from
+                            (
+                                select course_id, date, count(position) as count
+                                from \{resultTable()}
+                                group by course_id, date
+                            ) as sub1
+                            group by course_id
+                            order by course_id asc
+                        ) as sub2 on c.course_id = sub2.course_id
+                        left join  \{courseEventSummaryTable()} ces
+                        on c.course_id = ces.course_id
+                        and ces.finishers = sub2.max
+                        left join
+                        (
+                            select ces.course_id, ces.event_number as recent_event_number, finishers as recent_event_finishers, recent_event_date
+                            from \{courseEventSummaryTable()}  ces
+                            join
+                            (
+                                select course_id, max(date) as recent_event_date
+                                from \{courseEventSummaryTable()}
+                                group by course_id
+                            ) as sub4 on ces.course_id = sub4.course_id and ces.date = sub4.recent_event_date
+                        ) as sub3 on c.course_id = sub3.course_id
+                        where c.country_code = :countryCode;
+                """;
 
-        jdbc.update(sql, EmptySqlParameterSource.INSTANCE);
+        jdbc.update(sql, new MapSqlParameterSource("countryCode", NZ.getCountryCode()));
     }
 
     public List<AttendanceRecord> getAttendanceRecords(Date date)

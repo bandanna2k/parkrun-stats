@@ -22,7 +22,6 @@ import static dnt.parkrun.datastructures.AgeGroup.SM25_29;
 
 public class AttendanceRecordsDaoTest extends BaseDaoTest
 {
-    private AttendanceRecordsDao attendanceRecordsDao;
     private AthleteDao athleteDao;
     private CourseDao courseDao;
     private CourseRepository courseRepository;
@@ -37,6 +36,7 @@ public class AttendanceRecordsDaoTest extends BaseDaoTest
                 "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
 
         jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);
+        jdbc.update("delete from result", EmptySqlParameterSource.INSTANCE);
         jdbc.update("delete from course_event_summary", EmptySqlParameterSource.INSTANCE);
         jdbc.update("delete from course", EmptySqlParameterSource.INSTANCE);
         jdbc.update("drop table if exists " + AttendanceRecordsDao.tableName(date), EmptySqlParameterSource.INSTANCE);
@@ -46,7 +46,6 @@ public class AttendanceRecordsDaoTest extends BaseDaoTest
         courseDao = new CourseDao(dataSource, courseRepository);
         resultDao = new ResultDao(dataSource);
         courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
-        attendanceRecordsDao = AttendanceRecordsDao.getInstance(dataSource, date);
     }
 
     @Test
@@ -64,8 +63,8 @@ public class AttendanceRecordsDaoTest extends BaseDaoTest
         courseEventSummaryDao.insert(new CourseEventSummary(
                 course, 1, Date.from(Instant.EPOCH), 2, Optional.of(firstMan), Optional.of(firstWoman)));
 
+        AttendanceRecordsDao attendanceRecordsDao = AttendanceRecordsDao.getInstance(dataSource, date);
         List<AttendanceRecord> attendanceRecords = attendanceRecordsDao.getAttendanceRecords(Date.from(Instant.EPOCH));
-        System.out.println(attendanceRecords);
         Assertions.assertThat(attendanceRecords).isNotEmpty();
     }
 }
