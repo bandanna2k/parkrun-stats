@@ -24,10 +24,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - Mobile - put up/down arrows into stats
 
-- Finish max regionnaire
-
-- Regionnaire to include stopped events. 
-
 - Run invariant after launching webpage
 
 - Add stop dates as java code
@@ -42,6 +38,9 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - 'Most runs with other athletes' table
 
+- Finish max regionnaire (Needs rethink, harder calculation than thought.)
+
+- Regionnaire to include stopped events.
 
 ## Ideas
 
