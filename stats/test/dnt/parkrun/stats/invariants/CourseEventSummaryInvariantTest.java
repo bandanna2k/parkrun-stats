@@ -40,7 +40,6 @@ public class CourseEventSummaryInvariantTest
 
     private static class CourseEventSummaryChecker
     {
-        private static final int ITERATIONS = 2;
         private final Random random = new Random(); // SEED
         private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
         private final CourseEventSummaryDao courseEventSummaryDao;
@@ -51,13 +50,19 @@ public class CourseEventSummaryInvariantTest
 //            add("westernsprings346");
         }};
         private final SoftAssertions softly;
+        private final int iterations;
 
         public CourseEventSummaryChecker(DataSource dataSource, SoftAssertions softly)
         {
+            this(dataSource, softly, 4);
+        }
+        public CourseEventSummaryChecker(DataSource dataSource, SoftAssertions softly, int iterations)
+        {
             this.softly = softly;
+            this.iterations = iterations;
 
             CourseRepository courseRepository = new CourseRepository();
-            CourseDao courseDao = new CourseDao(dataSource, courseRepository);
+            new CourseDao(dataSource, courseRepository);
             resultDao = new ResultDao(dataSource);
             courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
         }
@@ -81,7 +86,6 @@ public class CourseEventSummaryInvariantTest
                     .filter(ces -> ces.date.after(firstOfTheMonth))
                     .collect(Collectors.toList());
             checkResults(summariesForThisMonth);
-
         }
 
         private void checkResultsFromLast60Days(List<CourseEventSummary> courseEventSummaries)
@@ -106,7 +110,7 @@ public class CourseEventSummaryInvariantTest
 
         private void checkResults(List<CourseEventSummary> summaries)
         {
-            for (int i = 0; i < ITERATIONS; i++)
+            for (int i = 0; i < iterations; i++)
             {
                 int randIndex = random.nextInt(summaries.size());
                 CourseEventSummary ces = summaries.get(randIndex);

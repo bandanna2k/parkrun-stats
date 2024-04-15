@@ -21,22 +21,18 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 ## Major
 
 ## Minor
- 
-- Unique runners at course
+
+- Do I need name/most global events in most events table?
+  Attendance records has unnecessary fields. DONE
+  Most events for region has unnecessary fields.
+
+- Finish max regionnaire
+
+- Run invariant after launching webpage
 
 - Add stop dates as java code
 
 - Prove?? Parsers can break half way through. Collate records first then stream records.
-
-- Invariant - Random invariant - Check that DB event history matches Web event history
-
-- Add unique runs for runners
-
-- Do I need name/most global events in most events table?
-Attendance records has unnecessary fields. DONE
-Most events for region has unnecessary fields.
-
-- Bug - When course not found, athlete course summary not finished.
 
 - Invariant - region event count < global event count
 
@@ -46,10 +42,16 @@ Most events for region has unnecessary fields.
 
 - 'Most runs with other athletes' table
 
-- Finish max regionnaire
+
+## Ideas
+
+- Unique runners at course / Add unique runs for runners / Add unique runs to Most Events???
 
 
 ## Issues Completed
+
+- 15/4/2024 - Bug - When course not found, athlete course summary not finished.
+Mitigated with invariant test that checks for new courses.
 
 - 15/4/2024 - Can we optimise How are we doing test? 'How are we doing test to assume next event number' -
   No, we are checking the Course Event summary for each cousre which has the finishers on it. Needs to be greater than 0.
@@ -59,17 +61,14 @@ Most events for region has unnecessary fields.
   Phil O'Keefe went down -1 because Robert Gunther jumped up above him.
   Tony Collins down -2 because he ran in Canada
 
-- 1/4/2024 - Question - Revisit pIndex downloads. 
-I don't think the criteria for downloading the athletes its correct. 
-Criteria is NZ regional pIndex > 5 (so 6 onwards) - This is correct.
+- 1/4/2024 - Question - Revisit pIndex downloads.
+  I don't think the criteria for downloading the athletes its correct.
+  Criteria is NZ regional pIndex > 5 (so 6 onwards) - This is correct.
 
 - 1/4/2024 - Bug - Why is 1311970 not getting collected for pIndex. No bug. 1311970 has NZ pIndex of 5 (needs to be 6)
 
 - 1/4/2024 - Issue - Can Weekly Results be optimised - Assume next event number (Can't assume, this downloads all missing events)
 
-## Ideas
-
-- Add unique runs to Most Events???
 
 
 # QUERIES
