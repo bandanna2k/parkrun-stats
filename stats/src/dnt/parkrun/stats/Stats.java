@@ -17,6 +17,7 @@ import dnt.parkrun.datastructures.stats.AtEvent;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import dnt.parkrun.htmlwriter.*;
 import dnt.parkrun.pindex.PIndex;
+import dnt.parkrun.stats.invariants.CourseEventSummaryChecker;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
@@ -66,7 +67,16 @@ public class Stats
                 "jdbc:mysql://localhost/weekly_stats", "stats", "statsfractalstats");
 
         Stats stats = Stats.newInstance(dataSource, statsDataSource, date);
-        stats.generateStats();
+        File file = stats.generateStats();
+
+        new ProcessBuilder("xdg-open", file.getAbsolutePath()).start();
+
+        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(dataSource, 1);
+        List<String> validate = checker.validate();
+        if(!validate.isEmpty())
+        {
+            throw new RuntimeException(String.join("\n", validate));
+        }
     }
 
     private final Date date;
@@ -119,7 +129,7 @@ public class Stats
         return new Stats(dataSource, statsDataSource, date);
     }
 
-    public void generateStats() throws IOException, XMLStreamException
+    public File generateStats() throws IOException, XMLStreamException
     {
         System.out.print("Getting start dates ");
         startDates.addAll(courseEventSummaryDao.getCourseStartDates());
@@ -222,8 +232,7 @@ public class Stats
                 }
             }
         }
-
-        new ProcessBuilder("xdg-open", htmlFileModified.getAbsolutePath()).start();
+        return htmlFileModified;
     }
 
     private void writeMostVolunteers(HtmlWriter writer) throws XMLStreamException

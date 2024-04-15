@@ -23,5 +23,7 @@
     <orderEntry type="module" module-name="courses" scope="TEST" />
     <orderEntry type="module" module-name="courseEvent" scope="TEST" />
     <orderEntry type="module" module-name="webpageProvider" scope="TEST" />
+    <orderEntry type="module" module-name="courseEvent" />
+    <orderEntry type="module" module-name="webpageProvider" />
   </component>
 </module>
