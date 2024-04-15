@@ -9,7 +9,7 @@ import java.io.Closeable;
 
 public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 {
-    private static boolean FEATURE_FOR_MAX_FROM_REGIONNAIRE = true;
+    private static boolean FEATURE_FOR_MAX_FROM_REGIONNAIRE = false;
 
     private final UrlGenerator urlGenerator;
     private final boolean extended;
@@ -72,7 +72,8 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         {
             startElement("th", "class", "dt");
             information("Events Needed (Max)",
-                    "Events needed to be regionnaire. (Maximum events this person has ever needed to become a regionnaire.");
+                    "Events needed to be regionnaire. " +
+                            "(Maximum running events this person has ever needed to become a regionnaire.)");
             endElement("th");
         }
 

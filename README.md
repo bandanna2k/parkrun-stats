@@ -22,7 +22,11 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- Mobile - put up/down arrows into stats
+
 - Finish max regionnaire
+
+- Regionnaire to include stopped events. 
 
 - Run invariant after launching webpage
 
