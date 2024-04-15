@@ -10,7 +10,6 @@ import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
@@ -23,24 +22,23 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static dnt.parkrun.datastructures.Country.NZ;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CourseEventSummaryInvariantTest
 {
-    private final SoftAssertions softly = new SoftAssertions();
-
     @Test
     public void checkCourseEventSummary() throws SQLException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
-        CourseEventSummaryChecker courseEventSummaryChecker = new CourseEventSummaryChecker(dataSource, softly);
-        courseEventSummaryChecker.assertAll();
-        softly.assertAll();
+        CourseEventSummaryChecker courseEventSummaryChecker = new CourseEventSummaryChecker(dataSource, 1);
+        List<String> validate = courseEventSummaryChecker.validate();
+        assertThat(validate).isEmpty();
     }
 
     private static class CourseEventSummaryChecker
     {
-        private final Random random = new Random(); // SEED
+        private final Random random; // SEED
         private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
         private final CourseEventSummaryDao courseEventSummaryDao;
         private final ResultDao resultDao;
@@ -49,16 +47,19 @@ public class CourseEventSummaryInvariantTest
 //            add("whanganuiriverbank167");
 //            add("westernsprings346");
         }};
-        private final SoftAssertions softly;
+        private final List<String> errors = new ArrayList<>();
         private final int iterations;
 
-        public CourseEventSummaryChecker(DataSource dataSource, SoftAssertions softly)
+        public CourseEventSummaryChecker(DataSource dataSource)
         {
-            this(dataSource, softly, 4);
+            this(dataSource, 4);
         }
-        public CourseEventSummaryChecker(DataSource dataSource, SoftAssertions softly, int iterations)
+        public CourseEventSummaryChecker(DataSource dataSource, int iterations)
         {
-            this.softly = softly;
+            long time = System.currentTimeMillis();
+            System.out.printf("Random seed for %s: %d%n", this.getClass().getSimpleName(), time);
+            this.random = new Random(time);
+
             this.iterations = iterations;
 
             CourseRepository courseRepository = new CourseRepository();
@@ -67,7 +68,7 @@ public class CourseEventSummaryInvariantTest
             courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
         }
 
-        public void assertAll()
+        public List<String> validate()
         {
             List<CourseEventSummary> courseEventSummaries = courseEventSummaryDao.getCourseEventSummaries();
 
@@ -75,6 +76,8 @@ public class CourseEventSummaryInvariantTest
             checkResultsFromLast60Days(courseEventSummaries);
             checkResultsFromLast350Days(courseEventSummaries);
             checkResults(courseEventSummaries);
+
+            return errors;
         }
 
         private void checkResultsFromThisMonth(List<CourseEventSummary> courseEventSummaries)
@@ -147,7 +150,7 @@ public class CourseEventSummaryInvariantTest
         {
             if (daoItems.size() != webItems.size())
             {
-                softly.fail("List sizes do not match: A: %d, B: %d, CES: %s", daoItems.size(), webItems.size(), ces);
+                errors.add(String.format("List sizes do not match: A: %d, B: %d, CES: %s", daoItems.size(), webItems.size(), ces));
                 return;
             }
 
@@ -160,27 +163,32 @@ public class CourseEventSummaryInvariantTest
                         "A: %s%n" +
                         "B: %s%n" +
                         "CES: %s%n%n", daoItem, webItem, ces);
-                softly.assertThat(daoItem.athlete.athleteId)
-                        .describedAs("Athlete ID does not match. " + comparison.get())
-                        .isEqualTo(webItem.athlete.athleteId);
+                if(daoItem.athlete.athleteId != webItem.athlete.athleteId)
+                {
+                    errors.add("Athlete ID does not match. " + comparison.get());
+                }
                 if(daoItem.time.getTotalSeconds() == 0 || webItem.time == null)
                 {
-                    softly.assertThat(daoItem.time.getTotalSeconds() == 0 && webItem.time == null)
-                            .describedAs("Zero time does not match. " + comparison.get())
-                            .isTrue();
+                    if(daoItem.time.getTotalSeconds() != 0 || webItem.time != null)
+                    {
+                        errors.add("Zero time does not match. " + comparison.get());
+                    }
                 }
                 else
                 {
-                    softly.assertThat(daoItem.time)
-                            .describedAs("Time does not match. " + comparison.get())
-                            .isEqualTo(webItem.time);
+                    if(daoItem.time.getTotalSeconds() != webItem.time.getTotalSeconds())
+                    {
+                        errors.add("Time does not match. " + comparison.get());
+                    }
                 }
-                softly.assertThat(daoItem.ageGroup)
-                        .describedAs("Age group does not match. " + comparison.get())
-                        .isEqualTo(webItem.ageGroup);
-                softly.assertThat(daoItem.ageGrade)
-                        .describedAs("Age grade does not match. " + comparison.get())
-                        .isEqualTo(webItem.ageGrade);
+                if(daoItem.ageGroup != webItem.ageGroup)
+                {
+                    errors.add("Age group does not match. " + comparison.get());
+                }
+                if(daoItem.ageGrade.ageGrade != webItem.ageGrade.ageGrade)
+                {
+                    errors.add("Age grade does not match. " + comparison.get());
+                }
 //            softly.assertThat(item1.ageGrade.ageGrade)
 //                    .describedAs("Age grade too small. " + comparison.get() + item1)
 //                    .matches(item -> item.equals(BigDecimal.ZERO) || item.doubleValue() < 2.0);

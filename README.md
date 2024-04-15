@@ -24,21 +24,18 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - Run invariant after launching webpage
 
+- UT for CES invariant
+
 - Add stop dates as java code
 
-- Prove?? Parsers can break half way through. Collate records first then stream records.
-
-- Invariant - region event count < global event count for volunteers
-
-- Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables.
+- Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables. ???
 
 - Friends table including at what venues
+  - 'Most runs with other athletes' table
 
-- 'Most runs with other athletes' table
-
-- Finish max regionnaire (Needs rethink, harder calculation than thought.)
-
-- Regionnaire to include stopped events.
+- Regionnaire count
+  - Finish max regionnaire (Needs rethink, harder calculation than thought.)
+  - Regionnaire to include stopped events.
 
 ## Ideas
 
@@ -46,6 +43,11 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 
 ## Issues Completed
+
+- 16/4/2024 Prove?? Parsers can break half way through. Collate records first then stream records.
+Abandoning. Course event summary invariant is just as likely to catch errors.
+
+- 16/4/2024 Invariant - region event count < global event count for volunteers
 
 - 16/4/2024 Mobile - put up/down arrows into stats
   Looks OK for attendance records.
