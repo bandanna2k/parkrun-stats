@@ -53,7 +53,12 @@ public abstract class BaseWriter implements Closeable
         endElement("abbr");
     }
 
-    protected void startDetails() throws XMLStreamException
+    protected void startDetails(int level) throws XMLStreamException
+    {
+        startElement("details", "name", "level" + level);
+    }
+
+    protected void startDetails() throws XMLStreamException // TODO: Remove
     {
         startElement("details", "name", "details1");
     }

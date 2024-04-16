@@ -79,4 +79,9 @@ public class AgeGrade
     {
         return (int)(Math.round(ageGrade * 100.0));
     }
+
+    public String toHtmlString()
+    {
+        return String.format("%.1f", ageGrade);
+    }
 }

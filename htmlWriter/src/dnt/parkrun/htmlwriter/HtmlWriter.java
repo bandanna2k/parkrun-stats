@@ -12,22 +12,24 @@ import java.util.Date;
 public class HtmlWriter extends BaseWriter
 {
     private final Date date;
+    private final File file;
 
-    public static HtmlWriter newInstance(Date date) throws IOException, XMLStreamException
+    public static HtmlWriter newInstance(Date date, String prefix) throws IOException, XMLStreamException
     {
-        File file = new File("stats_" + DateConverter.formatDateForDbTable(date) + ".html");
+        File file = new File(prefix + "_" + DateConverter.formatDateForDbTable(date) + ".html");
 
         XMLStreamWriter writer = XMLOutputFactory
                 .newInstance()
                 .createXMLStreamWriter(
                         new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
-        return new HtmlWriter(writer, date);
+        return new HtmlWriter(writer, date, file);
     }
 
-    private HtmlWriter(XMLStreamWriter writer, Date date) throws XMLStreamException, IOException
+    private HtmlWriter(XMLStreamWriter writer, Date date, File file) throws XMLStreamException, IOException
     {
         super(writer);
         this.date = date;
+        this.file = file;
 
         startHtml();
     }
@@ -76,5 +78,10 @@ public class HtmlWriter extends BaseWriter
         {
             throw new RuntimeException(e);
         }
+    }
+
+    public File getFile()
+    {
+        return file;
     }
 }
