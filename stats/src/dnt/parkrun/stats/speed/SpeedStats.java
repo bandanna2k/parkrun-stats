@@ -64,7 +64,7 @@ public class SpeedStats
         new CourseDao(dataSource, courseRepository);
     }
 
-    public static SpeedStats newInstance(DataSource dataSource, Date date) throws SQLException
+    public static SpeedStats newInstance(DataSource dataSource, Date date)
     {
         return new SpeedStats(dataSource, date);
     }
@@ -72,12 +72,20 @@ public class SpeedStats
     public File generateStats() throws IOException, XMLStreamException
     {
         Map<Integer, Map<AgeGroup, AgeGroupRecord>> courseToAgeGroupToAgeGradeRecord = new HashMap<>();
+        Map<AgeGroup, Map<Integer, AgeGroupRecord>> ageGroupToCourseAgeGradeRecord = new HashMap<>();
         resultDao.tableScan(result -> {
-            Map<AgeGroup, AgeGroupRecord> courseToAgeGradeRecord = courseToAgeGroupToAgeGradeRecord
-                    .computeIfAbsent(result.courseId, courseId -> new HashMap<>());
-            AgeGroupRecord ageGroupRecord = courseToAgeGradeRecord.computeIfAbsent(result.ageGroup, ageGroup -> new AgeGroupRecord());
-
-            ageGroupRecord.maybeAdd(result);
+            {
+                Map<AgeGroup, AgeGroupRecord> ageGroupToAgeGradeRecord = courseToAgeGroupToAgeGradeRecord
+                        .computeIfAbsent(result.courseId, courseId -> new HashMap<>());
+                AgeGroupRecord ageGroupRecord = ageGroupToAgeGradeRecord.computeIfAbsent(result.ageGroup, ageGroup -> new AgeGroupRecord());
+                ageGroupRecord.maybeAdd(result);
+            }
+            {
+                Map<Integer, AgeGroupRecord> courseToAgeGroupRecord = ageGroupToCourseAgeGradeRecord
+                        .computeIfAbsent(result.ageGroup, ageGroup -> new HashMap<>());
+                AgeGroupRecord ageGroupRecord = courseToAgeGroupRecord.computeIfAbsent(result.courseId, courseId -> new AgeGroupRecord());
+                ageGroupRecord.maybeAdd(result);
+            }
         });
 
         try (HtmlWriter writer = HtmlWriter.newInstance(date, "speed_stats"))
@@ -91,12 +99,13 @@ public class SpeedStats
                     Course course = courseRepository.getCourse(courseId);
                     if (course != null)
                     {
-                        try (CollapsableTitleHtmlWriter collapse2 = new CollapsableTitleHtmlWriter(writer.writer, course.longName, 2, 90.0))
+                        try (CollapsableTitleHtmlWriter collapse2 = new CollapsableTitleHtmlWriter(
+                                writer.writer, course.longName, 2, 95.0))
                         {
-                            for (Map.Entry<AgeGroup, AgeGroupRecord> e : ageGroupToAgeGroupRecord.entrySet())
+                            for(AgeGroup ageGroup : AgeGroup.values())
                             {
-                                AgeGroup ageGroup = e.getKey();
-                                AgeGroupRecord ageGroupRecord = e.getValue();
+                                AgeGroupRecord ageGroupRecord = ageGroupToAgeGroupRecord.get(ageGroup);
+                                if(ageGroupRecord == null) continue;
 
                                 try (AgeGroupHtmlWriter ageGroupWriter = new AgeGroupHtmlWriter(writer.writer, urlGenerator, ageGroup))
                                 {
