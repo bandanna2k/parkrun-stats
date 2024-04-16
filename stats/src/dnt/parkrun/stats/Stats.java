@@ -54,10 +54,10 @@ public class Stats
         return 0;
     };
     private final CourseRepository courseRepository;
+
     /*
             02/03/2024
      */
-
     public static void main(String[] args) throws SQLException, IOException, XMLStreamException
     {
         Date date = args.length == 0 ? getParkrunDay(new Date()) : DateConverter.parseWebsiteDate(args[0]);
@@ -108,7 +108,6 @@ public class Stats
         lastWeek = new Date();
         lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
 
-//        this.dataSource = dataSource;
         this.statsDataSource = statsDataSource;
         this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(statsDataSource, this.date);
         this.acsDao = AthleteCourseSummaryDao.getInstance(statsDataSource, this.date);
@@ -163,7 +162,8 @@ public class Stats
                     "['" + startDates.stream().map(sd -> courseRepository.getCourse(sd.course.courseId).longName).collect(Collectors.joining("','")) + "']" +
                     "]";
             writer.writer.writeStartElement("script");
-            writer.writer.writeCharacters("const courses = " + startDatesJs + ";");
+            writer.writer.writeCharacters("\nconst courses = " + startDatesJs + ";");
+            writer.writer.writeCharacters("\nconst stopDates = " + getStopDates() + ";");
             writer.writer.writeEndElement();
 
             writer.writer.writeCharacters("{{dialog}}");
@@ -234,6 +234,11 @@ public class Stats
             }
         }
         return htmlFileModified;
+    }
+
+    private static String getStopDates()
+    {
+        return "[{'x':1670025600000,'y':1,'name':'Porirua'}]";
     }
 
     private void writeMostVolunteers(HtmlWriter writer) throws XMLStreamException

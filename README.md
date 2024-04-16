@@ -22,10 +22,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Add stop dates as java code
-
-- Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables. ???
-
 - Friends table including at what venues
   - 'Most runs with other athletes' table
 
@@ -33,12 +29,17 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
   - Finish max regionnaire (Needs rethink, harder calculation than thought.)
   - Regionnaire to include stopped events.
 
+- Low priority
+Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables. ???
+
 ## Ideas
 
 - Unique runners at course / Add unique runs for runners / Add unique runs to Most Events???
 
 
 ## Issues Completed
+
+- 16/4/2024 Low priority - Add stop dates as java code
 
 - 16/4/2024 Prove?? Parsers can break half way through. Collate records first then stream records.
 Abandoning. Course event summary invariant is just as likely to catch errors.
