@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.*;
-import static dnt.parkrun.htmlwriter.Top10AtCourseHtmlWriter.Record.COMPARATOR;
 import static dnt.parkrun.region.Region.getNzRegionRunCount;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -454,18 +453,19 @@ public class Stats
                 }
             }
 
-            try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, urlGenerator, "New Zealand"))
+            try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(
+                    writer.writer, urlGenerator, "New Zealand", "Run"))
             {
                 List<AtEvent> top10InRegion = top10Dao.getTop10InRegion();
 
                 assert !top10InRegion.isEmpty() : "WARNING: Top 10 runs in NZ list is empty";
                 for (AtEvent r : top10InRegion)
                 {
-                    top10InRegionHtmlWriter.writeRecord(new Top10InRegionHtmlWriter.Record(r.athlete, r.course.longName, r.count));
+                    top10InRegionHtmlWriter.writeRecord(new Top10InRegionHtmlWriter.Record(r.athlete, r.course.longName, r.count, -1.d));
                 }
             }
 
-            List<Top10AtCourseHtmlWriter.Record> clubDe90Percent = new ArrayList<>();
+            List<Top10InRegionHtmlWriter.Record> clubDe90Percent = new ArrayList<>();
             for (Course course : courses)
             {
                 List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);
@@ -476,14 +476,16 @@ public class Stats
                     double percentage = runCount * 100.0 / courseCount;
                     if(percentage > 90 && runCount > 5)
                     {
-                        clubDe90Percent.add(new Top10AtCourseHtmlWriter.Record(rae.athlete, rae.count, percentage));
+                        clubDe90Percent.add(
+                                new Top10InRegionHtmlWriter.Record(rae.athlete, course.longName, rae.count, percentage));
                     }
                 }
             }
-            clubDe90Percent.sort(COMPARATOR);
-            try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, urlGenerator, "90% Club", "Run"))
+            clubDe90Percent.sort(Top10InRegionHtmlWriter.Record.COMPARATOR);
+            try (Top10InRegionHtmlWriter top10atCourse = new Top10InRegionHtmlWriter(
+                    writer.writer, urlGenerator, "90% Club", "Run", true))
             {
-                for (Top10AtCourseHtmlWriter.Record record : clubDe90Percent)
+                for (Top10InRegionHtmlWriter.Record record : clubDe90Percent)
                 {
                     top10atCourse.writeRecord(record);
                 }
@@ -528,7 +530,8 @@ public class Stats
                 }
             }
 
-            try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(writer.writer, urlGenerator,"New Zealand"))
+            try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(
+                    writer.writer, urlGenerator,"New Zealand", "Volunteer"))
             {
                 List<Object[]> top10VolunteersInRegion = top10VolunteerDao.getTop10VolunteersInRegion();
                 assert !top10VolunteersInRegion.isEmpty() : "WARNING: Top 10 runs in NZ list is empty";
@@ -538,11 +541,12 @@ public class Stats
                     Athlete athlete = (Athlete)record[0];
                     Course course = courseRepository.getCourse((int) record[1]);
                     int countOfVolunteersAtCourse = (int)record[2];
-                    top10InRegionHtmlWriter.writeRecord(new Top10InRegionHtmlWriter.Record(athlete, course.longName, countOfVolunteersAtCourse));
+                    top10InRegionHtmlWriter.writeRecord(
+                            new Top10InRegionHtmlWriter.Record(athlete, course.longName, countOfVolunteersAtCourse, -1d));
                 }
             }
 
-            List<Top10AtCourseHtmlWriter.Record> clubDe90Percent = new ArrayList<>();
+            List<Top10InRegionHtmlWriter.Record> clubDe90Percent = new ArrayList<>();
             for (Course course : courses)
             {
                 List<VolunteersAtEvent> top10 = top10VolunteersDao.getTop10VolunteersAtEvent(course.courseId);
@@ -553,14 +557,15 @@ public class Stats
                     double percentage = runCount * 100.0 / courseCount;
                     if(percentage > 90 && runCount > 5)
                     {
-                        clubDe90Percent.add(new Top10AtCourseHtmlWriter.Record(rae.athlete, rae.count, percentage));
+                        clubDe90Percent.add(new Top10InRegionHtmlWriter.Record(rae.athlete, course.longName, rae.count, percentage));
                     }
                 }
             }
-            clubDe90Percent.sort(COMPARATOR);
-            try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, urlGenerator, "90% Club", "Volunteer"))
+            clubDe90Percent.sort(Top10InRegionHtmlWriter.Record.COMPARATOR);
+            try (Top10InRegionHtmlWriter top10atCourse = new Top10InRegionHtmlWriter(
+                    writer.writer, urlGenerator, "90% Club", "Volunteer", true))
             {
-                for (Top10AtCourseHtmlWriter.Record record : clubDe90Percent)
+                for (Top10InRegionHtmlWriter.Record record : clubDe90Percent)
                 {
                     top10atCourse.writeRecord(record);
                 }

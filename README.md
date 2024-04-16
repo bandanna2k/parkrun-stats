@@ -22,10 +22,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Add course name to 90% club
-
-- Top 10 At Event comparator UT
-
 - Add stop dates as java code
 
 - Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables. ???
