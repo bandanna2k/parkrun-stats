@@ -5,6 +5,7 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -12,5 +13,7 @@
     <orderEntry type="module" module-name="common" />
     <orderEntry type="module" module-name="pindex" />
     <orderEntry type="library" name="jsoup" level="project" />
+    <orderEntry type="library" scope="TEST" name="junit" level="project" />
+    <orderEntry type="library" scope="TEST" name="assertj.core" level="project" />
   </component>
 </module>
