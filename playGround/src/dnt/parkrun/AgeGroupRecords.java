@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static dnt.parkrun.datastructures.Athlete.NO_ATHLETE;
+
 public class AgeGroupRecords
 {
     public static void main(String[] args) throws SQLException
@@ -50,12 +52,37 @@ public class AgeGroupRecords
 
     private static class AgeGroupRecord
     {
-        Result resultGold = new Result(0, null, 0, null, null, null, AgeGrade.newInstance(0));
-        Result resultSilver = new Result(0, null, 0, null, null, null, AgeGrade.newInstance(0));
-        Result resultBronze = new Result(0, null, 0, null, null, null, AgeGrade.newInstance(0));
+        private static final Result NO_RESULT = new Result(0, null, 0, NO_ATHLETE, null, null, AgeGrade.newInstance(0));
+        Result resultGold = NO_RESULT;
+        Result resultSilver = NO_RESULT;
+        Result resultBronze = NO_RESULT;
 
         public void maybeAdd(Result result)
         {
+            if(result.athlete.athleteId == resultGold.athlete.athleteId)
+            {
+                if(result.ageGrade.ageGrade > resultGold.ageGrade.ageGrade)
+                {
+                    resultGold = result;
+                }
+                return;
+            }
+            if(result.athlete.athleteId == resultSilver.athlete.athleteId)
+            {
+                if(result.ageGrade.ageGrade > resultSilver.ageGrade.ageGrade)
+                {
+                    resultSilver = result;
+                }
+                return;
+            }
+            if(result.athlete.athleteId == resultBronze.athlete.athleteId)
+            {
+                if(result.ageGrade.ageGrade > resultBronze.ageGrade.ageGrade)
+                {
+                    resultBronze = result;
+                }
+                return;
+            }
             if(result.ageGrade.ageGrade > resultGold.ageGrade.ageGrade)
             {
                 resultBronze = resultSilver;
