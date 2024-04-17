@@ -1,0 +1,97 @@
+@media screen and (max-width: 600px) {
+    table {
+        font-size:12px;
+    }
+    summary {
+        font-size:20px;
+        padding:8px;
+        text-align:center;
+    }
+    .dt {
+        display:none;
+    }
+}
+@media screen and (min-width: 600px) {
+    table {
+        font-size:16px;
+    }
+}
+.close p {
+    text-align:left;
+}
+body {
+    font-family:'Arial';
+    background:#f2f2f2;
+    text-align:center;
+}
+table {
+    border-spacing: 1;
+    border-collapse: collapse;
+    background:white;
+    border-radius:6px;
+    overflow:hidden;
+    max-width:800px;
+    margin:0 auto;
+    position:relative;
+}
+summary {
+    font-size:24px;
+    padding:10px;
+    text-align:center;
+}
+table a {
+    color:inherit;
+    text-decoration:none;
+}
+td,th {
+    padding:8px;
+    text-align:center;
+}
+.bold1 td:nth-child(1) { font-weight:700; }
+.bold2 td:nth-child(2) { font-weight:700; }
+.bold3 td:nth-child(3) { font-weight:700; }
+.left1 td:nth-child(1) { text-align:left; }
+.left2 td:nth-child(2) { text-align:left; }
+.left3 td:nth-child(3) { text-align:left; }
+
+thead tr {
+    height:60px;
+    color:#fff;
+    background:#3e3e77;
+}
+tbody tr {
+    height:40px; border-bottom:1px solid #E3F1D5;
+}
+
+.collapse {
+    background-color: #a2de96;
+    border: none;
+    outline: none;
+    font-size: 25px;
+}
+.active,
+.collapse:hover {
+    background-color: #438a5e;
+}
+.text {
+    background-color: #e1ffc2;
+    display: none;
+    font-size: 20px;
+}
+abbr[title] {
+    text-decoration: none;
+}
+.small-text {
+    margin-top: 5px;
+    color: #888;
+    font-size: 12px;
+    font-weight: 400;
+}
+dialog {
+    width: 95%;
+    height: 90%;
+    border: solid gray 2px;
+}
+.click-me:hover {
+  cursor: pointer;
+}

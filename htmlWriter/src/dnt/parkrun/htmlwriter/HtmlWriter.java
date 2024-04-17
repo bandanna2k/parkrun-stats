@@ -13,8 +13,9 @@ public class HtmlWriter extends BaseWriter
 {
     private final Date date;
     private final File file;
+    private final String cssFilename;
 
-    public static HtmlWriter newInstance(Date date, String prefix) throws IOException, XMLStreamException
+    public static HtmlWriter newInstance(Date date, String prefix, String cssFile) throws IOException, XMLStreamException
     {
         File file = new File(prefix + "_" + DateConverter.formatDateForDbTable(date) + ".html");
 
@@ -22,14 +23,15 @@ public class HtmlWriter extends BaseWriter
                 .newInstance()
                 .createXMLStreamWriter(
                         new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
-        return new HtmlWriter(writer, date, file);
+        return new HtmlWriter(writer, date, file, cssFile);
     }
 
-    private HtmlWriter(XMLStreamWriter writer, Date date, File file) throws XMLStreamException, IOException
+    private HtmlWriter(XMLStreamWriter writer, Date date, File file, String cssFilename) throws XMLStreamException, IOException
     {
         super(writer);
         this.date = date;
         this.file = file;
+        this.cssFilename = cssFilename;
 
         startHtml();
     }
@@ -46,7 +48,7 @@ public class HtmlWriter extends BaseWriter
 
         writer.writeStartElement("style\n");
         try(BufferedReader reader1 = new BufferedReader(new InputStreamReader(
-                this.getClass().getResourceAsStream("/css/most_events.css"))))
+                this.getClass().getResourceAsStream("/css/" + cssFilename))))
         {
             String line1;
             while(null != (line1 = reader1.readLine()))

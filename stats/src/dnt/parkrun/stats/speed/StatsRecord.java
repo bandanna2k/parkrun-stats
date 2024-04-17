@@ -1,6 +1,7 @@
 package dnt.parkrun.stats.speed;
 
 import dnt.parkrun.datastructures.AgeGrade;
+import dnt.parkrun.datastructures.AgeGroup;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Time;
 
@@ -12,6 +13,7 @@ public class StatsRecord
     private Time time;
     private AgeGrade ageGrade;
     private Date date;
+    private AgeGroup ageGroup;
 
     StatsRecord athlete(Athlete athlete)
     {
@@ -40,4 +42,11 @@ public class StatsRecord
         return this;
     }
     public Date date() { return date; }
+
+    public StatsRecord ageGroup(AgeGroup ageGroup)
+    {
+        this.ageGroup = ageGroup;
+        return this;
+    }
+    public AgeGroup ageGroup() { return ageGroup; }
 }

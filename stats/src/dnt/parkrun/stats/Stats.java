@@ -154,7 +154,7 @@ public class Stats
 
         downloadAthleteCourseSummaries(differentEventRecords);
 
-        try (HtmlWriter writer = HtmlWriter.newInstance(date, "stats"))
+        try (HtmlWriter writer = HtmlWriter.newInstance(date, "stats", "most_events.css"))
         {
             String startDatesJs = "[" +
                     "[" + startDates.stream().map(sd -> String.valueOf(sd.date.getTime() / 1000)).collect(Collectors.joining(",")) + "]," +

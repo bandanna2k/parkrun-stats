@@ -82,6 +82,6 @@ public class AgeGrade
 
     public String toHtmlString()
     {
-        return String.format("%.1f", ageGrade);
+        return String.format("%.2f %%", ageGrade);
     }
 }

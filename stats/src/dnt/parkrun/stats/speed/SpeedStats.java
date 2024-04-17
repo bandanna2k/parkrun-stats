@@ -88,30 +88,32 @@ public class SpeedStats
             }
         });
 
-        try (HtmlWriter writer = HtmlWriter.newInstance(date, "speed_stats"))
+        try (HtmlWriter writer = HtmlWriter.newInstance(date, "speed_stats", "speed_stats.css"))
         {
-            try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter(writer.writer, "Age Group Records", 1))
+            try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter(
+                    writer.writer, "Age Category Records "))
             {
                 for (Map.Entry<Integer, Map<AgeGroup, AgeGroupRecord>> entry : courseToAgeGroupToAgeGradeRecord.entrySet())
                 {
                     int courseId = entry.getKey();
                     Map<AgeGroup, AgeGroupRecord> ageGroupToAgeGroupRecord = entry.getValue();
+
                     Course course = courseRepository.getCourse(courseId);
                     if (course != null)
                     {
-                        try (CollapsableTitleHtmlWriter collapse2 = new CollapsableTitleHtmlWriter(
+                        try(CollapsableTitleHtmlWriter collapse2 = new CollapsableTitleHtmlWriter(
                                 writer.writer, course.longName, 2, 95.0))
                         {
-                            for(AgeGroup ageGroup : AgeGroup.values())
+                            try (AgeGroupRecordsHtmlWriter ageGroupRecordsWriter = new AgeGroupRecordsHtmlWriter(writer.writer, urlGenerator))
                             {
-                                AgeGroupRecord ageGroupRecord = ageGroupToAgeGroupRecord.get(ageGroup);
-                                if(ageGroupRecord == null) continue;
-
-                                try (AgeGroupHtmlWriter ageGroupWriter = new AgeGroupHtmlWriter(writer.writer, urlGenerator, ageGroup))
+                                for (AgeGroup ageGroup : AgeGroup.values())
                                 {
-                                    writeAgeGroupRecord(ageGroupWriter, ageGroupRecord.resultGold);
-                                    writeAgeGroupRecord(ageGroupWriter, ageGroupRecord.resultSilver);
-                                    writeAgeGroupRecord(ageGroupWriter, ageGroupRecord.resultBronze);
+                                    AgeGroupRecord ageGroupRecord = ageGroupToAgeGroupRecord.get(ageGroup);
+                                    if (ageGroupRecord == null) continue;
+
+                                    writeAgeGroupRecord(ageGroupRecordsWriter, ageGroupRecord.resultGold);
+//                                writeAgeGroupRecord(ageGroupRecordsWriter, ageGroupRecord.resultSilver);
+//                                writeAgeGroupRecord(ageGroupRecordsWriter, ageGroupRecord.resultBronze);
                                 }
                             }
                         }
@@ -122,7 +124,7 @@ public class SpeedStats
         }
     }
 
-    private void writeAgeGroupRecord(AgeGroupHtmlWriter writer, Result result) throws XMLStreamException
+    private void writeAgeGroupRecord(AgeGroupRecordsHtmlWriter writer, Result result) throws XMLStreamException
     {
         if(result.time == null) return; // TODO
 
@@ -130,6 +132,7 @@ public class SpeedStats
                 .athlete(result.athlete)
                 .date(result.date)
                 .time(result.time)
+                .ageGroup(result.ageGroup)
                 .ageGrade(result.ageGrade);
         writer.write(statsRecord);
     }
