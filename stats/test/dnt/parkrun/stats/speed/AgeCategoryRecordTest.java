@@ -4,6 +4,7 @@ import dnt.parkrun.datastructures.*;
 import org.junit.Test;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,12 +48,10 @@ Set silver, same athlete: Result{courseId=40, date=2024-04-13, position=3, athle
         addByAgeGrade(record, "Josie BROUGH", 8501974, 71.42);
         addByAgeGrade(record, "Josie BROUGH", 8501974, 72.17);
         System.out.println();
-        System.out.println(record.recordGold.result());
-        System.out.println(record.recordSilver.result());
-        System.out.println(record.recordBronze.result());
-        assertThat(record.recordGold.result().athlete.athleteId).isEqualTo(8501974);
-        assertThat(record.recordSilver.result().athlete.athleteId).isEqualTo(320068);
-        assertThat(record.recordBronze.result().athlete.athleteId).isEqualTo(6851029);
+        Arrays.stream(record.records).forEach(r -> System.out.println(r.result()));
+        assertThat(record.records[0].result().athlete.athleteId).isEqualTo(8501974);
+        assertThat(record.records[1].result().athlete.athleteId).isEqualTo(320068);
+        assertThat(record.records[2].result().athlete.athleteId).isEqualTo(6851029);
     }
 
     private void addByAgeGrade(AgeCategoryRecord record, String name, int athleteId, double ageGrade)

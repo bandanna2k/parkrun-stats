@@ -108,7 +108,7 @@ public class SpeedStats
                             AgeCategoryRecord ageCategoryRecord = ageGroupToAgeGroupRecord.get(ageCategory);
                             if (ageCategoryRecord == null) continue;
 
-                            writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.recordGold, course);
+                            writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.records[0], course);
 //                                writeAgeGroupRecord(ageGroupRecordsWriter, ageGroupRecord.resultSilver);
 //                                writeAgeGroupRecord(ageGroupRecordsWriter, ageGroupRecord.resultBronze);
                         }
@@ -157,9 +157,9 @@ public class SpeedStats
                         {
                             try (AgeCategoryRecordsHtmlWriter ageGroupRecordsWriter = new AgeCategoryRecordsHtmlWriter(writer.writer, urlGenerator))
                             {
-                                writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.recordGold, course);
-                                writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.recordSilver, course);
-                                writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.recordBronze, course);
+                                writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.records[0], course);
+                                writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.records[1], course);
+                                writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.records[2], course);
                             }
                         }
                     }
