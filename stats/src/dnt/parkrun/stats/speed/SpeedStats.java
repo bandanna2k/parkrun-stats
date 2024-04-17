@@ -81,16 +81,20 @@ public class SpeedStats
 
     private void writeAgeCategoryRecords(HtmlWriter writer) throws XMLStreamException
     {
+     // I think we are doing this twice
         Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord = new HashMap<>();
         resultDao.tableScanResultAndEventNumber((result, eventNumber) -> {
-            Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGradeRecord = courseToAgeGroupToAgeGradeRecord
-                    .computeIfAbsent(result.courseId, courseId -> new HashMap<>());
-            AgeCategoryRecord ageCategoryRecord = ageGroupToAgeGradeRecord.computeIfAbsent(result.ageCategory, ageGroup -> new AgeCategoryRecord());
-            ageCategoryRecord.maybeAddByTime(new StatsRecord().result(result).eventNumber(eventNumber));
+           // if(result.courseId == 2)
+            {
+                Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGradeRecord = courseToAgeGroupToAgeGradeRecord
+                        .computeIfAbsent(result.courseId, courseId -> new HashMap<>());
+                AgeCategoryRecord ageCategoryRecord = ageGroupToAgeGradeRecord.computeIfAbsent(result.ageCategory, ageGroup -> new AgeCategoryRecord());
+                ageCategoryRecord.maybeAddByTime(new StatsRecord().result(result).eventNumber(eventNumber));
+            }
         });
 
         try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter(
-                writer.writer, "Age Category Records "))
+                writer.writer, "Age Category Records (Time)"))
         {
             List<Course> sortedCourses = new ArrayList<>();
             courseToAgeGroupToAgeGradeRecord.keySet().forEach(courseId -> {
@@ -126,7 +130,8 @@ public class SpeedStats
     {
         Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord = new HashMap<>();
         resultDao.tableScanResultAndEventNumber((result, eventNumber) -> {
-//            if(result.courseId == 40 && result.ageCategory == AgeCategory.SW30_34)
+            //if(result.courseId == 40 && result.ageCategory == AgeCategory.SW30_34)
+            //if(result.courseId == 2)
             {
                 Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGradeRecord = courseToAgeGroupToAgeGradeRecord
                         .computeIfAbsent(result.courseId, courseId -> new HashMap<>());
@@ -136,7 +141,7 @@ public class SpeedStats
         });
 
         try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter(
-                writer.writer, "Age Grade Records "))
+                writer.writer, "Age Grade Records"))
         {
             List<Course> sortedCourses = new ArrayList<>();
             courseToAgeGroupToAgeGradeRecord.keySet().forEach(courseId -> {
@@ -155,6 +160,16 @@ public class SpeedStats
                     {
                         AgeCategoryRecord ageCategoryRecord = ageGroupToAgeGroupRecord.get(ageCategory);
                         if (ageCategoryRecord == null) continue;
+
+                        List<StatsRecord> records = new ArrayList<>();
+                        for (StatsRecord record : ageCategoryRecord.records)
+                        {
+                            if(record.result().date == null) continue; // TODO: Need a better way of telling that a result is null.
+                            if(record.result().ageCategory == AgeCategory.UNKNOWN) continue;
+
+                            records.add(record);
+                        }
+                        if(records.isEmpty()) continue;
 
                         try (CollapsableTitleHtmlWriter collapse3 = new CollapsableTitleHtmlWriter(
                                 writer.writer, ageCategory.textOnWebpage, 3, 95.0))
