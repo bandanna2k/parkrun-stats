@@ -3,21 +3,18 @@ package dnt.parkrun.database;
 import dnt.parkrun.datastructures.*;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class ResultDao
+public class ResultDao extends BaseDao
 {
-    private final NamedParameterJdbcOperations jdbc;
-
     public ResultDao(DataSource dataSource)
     {
-        jdbc = new NamedParameterJdbcTemplate(dataSource);
+        super(dataSource);
     }
 
     @Deprecated // Testing only. Do not use. Results too large
@@ -115,6 +112,34 @@ public class ResultDao
                     rs.getString("age_group") == null ? null : AgeGroup.from(rs.getInt("age_group")),
                     rs.getString("age_grade") == null ? null : AgeGrade.newInstanceFromDb(rs.getInt("age_grade")));
             consumer.accept(result);
+            return null;
+        });
+    }
+    public void tableScanResultAndEventNumber(BiConsumer<Result, Integer> consumer)
+    {
+        String sql = STR."""
+                select
+                    r.course_id, r.date, r.position, r.time_seconds, r.age_group, r.age_grade,
+                    a.name, a.athlete_id,
+                    ces.event_number
+                from result r
+                join \{athleteTable()} a using (athlete_id)
+                join \{courseEventSummaryTable()} ces on r.date = ces.date and r.course_id = ces.course_id
+                """;
+        jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
+        {
+            Result result = new Result(
+                    rs.getInt("course_id"),
+                    rs.getDate("date"),
+                    rs.getInt("position"),
+                    Athlete.from(
+                            rs.getString("name"),
+                            rs.getInt("athlete_id")
+                    ),
+                    Time.from(rs.getInt("time_seconds")),
+                    rs.getString("age_group") == null ? null : AgeGroup.from(rs.getInt("age_group")),
+                    rs.getString("age_grade") == null ? null : AgeGrade.newInstanceFromDb(rs.getInt("age_grade")));
+            consumer.accept(result, rs.getInt("event_number"));
             return null;
         });
     }

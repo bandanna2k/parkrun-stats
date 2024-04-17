@@ -6,6 +6,7 @@ public class Time
 {
     public static final int NO_TIME_SECONDS = 0;
     public static final Time NO_TIME = new Time(0, 0, 0);
+    public static final Time MAX_TIME = new Time(99, 59, 59);
 
     public final int hours;
     public final int mins;

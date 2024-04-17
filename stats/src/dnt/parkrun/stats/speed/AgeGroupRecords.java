@@ -35,7 +35,7 @@ public class AgeGroupRecords
             Map<Integer, AgeGroupRecord> courseToAgeGradeRecord = ageGroupToCourseToAgeGradeRecord.computeIfAbsent(result.ageGroup, ageGroup -> new HashMap<>());
             AgeGroupRecord ageGroupRecord = courseToAgeGradeRecord.computeIfAbsent(result.courseId, courseId -> new AgeGroupRecord());
 
-            ageGroupRecord.maybeAdd(result);
+            ageGroupRecord.maybeAddByTime(new StatsRecord().result(result));
         });
 
         ageGroupToCourseToAgeGradeRecord.forEach((ageGroup, courseToAgeGradeRecord) ->
@@ -43,9 +43,9 @@ public class AgeGroupRecords
         {
             Course course = courseRepository.getCourse(key);
             System.out.println(ageGroup + " " + course);
-            System.out.println(record.resultGold);
-            System.out.println(record.resultSilver);
-            System.out.println(record.resultBronze);
+            System.out.println(record.recordGold);
+            System.out.println(record.recordSilver);
+            System.out.println(record.recordBronze);
             System.out.println();
         }));
     }

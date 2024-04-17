@@ -2,6 +2,7 @@ package dnt.parkrun.stats.speed;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
+import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.htmlwriter.BaseWriter;
 
 import javax.xml.stream.XMLStreamException;
@@ -35,8 +36,8 @@ public class AgeGroupRecordsHtmlWriter extends BaseWriter implements Closeable
         writer.writeCharacters("Age Group");
         endElement("th");
 
-        // Date
-        startElement("th");
+        // Date (desktop)
+        startElement("th", "class", "dt");
         writer.writeCharacters("Date");
         endElement("th");
 
@@ -81,37 +82,43 @@ public class AgeGroupRecordsHtmlWriter extends BaseWriter implements Closeable
         }
     }
 
-    public void write(StatsRecord record) throws XMLStreamException
+    public void write(StatsRecord statsRecord) throws XMLStreamException
     {
+        Result result = statsRecord.result();
+
         writer.writeStartElement("tr");
 
         // Date
         startElement("td");
-        writer.writeCharacters(record.ageGroup().textOnWebpage);
+        writer.writeCharacters(result.ageGroup.textOnWebpage);
         endElement("td");
 
         // Date
-        startElement("td");
-        writer.writeCharacters(DateConverter.formatDateForHtml(record.date()));
+        startElement("td", "class", "dt");
+        startElement("a", "target", statsRecord.course().name + statsRecord.eventNumber(),
+                "href", urlGenerator.generateCourseEventUrl(statsRecord.course().name, statsRecord.eventNumber()).toString());
+        writer.writeCharacters(DateConverter.formatDateForHtml(result.date));
+        endElement("a");
         endElement("td");
+
 
         // Name
         startElement("td");
         writer.writeStartElement("a");
-        writer.writeAttribute("href", urlGenerator.generateAthleteEventSummaryUrl(record.athlete().athleteId).toString());
-        writer.writeAttribute("target", String.valueOf(record.athlete().name));
-        writer.writeCharacters(record.athlete().name);
+        writer.writeAttribute("href", urlGenerator.generateAthleteEventSummaryUrl(result.athlete.athleteId).toString());
+        writer.writeAttribute("target", String.valueOf(result.athlete.name));
+        writer.writeCharacters(result.athlete.name);
         endElement("a");
         endElement("td");
 
         // Time
         startElement("td");
-        writer.writeCharacters(record.time().toHtmlString());
+        writer.writeCharacters(result.time.toHtmlString());
         endElement("td");
 
         // Age grade (desktop)
         startElement("td", "class", "dt");
-        writer.writeCharacters(record.ageGrade().toHtmlString());
+        writer.writeCharacters(result.ageGrade.toHtmlString());
         endElement("td");
 
         endElement("tr");

@@ -8,7 +8,6 @@ import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.datastructures.AgeGroup;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
-import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.htmlwriter.CollapsableTitleHtmlWriter;
 import dnt.parkrun.htmlwriter.HtmlWriter;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -73,18 +72,18 @@ public class SpeedStats
     {
         Map<Integer, Map<AgeGroup, AgeGroupRecord>> courseToAgeGroupToAgeGradeRecord = new HashMap<>();
         Map<AgeGroup, Map<Integer, AgeGroupRecord>> ageGroupToCourseAgeGradeRecord = new HashMap<>();
-        resultDao.tableScan(result -> {
+        resultDao.tableScanResultAndEventNumber((result, eventNumber) -> {
             {
                 Map<AgeGroup, AgeGroupRecord> ageGroupToAgeGradeRecord = courseToAgeGroupToAgeGradeRecord
                         .computeIfAbsent(result.courseId, courseId -> new HashMap<>());
                 AgeGroupRecord ageGroupRecord = ageGroupToAgeGradeRecord.computeIfAbsent(result.ageGroup, ageGroup -> new AgeGroupRecord());
-                ageGroupRecord.maybeAdd(result);
+                ageGroupRecord.maybeAddByTime(new StatsRecord().result(result).eventNumber(eventNumber));
             }
             {
                 Map<Integer, AgeGroupRecord> courseToAgeGroupRecord = ageGroupToCourseAgeGradeRecord
                         .computeIfAbsent(result.ageGroup, ageGroup -> new HashMap<>());
                 AgeGroupRecord ageGroupRecord = courseToAgeGroupRecord.computeIfAbsent(result.courseId, courseId -> new AgeGroupRecord());
-                ageGroupRecord.maybeAdd(result);
+                ageGroupRecord.maybeAddByTime(new StatsRecord().result(result).eventNumber(eventNumber));
             }
         });
 
@@ -111,7 +110,7 @@ public class SpeedStats
                                     AgeGroupRecord ageGroupRecord = ageGroupToAgeGroupRecord.get(ageGroup);
                                     if (ageGroupRecord == null) continue;
 
-                                    writeAgeGroupRecord(ageGroupRecordsWriter, ageGroupRecord.resultGold);
+                                    writeAgeGroupRecord(ageGroupRecordsWriter, ageGroupRecord.recordGold, course);
 //                                writeAgeGroupRecord(ageGroupRecordsWriter, ageGroupRecord.resultSilver);
 //                                writeAgeGroupRecord(ageGroupRecordsWriter, ageGroupRecord.resultBronze);
                                 }
@@ -124,17 +123,14 @@ public class SpeedStats
         }
     }
 
-    private void writeAgeGroupRecord(AgeGroupRecordsHtmlWriter writer, Result result) throws XMLStreamException
+    private void writeAgeGroupRecord(AgeGroupRecordsHtmlWriter writer, StatsRecord record, Course course) throws XMLStreamException
     {
-        if(result.time == null) return; // TODO
+        if(record.result().date == null) return; // TODO
+        if(record.result().ageGroup == AgeGroup.UNKNOWN) return;
 
-        StatsRecord statsRecord = new StatsRecord()
-                .athlete(result.athlete)
-                .date(result.date)
-                .time(result.time)
-                .ageGroup(result.ageGroup)
-                .ageGrade(result.ageGrade);
-        writer.write(statsRecord);
+        record.course(course);
+
+        writer.write(record);
     }
 
     public static Date getParkrunDay(Date result)

@@ -81,17 +81,6 @@ tbody tr {
 abbr[title] {
     text-decoration: none;
 }
-.small-text {
-    margin-top: 5px;
-    color: #888;
-    font-size: 12px;
-    font-weight: 400;
-}
-dialog {
-    width: 95%;
-    height: 90%;
-    border: solid gray 2px;
-}
 .click-me:hover {
   cursor: pointer;
 }

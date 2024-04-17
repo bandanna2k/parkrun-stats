@@ -1,9 +1,6 @@
 package dnt.parkrun.stats.speed;
 
-import dnt.parkrun.datastructures.AgeGrade;
-import dnt.parkrun.datastructures.AgeGroup;
-import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.Time;
+import dnt.parkrun.datastructures.*;
 
 import java.util.Date;
 
@@ -14,6 +11,11 @@ public class StatsRecord
     private AgeGrade ageGrade;
     private Date date;
     private AgeGroup ageGroup;
+    private Course course;
+    private int eventNumber;
+    private int position;
+    private int courseId;
+    private Result result;
 
     StatsRecord athlete(Athlete athlete)
     {
@@ -49,4 +51,46 @@ public class StatsRecord
         return this;
     }
     public AgeGroup ageGroup() { return ageGroup; }
+
+    public StatsRecord eventNumber(int eventNumber)
+    {
+        this.eventNumber = eventNumber;
+        return this;
+    }
+    public int eventNumber() { return eventNumber; }
+
+    public StatsRecord course(Course course)
+    {
+        this.course = course;
+        return this;
+    }
+    public Course course() { return course; }
+
+    public StatsRecord position(int position)
+    {
+        this.position = position;
+        return this;
+    }
+    public int position() { return position; }
+
+    public StatsRecord courseId(int courseId)
+    {
+        this.courseId = courseId;
+        return this;
+    }
+    public int courseId() { return courseId; }
+
+    public StatsRecord result(Result result)
+    {
+        this.result = result;
+//        time(result.time);
+//        date(result.date);
+//        ageGrade(result.ageGrade);
+//        ageGroup(result.ageGroup);
+//        athlete(result.athlete);
+//        courseId(result.courseId);
+//        position(result.position);
+        return this;
+    }
+    public Result result() { return result; }
 }
