@@ -11,18 +11,30 @@ import java.io.Closeable;
 
 public class AgeCategoryRecordsHtmlWriter extends BaseWriter implements Closeable
 {
+    enum Type
+    {
+        AGE_CATEGORY_BY_TIME,
+        AGE_GRADE,
+    }
+
+    private final Type type;
     private final UrlGenerator urlGenerator;
 
-    public AgeCategoryRecordsHtmlWriter(XMLStreamWriter writer, UrlGenerator urlGenerator) throws XMLStreamException
+    public AgeCategoryRecordsHtmlWriter(XMLStreamWriter writer, UrlGenerator urlGenerator, Type type) throws XMLStreamException
     {
         super(writer);
         this.urlGenerator = urlGenerator;
+        this.type = type;
 
 //        startElement("h2");
 ////        writer.writeCharacters(ageGroup.textOnWebpage);
 //        startElement("h2");
 
-        startElement("table", "class", "sortable bold1 left3");
+        switch (type)
+        {
+            case AGE_CATEGORY_BY_TIME -> startElement("table", "class", "sortable bold3 left3");
+            case AGE_GRADE -> startElement("table", "class", "sortable bold2 left2");
+        }
         writeHeader(writer);
     }
 
@@ -32,10 +44,12 @@ public class AgeCategoryRecordsHtmlWriter extends BaseWriter implements Closeabl
         startElement("tr");
 
         // Age group
-        startElement("th");
-        writer.writeCharacters("Age Group");
-        endElement("th");
-
+        if(type == Type.AGE_CATEGORY_BY_TIME)
+        {
+            startElement("th");
+            writer.writeCharacters("Age Group");
+            endElement("th");
+        }
         // Date (desktop)
         startElement("th", "class", "dt");
         writer.writeCharacters("Date");
@@ -51,8 +65,8 @@ public class AgeCategoryRecordsHtmlWriter extends BaseWriter implements Closeabl
         writer.writeCharacters("Time");
         endElement("th");
 
-        // Age grade (desktop)
-        startElement("th", "class", "dt");
+        // Age grade
+        startElement("th");
         writer.writeCharacters("Age Grade");
         endElement("th");
 
@@ -88,11 +102,13 @@ public class AgeCategoryRecordsHtmlWriter extends BaseWriter implements Closeabl
 
         writer.writeStartElement("tr");
 
-        // Date
-        startElement("td");
-        writer.writeCharacters(result.ageCategory.textOnWebpage);
-        endElement("td");
-
+        // Age Category
+        if(type == Type.AGE_CATEGORY_BY_TIME)
+        {
+            startElement("td");
+            writer.writeCharacters(result.ageCategory.textOnWebpage);
+            endElement("td");
+        }
         // Date
         startElement("td", "class", "dt");
         startElement("a", "target", statsRecord.course().name + statsRecord.eventNumber(),
@@ -100,7 +116,6 @@ public class AgeCategoryRecordsHtmlWriter extends BaseWriter implements Closeabl
         writer.writeCharacters(DateConverter.formatDateForHtml(result.date));
         endElement("a");
         endElement("td");
-
 
         // Name
         startElement("td");
@@ -116,8 +131,8 @@ public class AgeCategoryRecordsHtmlWriter extends BaseWriter implements Closeabl
         writer.writeCharacters(result.time.toHtmlString());
         endElement("td");
 
-        // Age grade (desktop)
-        startElement("td", "class", "dt");
+        // Age grade
+        startElement("td");
         writer.writeCharacters(result.ageGrade.toHtmlString());
         endElement("td");
 

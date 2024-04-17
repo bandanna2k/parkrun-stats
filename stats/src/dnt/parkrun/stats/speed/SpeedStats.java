@@ -21,6 +21,8 @@ import java.util.*;
 
 import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
 import static dnt.parkrun.datastructures.Country.NZ;
+import static dnt.parkrun.stats.speed.AgeCategoryRecordsHtmlWriter.Type.AGE_CATEGORY_BY_TIME;
+import static dnt.parkrun.stats.speed.AgeCategoryRecordsHtmlWriter.Type.AGE_GRADE;
 
 public class SpeedStats
 {
@@ -109,7 +111,7 @@ public class SpeedStats
                 try(CollapsableTitleHtmlWriter collapse2 = new CollapsableTitleHtmlWriter(
                         writer.writer, course.longName, 2, 95.0))
                 {
-                    try (AgeCategoryRecordsHtmlWriter ageGroupRecordsWriter = new AgeCategoryRecordsHtmlWriter(writer.writer, urlGenerator))
+                    try (AgeCategoryRecordsHtmlWriter ageGroupRecordsWriter = new AgeCategoryRecordsHtmlWriter(writer.writer, urlGenerator, AGE_CATEGORY_BY_TIME))
                     {
                         for (AgeCategory ageCategory : AgeCategory.values())
                         {
@@ -178,7 +180,7 @@ public class SpeedStats
                             writer.writer.writeCharacters(course.longName);
                             writer.writer.writeEndElement();
 
-                            try (AgeCategoryRecordsHtmlWriter ageGroupRecordsWriter = new AgeCategoryRecordsHtmlWriter(writer.writer, urlGenerator))
+                            try (AgeCategoryRecordsHtmlWriter ageGroupRecordsWriter = new AgeCategoryRecordsHtmlWriter(writer.writer, urlGenerator, AGE_GRADE))
                             {
                                 for (StatsRecord record : ageCategoryRecord.records)
                                 {
