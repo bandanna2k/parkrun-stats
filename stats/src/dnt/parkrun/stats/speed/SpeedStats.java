@@ -70,6 +70,7 @@ public class SpeedStats
         try (HtmlWriter writer = HtmlWriter.newInstance(date, "speed_stats", "speed_stats.css"))
         {
             writeAgeCategoryRecords(writer);
+            writeAgeGradeRecords(writer);
             return writer.getFile();
         }
     }
@@ -77,20 +78,11 @@ public class SpeedStats
     private void writeAgeCategoryRecords(HtmlWriter writer) throws XMLStreamException
     {
         Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord = new HashMap<>();
-        Map<AgeCategory, Map<Integer, AgeCategoryRecord>> ageGroupToCourseAgeGradeRecord = new HashMap<>();
         resultDao.tableScanResultAndEventNumber((result, eventNumber) -> {
-            {
-                Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGradeRecord = courseToAgeGroupToAgeGradeRecord
-                        .computeIfAbsent(result.courseId, courseId -> new HashMap<>());
-                AgeCategoryRecord ageCategoryRecord = ageGroupToAgeGradeRecord.computeIfAbsent(result.ageCategory, ageGroup -> new AgeCategoryRecord());
-                ageCategoryRecord.maybeAddByTime(new StatsRecord().result(result).eventNumber(eventNumber));
-            }
-            {
-                Map<Integer, AgeCategoryRecord> courseToAgeGroupRecord = ageGroupToCourseAgeGradeRecord
-                        .computeIfAbsent(result.ageCategory, ageGroup -> new HashMap<>());
-                AgeCategoryRecord ageCategoryRecord = courseToAgeGroupRecord.computeIfAbsent(result.courseId, courseId -> new AgeCategoryRecord());
-                ageCategoryRecord.maybeAddByTime(new StatsRecord().result(result).eventNumber(eventNumber));
-            }
+            Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGradeRecord = courseToAgeGroupToAgeGradeRecord
+                    .computeIfAbsent(result.courseId, courseId -> new HashMap<>());
+            AgeCategoryRecord ageCategoryRecord = ageGroupToAgeGradeRecord.computeIfAbsent(result.ageCategory, ageGroup -> new AgeCategoryRecord());
+            ageCategoryRecord.maybeAddByTime(new StatsRecord().result(result).eventNumber(eventNumber));
         });
 
         try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter(
@@ -119,6 +111,56 @@ public class SpeedStats
                             writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.recordGold, course);
 //                                writeAgeGroupRecord(ageGroupRecordsWriter, ageGroupRecord.resultSilver);
 //                                writeAgeGroupRecord(ageGroupRecordsWriter, ageGroupRecord.resultBronze);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void writeAgeGradeRecords(HtmlWriter writer) throws XMLStreamException
+    {
+        Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord = new HashMap<>();
+        resultDao.tableScanResultAndEventNumber((result, eventNumber) -> {
+//            if(result.courseId == 40 && result.ageCategory == AgeCategory.SW30_34)
+            {
+                Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGradeRecord = courseToAgeGroupToAgeGradeRecord
+                        .computeIfAbsent(result.courseId, courseId -> new HashMap<>());
+                AgeCategoryRecord ageCategoryRecord = ageGroupToAgeGradeRecord.computeIfAbsent(result.ageCategory, ageGroup -> new AgeCategoryRecord());
+                ageCategoryRecord.maybeAddByAgeGrade(new StatsRecord().result(result).eventNumber(eventNumber));
+            }
+        });
+
+        try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter(
+                writer.writer, "Age Grade Records "))
+        {
+            List<Course> sortedCourses = new ArrayList<>();
+            courseToAgeGroupToAgeGradeRecord.keySet().forEach(courseId -> {
+                sortedCourses.add(courseRepository.getCourse(courseId));
+            });
+            sortedCourses.sort(Comparator.comparing(s -> s.name));
+
+            for (Course course : sortedCourses)
+            {
+                Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGroupRecord = courseToAgeGroupToAgeGradeRecord.get(course.courseId);
+
+                try(CollapsableTitleHtmlWriter collapse2 = new CollapsableTitleHtmlWriter(
+                        writer.writer, course.longName, 2, 95.0))
+                {
+                    for (AgeCategory ageCategory : AgeCategory.values())
+                    {
+                        AgeCategoryRecord ageCategoryRecord = ageGroupToAgeGroupRecord.get(ageCategory);
+                        if (ageCategoryRecord == null) continue;
+
+                        try (CollapsableTitleHtmlWriter collapse3 = new CollapsableTitleHtmlWriter(
+                                writer.writer, ageCategory.textOnWebpage, 3, 95.0))
+                        {
+                            try (AgeCategoryRecordsHtmlWriter ageGroupRecordsWriter = new AgeCategoryRecordsHtmlWriter(writer.writer, urlGenerator))
+                            {
+                                writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.recordGold, course);
+                                writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.recordSilver, course);
+                                writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.recordBronze, course);
+                            }
                         }
                     }
                 }
