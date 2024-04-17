@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static dnt.parkrun.datastructures.Country.NZ;
-import static dnt.parkrun.stats.Stats.getRunsNeededAndMaxRunsNeeded;
+import static dnt.parkrun.stats.MostEventStats.getRunsNeededAndMaxRunsNeeded;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MaxNeededTest

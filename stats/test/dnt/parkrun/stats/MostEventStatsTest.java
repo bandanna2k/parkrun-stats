@@ -14,20 +14,20 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.util.Date;
 
-public class StatsTest
+public class MostEventStatsTest
 {
     private NamedParameterJdbcTemplate jdbc;
-    private Stats stats;
+    private MostEventStats stats;
 
     @Before
     public void setUp() throws Exception
     {
-        Stats.class.getClassLoader().setClassAssertionStatus(Stats.class.getName(), false);
+        MostEventStats.class.getClassLoader().setClassAssertionStatus(MostEventStats.class.getName(), false);
 
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
 
-        stats = Stats.newInstance(dataSource, dataSource, Date.from(Instant.EPOCH));
+        stats = MostEventStats.newInstance(dataSource, dataSource, Date.from(Instant.EPOCH));
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);
         jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);

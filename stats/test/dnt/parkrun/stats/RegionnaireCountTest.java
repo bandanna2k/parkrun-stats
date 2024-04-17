@@ -10,7 +10,7 @@ import java.util.List;
 
 import static dnt.parkrun.common.DateConverter.parseWebsiteDate;
 import static dnt.parkrun.datastructures.Country.NZ;
-import static dnt.parkrun.stats.Stats.getRegionnaireCount;
+import static dnt.parkrun.stats.MostEventStats.getRegionnaireCount;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RegionnaireCountTest

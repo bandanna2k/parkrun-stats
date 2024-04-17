@@ -38,7 +38,7 @@ import static dnt.parkrun.region.Region.getNzRegionRunCount;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 
-public class Stats
+public class MostEventStats
 {
     public static final int MIN_P_INDEX = 5;
     public static final Comparator<PIndexTableHtmlWriter.Record> PINDEX_RECORD_COMPARATOR = (pIndexRecord1, pIndexRecord2) ->
@@ -67,7 +67,7 @@ public class Stats
         DataSource statsDataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/weekly_stats", "stats", "statsfractalstats");
 
-        Stats stats = Stats.newInstance(dataSource, statsDataSource, date);
+        MostEventStats stats = MostEventStats.newInstance(dataSource, statsDataSource, date);
         File file = stats.generateStats();
 
         new ProcessBuilder("xdg-open", file.getAbsolutePath()).start();
@@ -100,9 +100,9 @@ public class Stats
     private final List<CourseDate> stopDates = new ArrayList<>();
     private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
 
-    private Stats(DataSource dataSource,
-                  DataSource statsDataSource,
-                  Date date)
+    private MostEventStats(DataSource dataSource,
+                           DataSource statsDataSource,
+                           Date date)
     {
         this.date = date;
         lastWeek = new Date();
@@ -124,9 +124,9 @@ public class Stats
         this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
     }
 
-    public static Stats newInstance(DataSource dataSource, DataSource statsDataSource, Date date) throws SQLException
+    public static MostEventStats newInstance(DataSource dataSource, DataSource statsDataSource, Date date) throws SQLException
     {
-        return new Stats(dataSource, statsDataSource, date);
+        return new MostEventStats(dataSource, statsDataSource, date);
     }
 
     public File generateStats() throws IOException, XMLStreamException
