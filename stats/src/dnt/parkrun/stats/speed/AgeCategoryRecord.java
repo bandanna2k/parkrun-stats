@@ -14,7 +14,7 @@ public class AgeCategoryRecord
     int GOLD = 0;
     int SILVER = 1;
     int BRONZE = 2;
-    StatsRecord[] records = getNullRecords(3);
+    StatsRecord[] records = getNullRecords(10);
 
     private StatsRecord[] getNullRecords(int count)
     {
@@ -32,57 +32,39 @@ public class AgeCategoryRecord
         {
             if(statsRecord.result().time.getTotalSeconds() == Time.NO_TIME.getTotalSeconds()) return;
 
-            Result result = statsRecord.result();
-            if (result.athlete.athleteId == records[BRONZE].result().athlete.athleteId)
+            // Sorry for the complexity. Hence the invariant.
+            // To understand this algorithm, look at the GOLD/SILVER/BRONZE implementation first.
+            for (int i = records.length - 1; i >= 0 ; i--)
             {
-                if (result.time.getTotalSeconds() > records[BRONZE].result().time.getTotalSeconds())
+                if (statsRecord.result().athlete.athleteId == records[i].result().athlete.athleteId)
                 {
-                    records[BRONZE] = new StatsRecord().result(NO_RESULT);
+                    if (statsRecord.result().time.getTotalSeconds() < records[i].result().time.getTotalSeconds())
+                    {
+                        int j;
+                        for (j = i; j < records.length - 1; j++)
+                        {
+                            records[j] = records[j + 1];
+                        }
+                        records[j] = new StatsRecord().result(NO_RESULT);
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
-                else
+            }
+
+            for (int i = 0; i < records.length; i++)
+            {
+                if (statsRecord.result().time.getTotalSeconds() < records[i].result().time.getTotalSeconds())
                 {
+                    for (int j = records.length - 1; j > i; j--)
+                    {
+                        records[j] = records[j-1];
+                    }
+                    records[i] = statsRecord;
                     return;
                 }
-            }
-            else if (result.athlete.athleteId == records[SILVER].result().athlete.athleteId)
-            {
-                if (result.time.getTotalSeconds() > records[SILVER].result().time.getTotalSeconds())
-                {
-                    records[SILVER] = records[BRONZE];
-                    records[BRONZE] = new StatsRecord().result(NO_RESULT);
-                }
-                else
-                {
-                    return;
-                }
-            }
-            else if (result.athlete.athleteId == records[GOLD].result().athlete.athleteId)
-            {
-                if (result.time.getTotalSeconds() > records[GOLD].result().time.getTotalSeconds())
-                {
-                    records[GOLD] = records[SILVER];
-                    records[SILVER] = records[BRONZE];
-                    records[BRONZE] = new StatsRecord().result(NO_RESULT);
-                }
-                else
-                {
-                    return;
-                }
-            }
-            if (result.time.getTotalSeconds() > records[GOLD].result().time.getTotalSeconds())
-            {
-                records[BRONZE] = records[SILVER];
-                records[SILVER] = records[GOLD];
-                records[GOLD] = statsRecord;
-            }
-            else if (result.time.getTotalSeconds() > records[SILVER].result().time.getTotalSeconds())
-            {
-                records[BRONZE] = records[SILVER];
-                records[SILVER] = statsRecord;
-            }
-            else if (result.time.getTotalSeconds() > records[BRONZE].result().time.getTotalSeconds())
-            {
-                records[BRONZE] = statsRecord;
             }
         }
         finally
@@ -105,58 +87,39 @@ public class AgeCategoryRecord
         {
             if (statsRecord.result().time.getTotalSeconds() == Time.NO_TIME.getTotalSeconds()) return;
 
-            Result result = statsRecord.result();
+            // Sorry for the complexity. Hence the invariant.
+            // To understand this algorithm, look at the GOLD/SILVER/BRONZE implementation first.
+            for (int i = records.length - 1; i >= 0 ; i--)
+            {
+                if (statsRecord.result().athlete.athleteId == records[i].result().athlete.athleteId)
+                {
+                    if (statsRecord.result().ageGrade.ageGrade > records[i].result().ageGrade.ageGrade)
+                    {
+                        int j;
+                        for (j = i; j < records.length - 1; j++)
+                        {
+                            records[j] = records[j + 1];
+                        }
+                        records[j] = new StatsRecord().result(NO_RESULT);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+            }
 
-            if (statsRecord.result().athlete.athleteId == records[BRONZE].result().athlete.athleteId)
+            for (int i = 0; i < records.length; i++)
             {
-                if (statsRecord.result().ageGrade.ageGrade > records[BRONZE].result().ageGrade.ageGrade)
+                if (statsRecord.result().ageGrade.ageGrade > records[i].result().ageGrade.ageGrade)
                 {
-                    records[BRONZE] = new StatsRecord().result(NO_RESULT);
-                }
-                else
-                {
+                    for (int j = records.length - 1; j > i; j--)
+                    {
+                        records[j] = records[j-1];
+                    }
+                    records[i] = statsRecord;
                     return;
                 }
-            }
-            else if (statsRecord.result().athlete.athleteId == records[SILVER].result().athlete.athleteId)
-            {
-                if (statsRecord.result().ageGrade.ageGrade > records[SILVER].result().ageGrade.ageGrade)
-                {
-                    records[SILVER] = records[BRONZE];
-                    records[BRONZE] = new StatsRecord().result(NO_RESULT);
-                }
-                else
-                {
-                    return;
-                }
-            }
-            else if (statsRecord.result().athlete.athleteId == records[GOLD].result().athlete.athleteId)
-            {
-                if (statsRecord.result().ageGrade.ageGrade > records[GOLD].result().ageGrade.ageGrade)
-                {
-                    records[GOLD] = records[SILVER];
-                    records[SILVER] = records[BRONZE];
-                    records[BRONZE] = new StatsRecord().result(NO_RESULT);
-                }
-                else
-                {
-                    return;
-                }
-            }
-            if (statsRecord.result().ageGrade.ageGrade > records[GOLD].result().ageGrade.ageGrade)
-            {
-                records[BRONZE] = records[SILVER];
-                records[SILVER] = records[GOLD];
-                records[GOLD] = statsRecord;
-            }
-            else if (statsRecord.result().ageGrade.ageGrade > records[SILVER].result().ageGrade.ageGrade)
-            {
-                records[BRONZE] = records[SILVER];
-                records[SILVER] = statsRecord;
-            }
-            else if (statsRecord.result().ageGrade.ageGrade > records[BRONZE].result().ageGrade.ageGrade)
-            {
-                records[BRONZE] = statsRecord;
             }
         }
         finally
@@ -251,4 +214,82 @@ public class AgeCategoryRecord
                 ", records[BRONZE=" + records[BRONZE] +
                 '}';
     }
+
+
+
+
+
+    public void maybeAddByTimeGoldSilverBronzeExample(StatsRecord statsRecord)
+    {
+        try
+        {
+            if(statsRecord.result().time.getTotalSeconds() == Time.NO_TIME.getTotalSeconds()) return;
+
+            Result result = statsRecord.result();
+            if (result.athlete.athleteId == records[BRONZE].result().athlete.athleteId)
+            {
+                if (result.time.getTotalSeconds() > records[BRONZE].result().time.getTotalSeconds())
+                {
+                    records[BRONZE] = new StatsRecord().result(NO_RESULT);
+                }
+                else
+                {
+                    return;
+                }
+            }
+            else if (result.athlete.athleteId == records[SILVER].result().athlete.athleteId)
+            {
+                if (result.time.getTotalSeconds() > records[SILVER].result().time.getTotalSeconds())
+                {
+                    records[SILVER] = records[BRONZE];
+                    records[BRONZE] = new StatsRecord().result(NO_RESULT);
+                }
+                else
+                {
+                    return;
+                }
+            }
+            else if (result.athlete.athleteId == records[GOLD].result().athlete.athleteId)
+            {
+                if (result.time.getTotalSeconds() > records[GOLD].result().time.getTotalSeconds())
+                {
+                    records[GOLD] = records[SILVER];
+                    records[SILVER] = records[BRONZE];
+                    records[BRONZE] = new StatsRecord().result(NO_RESULT);
+                }
+                else
+                {
+                    return;
+                }
+            }
+            if (result.time.getTotalSeconds() > records[GOLD].result().time.getTotalSeconds())
+            {
+                records[BRONZE] = records[SILVER];
+                records[SILVER] = records[GOLD];
+                records[GOLD] = statsRecord;
+            }
+            else if (result.time.getTotalSeconds() > records[SILVER].result().time.getTotalSeconds())
+            {
+                records[BRONZE] = records[SILVER];
+                records[SILVER] = statsRecord;
+            }
+            else if (result.time.getTotalSeconds() > records[BRONZE].result().time.getTotalSeconds())
+            {
+                records[BRONZE] = statsRecord;
+            }
+        }
+        finally
+        {
+            int check = checkByTime();
+            if(check > 0)
+            {
+                String error = STR."""
+\{this.getClass().getSimpleName()} Invariant failure. \{check}
+            """;
+                checkByTime();
+                throw new AssertionError(error);
+            }
+        }
+    }
+
 }

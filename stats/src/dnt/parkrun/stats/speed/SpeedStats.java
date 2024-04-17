@@ -157,9 +157,10 @@ public class SpeedStats
                         {
                             try (AgeCategoryRecordsHtmlWriter ageGroupRecordsWriter = new AgeCategoryRecordsHtmlWriter(writer.writer, urlGenerator))
                             {
-                                writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.records[0], course);
-                                writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.records[1], course);
-                                writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.records[2], course);
+                                for (StatsRecord record : ageCategoryRecord.records)
+                                {
+                                    writeAgeGroupRecord(ageGroupRecordsWriter, record, course);
+                                }
                             }
                         }
                     }
