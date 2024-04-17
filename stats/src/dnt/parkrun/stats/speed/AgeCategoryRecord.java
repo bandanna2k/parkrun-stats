@@ -6,7 +6,7 @@ import dnt.parkrun.datastructures.Time;
 
 import static dnt.parkrun.datastructures.Athlete.NO_ATHLETE;
 
-public class AgeGroupRecord
+public class AgeCategoryRecord
 {
     private static final Result NO_RESULT = new Result(
             0, null, 0, NO_ATHLETE, Time.MAX_TIME, null, AgeGrade.newInstance(0));

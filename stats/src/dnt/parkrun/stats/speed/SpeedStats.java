@@ -5,7 +5,7 @@ import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.ResultDao;
-import dnt.parkrun.datastructures.AgeGroup;
+import dnt.parkrun.datastructures.AgeCategory;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.htmlwriter.CollapsableTitleHtmlWriter;
@@ -70,20 +70,20 @@ public class SpeedStats
 
     public File generateStats() throws IOException, XMLStreamException
     {
-        Map<Integer, Map<AgeGroup, AgeGroupRecord>> courseToAgeGroupToAgeGradeRecord = new HashMap<>();
-        Map<AgeGroup, Map<Integer, AgeGroupRecord>> ageGroupToCourseAgeGradeRecord = new HashMap<>();
+        Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord = new HashMap<>();
+        Map<AgeCategory, Map<Integer, AgeCategoryRecord>> ageGroupToCourseAgeGradeRecord = new HashMap<>();
         resultDao.tableScanResultAndEventNumber((result, eventNumber) -> {
             {
-                Map<AgeGroup, AgeGroupRecord> ageGroupToAgeGradeRecord = courseToAgeGroupToAgeGradeRecord
+                Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGradeRecord = courseToAgeGroupToAgeGradeRecord
                         .computeIfAbsent(result.courseId, courseId -> new HashMap<>());
-                AgeGroupRecord ageGroupRecord = ageGroupToAgeGradeRecord.computeIfAbsent(result.ageGroup, ageGroup -> new AgeGroupRecord());
-                ageGroupRecord.maybeAddByTime(new StatsRecord().result(result).eventNumber(eventNumber));
+                AgeCategoryRecord ageCategoryRecord = ageGroupToAgeGradeRecord.computeIfAbsent(result.ageCategory, ageGroup -> new AgeCategoryRecord());
+                ageCategoryRecord.maybeAddByTime(new StatsRecord().result(result).eventNumber(eventNumber));
             }
             {
-                Map<Integer, AgeGroupRecord> courseToAgeGroupRecord = ageGroupToCourseAgeGradeRecord
-                        .computeIfAbsent(result.ageGroup, ageGroup -> new HashMap<>());
-                AgeGroupRecord ageGroupRecord = courseToAgeGroupRecord.computeIfAbsent(result.courseId, courseId -> new AgeGroupRecord());
-                ageGroupRecord.maybeAddByTime(new StatsRecord().result(result).eventNumber(eventNumber));
+                Map<Integer, AgeCategoryRecord> courseToAgeGroupRecord = ageGroupToCourseAgeGradeRecord
+                        .computeIfAbsent(result.ageCategory, ageGroup -> new HashMap<>());
+                AgeCategoryRecord ageCategoryRecord = courseToAgeGroupRecord.computeIfAbsent(result.courseId, courseId -> new AgeCategoryRecord());
+                ageCategoryRecord.maybeAddByTime(new StatsRecord().result(result).eventNumber(eventNumber));
             }
         });
 
@@ -92,10 +92,10 @@ public class SpeedStats
             try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter(
                     writer.writer, "Age Category Records "))
             {
-                for (Map.Entry<Integer, Map<AgeGroup, AgeGroupRecord>> entry : courseToAgeGroupToAgeGradeRecord.entrySet())
+                for (Map.Entry<Integer, Map<AgeCategory, AgeCategoryRecord>> entry : courseToAgeGroupToAgeGradeRecord.entrySet())
                 {
                     int courseId = entry.getKey();
-                    Map<AgeGroup, AgeGroupRecord> ageGroupToAgeGroupRecord = entry.getValue();
+                    Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGroupRecord = entry.getValue();
 
                     Course course = courseRepository.getCourse(courseId);
                     if (course != null)
@@ -103,14 +103,14 @@ public class SpeedStats
                         try(CollapsableTitleHtmlWriter collapse2 = new CollapsableTitleHtmlWriter(
                                 writer.writer, course.longName, 2, 95.0))
                         {
-                            try (AgeGroupRecordsHtmlWriter ageGroupRecordsWriter = new AgeGroupRecordsHtmlWriter(writer.writer, urlGenerator))
+                            try (AgeCategoryRecordsHtmlWriter ageGroupRecordsWriter = new AgeCategoryRecordsHtmlWriter(writer.writer, urlGenerator))
                             {
-                                for (AgeGroup ageGroup : AgeGroup.values())
+                                for (AgeCategory ageCategory : AgeCategory.values())
                                 {
-                                    AgeGroupRecord ageGroupRecord = ageGroupToAgeGroupRecord.get(ageGroup);
-                                    if (ageGroupRecord == null) continue;
+                                    AgeCategoryRecord ageCategoryRecord = ageGroupToAgeGroupRecord.get(ageCategory);
+                                    if (ageCategoryRecord == null) continue;
 
-                                    writeAgeGroupRecord(ageGroupRecordsWriter, ageGroupRecord.recordGold, course);
+                                    writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.recordGold, course);
 //                                writeAgeGroupRecord(ageGroupRecordsWriter, ageGroupRecord.resultSilver);
 //                                writeAgeGroupRecord(ageGroupRecordsWriter, ageGroupRecord.resultBronze);
                                 }
@@ -123,10 +123,10 @@ public class SpeedStats
         }
     }
 
-    private void writeAgeGroupRecord(AgeGroupRecordsHtmlWriter writer, StatsRecord record, Course course) throws XMLStreamException
+    private void writeAgeGroupRecord(AgeCategoryRecordsHtmlWriter writer, StatsRecord record, Course course) throws XMLStreamException
     {
         if(record.result().date == null) return; // TODO
-        if(record.result().ageGroup == AgeGroup.UNKNOWN) return;
+        if(record.result().ageCategory == AgeCategory.UNKNOWN) return;
 
         record.course(course);
 

@@ -46,7 +46,7 @@ public class BackfillResults
         Set<String> courseIdAndDateSet = new HashSet<>();
         resultDao.tableScan(r ->
         {
-            if(r.ageGrade == null && r.ageGroup == null)
+            if(r.ageGrade == null && r.ageCategory == null)
             {
                 courseIdAndDateSet.add(r.courseId + "-" + DateConverter.formatDateForHtml(r.date));
             }
@@ -142,6 +142,6 @@ public class BackfillResults
 
     private void updateResult(ResultDao resultDao, Result r)
     {
-        resultDao.backfillUpdateResultWithAgeGroup(r);
+        resultDao.backfillUpdateResultWithAgeCategory(r);
     }
 }

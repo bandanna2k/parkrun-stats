@@ -25,7 +25,7 @@ public class ResultDao extends BaseDao
                 "order by course_id asc, date desc, position asc, athlete_id asc";
         List<Result> query = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
-            Integer ageGroup = rs.getInt("age_group");
+            Integer ageCategory = rs.getInt("age_group");
             Integer ageGrade = rs.getInt("age_grade");
             return new Result(
                     rs.getInt("course_id"),
@@ -36,7 +36,7 @@ public class ResultDao extends BaseDao
                             rs.getInt("athlete_id")
                     ),
                     Time.from(rs.getInt("time_seconds")),     // TODO Needs converting to int
-                    AgeGroup.from(ageGroup),
+                    AgeCategory.from(ageCategory),
                     AgeGrade.newInstanceFromDb(ageGrade));
         });
         return query;
@@ -54,7 +54,7 @@ public class ResultDao extends BaseDao
                 .addValue("date", date);
         return jdbc.query(sql, params, (rs, rowNum) ->
         {
-            Integer ageGroup = rs.getInt("age_group");
+            Integer ageCategory = rs.getInt("age_group");
             Integer ageGrade = rs.getInt("age_grade");
             return new Result(
                     rs.getInt("course_id"),
@@ -65,7 +65,7 @@ public class ResultDao extends BaseDao
                             rs.getInt("athlete_id")
                     ),
                     Time.from(rs.getInt("time_seconds")),     // TODO Needs converting to int
-                    AgeGroup.from(ageGroup),
+                    AgeCategory.from(ageCategory),
                     AgeGrade.newInstanceFromDb(ageGrade));
         });
     }
@@ -76,7 +76,7 @@ public class ResultDao extends BaseDao
         String sql = "insert into result (" +
                 "athlete_id, course_id, date, position, time_seconds, age_group, age_grade" +
                 ") values ( " +
-                ":athleteId, :courseId, :date, :position, :time_seconds, :ageGroup, :ageGrade" +
+                ":athleteId, :courseId, :date, :position, :time_seconds, :ageCategory, :ageGrade" +
                 ")";
         jdbc.update(sql, new MapSqlParameterSource()
                 .addValue("athleteId", result.athlete.athleteId)
@@ -84,7 +84,7 @@ public class ResultDao extends BaseDao
                 .addValue("date", result.date)
                 .addValue("position", result.position)
                 .addValue("time_seconds", result.time == null ? 0 : result.time.getTotalSeconds())
-                .addValue("ageGroup", result.ageGroup.dbCode)
+                .addValue("ageCategory", result.ageCategory.dbCode)
                 .addValue("ageGrade", result.ageGrade.getAgeGradeForDb())
         );
     }
@@ -109,7 +109,7 @@ public class ResultDao extends BaseDao
                             rs.getInt("athlete_id")
                     ),
                     Time.from(rs.getInt("time_seconds")),
-                    rs.getString("age_group") == null ? null : AgeGroup.from(rs.getInt("age_group")),
+                    rs.getString("age_group") == null ? null : AgeCategory.from(rs.getInt("age_group")),
                     rs.getString("age_grade") == null ? null : AgeGrade.newInstanceFromDb(rs.getInt("age_grade")));
             consumer.accept(result);
             return null;
@@ -137,7 +137,7 @@ public class ResultDao extends BaseDao
                             rs.getInt("athlete_id")
                     ),
                     Time.from(rs.getInt("time_seconds")),
-                    rs.getString("age_group") == null ? null : AgeGroup.from(rs.getInt("age_group")),
+                    rs.getString("age_group") == null ? null : AgeCategory.from(rs.getInt("age_group")),
                     rs.getString("age_grade") == null ? null : AgeGrade.newInstanceFromDb(rs.getInt("age_grade")));
             consumer.accept(result, rs.getInt("event_number"));
             return null;
@@ -159,12 +159,12 @@ public class ResultDao extends BaseDao
     }
 
     @Deprecated
-    public void backfillUpdateResultWithAgeGroup(Result result)
+    public void backfillUpdateResultWithAgeCategory(Result result)
     {
         String sql = "update result " +
                 "set " +
                 "   athlete_id = :athleteId," +
-                "   age_group = :ageGroup, " +
+                "   age_group = :ageCategory, " +
                 "   age_grade = :ageGrade, " +
                 "   time_seconds = :timeSeconds " +
                 "where course_id = :courseId " +
@@ -175,7 +175,7 @@ public class ResultDao extends BaseDao
                 .addValue("courseId", result.courseId)
                 .addValue("date", result.date)
                 .addValue("position", result.position)
-                .addValue("ageGroup", result.ageGroup.dbCode)
+                .addValue("ageCategory", result.ageCategory.dbCode)
                 .addValue("ageGrade", result.ageGrade.getAgeGradeForDb())
                 .addValue("timeSeconds", null == result.time ? 0 : result.time.getTotalSeconds())
         );

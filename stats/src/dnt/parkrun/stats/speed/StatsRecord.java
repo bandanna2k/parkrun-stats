@@ -10,7 +10,7 @@ public class StatsRecord
     private Time time;
     private AgeGrade ageGrade;
     private Date date;
-    private AgeGroup ageGroup;
+    private AgeCategory ageCategory;
     private Course course;
     private int eventNumber;
     private int position;
@@ -45,12 +45,12 @@ public class StatsRecord
     }
     public Date date() { return date; }
 
-    public StatsRecord ageGroup(AgeGroup ageGroup)
+    public StatsRecord ageGroup(AgeCategory ageCategory)
     {
-        this.ageGroup = ageGroup;
+        this.ageCategory = ageCategory;
         return this;
     }
-    public AgeGroup ageGroup() { return ageGroup; }
+    public AgeCategory ageCategory() { return ageCategory; }
 
     public StatsRecord eventNumber(int eventNumber)
     {

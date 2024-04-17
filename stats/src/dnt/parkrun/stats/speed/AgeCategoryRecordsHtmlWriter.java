@@ -9,11 +9,11 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.Closeable;
 
-public class AgeGroupRecordsHtmlWriter extends BaseWriter implements Closeable
+public class AgeCategoryRecordsHtmlWriter extends BaseWriter implements Closeable
 {
     private final UrlGenerator urlGenerator;
 
-    public AgeGroupRecordsHtmlWriter(XMLStreamWriter writer, UrlGenerator urlGenerator) throws XMLStreamException
+    public AgeCategoryRecordsHtmlWriter(XMLStreamWriter writer, UrlGenerator urlGenerator) throws XMLStreamException
     {
         super(writer);
         this.urlGenerator = urlGenerator;
@@ -90,7 +90,7 @@ public class AgeGroupRecordsHtmlWriter extends BaseWriter implements Closeable
 
         // Date
         startElement("td");
-        writer.writeCharacters(result.ageGroup.textOnWebpage);
+        writer.writeCharacters(result.ageCategory.textOnWebpage);
         endElement("td");
 
         // Date

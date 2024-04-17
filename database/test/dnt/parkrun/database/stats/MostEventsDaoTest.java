@@ -17,8 +17,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static dnt.parkrun.datastructures.AgeGroup.SM25_29;
-import static dnt.parkrun.datastructures.AgeGroup.SM30_34;
+import static dnt.parkrun.datastructures.AgeCategory.SM25_29;
+import static dnt.parkrun.datastructures.AgeCategory.SM30_34;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static org.assertj.core.api.Assertions.assertThat;
 

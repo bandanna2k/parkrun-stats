@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static dnt.parkrun.datastructures.AgeGroup.*;
+import static dnt.parkrun.datastructures.AgeCategory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CourseEventSummaryInvariantTest extends BaseDaoTest

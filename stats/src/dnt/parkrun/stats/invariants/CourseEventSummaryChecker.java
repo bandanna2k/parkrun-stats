@@ -168,7 +168,7 @@ public class CourseEventSummaryChecker
                     errors.add("Time does not match. " + comparison.get());
                 }
             }
-            if (daoItem.ageGroup != webItem.ageGroup)
+            if (daoItem.ageCategory != webItem.ageCategory)
             {
                 errors.add("Age group does not match. " + comparison.get());
             }

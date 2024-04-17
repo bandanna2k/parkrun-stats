@@ -40,10 +40,10 @@ public class ResultDaoTest extends BaseDaoTest
         Athlete athlete = Athlete.fromAthleteSummaryLink("Davey JONES", "https://www.parkrun.co.nz/parkrunner/902393/");
         athleteDao.insert(athlete);
 
-        Result result = new Result(500, EPOCH_PLUS_7, 1, athlete, Time.from("1:30:02"), AgeGroup.VW45_49, AgeGrade.newInstance("68.49"));
+        Result result = new Result(500, EPOCH_PLUS_7, 1, athlete, Time.from("1:30:02"), AgeCategory.VW45_49, AgeGrade.newInstance("68.49"));
         resultDao.insert(result);
 
-        Result resultNull = new Result(501, EPOCH_PLUS_14, 1, athlete, null, AgeGroup.VW45_49, AgeGrade.newInstance("68.49"));
+        Result resultNull = new Result(501, EPOCH_PLUS_14, 1, athlete, null, AgeCategory.VW45_49, AgeGrade.newInstance("68.49"));
         resultDao.insert(resultNull);
 
         List<Result> results = resultDao.getResults();
@@ -59,16 +59,16 @@ public class ResultDaoTest extends BaseDaoTest
 
         Instant epoch = EPOCH;
         resultDao.insert(new Result(
-                500, EPOCH_PLUS_7, 1, athlete, Time.from("1:30:02"), AgeGroup.VW45_49,
+                500, EPOCH_PLUS_7, 1, athlete, Time.from("1:30:02"), AgeCategory.VW45_49,
                 AgeGrade.newInstanceAssisted()));
         resultDao.insert(new Result(
-                500, EPOCH_PLUS_14, 2, athlete, Time.from("1:31:03"), AgeGroup.VW45_49,
+                500, EPOCH_PLUS_14, 2, athlete, Time.from("1:31:03"), AgeCategory.VW45_49,
                 AgeGrade.newInstanceNoAgeGrade()));
         resultDao.insert(new Result(
-                500, EPOCH_PLUS_21, 3, athlete, Time.from("1:32:04"), AgeGroup.VW45_49,
+                500, EPOCH_PLUS_21, 3, athlete, Time.from("1:32:04"), AgeCategory.VW45_49,
                 AgeGrade.newInstance(68.49)));
         resultDao.insert(new Result(
-                500, EPOCH_PLUS_28, 4, athlete, Time.from("1:32:05"), AgeGroup.VW45_49,
+                500, EPOCH_PLUS_28, 4, athlete, Time.from("1:32:05"), AgeCategory.VW45_49,
                 AgeGrade.newInstance(68.48)));
 
         List<Result> results = resultDao.getResults();
@@ -95,7 +95,7 @@ public class ResultDaoTest extends BaseDaoTest
         {
             Time fastTime = Time.from("20:00");
             Time fastishTime = Time.from(fastTime.getTotalSeconds() + i);
-            Result result = new Result(500, Date.from(instant), i, athlete, fastishTime, AgeGroup.JM11_14, AgeGrade.newInstance("66.0"));
+            Result result = new Result(500, Date.from(instant), i, athlete, fastishTime, AgeCategory.JM11_14, AgeGrade.newInstance("66.0"));
             resultDao.insert(result);
 
             instant.plus(7, DAYS);
@@ -117,7 +117,7 @@ public class ResultDaoTest extends BaseDaoTest
         {
             Time fastTime = Time.from("20:00");
             Time fastishTime = Time.from(fastTime.getTotalSeconds() + i);
-            Result result = new Result(500, Date.from(instant), i, athlete, fastishTime, AgeGroup.SM25_29, AgeGrade.newInstance("66.6"));
+            Result result = new Result(500, Date.from(instant), i, athlete, fastishTime, AgeCategory.SM25_29, AgeGrade.newInstance("66.6"));
             resultDao.insert(result);
 
             instant.plus(7, DAYS);

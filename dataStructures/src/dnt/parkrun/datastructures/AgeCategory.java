@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public enum AgeGroup
+public enum AgeCategory
 {
     UNKNOWN(null, 0),
 
@@ -83,39 +83,39 @@ public enum AgeGroup
     public final String textOnWebpage;
     public final int dbCode;
 
-    AgeGroup(String textOnWebpage, int dbCode)
+    AgeCategory(String textOnWebpage, int dbCode)
     {
 
         this.textOnWebpage = textOnWebpage;
         this.dbCode = dbCode;
     }
 
-    private static Map<String, AgeGroup> textOnWebpageToAgeGroup = new HashMap<>();
+    private static Map<String, AgeCategory> textOnWebpageToAgeCategory = new HashMap<>();
     static
     {
         assert Arrays.stream(values()).map(Enum -> Enum.dbCode).collect(Collectors.toSet()).size() == values().length;
-        Arrays.stream(values()).forEach(ageGroup -> textOnWebpageToAgeGroup.put(ageGroup.textOnWebpage, ageGroup));
-        assert values().length == textOnWebpageToAgeGroup.size();
+        Arrays.stream(values()).forEach(ageCategory -> textOnWebpageToAgeCategory.put(ageCategory.textOnWebpage, ageCategory));
+        assert values().length == textOnWebpageToAgeCategory.size();
     }
-    private static Map<Integer, AgeGroup> dbCodeToAgeGroup = new HashMap<>();
+    private static Map<Integer, AgeCategory> dbCodeToAgeCategory = new HashMap<>();
     static
     {
-        Arrays.stream(values()).forEach(ageGroup -> dbCodeToAgeGroup.put(ageGroup.dbCode, ageGroup));
-        assert values().length == dbCodeToAgeGroup.size();
+        Arrays.stream(values()).forEach(ageCategory -> dbCodeToAgeCategory.put(ageCategory.dbCode, ageCategory));
+        assert values().length == dbCodeToAgeCategory.size();
     }
 
-    public static AgeGroup from(String textOnWebpage)
+    public static AgeCategory from(String textOnWebpage)
     {
-        AgeGroup ageGroup = textOnWebpageToAgeGroup.get(textOnWebpage);
-        assert ageGroup != null : "Age group not found: " + textOnWebpage;
-        return ageGroup;
+        AgeCategory ageCategory = textOnWebpageToAgeCategory.get(textOnWebpage);
+        assert ageCategory != null : "Age group not found: " + textOnWebpage;
+        return ageCategory;
     }
 
-    public static AgeGroup from(Integer dbCode)
+    public static AgeCategory from(Integer dbCode)
     {
         if(dbCode == null) return null;
-        AgeGroup ageGroup = dbCodeToAgeGroup.get(dbCode);
-        assert ageGroup != null : "Age group not found: " + dbCode;
-        return ageGroup;
+        AgeCategory ageCategory = dbCodeToAgeCategory.get(dbCode);
+        assert ageCategory != null : "Age group not found: " + dbCode;
+        return ageCategory;
     }
 }

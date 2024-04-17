@@ -9,17 +9,17 @@ public class Result
     public final int position;
     public final Athlete athlete;
     public final Time time;
-    public final AgeGroup ageGroup;
+    public final AgeCategory ageCategory;
     public final AgeGrade ageGrade;
 
-    public Result(int courseId, Date date, int position, Athlete athlete, Time time, AgeGroup ageGroup, AgeGrade ageGrade)
+    public Result(int courseId, Date date, int position, Athlete athlete, Time time, AgeCategory ageCategory, AgeGrade ageGrade)
     {
         this.courseId = courseId;
         this.date = date;
         this.position = position;
         this.athlete = athlete;
         this.time = time;
-        this.ageGroup = ageGroup;
+        this.ageCategory = ageCategory;
         this.ageGrade = ageGrade;
     }
 
@@ -32,7 +32,7 @@ public class Result
                 ", position=" + position +
                 ", athlete=" + athlete +
                 ", time=" + time +
-                ", ageGroup=" + ageGroup +
+                ", ageCategory=" + ageCategory +
                 ", ageGrade=" + ageGrade +
                 '}';
     }

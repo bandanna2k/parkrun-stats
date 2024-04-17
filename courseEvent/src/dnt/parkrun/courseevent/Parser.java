@@ -86,20 +86,20 @@ public class Parser
                     gender = Gender.from(genderNode.childNode(0).toString().trim());
                 }
 
-                // 3 - Age group / age grade
-                Node ageGroupNode = row
+                // 3 - Age category / age grade
+                Node ageCategoryNode = row
                         .childNode(3)   // td
                         .childNode(0);
-                final AgeGroup ageGroup;
+                final AgeCategory ageCategory;
                 final AgeGrade ageGrade;
-                if(ageGroupNode.childNodes().isEmpty())
+                if(ageCategoryNode.childNodes().isEmpty())
                 {
-                    ageGroup = AgeGroup.UNKNOWN;
+                    ageCategory = AgeCategory.UNKNOWN;
                     ageGrade = AgeGrade.newInstanceNoAgeGrade();
                 }
                 else
                 {
-                    ageGroup = AgeGroup.from(ageGroupNode.childNode(0).toString().trim());
+                    ageCategory = AgeCategory.from(ageCategoryNode.childNode(0).toString().trim());
 
                     Node ageGradeNode = row
                             .childNode(3);   // td
@@ -123,7 +123,7 @@ public class Parser
 
                 final Time time = timeDiv.childNodes().isEmpty() ? null : Time.from(timeDiv.childNode(0).toString());
 
-                resultConsumer.accept(new Result(course.courseId, date, position, athlete, time, ageGroup, ageGrade));
+                resultConsumer.accept(new Result(course.courseId, date, position, athlete, time, ageCategory, ageGrade));
             }
         }
 

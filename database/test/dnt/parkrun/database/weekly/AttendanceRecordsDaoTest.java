@@ -16,9 +16,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static dnt.parkrun.datastructures.AgeCategory.SM20_24;
+import static dnt.parkrun.datastructures.AgeCategory.SM25_29;
 import static dnt.parkrun.datastructures.AgeGrade.newInstance;
-import static dnt.parkrun.datastructures.AgeGroup.SM20_24;
-import static dnt.parkrun.datastructures.AgeGroup.SM25_29;
 
 public class AttendanceRecordsDaoTest extends BaseDaoTest
 {

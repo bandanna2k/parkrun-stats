@@ -56,7 +56,7 @@ public class ParserTest
 
         results.forEach(r -> {
             Assertions.assertThat(r.ageGrade).isNotNull();
-            Assertions.assertThat(r.ageGroup).isNotNull();
+            Assertions.assertThat(r.ageCategory).isNotNull();
         });
     }
 }

@@ -2,7 +2,7 @@ package dnt.parkrun.stats.speed;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
-import dnt.parkrun.datastructures.AgeGroup;
+import dnt.parkrun.datastructures.AgeCategory;
 import dnt.parkrun.htmlwriter.BaseWriter;
 
 import javax.xml.stream.XMLStreamException;
@@ -12,16 +12,14 @@ import java.io.Closeable;
 public class AgeGroupHtmlWriter extends BaseWriter implements Closeable
 {
     private final UrlGenerator urlGenerator;
-    private final AgeGroup ageGroup;
 
-    public AgeGroupHtmlWriter(XMLStreamWriter writer, UrlGenerator urlGenerator, AgeGroup ageGroup) throws XMLStreamException
+    public AgeGroupHtmlWriter(XMLStreamWriter writer, UrlGenerator urlGenerator, AgeCategory ageCategory) throws XMLStreamException
     {
         super(writer);
         this.urlGenerator = urlGenerator;
-        this.ageGroup = ageGroup;
 
         startElement("h2");
-        writer.writeCharacters(ageGroup.textOnWebpage);
+        writer.writeCharacters(ageCategory.textOnWebpage);
         startElement("h2");
 
         startElement("table", "class", "sortable most-events");
