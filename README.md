@@ -22,9 +22,9 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Bug - Change key on course_event_summary
+- Bug - Empty tables on Age Categories.
 
-- Age grade records - UT for maybeAdd
+- Bug - Change key on course_event_summary???
 
 - Friends table including at what venues
   - 'Most runs with other athletes' table

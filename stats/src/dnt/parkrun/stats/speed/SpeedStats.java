@@ -70,6 +70,10 @@ public class SpeedStats
         try (HtmlWriter writer = HtmlWriter.newInstance(date, "speed_stats", "speed_stats.css"))
         {
             writeAgeCategoryRecords(writer);
+
+            writer.writer.writeStartElement("hr");
+            writer.writer.writeEndElement();
+
             writeAgeGradeRecords(writer);
             return writer.getFile();
         }
@@ -155,6 +159,10 @@ public class SpeedStats
                         try (CollapsableTitleHtmlWriter collapse3 = new CollapsableTitleHtmlWriter(
                                 writer.writer, ageCategory.textOnWebpage, 3, 95.0))
                         {
+                            writer.writer.writeStartElement("h3");
+                            writer.writer.writeCharacters(course.longName);
+                            writer.writer.writeEndElement();
+
                             try (AgeCategoryRecordsHtmlWriter ageGroupRecordsWriter = new AgeCategoryRecordsHtmlWriter(writer.writer, urlGenerator))
                             {
                                 for (StatsRecord record : ageCategoryRecord.records)
