@@ -31,6 +31,7 @@ public class AgeCategoryRecord
         try
         {
             if(statsRecord.result().time.getTotalSeconds() == Time.NO_TIME.getTotalSeconds()) return;
+            if(statsRecord.result().ageGrade.ageGrade == AgeGrade.newInstanceNoAgeGrade().ageGrade) return;
 
             // Sorry for the complexity. Hence the invariant.
             // To understand this algorithm, look at the GOLD/SILVER/BRONZE implementation first.
