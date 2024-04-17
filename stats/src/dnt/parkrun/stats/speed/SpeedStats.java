@@ -17,10 +17,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
 import static dnt.parkrun.datastructures.Country.NZ;
@@ -92,31 +89,36 @@ public class SpeedStats
             try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter(
                     writer.writer, "Age Category Records "))
             {
-                for (Map.Entry<Integer, Map<AgeCategory, AgeCategoryRecord>> entry : courseToAgeGroupToAgeGradeRecord.entrySet())
+                List<Course> sortedCourses = new ArrayList<>();
+                courseToAgeGroupToAgeGradeRecord.keySet().forEach(courseId -> {
+                    sortedCourses.add(courseRepository.getCourse(courseId));
+                });
+                sortedCourses.sort(Comparator.comparing(s -> s.name));
+
+                for (Course course : sortedCourses)
                 {
-                    int courseId = entry.getKey();
-                    Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGroupRecord = entry.getValue();
+                    Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGroupRecord = courseToAgeGroupToAgeGradeRecord.get(course.courseId);
 
-                    Course course = courseRepository.getCourse(courseId);
-                    if (course != null)
+                    try(CollapsableTitleHtmlWriter collapse2 = new CollapsableTitleHtmlWriter(
+                            writer.writer, course.longName, 2, 95.0))
                     {
-                        try(CollapsableTitleHtmlWriter collapse2 = new CollapsableTitleHtmlWriter(
-                                writer.writer, course.longName, 2, 95.0))
+                        try (AgeCategoryRecordsHtmlWriter ageGroupRecordsWriter = new AgeCategoryRecordsHtmlWriter(writer.writer, urlGenerator))
                         {
-                            try (AgeCategoryRecordsHtmlWriter ageGroupRecordsWriter = new AgeCategoryRecordsHtmlWriter(writer.writer, urlGenerator))
+                            for (AgeCategory ageCategory : AgeCategory.values())
                             {
-                                for (AgeCategory ageCategory : AgeCategory.values())
-                                {
-                                    AgeCategoryRecord ageCategoryRecord = ageGroupToAgeGroupRecord.get(ageCategory);
-                                    if (ageCategoryRecord == null) continue;
+                                AgeCategoryRecord ageCategoryRecord = ageGroupToAgeGroupRecord.get(ageCategory);
+                                if (ageCategoryRecord == null) continue;
 
-                                    writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.recordGold, course);
+                                writeAgeGroupRecord(ageGroupRecordsWriter, ageCategoryRecord.recordGold, course);
 //                                writeAgeGroupRecord(ageGroupRecordsWriter, ageGroupRecord.resultSilver);
 //                                writeAgeGroupRecord(ageGroupRecordsWriter, ageGroupRecord.resultBronze);
-                                }
                             }
                         }
                     }
+                }
+
+                for (Map.Entry<Integer, Map<AgeCategory, AgeCategoryRecord>> entry : courseToAgeGroupToAgeGradeRecord.entrySet())
+                {
                 }
             }
             return writer.getFile();
