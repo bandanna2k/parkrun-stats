@@ -16,6 +16,8 @@ public class StatsRecord
     private int position;
     private int courseId;
     private Result result;
+    private boolean isNew;
+    private boolean isRecent;
 
     StatsRecord athlete(Athlete athlete)
     {
@@ -93,4 +95,18 @@ public class StatsRecord
         return this;
     }
     public Result result() { return result; }
+
+    public StatsRecord isNew(boolean isNew)
+    {
+        this.isNew = isNew;
+        return this;
+    }
+    public boolean isNew() { return this.isNew; }
+
+    public StatsRecord isRecent(boolean isRecent)
+    {
+        this.isRecent = isRecent;
+        return this;
+    }
+    public boolean isRecent() { return this.isRecent; }
 }

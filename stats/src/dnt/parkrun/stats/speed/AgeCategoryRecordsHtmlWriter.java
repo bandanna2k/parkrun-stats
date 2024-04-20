@@ -100,7 +100,12 @@ public class AgeCategoryRecordsHtmlWriter extends BaseWriter implements Closeabl
     {
         Result result = statsRecord.result();
 
-        writer.writeStartElement("tr");
+        if(statsRecord.isNew())
+            startElement("tr", "class", "new");
+        else if(statsRecord.isRecent())
+            startElement("tr", "class", "recent");
+        else
+            startElement("tr");
 
         // Age Category
         if(type == Type.AGE_CATEGORY_BY_TIME)

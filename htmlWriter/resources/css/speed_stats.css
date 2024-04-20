@@ -62,6 +62,12 @@ thead tr {
 tbody tr {
     height:40px; border-bottom:1px solid #E3F1D5;
 }
+.recent {
+    background-color: #E9F0ff;
+}
+.new {
+    background-color: #C9D0ff;
+}
 
 .collapse {
     background-color: #a2de96;

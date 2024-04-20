@@ -1,7 +1,6 @@
 package dnt.parkrun.stats.speed;
 
 import com.mysql.jdbc.Driver;
-import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.ResultDao;
@@ -17,9 +16,10 @@ import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.stats.speed.AgeCategoryRecordsHtmlWriter.Type.AGE_CATEGORY_BY_TIME;
 import static dnt.parkrun.stats.speed.AgeCategoryRecordsHtmlWriter.Type.AGE_GRADE;
@@ -31,40 +31,32 @@ public class SpeedStats
     /*
             02/03/2024
      */
-    public static void main(String[] args) throws SQLException, IOException, XMLStreamException
+    public static void main() throws SQLException, IOException, XMLStreamException
     {
-        Date date = args.length == 0 ? getParkrunDay(new Date()) : DateConverter.parseWebsiteDate(args[0]);
-
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats", "stats", "statsfractalstats");
 
-        SpeedStats stats = SpeedStats.newInstance(dataSource, date);
+        SpeedStats stats = SpeedStats.newInstance(dataSource);
         File file = stats.generateStats();
 
         new ProcessBuilder("xdg-open", file.getAbsolutePath()).start();
     }
 
-    private final Date date;
-    private final Date lastWeek;
+    private Date mostRecentDate = new Date(Long.MIN_VALUE);
     private final ResultDao resultDao;
 
     private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
 
-    private SpeedStats(DataSource dataSource,
-                       Date date)
+    private SpeedStats(DataSource dataSource)
     {
-        this.date = date;
-        lastWeek = new Date();
-        lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
-
         this.resultDao = new ResultDao(dataSource);
         this.courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
     }
 
-    public static SpeedStats newInstance(DataSource dataSource, Date date)
+    public static SpeedStats newInstance(DataSource dataSource)
     {
-        return new SpeedStats(dataSource, date);
+        return new SpeedStats(dataSource);
     }
 
     public File generateStats() throws IOException, XMLStreamException
@@ -79,9 +71,12 @@ public class SpeedStats
                 AgeCategoryRecord ageCategoryRecord = ageGroupToAgeGradeRecord.computeIfAbsent(result.ageCategory, ageGroup -> new AgeCategoryRecord());
                 ageCategoryRecord.maybeAddByAgeGrade(new StatsRecord().result(result).eventNumber(eventNumber));
             }
+            if(result.date.getTime() > mostRecentDate.getTime())
+                mostRecentDate = new Date(result.date.getTime());
         });
 
-        try (HtmlWriter writer = HtmlWriter.newInstance(date, "speed_stats", "speed_stats.css"))
+        System.out.println(mostRecentDate);
+        try (HtmlWriter writer = HtmlWriter.newInstance(mostRecentDate, "speed_stats", "speed_stats.css"))
         {
             writeAgeCategoryRecords(writer, courseToAgeGroupToAgeGradeRecord);
 
@@ -129,7 +124,8 @@ public class SpeedStats
         }
     }
 
-    private void writeAgeGradeRecords(HtmlWriter writer, Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord) throws XMLStreamException
+    private void writeAgeGradeRecords(HtmlWriter writer,
+                                      Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord) throws XMLStreamException
     {
         try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter(
                 writer.writer, "Age Grade Records"))
@@ -189,27 +185,21 @@ public class SpeedStats
         if(record.result().ageCategory == AgeCategory.UNKNOWN) return;
 
         record.course(course);
+        record.isRecent(isRecent(record.result().date));
+        record.isNew(isNew(record.result().date));
 
         writer.write(record);
     }
 
-    public static Date getParkrunDay(Date result)
+    private boolean isNew(Date date)
     {
-        Calendar calResult = Calendar.getInstance();
-        calResult.setTime(result);
+        Instant isNew = mostRecentDate.toInstant().minus(6, ChronoUnit.DAYS);
+        return date.after(Date.from(isNew));
+    }
 
-        for (int i = 0; i < 7; i++)
-        {
-            if (calResult.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
-            {
-                calResult.set(Calendar.HOUR_OF_DAY, 0);
-                calResult.set(Calendar.MINUTE, 0);
-                calResult.set(Calendar.SECOND, 0);
-                calResult.set(Calendar.MILLISECOND, 0);
-                return calResult.getTime();
-            }
-            calResult.add(Calendar.DAY_OF_MONTH, -1);
-        }
-        throw new UnsupportedOperationException();
+    private boolean isRecent(Date date)
+    {
+        Instant isRecent = mostRecentDate.toInstant().minus(35, ChronoUnit.DAYS);
+        return date.after(Date.from(isRecent));
     }
 }
