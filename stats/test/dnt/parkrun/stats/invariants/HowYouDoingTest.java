@@ -117,7 +117,23 @@ public class HowYouDoingTest
                         Course repositoryCourse = courseRepository.getCourseFromName(course.name);
                         if(repositoryCourse == null)
                         {
-                            softly.fail("New course found " + course.country + "\t" + course.name);
+                            final String warning;
+                            if(course.country == NZ)
+                            {
+                                warning = STR."""
+                                        *** New course found \{course.country}  \{course.name}  \{course.longName} ***
+                                        INSERT INTO course (
+                                        course_id, course_name, course_long_name, country_code, country, status
+                                        ) VALUES (
+                                        ID, '\{course.name}', '\{course.longName}', \{course.country.countryCode}, 'NZ', 'P'
+                                        );
+                                        """;
+                            }
+                            else
+                            {
+                                warning = STR."*** New course found \{course.country}  \{course.name}  \{course.longName} ***";
+                            }
+                            softly.fail(warning);
                             if(addNewCourses)
                             {
                                 courseDao.insert(course);

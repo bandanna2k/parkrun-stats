@@ -38,13 +38,13 @@ public class JsoupWrapper
                     System.out.print("Sleeping for " + sleepTime + " ... ");
                     Thread.sleep(sleepTime);
                     System.out.print("Loading URL: " + url + " ");
-                    document = Jsoup.parse(url, 5000);
+                    document = Jsoup.parse(url, 10000);
                     System.out.println("Done");
                 }
                 else
                 {
                     System.out.print("Loading URL: " + url + " ");
-                    document = Jsoup.parse(url, 5000);
+                    document = Jsoup.parse(url, 10000);
                     System.out.println("Done");
                 }
             }
