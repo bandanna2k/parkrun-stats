@@ -48,6 +48,7 @@ public abstract class Region
     public static boolean isBayOfPlenty(Course course)
     {
         String[] list = {"puarenga",
+                "moanapointreserve",
                 "tauranga",
                 "gordonsprattreserve",
                 "whakatanegardens",
@@ -88,6 +89,7 @@ public abstract class Region
                 "westernsprings",
                 "northernpathway",
                 "sherwoodreserve",
+                "orakeibay",
                 "owairaka"};
         return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
     }
@@ -113,7 +115,12 @@ public abstract class Region
 
     public static boolean isOtago(Course course)
     {
-        String[] list = {"dunedin", "balclutha", "queenstown", "wanaka"};
+        String[] list = {
+                "dunedin",
+                "balclutha",
+                "otagocentralrailtrailalexandra",
+                "queenstown",
+                "wanaka"};
         return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
     }
 

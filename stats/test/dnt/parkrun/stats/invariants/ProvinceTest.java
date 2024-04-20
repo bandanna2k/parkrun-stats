@@ -21,11 +21,12 @@ public class ProvinceTest
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats", "stats", "statsfractalstats");
         CourseRepository courseRepository = new CourseRepository();
-        CourseDao courseDao = new CourseDao(dataSource, courseRepository);
+        new CourseDao(dataSource, courseRepository);
 
         courseRepository.getCourses(Country.NZ).stream().filter(c -> c.country == Country.NZ).forEach(c -> {
             System.out.println(c);
-            assertTrue("Bad course " + c, isSameNzRegion(c, c));
+            assertTrue("Bad course " + c,
+                    isSameNzRegion(c, c));
         });
 
     }
