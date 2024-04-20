@@ -69,32 +69,33 @@ public class SpeedStats
 
     public File generateStats() throws IOException, XMLStreamException
     {
-        try (HtmlWriter writer = HtmlWriter.newInstance(date, "speed_stats", "speed_stats.css"))
-        {
-            writeAgeCategoryRecords(writer);
-
-            writer.writer.writeStartElement("hr");
-            writer.writer.writeEndElement();
-
-            writeAgeGradeRecords(writer);
-            return writer.getFile();
-        }
-    }
-
-    private void writeAgeCategoryRecords(HtmlWriter writer) throws XMLStreamException
-    {
-     // I think we are doing this twice
         Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord = new HashMap<>();
         resultDao.tableScanResultAndEventNumber((result, eventNumber) -> {
-           // if(result.courseId == 2)
+            //if(result.courseId == 40 && result.ageCategory == AgeCategory.SW30_34)
+            //if(result.courseId == 2)
             {
                 Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGradeRecord = courseToAgeGroupToAgeGradeRecord
                         .computeIfAbsent(result.courseId, courseId -> new HashMap<>());
                 AgeCategoryRecord ageCategoryRecord = ageGroupToAgeGradeRecord.computeIfAbsent(result.ageCategory, ageGroup -> new AgeCategoryRecord());
-                ageCategoryRecord.maybeAddByTime(new StatsRecord().result(result).eventNumber(eventNumber));
+                ageCategoryRecord.maybeAddByAgeGrade(new StatsRecord().result(result).eventNumber(eventNumber));
             }
         });
 
+        try (HtmlWriter writer = HtmlWriter.newInstance(date, "speed_stats", "speed_stats.css"))
+        {
+            writeAgeCategoryRecords(writer, courseToAgeGroupToAgeGradeRecord);
+
+            writer.writer.writeStartElement("hr");
+            writer.writer.writeEndElement();
+
+            writeAgeGradeRecords(writer, courseToAgeGroupToAgeGradeRecord);
+            return writer.getFile();
+        }
+    }
+
+    private void writeAgeCategoryRecords(HtmlWriter writer,
+                                         Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord) throws XMLStreamException
+    {
         try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter(
                 writer.writer, "Age Category Records (Time)"))
         {
@@ -128,20 +129,8 @@ public class SpeedStats
         }
     }
 
-    private void writeAgeGradeRecords(HtmlWriter writer) throws XMLStreamException
+    private void writeAgeGradeRecords(HtmlWriter writer, Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord) throws XMLStreamException
     {
-        Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord = new HashMap<>();
-        resultDao.tableScanResultAndEventNumber((result, eventNumber) -> {
-            //if(result.courseId == 40 && result.ageCategory == AgeCategory.SW30_34)
-            //if(result.courseId == 2)
-            {
-                Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGradeRecord = courseToAgeGroupToAgeGradeRecord
-                        .computeIfAbsent(result.courseId, courseId -> new HashMap<>());
-                AgeCategoryRecord ageCategoryRecord = ageGroupToAgeGradeRecord.computeIfAbsent(result.ageCategory, ageGroup -> new AgeCategoryRecord());
-                ageCategoryRecord.maybeAddByAgeGrade(new StatsRecord().result(result).eventNumber(eventNumber));
-            }
-        });
-
         try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter(
                 writer.writer, "Age Grade Records"))
         {
