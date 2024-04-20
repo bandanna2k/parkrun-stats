@@ -48,6 +48,7 @@ public class CourseDao
 
     public Course insert(Course course)
     {
+        assert course.courseId == Course.NO_COURSE_ID;
         assert courseRepository.getCourseFromName(course.name) == null &&
                 courseRepository.getCourseFromLongName(course.longName) == null
                 : "Course already exists";

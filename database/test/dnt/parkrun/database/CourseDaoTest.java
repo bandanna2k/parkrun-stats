@@ -4,12 +4,14 @@ import com.mysql.jdbc.Driver;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.List;
 
 import static dnt.parkrun.datastructures.Country.*;
@@ -33,6 +35,24 @@ public class CourseDaoTest extends BaseDaoTest
 
         courseRepository = new CourseRepository();
         courseDao = new CourseDao(dataSource, courseRepository);
+    }
+
+    @Test
+    @Ignore
+    public void shouldInsertIntoRealDatabase() throws SQLException
+    {
+        DataSource realDataSource = new SimpleDriverDataSource(new Driver(),
+                "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+
+        NamedParameterJdbcTemplate realJdbc = new NamedParameterJdbcTemplate(realDataSource);
+        String sql = STR."""
+    INSERT INTO course (
+    course_id, course_name, course_long_name, country_code, country, status
+    ) VALUES (
+    48, 'orakeibay', 'Ōrākei Bay parkrun', 65, 'NZ', 'P'
+    );
+                """;
+        realJdbc.update(sql, EmptySqlParameterSource.INSTANCE);
     }
 
     @Test
