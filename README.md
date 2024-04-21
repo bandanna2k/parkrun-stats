@@ -22,14 +22,17 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Bug - Empty tables on Age Categories.
+- pIndex check needed.
+  Dan JOE	11	14 more to P12	0.682
+
+- We can assume event numbers for getting Weekly Results.
 
 - Bug - Change key on course_event_summary???
 
 - Friends table including at what venues
   - 'Most runs with other athletes' table
 
-- Regionnaire count
+- Regionnaire count (idea, use a set and match set of course_ids)
   - Finish max regionnaire (Needs rethink, harder calculation than thought.)
   - Regionnaire to include stopped events.
 
@@ -42,6 +45,8 @@ Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tab
 
 
 ## Issues Completed
+
+- 20/4/2024 - Empty tables on Age Categories.
 
 - 16/4/2024 Low priority - Add stop dates as java code
 

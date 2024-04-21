@@ -58,8 +58,7 @@ public class HtmlWriter extends BaseWriter
         }
         endElement("style");
 
-        writer.writeStartElement("script");
-        writer.writeAttribute("src", "https://www.kryogenix.org/code/browser/sorttable/sorttable.js");
+        startElement("script", "src", "https://www.kryogenix.org/code/browser/sorttable/sorttable.js");
         endElement("script");
 
         startElement("body");

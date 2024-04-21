@@ -36,7 +36,14 @@ public class Parser
 
     public void parse()
     {
+        if(doc == null)
+        {
+            System.out.println("WARNING: Empty document.");
+            return;
+        }
+
         Elements resultsHeader = doc.getElementsByClass("Results-header");
+
         Node eventNumberNode = resultsHeader.get(0)
                 .childNode(1)   // h3
                 .childNode(2)   // span
