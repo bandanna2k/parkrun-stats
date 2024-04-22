@@ -35,6 +35,7 @@ import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.*;
 import static dnt.parkrun.region.Region.getNzRegionRunCount;
+import static java.util.Calendar.SATURDAY;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 
@@ -718,40 +719,89 @@ public class MostEventStats
     }
 
     static int getRegionnaireCount(
-            List<CourseDate> sortedStartDates,
-            List<CourseDate> sortedStopDates,
-            List<CourseDate> sortedFirstRuns)
+            List<CourseDate> startDates,
+            List<CourseDate> stopDates,
+            List<CourseDate> firstRuns)
     {
-        return getListOfRegionnaireDates(sortedStartDates, sortedStopDates, sortedFirstRuns).size();
+        return getListOfRegionnaireDates(startDates, stopDates, firstRuns).size();
     }
     static List<CourseDate> getListOfRegionnaireDates(
-            List<CourseDate> sortedStartDates,
-            List<CourseDate> sortedStopDates,
-            List<CourseDate> sortedFirstRuns)
-        {
-        final int totalEvents = sortedStartDates.size();
-        final int totalEventsStopped = sortedStopDates.size();
-        final int totalEventsRun = sortedFirstRuns.size();
+            List<CourseDate> startDates,
+            List<CourseDate> stopDates,
+            List<CourseDate> firstRuns)
+    {
+        List<CourseDate> sortedStartDates = new ArrayList<>(startDates);
+        List<CourseDate> sortedStopDates = new ArrayList<>(stopDates);
+        List<CourseDate> sortedFirstRuns = new ArrayList<>(firstRuns);
+        sortedStartDates.sort(CourseDate.COMPARATOR);
+        sortedStopDates.sort(CourseDate.COMPARATOR);
+        sortedFirstRuns.sort(CourseDate.COMPARATOR);
+
         List<CourseDate> regionnaireDates = new ArrayList<>();
-        while(!sortedFirstRuns.isEmpty())
+
+        Set<Integer> coursesDone = new HashSet<>();
+        Set<Integer> coursesRunning = new HashSet<>();
+        while(
+                !(sortedFirstRuns.isEmpty() && sortedStartDates.isEmpty() && sortedStopDates.isEmpty()))
         {
-            CourseDate firstRun = sortedFirstRuns.remove(0);
-            sortedStartDates.removeIf(record -> record.date.getTime() <= firstRun.date.getTime());
-            sortedStopDates.removeIf(record -> record.date.getTime() <= firstRun.date.getTime());
+            Date loopDate = getEarliestDate(sortedFirstRuns, sortedStartDates, sortedStopDates);
 
-            // Courses running
-            int coursesThatAreStopped = totalEventsStopped - sortedStopDates.size();
-            int courseThatAreRunning = totalEvents - coursesThatAreStopped - sortedStartDates.size();
-
-            // Athlete Runs
-            int coursesRunSoFar = totalEventsRun - sortedFirstRuns.size();
-
-            if(coursesRunSoFar == courseThatAreRunning)
+            CourseDate firstRun = null;
+            CourseDate stopDate = null;
+            if(!sortedFirstRuns.isEmpty() && loopDate.getTime() == sortedFirstRuns.getFirst().date.getTime())
             {
-                regionnaireDates.add(firstRun);
+                firstRun = sortedFirstRuns.removeFirst();
+                coursesDone.add(firstRun.course.courseId);
+            }
+            if(!sortedStartDates.isEmpty() && loopDate.getTime() == sortedStartDates.getFirst().date.getTime())
+            {
+                CourseDate startDate = sortedStartDates.removeFirst();
+                coursesRunning.add(startDate.course.courseId);
+            }
+            if(!sortedStopDates.isEmpty() && loopDate.getTime() == sortedStopDates.getFirst().date.getTime())
+            {
+                stopDate = sortedStopDates.removeFirst();
+                final int stopDateCourseId = stopDate.course.courseId;
+                coursesRunning.removeIf(n -> n == stopDateCourseId);
+            }
+
+            if(firstRun == null && stopDate == null) continue;
+
+            Set<Integer> coursesNotDone = new HashSet<>(coursesRunning);
+            coursesNotDone.removeAll(coursesDone);
+
+            if(coursesNotDone.isEmpty())
+            {
+                if(firstRun != null)
+                    regionnaireDates.add(firstRun);
+                else if(stopDate != null)
+                    regionnaireDates.add(stopDate);
             }
         }
         return regionnaireDates;
+    }
+
+    @SafeVarargs
+    private static Date getEarliestDate(List<CourseDate>... lists)
+    {
+        Date date = null;
+        long minDate = Long.MAX_VALUE;
+        for (List<CourseDate> list : lists)
+        {
+            if (!list.isEmpty())
+            {
+                minDate = Math.min(minDate, list.getFirst().date.getTime());
+                date = new Date(minDate);
+            }
+        }
+        return date;
+    }
+
+    private static int getDayOfWeek(Date date)
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.DAY_OF_WEEK);
     }
 
     private void writeAttendanceRecords(HtmlWriter writer) throws XMLStreamException
@@ -1029,7 +1079,7 @@ public class MostEventStats
 
         for (int i = 0; i < 7; i++)
         {
-            if (calResult.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
+            if (calResult.get(Calendar.DAY_OF_WEEK) == SATURDAY)
             {
                 calResult.set(Calendar.HOUR_OF_DAY, 0);
                 calResult.set(Calendar.MINUTE, 0);

@@ -31,20 +31,19 @@ public class RegionnaireCountTest
     @Test
     public void shouldCalculateRegionnaireCount()
     {
-        List<CourseDate> sortedStartDates = new ArrayList<>(List.of(
+        List<CourseDate> startDates = List.of(
                 new CourseDate(courses.get(0), parseWebsiteDate("01/01/2024")),
                 new CourseDate(courses.get(1), parseWebsiteDate("15/01/2024")),
-                new CourseDate(courses.get(1), parseWebsiteDate("01/02/2024")),
-                new CourseDate(courses.get(1), parseWebsiteDate("15/02/2024"))
-        ));
-        List<CourseDate> sortedFirstRuns = new ArrayList<>(List.of(
+                new CourseDate(courses.get(2), parseWebsiteDate("01/02/2024")),
+                new CourseDate(courses.get(3), parseWebsiteDate("15/02/2024"))
+        );
+        List<CourseDate> firstRuns = List.of(
                 new CourseDate(courses.get(0), parseWebsiteDate("01/03/2024")),
                 new CourseDate(courses.get(1), parseWebsiteDate("08/03/2024")),
                 new CourseDate(courses.get(2), parseWebsiteDate("15/03/2024")),
                 new CourseDate(courses.get(3), parseWebsiteDate("22/03/2024"))
-        ));
-
-        assertThat(getRegionnaireCount(sortedStartDates, Collections.emptyList(), sortedFirstRuns)).isEqualTo(1);
+        );
+        assertThat(getRegionnaireCount(startDates, Collections.emptyList(), firstRuns)).isEqualTo(1);
     }
 
     @Test
@@ -104,21 +103,25 @@ public class RegionnaireCountTest
     @Test
     public void shouldCalculateMaxRegionnaireCountWithStoppedRun2()
     {
+        int A = 0;
+        int B = 1;
+        int C = 2;
+        int D = 3;
         List<CourseDate> sortedStartDates = new ArrayList<>(List.of(
-                new CourseDate(courses.get(0), parseWebsiteDate("01/01/2024")),
-                new CourseDate(courses.get(1), parseWebsiteDate("15/01/2024")),
-                new CourseDate(courses.get(2), parseWebsiteDate("01/02/2024")),
-                new CourseDate(courses.get(3), parseWebsiteDate("15/02/2024"))
+                new CourseDate(courses.get(A), parseWebsiteDate("01/01/2024")),
+                new CourseDate(courses.get(B), parseWebsiteDate("15/01/2024")),
+                new CourseDate(courses.get(C), parseWebsiteDate("01/02/2024")),
+                new CourseDate(courses.get(D), parseWebsiteDate("15/02/2024"))
         ));
         List<CourseDate> sortedStopDates = new ArrayList<>(List.of(
-                new CourseDate(courses.get(0), parseWebsiteDate("01/02/2024"))
+                new CourseDate(courses.get(A), parseWebsiteDate("01/02/2024"))
         ));
         List<CourseDate> sortedFirstRuns = new ArrayList<>(List.of(
-                new CourseDate(courses.get(0), parseWebsiteDate("15/01/2024")), // 2 runs at this point, 1 completed
-                new CourseDate(courses.get(1), parseWebsiteDate("01/02/2024"))  // 2 started, 1 stopped, 2 completed
+                new CourseDate(courses.get(A), parseWebsiteDate("15/01/2024")), // A,B courses running, A run at. Not regionnaire
+                new CourseDate(courses.get(B), parseWebsiteDate("01/02/2024"))  // B,C course running, A,B run at. Not regionnaire
         ));
 
-        assertThat(getRegionnaireCount(sortedStartDates, sortedStopDates, sortedFirstRuns)).isEqualTo(1);
+        assertThat(getRegionnaireCount(sortedStartDates, sortedStopDates, sortedFirstRuns)).isEqualTo(0);
     }
 
     @Test
@@ -141,5 +144,54 @@ public class RegionnaireCountTest
         ));
 
         assertThat(getRegionnaireCount(sortedStartDates, sortedStopDates, sortedFirstRuns)).isEqualTo(1);
+    }
+
+    @Test
+    public void shouldCalculateMaxRegionnaireCountWithStoppedRun4a()
+    {
+        int A = 0;
+        int B = 1;
+        int C = 2;
+        int D = 3;
+        List<CourseDate> sortedStartDates = new ArrayList<>(List.of(
+                new CourseDate(courses.get(A), parseWebsiteDate("01/01/2024")),
+                new CourseDate(courses.get(B), parseWebsiteDate("15/01/2024")),
+                new CourseDate(courses.get(C), parseWebsiteDate("01/02/2024")),
+                new CourseDate(courses.get(D), parseWebsiteDate("15/02/2024"))
+        ));
+        List<CourseDate> sortedStopDates = new ArrayList<>(List.of(
+                new CourseDate(courses.get(D), parseWebsiteDate("01/04/2024")) // A,B,C courses running, A,B,C run at.        Regionnaire
+        ));
+        List<CourseDate> sortedFirstRuns = new ArrayList<>(List.of(
+                new CourseDate(courses.get(A), parseWebsiteDate("01/03/2024")), // A,B,C,D courses running, A run at.     Not regionnaire
+                new CourseDate(courses.get(B), parseWebsiteDate("08/03/2024")), // A,B,C,D courses running, A,B run at.   Not regionnaire
+                new CourseDate(courses.get(C), parseWebsiteDate("15/03/2024"))  // A,B,C,D courses running, A,B,C run at. Not regionnaire
+        ));
+
+        assertThat(getRegionnaireCount(sortedStartDates, sortedStopDates, sortedFirstRuns)).isEqualTo(1);
+    }
+    @Test
+    public void shouldCalculateMaxRegionnaireCountWithStoppedRun4b()
+    {
+        int A = 0;
+        int B = 1;
+        int C = 2;
+        int D = 3;
+        List<CourseDate> sortedStartDates = new ArrayList<>(List.of(
+                new CourseDate(courses.get(A), parseWebsiteDate("01/01/2024")),
+                new CourseDate(courses.get(B), parseWebsiteDate("15/01/2024")),
+                new CourseDate(courses.get(C), parseWebsiteDate("01/02/2024")),
+                new CourseDate(courses.get(D), parseWebsiteDate("15/02/2024"))
+        ));
+        List<CourseDate> sortedStopDates = new ArrayList<>(List.of(
+                new CourseDate(courses.get(B), parseWebsiteDate("01/04/2024")) // A,C,D courses running, A,B,C run at.    Not Regionnaire
+        ));
+        List<CourseDate> sortedFirstRuns = new ArrayList<>(List.of(
+                new CourseDate(courses.get(A), parseWebsiteDate("01/03/2024")), // A,B,C,D courses running, A run at.     Not regionnaire
+                new CourseDate(courses.get(B), parseWebsiteDate("08/03/2024")), // A,B,C,D courses running, A,B run at.   Not regionnaire
+                new CourseDate(courses.get(C), parseWebsiteDate("15/03/2024"))  // A,B,C,D courses running, A,B,C run at. Not regionnaire
+        ));
+
+        assertThat(getRegionnaireCount(sortedStartDates, sortedStopDates, sortedFirstRuns)).isEqualTo(0);
     }
 }

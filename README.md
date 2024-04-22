@@ -22,10 +22,7 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- pIndex check needed.
-  Dan JOE	11	14 more to P12	0.682
-
-- We can assume event numbers for getting Weekly Results.
+- Weekly results - Backfill each course at a time. Just encase a course fails to get event history.
 
 - Bug - Change key on course_event_summary???
 
@@ -45,6 +42,13 @@ Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tab
 
 
 ## Issues Completed
+
+- 22/4/2024 - We can assume event numbers for getting Weekly Results.
+Hopefully this is the final time. We can't assume. Remember this back-fills all missing results.
+
+- 21/4/2024 - pIndex check needed.
+Dan JOE	11	14 more to P12	0.682
+pIndex correct. Needs all of P12 and 1 each of 3 more courses
 
 - 20/4/2024 - Empty tables on Age Categories.
 
