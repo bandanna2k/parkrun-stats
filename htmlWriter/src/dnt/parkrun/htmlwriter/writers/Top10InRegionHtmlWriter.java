@@ -1,13 +1,12 @@
 package dnt.parkrun.htmlwriter.writers;
 
 import dnt.parkrun.common.UrlGenerator;
-import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.htmlwriter.BaseWriter;
+import dnt.parkrun.htmlwriter.StatsRecord;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.Closeable;
-import java.util.Comparator;
 
 public class Top10InRegionHtmlWriter extends BaseWriter implements Closeable
 {
@@ -85,74 +84,36 @@ public class Top10InRegionHtmlWriter extends BaseWriter implements Closeable
         }
     }
 
-    public void writeRecord(Record record) throws XMLStreamException
+    public void writeRecord(StatsRecord record) throws XMLStreamException
     {
        writer.writeStartElement("tr");
 
         // Name
         startElement("td");
         writer.writeStartElement("a");
-        writer.writeAttribute("href", urlGenerator.generateAthleteEventSummaryUrl(record.athlete.athleteId).toString());
-        writer.writeAttribute("target", String.valueOf(record.athlete.name));
-        writer.writeCharacters(record.athlete.name);
+        writer.writeAttribute("href", urlGenerator.generateAthleteEventSummaryUrl(record.athlete().athleteId).toString());
+        writer.writeAttribute("target", String.valueOf(record.athlete().name));
+        writer.writeCharacters(record.athlete().name);
         endElement("a");
         endElement("td");
 
         // Course
         startElement("td");
-        writer.writeCharacters(record.courseLongName);
+        writer.writeCharacters(record.course().longName);
         endElement("td");
 
         // Count
         startElement("td");
-        writer.writeCharacters(String.valueOf(record.runCount));
+        writer.writeCharacters(String.valueOf(record.count()));
         endElement("td");
 
         // %
         if(showPercentageColumn)
         {
             startElement("td", "class", "dt");
-            writer.writeCharacters(String.format("%.1f", record.percentage));
+            writer.writeCharacters(String.format("%.1f", record.percentage()));
             endElement("td");
         }
         endElement("tr");
-    }
-
-    public static class Record
-    {
-        public static Comparator<Record> COMPARATOR = (r1, r2) ->
-        {
-            if (r1.percentage > r2.percentage) return -1;
-            if (r1.percentage < r2.percentage) return 1;
-            if (r1.runCount > r2.runCount) return -1;
-            if (r1.runCount < r2.runCount) return 1;
-            if (r1.athlete.athleteId > r2.athlete.athleteId) return 1;
-            if (r1.athlete.athleteId < r2.athlete.athleteId) return -1;
-            return 0;
-        };
-
-        public final Athlete athlete;
-        public final String courseLongName;
-        public final int runCount;
-        public final double percentage;
-
-        public Record(Athlete athlete, String courseLongName, int runCount, double percentage)
-        {
-            this.athlete = athlete;
-            this.courseLongName = courseLongName;
-            this.runCount = runCount;
-            this.percentage = percentage;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "Record{" +
-                    "athlete=" + athlete +
-                    ", courseLongName='" + courseLongName + '\'' +
-                    ", runCount=" + runCount +
-                    ", percentage=" + percentage +
-                    '}';
-        }
     }
 }

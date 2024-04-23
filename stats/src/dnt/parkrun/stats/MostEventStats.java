@@ -469,11 +469,12 @@ public class MostEventStats
                 assert !top10InRegion.isEmpty() : "WARNING: Top 10 runs in NZ list is empty";
                 for (AtEvent r : top10InRegion)
                 {
-                    top10InRegionHtmlWriter.writeRecord(new Top10InRegionHtmlWriter.Record(r.athlete, r.course.longName, r.count, -1.d));
+                    top10InRegionHtmlWriter.writeRecord(new StatsRecord()
+                            .athlete(r.athlete).course(r.course).count(r.count));
                 }
             }
 
-            List<Top10InRegionHtmlWriter.Record> clubDe90Percent = new ArrayList<>();
+            List<StatsRecord> clubDe90Percent = new ArrayList<>();
             for (Course course : courses)
             {
                 List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);
@@ -484,16 +485,16 @@ public class MostEventStats
                     double percentage = runCount * 100.0 / courseCount;
                     if(percentage > 90 && runCount > 5)
                     {
-                        clubDe90Percent.add(
-                                new Top10InRegionHtmlWriter.Record(rae.athlete, course.longName, rae.count, percentage));
+                        clubDe90Percent.add(new StatsRecord()
+                                .athlete(rae.athlete).course(course).count(rae.count).percentage(percentage));
                     }
                 }
             }
-            clubDe90Percent.sort(Top10InRegionHtmlWriter.Record.COMPARATOR);
+            clubDe90Percent.sort(StatsRecord.COMPARATOR_FOR_PERCENTAGE_COUNT_ATHLETE);
             try (Top10InRegionHtmlWriter top10atCourse = new Top10InRegionHtmlWriter(
                     writer.writer, urlGenerator, "90% Club", "Run", true))
             {
-                for (Top10InRegionHtmlWriter.Record record : clubDe90Percent)
+                for (StatsRecord record : clubDe90Percent)
                 {
                     top10atCourse.writeRecord(record);
                 }
@@ -551,12 +552,12 @@ public class MostEventStats
                     Athlete athlete = (Athlete)record[0];
                     Course course = courseRepository.getCourse((int) record[1]);
                     int countOfVolunteersAtCourse = (int)record[2];
-                    top10InRegionHtmlWriter.writeRecord(
-                            new Top10InRegionHtmlWriter.Record(athlete, course.longName, countOfVolunteersAtCourse, -1d));
+                    top10InRegionHtmlWriter.writeRecord(new StatsRecord()
+                            .athlete(athlete).course(course).count(countOfVolunteersAtCourse));
                 }
             }
 
-            List<Top10InRegionHtmlWriter.Record> clubDe90Percent = new ArrayList<>();
+            List<StatsRecord> clubDe90Percent = new ArrayList<>();
             for (Course course : courses)
             {
                 List<VolunteersAtEvent> top10 = top10VolunteersDao.getTop10VolunteersAtEvent(course.courseId);
@@ -567,15 +568,16 @@ public class MostEventStats
                     double percentage = runCount * 100.0 / courseCount;
                     if(percentage > 90 && runCount > 5)
                     {
-                        clubDe90Percent.add(new Top10InRegionHtmlWriter.Record(rae.athlete, course.longName, rae.count, percentage));
+                        clubDe90Percent.add(new StatsRecord()
+                                .athlete(rae.athlete).course(course).count(rae.count).percentage(percentage));
                     }
                 }
             }
-            clubDe90Percent.sort(Top10InRegionHtmlWriter.Record.COMPARATOR);
+            clubDe90Percent.sort(StatsRecord.COMPARATOR_FOR_PERCENTAGE_COUNT_ATHLETE);
             try (Top10InRegionHtmlWriter top10atCourse = new Top10InRegionHtmlWriter(
                     writer.writer, urlGenerator, "90% Club", "Volunteer", true))
             {
-                for (Top10InRegionHtmlWriter.Record record : clubDe90Percent)
+                for (StatsRecord record : clubDe90Percent)
                 {
                     top10atCourse.writeRecord(record);
                 }

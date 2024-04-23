@@ -2,6 +2,7 @@ package dnt.parkrun.htmlwriter;
 
 import dnt.parkrun.datastructures.*;
 
+import java.util.Comparator;
 import java.util.Date;
 
 public class StatsRecord
@@ -125,5 +126,16 @@ public class StatsRecord
         return this;
     }
     public double percentage() { return percentage; }
+
+    public static Comparator<StatsRecord> COMPARATOR_FOR_PERCENTAGE_COUNT_ATHLETE = (r1, r2) ->
+    {
+        if (r1.percentage > r2.percentage) return -1;
+        if (r1.percentage < r2.percentage) return 1;
+        if (r1.count > r2.count) return -1;
+        if (r1.count < r2.count) return 1;
+        if (r1.athlete.athleteId > r2.athlete.athleteId) return 1;
+        if (r1.athlete.athleteId < r2.athlete.athleteId) return -1;
+        return 0;
+    };
 
 }
