@@ -37,9 +37,16 @@ public class SpeedStats
                 "jdbc:mysql://localhost/parkrun_stats", "stats", "statsfractalstats");
 
         SpeedStats stats = SpeedStats.newInstance(dataSource);
-        File file = stats.generateStats();
-
-        new ProcessBuilder("xdg-open", file.getAbsolutePath()).start();
+        Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord =
+                stats.collectCourseToAgeGroupToAgeGradeRecord();
+        {
+            File file = stats.generateTimeStats(courseToAgeGroupToAgeGradeRecord);
+            new ProcessBuilder("xdg-open", file.getAbsolutePath()).start();
+        }
+        {
+            File file = stats.generateAgeGradeStats(courseToAgeGroupToAgeGradeRecord);
+            new ProcessBuilder("xdg-open", file.getAbsolutePath()).start();
+        }
     }
 
     private Date mostRecentDate = new Date(Long.MIN_VALUE);
@@ -59,7 +66,7 @@ public class SpeedStats
         return new SpeedStats(dataSource);
     }
 
-    public File generateStats() throws IOException, XMLStreamException
+    public Map<Integer, Map<AgeCategory, AgeCategoryRecord>> collectCourseToAgeGroupToAgeGradeRecord()
     {
         Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord = new HashMap<>();
         resultDao.tableScanResultAndEventNumber((result, eventNumber) -> {
@@ -74,15 +81,23 @@ public class SpeedStats
             if(result.date.getTime() > mostRecentDate.getTime())
                 mostRecentDate = new Date(result.date.getTime());
         });
-
         System.out.println(mostRecentDate);
-        try (HtmlWriter writer = HtmlWriter.newInstance(mostRecentDate, "speed_stats", "speed_stats.css"))
+        return courseToAgeGroupToAgeGradeRecord;
+    }
+
+    public File generateTimeStats(Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord) throws IOException, XMLStreamException
+    {
+        try (HtmlWriter writer = HtmlWriter.newInstance(mostRecentDate, "stats_for_fastest_times", "speed_stats.css"))
         {
             writeAgeCategoryRecords(writer, courseToAgeGroupToAgeGradeRecord);
+            return writer.getFile();
+        }
+    }
 
-            writer.writer.writeStartElement("hr");
-            writer.writer.writeEndElement();
-
+    private File generateAgeGradeStats(Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord) throws XMLStreamException, IOException
+    {
+        try (HtmlWriter writer = HtmlWriter.newInstance(mostRecentDate, "stats_for_age_grade", "speed_stats.css"))
+        {
             writeAgeGradeRecords(writer, courseToAgeGroupToAgeGradeRecord);
             return writer.getFile();
         }
@@ -92,7 +107,7 @@ public class SpeedStats
                                          Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord) throws XMLStreamException
     {
         try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter.Builder(
-                writer.writer, "Age Category Records (Time)").build())
+                writer.writer, "Age Category Records (Time)").open().build())
         {
             List<Course> sortedCourses = new ArrayList<>();
             courseToAgeGroupToAgeGradeRecord.keySet().forEach(courseId -> {
