@@ -91,8 +91,8 @@ public class SpeedStats
     private void writeAgeCategoryRecords(HtmlWriter writer,
                                          Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord) throws XMLStreamException
     {
-        try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter(
-                writer.writer, "Age Category Records (Time)"))
+        try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter.Builder(
+                writer.writer, "Age Category Records (Time)").build())
         {
             List<Course> sortedCourses = new ArrayList<>();
             courseToAgeGroupToAgeGradeRecord.keySet().forEach(courseId -> {
@@ -104,10 +104,11 @@ public class SpeedStats
             {
                 Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGroupRecord = courseToAgeGroupToAgeGradeRecord.get(course.courseId);
 
-                try(CollapsableTitleHtmlWriter collapse2 = new CollapsableTitleHtmlWriter(
-                        writer.writer, course.longName, 2, 95.0))
+                try(CollapsableTitleHtmlWriter collapse2 = new CollapsableTitleHtmlWriter.Builder(
+                        writer.writer, course.longName).level(2).fontSizePercent(95.0).build())
                 {
-                    try (AgeCategoryRecordsHtmlWriter ageGroupRecordsWriter = new AgeCategoryRecordsHtmlWriter(writer.writer, urlGenerator, AGE_CATEGORY_BY_TIME))
+                    try (AgeCategoryRecordsHtmlWriter ageGroupRecordsWriter = new AgeCategoryRecordsHtmlWriter(
+                            writer.writer, urlGenerator, AGE_CATEGORY_BY_TIME))
                     {
                         for (AgeCategory ageCategory : AgeCategory.values())
                         {
@@ -127,8 +128,8 @@ public class SpeedStats
     private void writeAgeGradeRecords(HtmlWriter writer,
                                       Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord) throws XMLStreamException
     {
-        try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter(
-                writer.writer, "Age Grade Records"))
+        try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter.Builder(
+                writer.writer, "Age Grade Records").open().build())
         {
             List<Course> sortedCourses = new ArrayList<>();
             courseToAgeGroupToAgeGradeRecord.keySet().forEach(courseId -> {
@@ -140,8 +141,8 @@ public class SpeedStats
             {
                 Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGroupRecord = courseToAgeGroupToAgeGradeRecord.get(course.courseId);
 
-                try(CollapsableTitleHtmlWriter collapse2 = new CollapsableTitleHtmlWriter(
-                        writer.writer, course.longName, 2, 95.0))
+                try(CollapsableTitleHtmlWriter collapse2 = new CollapsableTitleHtmlWriter.Builder(
+                        writer.writer, course.longName).level(2).fontSizePercent(95.0).build())
                 {
                     for (AgeCategory ageCategory : AgeCategory.values())
                     {
@@ -158,8 +159,8 @@ public class SpeedStats
                         }
                         if(records.isEmpty()) continue;
 
-                        try (CollapsableTitleHtmlWriter collapse3 = new CollapsableTitleHtmlWriter(
-                                writer.writer, ageCategory.textOnWebpage, 3, 95.0))
+                        try (CollapsableTitleHtmlWriter collapse3 = new CollapsableTitleHtmlWriter.Builder(
+                                writer.writer, ageCategory.textOnWebpage).level(3).fontSizePercent(95.0).build())
                         {
                             writer.writer.writeStartElement("h3");
                             writer.writer.writeCharacters(course.longName);

@@ -244,7 +244,7 @@ public class MostEventStats
 
     private void writeMostVolunteers(HtmlWriter writer) throws XMLStreamException
     {
-        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Events, Volunteering"))
+        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Events, Volunteering").build())
         {
             try (MostVolunteersTableHtmlWriter tableWriter = new MostVolunteersTableHtmlWriter(writer, urlGenerator))
             {
@@ -261,7 +261,7 @@ public class MostEventStats
 
     private void writePIndex(HtmlWriter writer) throws XMLStreamException
     {
-        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "p-Index Tables"))
+        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter.Builder(writer.writer, "p-Index Tables").build())
         {
             writer.writer.writeStartElement("p");
             writer.writer.writeCharacters("p-Index tables with credit to ");
@@ -442,7 +442,7 @@ public class MostEventStats
     private void writeTop10Runs(HtmlWriter writer) throws XMLStreamException
     {
         Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
-        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Runs at Courses"))
+        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Runs at Courses").build())
         {
             // Populate top 10 runs at courses
             Top10RunsDao top10RunsDao = new Top10RunsDao(statsDataSource);
@@ -520,7 +520,8 @@ public class MostEventStats
     private void writeTop10Volunteers(HtmlWriter writer) throws XMLStreamException
     {
         Map<String, Integer> courseToCount = courseEventSummaryDao.getCourseCount();
-        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter(writer.writer, "Most Volunteers at Courses"))
+        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Volunteers at Courses")
+                .open().build())
         {
             Top10VolunteersDao top10VolunteersDao = new Top10VolunteersDao(statsDataSource);
             List<Course> courses = courseRepository.getCourses(NZ).stream()

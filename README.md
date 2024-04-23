@@ -22,16 +22,18 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- Create an index page
+
+- Split results page
+
 - Weekly results - Backfill each course at a time. Just encase a course fails to get event history.
+
+- Finish max regionnaire (Needs rethink, harder calculation than thought.)
 
 - Bug - Change key on course_event_summary???
 
 - Friends table including at what venues
   - 'Most runs with other athletes' table
-
-- Regionnaire count (idea, use a set and match set of course_ids)
-  - Finish max regionnaire (Needs rethink, harder calculation than thought.)
-  - Regionnaire to include stopped events.
 
 - Low priority
 Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables. ???
@@ -42,6 +44,9 @@ Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tab
 
 
 ## Issues Completed
+
+- 22/4/2024 - Fix Regionnaire count (idea, use a set and match set of course_ids)
+Regionnaire count to include stopped events.
 
 - 22/4/2024 - We can assume event numbers for getting Weekly Results.
 Hopefully this is the final time. We can't assume. Remember this back-fills all missing results.
