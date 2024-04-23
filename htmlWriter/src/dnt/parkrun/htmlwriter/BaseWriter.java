@@ -55,17 +55,17 @@ public abstract class BaseWriter implements Closeable
 
     protected void startDetails(int level) throws XMLStreamException
     {
-        startElement("details", "name", "level" + level);
+        startElement("details", "name", "l" + level);
     }
 
     protected void startDetailsOpen(int level) throws XMLStreamException
     {
-        startElement("details", "name", "level" + level, "open", "true");
+        startElement("details", "name", "l" + level, "open", "true");
     }
 
     protected void startDetails() throws XMLStreamException // TODO: Remove
     {
-        startElement("details", "name", "details1");
+        startElement("details", "name", "d1");
     }
     protected void endDetails() throws XMLStreamException
     {
@@ -73,7 +73,7 @@ public abstract class BaseWriter implements Closeable
     }
     protected void startSubDetails() throws XMLStreamException
     {
-        startElement("details", "name", "details2");
+        startElement("details", "name", "d2");
     }
     protected void endSubDetails() throws XMLStreamException
     {

@@ -7,19 +7,6 @@ import java.util.Optional;
 
 public class CollapsableTitleHtmlWriter extends BaseWriter implements Closeable
 {
-    //    public CollapsableTitleHtmlWriter(XMLStreamWriter writer, String title) throws XMLStreamException
-//    {
-//        this(writer, title, 1);
-//    }
-//    public CollapsableTitleHtmlWriter(XMLStreamWriter writer, String title, int level) throws XMLStreamException
-//    {
-//        super(writer);
-//
-//        startDetails(level);
-//        startElement("summary");
-//        writer.writeCharacters(title);
-//        endElement("summary");
-//    }
     private CollapsableTitleHtmlWriter(XMLStreamWriter writer,
                                        String title,
                                        int level,

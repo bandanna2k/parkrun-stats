@@ -40,11 +40,7 @@ public class SpeedStats
         Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord =
                 stats.collectCourseToAgeGroupToAgeGradeRecord();
         {
-            File file = stats.generateTimeStats(courseToAgeGroupToAgeGradeRecord);
-            new ProcessBuilder("xdg-open", file.getAbsolutePath()).start();
-        }
-        {
-            File file = stats.generateAgeGradeStats(courseToAgeGroupToAgeGradeRecord);
+            File file = stats.generateFastTimeStats(courseToAgeGroupToAgeGradeRecord);
             new ProcessBuilder("xdg-open", file.getAbsolutePath()).start();
         }
     }
@@ -85,19 +81,15 @@ public class SpeedStats
         return courseToAgeGroupToAgeGradeRecord;
     }
 
-    public File generateTimeStats(Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord) throws IOException, XMLStreamException
+    public File generateFastTimeStats(Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord) throws IOException, XMLStreamException
     {
-        try (HtmlWriter writer = HtmlWriter.newInstance(mostRecentDate, "stats_for_fastest_times", "speed_stats.css"))
+        try (HtmlWriter writer = HtmlWriter.newInstance(mostRecentDate, "stats_for_speed", "speed_stats.css"))
         {
             writeAgeCategoryRecords(writer, courseToAgeGroupToAgeGradeRecord);
-            return writer.getFile();
-        }
-    }
 
-    private File generateAgeGradeStats(Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord) throws XMLStreamException, IOException
-    {
-        try (HtmlWriter writer = HtmlWriter.newInstance(mostRecentDate, "stats_for_age_grade", "speed_stats.css"))
-        {
+            writer.writer.writeStartElement("hr");
+            writer.writer.writeEndElement();
+
             writeAgeGradeRecords(writer, courseToAgeGroupToAgeGradeRecord);
             return writer.getFile();
         }
@@ -107,7 +99,7 @@ public class SpeedStats
                                          Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord) throws XMLStreamException
     {
         try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter.Builder(
-                writer.writer, "Age Category Records (Time)").open().build())
+                writer.writer, "Age Category Records (Time)").build())
         {
             List<Course> sortedCourses = new ArrayList<>();
             courseToAgeGroupToAgeGradeRecord.keySet().forEach(courseId -> {
