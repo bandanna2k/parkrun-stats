@@ -17,6 +17,7 @@ import dnt.parkrun.datastructures.stats.AtEvent;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import dnt.parkrun.datastructures.stats.VolunteersAtEvent;
 import dnt.parkrun.htmlwriter.HtmlWriter;
+import dnt.parkrun.htmlwriter.StatsRecord;
 import dnt.parkrun.htmlwriter.writers.*;
 import dnt.parkrun.pindex.PIndex;
 import dnt.parkrun.stats.invariants.CourseEventSummaryChecker;
@@ -511,7 +512,8 @@ public class MostEventStats
                         double courseCount = courseToCount.get(course.name);
                         double runCount = rae.count;
                         double percentage = runCount * 100.0 / courseCount;
-                        top10atCourse.writeRecord(new Top10AtCourseHtmlWriter.Record(rae.athlete, rae.count, percentage));
+                        top10atCourse.writeRecord(new StatsRecord()
+                                .athlete(rae.athlete).count(rae.count).percentage(percentage));
                     }
                 }
             }
@@ -593,7 +595,8 @@ public class MostEventStats
                         double courseCount = courseToCount.get(course.name);
                         double volunteerCount = rae.count;
                         double percentage = volunteerCount * 100.0 / courseCount;
-                        top10atCourse.writeRecord(new Top10AtCourseHtmlWriter.Record(rae.athlete, rae.count, percentage));
+                        top10atCourse.writeRecord(new StatsRecord()
+                                .athlete(rae.athlete).count(rae.count).percentage(percentage));
                     }
                 }
             }
@@ -797,13 +800,6 @@ public class MostEventStats
             }
         }
         return date;
-    }
-
-    private static int getDayOfWeek(Date date)
-    {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        return cal.get(Calendar.DAY_OF_WEEK);
     }
 
     private void writeAttendanceRecords(HtmlWriter writer) throws XMLStreamException

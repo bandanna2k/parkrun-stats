@@ -18,13 +18,15 @@ public class StatsRecord
     private Result result;
     private boolean isNew;
     private boolean isRecent;
+    private int count;
+    private double percentage;
 
-    StatsRecord athlete(Athlete athlete)
+    public StatsRecord athlete(Athlete athlete)
     {
         this.athlete = athlete;
         return this;
     }
-    Athlete athlete() { return athlete; }
+    public Athlete athlete() { return athlete; }
 
     public StatsRecord time(Time time)
     {
@@ -109,4 +111,19 @@ public class StatsRecord
         return this;
     }
     public boolean isRecent() { return this.isRecent; }
+
+    public StatsRecord count(int count)
+    {
+        this.count = count;
+        return this;
+    }
+    public int count() { return count; }
+
+    public StatsRecord percentage(double percentage)
+    {
+        this.percentage = percentage;
+        return this;
+    }
+    public double percentage() { return percentage; }
+
 }
