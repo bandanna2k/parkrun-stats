@@ -107,4 +107,44 @@ public class MaxNeededTest
         assertThat(getRunsNeededAndMaxRunsNeeded(sortedStartDates, sortedStopDates, sortedFirstRuns))
                 .isEqualTo(new Object[] { 0, 3 } );
     }
+
+    @Test
+    public void shouldCalculateRunsNeededWithStoppedRun1()
+    {
+        List<CourseDate> sortedStartDates = new ArrayList<>(List.of(
+                new CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/01/2024")),
+                new CourseDate(courses.get(1), DateConverter.parseWebsiteDate("15/01/2024")),
+                new CourseDate(courses.get(2), DateConverter.parseWebsiteDate("01/02/2024")),
+                new CourseDate(courses.get(3), DateConverter.parseWebsiteDate("15/02/2024"))
+        ));
+        List<CourseDate> sortedStopDates = new ArrayList<>(List.of(
+                new CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/03/2024"))
+        ));
+        List<CourseDate> sortedFirstRuns = new ArrayList<>(List.of(
+                new CourseDate(courses.get(1), DateConverter.parseWebsiteDate("01/04/2024")),
+                new CourseDate(courses.get(2), DateConverter.parseWebsiteDate("15/04/2024")),
+                new CourseDate(courses.get(3), DateConverter.parseWebsiteDate("22/04/2024"))
+        ));
+
+        assertThat(getRunsNeededAndMaxRunsNeeded(sortedStartDates, sortedStopDates, sortedFirstRuns))
+                .isEqualTo(new Object[] { 0, 4 } );
+    }
+
+    @Test
+    public void shouldCalculateRunsNeededWithStoppedRun2()
+    {
+        List<CourseDate> sortedStartDates = new ArrayList<>(List.of(
+                new CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/01/2024")),
+                new CourseDate(courses.get(1), DateConverter.parseWebsiteDate("15/01/2024"))
+        ));
+        List<CourseDate> sortedStopDates = new ArrayList<>(List.of(
+                new CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/02/2024"))
+        ));
+        List<CourseDate> sortedFirstRuns = new ArrayList<>(List.of(
+                new CourseDate(courses.get(1), DateConverter.parseWebsiteDate("01/02/2024"))
+        ));
+
+        assertThat(getRunsNeededAndMaxRunsNeeded(sortedStartDates, sortedStopDates, sortedFirstRuns))
+                .isEqualTo(new Object[] { 0, 1 } );
+    }
 }
