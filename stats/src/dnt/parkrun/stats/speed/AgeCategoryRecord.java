@@ -3,6 +3,7 @@ package dnt.parkrun.stats.speed;
 import dnt.parkrun.datastructures.AgeGrade;
 import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.datastructures.Time;
+import dnt.parkrun.htmlwriter.StatsRecord;
 
 import static dnt.parkrun.datastructures.Athlete.NO_ATHLETE;
 

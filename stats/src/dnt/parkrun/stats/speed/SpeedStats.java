@@ -7,8 +7,9 @@ import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.datastructures.AgeCategory;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
-import dnt.parkrun.htmlwriter.CollapsableTitleHtmlWriter;
 import dnt.parkrun.htmlwriter.HtmlWriter;
+import dnt.parkrun.htmlwriter.StatsRecord;
+import dnt.parkrun.htmlwriter.writers.CollapsableTitleHtmlWriter;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;

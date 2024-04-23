@@ -1,6 +1,7 @@
 package dnt.parkrun.htmlwriter;
 
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.htmlwriter.writers.Top10AtCourseHtmlWriter;
 import org.junit.Before;
 import org.junit.Test;
 

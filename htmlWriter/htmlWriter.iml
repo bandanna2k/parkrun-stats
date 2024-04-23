@@ -10,10 +10,10 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="dataStructures" />
-    <orderEntry type="module" module-name="common" />
     <orderEntry type="module" module-name="pindex" />
     <orderEntry type="library" name="jsoup" level="project" />
     <orderEntry type="library" scope="TEST" name="junit" level="project" />
     <orderEntry type="library" scope="TEST" name="assertj.core" level="project" />
+    <orderEntry type="module" module-name="common" />
   </component>
 </module>

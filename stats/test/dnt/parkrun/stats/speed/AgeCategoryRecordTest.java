@@ -1,6 +1,7 @@
 package dnt.parkrun.stats.speed;
 
 import dnt.parkrun.datastructures.*;
+import dnt.parkrun.htmlwriter.StatsRecord;
 import org.junit.Test;
 
 import java.time.Instant;

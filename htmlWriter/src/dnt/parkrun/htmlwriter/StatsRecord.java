@@ -1,4 +1,4 @@
-package dnt.parkrun.stats.speed;
+package dnt.parkrun.htmlwriter;
 
 import dnt.parkrun.datastructures.*;
 

@@ -4,6 +4,7 @@ import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.htmlwriter.BaseWriter;
+import dnt.parkrun.htmlwriter.StatsRecord;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;

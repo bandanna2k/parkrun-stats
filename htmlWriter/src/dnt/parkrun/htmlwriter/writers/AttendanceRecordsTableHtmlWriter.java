@@ -1,9 +1,10 @@
-package dnt.parkrun.htmlwriter;
+package dnt.parkrun.htmlwriter.writers;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
+import dnt.parkrun.htmlwriter.BaseWriter;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;

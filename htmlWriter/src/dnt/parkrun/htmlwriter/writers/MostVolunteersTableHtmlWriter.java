@@ -1,7 +1,9 @@
-package dnt.parkrun.htmlwriter;
+package dnt.parkrun.htmlwriter.writers;
 
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.htmlwriter.BaseWriter;
+import dnt.parkrun.htmlwriter.HtmlWriter;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
