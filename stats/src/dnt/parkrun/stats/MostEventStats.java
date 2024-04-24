@@ -697,36 +697,38 @@ public class MostEventStats
 
         int maxBehind = -1;
         int behindNow = -1;
-        final int totalEvents = sortedStartDates.size();
-        final int totalEventsStopped = sortedStopDates.size();
-        final int totalEventsRun = sortedFirstRuns.size();
-        while(!sortedStartDates.isEmpty())
+        Set<Integer> coursesDone = new HashSet<>();
+        Set<Integer> coursesRunning = new HashSet<>();
+        while(
+                !(sortedFirstRuns.isEmpty() && sortedStartDates.isEmpty() && sortedStopDates.isEmpty()))
         {
-            CourseDate startDate = sortedStartDates.removeFirst();
-            sortedFirstRuns.removeIf(record -> record.date.getTime() <= startDate.date.getTime());
-            sortedStopDates.removeIf(record -> record.date.getTime() <= startDate.date.getTime());
+            Date loopDate = getEarliestDate(sortedFirstRuns, sortedStartDates, sortedStopDates);
 
-            int coursesDone = totalEventsRun - sortedFirstRuns.size();
-            int coursesThatHaveStarted = totalEvents - sortedStartDates.size();
-            int coursesThatHaveStopped = totalEventsStopped - sortedStopDates.size();
-            int coursesRunning = coursesThatHaveStarted - coursesThatHaveStopped;
-            int coursesRunningDone = Math.max(0, coursesDone - coursesThatHaveStopped);
-            behindNow = coursesRunning - coursesRunningDone;
-            maxBehind = Math.max(behindNow, maxBehind);
-        }
-        while(!sortedFirstRuns.isEmpty())
-        {
-            CourseDate firstRun = sortedFirstRuns.removeFirst();
-            sortedStartDates.removeIf(record -> record.date.getTime() <= firstRun.date.getTime());
-            sortedStopDates.removeIf(record -> record.date.getTime() <= firstRun.date.getTime());
+            CourseDate firstRun = null;
+            CourseDate stopDate = null;
+            if(!sortedFirstRuns.isEmpty() && loopDate.getTime() == sortedFirstRuns.getFirst().date.getTime())
+            {
+                firstRun = sortedFirstRuns.removeFirst();
+                coursesDone.add(firstRun.course.courseId);
+            }
+            if(!sortedStartDates.isEmpty() && loopDate.getTime() == sortedStartDates.getFirst().date.getTime())
+            {
+                CourseDate startDate = sortedStartDates.removeFirst();
+                coursesRunning.add(startDate.course.courseId);
+            }
+            if(!sortedStopDates.isEmpty() && loopDate.getTime() == sortedStopDates.getFirst().date.getTime())
+            {
+                stopDate = sortedStopDates.removeFirst();
+                final int stopDateCourseId = stopDate.course.courseId;
+                coursesRunning.removeIf(n -> n == stopDateCourseId);
+            }
 
-            int coursesDone = totalEventsRun - sortedFirstRuns.size();
-            int coursesThatHaveStarted = totalEvents - sortedStartDates.size();
-            int coursesThatHaveStopped = totalEventsStopped - sortedStopDates.size();
-            int coursesRunning = coursesThatHaveStarted - coursesThatHaveStopped;
-            int coursesRunningDone = Math.max(0, coursesDone - coursesThatHaveStopped);
-            behindNow = coursesRunning - coursesRunningDone;
+            Set<Integer> coursesNotDone = new HashSet<>(coursesRunning);
+            coursesNotDone.removeAll(coursesDone);
+
+            behindNow = coursesNotDone.size();
             maxBehind = Math.max(behindNow, maxBehind);
+
         }
         return new Object[] { behindNow, maxBehind };
     }

@@ -145,6 +145,24 @@ public class MaxNeededTest
         ));
 
         assertThat(getRunsNeededAndMaxRunsNeeded(sortedStartDates, sortedStopDates, sortedFirstRuns))
+                .isEqualTo(new Object[] { 0, 2 } );
+    }
+
+    @Test
+    public void shouldCalculateRunsNeededWithStoppedRun2a()
+    {
+        List<CourseDate> sortedStartDates = new ArrayList<>(List.of(
+                new CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/01/2024")),
+                new CourseDate(courses.get(1), DateConverter.parseWebsiteDate("01/02/2024"))
+        ));
+        List<CourseDate> sortedStopDates = new ArrayList<>(List.of(
+                new CourseDate(courses.get(0), DateConverter.parseWebsiteDate("01/02/2024"))
+        ));
+        List<CourseDate> sortedFirstRuns = new ArrayList<>(List.of(
+                new CourseDate(courses.get(1), DateConverter.parseWebsiteDate("01/02/2024"))
+        ));
+
+        assertThat(getRunsNeededAndMaxRunsNeeded(sortedStartDates, sortedStopDates, sortedFirstRuns))
                 .isEqualTo(new Object[] { 0, 1 } );
     }
 }
