@@ -22,13 +22,9 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Create an index page
-
-- Split results page
+- Need a loading icon whilst fastest times page is loading 
 
 - Weekly results - Backfill each course at a time. Just encase a course fails to get event history.
-
-- Finish max regionnaire (Needs rethink, harder calculation than thought.)
 
 - Bug - Change key on course_event_summary???
 
@@ -44,6 +40,10 @@ Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tab
 
 
 ## Issues Completed
+
+- 24/4/2024 - Split results page (Not doing, the no benefit)
+
+- 24/4/2024 - Finish max regionnaire (Needs rethink, harder calculation than thought.)
 
 - 22/4/2024 - Fix Regionnaire count (idea, use a set and match set of course_ids)
 Regionnaire count to include stopped events.

@@ -111,32 +111,39 @@ public class WeekendResults
 
             System.out.printf("* Processing %s *\n", ces);
 
-            while(true)
+            tryTwiceIfFails(() -> {
+                dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(ces.course)
+                        .webpageProvider(webpageProviderFactory.createCourseEventWebpageProvider(ces.course.name, ces.eventNumber))
+                        .forEachAthlete(athleteDao::insert)
+                        .forEachResult(resultDao::insert)
+                        .forEachVolunteer(volunteerDao::insert)
+                        .build();
+                parser.parse();
+
+                courseEventSummaryDao.insert(ces);
+            });
+        }
+    }
+
+    private void tryTwiceIfFails(Runnable runnable)
+    {
+        while(true)
+        {
+            try
             {
+                runnable.run();
+                break;
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
                 try
                 {
-                    dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(ces.course)
-                            .webpageProvider(webpageProviderFactory.createCourseEventWebpageProvider(ces.course.name, ces.eventNumber))
-                            .forEachAthlete(athleteDao::insert)
-                            .forEachResult(resultDao::insert)
-                            .forEachVolunteer(volunteerDao::insert)
-                            .build();
-                    parser.parse();
-
-                    courseEventSummaryDao.insert(ces);
-                    break;
+                    Thread.sleep(5000);
                 }
-                catch (Exception ex)
+                catch (InterruptedException e)
                 {
-                    ex.printStackTrace();
-                    try
-                    {
-                        Thread.sleep(5000);
-                    }
-                    catch (InterruptedException e)
-                    {
-                        throw new RuntimeException(e);
-                    }
+                    throw new RuntimeException(e);
                 }
             }
         }
