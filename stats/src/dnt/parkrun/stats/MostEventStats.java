@@ -17,6 +17,7 @@ import dnt.parkrun.datastructures.stats.AtEvent;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import dnt.parkrun.datastructures.stats.VolunteersAtEvent;
 import dnt.parkrun.htmlwriter.HtmlWriter;
+import dnt.parkrun.htmlwriter.MostEventsRecord;
 import dnt.parkrun.htmlwriter.StatsRecord;
 import dnt.parkrun.htmlwriter.writers.*;
 import dnt.parkrun.pindex.PIndex;
@@ -39,7 +40,6 @@ import static dnt.parkrun.datastructures.Course.Status.*;
 import static dnt.parkrun.region.Region.getNzRegionRunCount;
 import static java.util.Calendar.SATURDAY;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 
 public class MostEventStats
 {
@@ -178,13 +178,38 @@ public class MostEventStats
 
             writeAttendanceRecords(writer);
 
-            writeMostEvents(writer, differentEventRecords, false);
+            {
+                for (MostEventsDao.MostEventsRecord der : differentEventRecords)
+                {
+                    Athlete athlete = athleteIdToAthlete.get(der.athlete.athleteId);
+                    List<AthleteCourseSummary> athleteCourseSummaries = athleteIdToAthleteCourseSummaries.get(der.athlete.athleteId);
 
+                    int globalCourseCount = athleteCourseSummaries.size();
+                    int globalTotalCourseCount = athleteCourseSummaries.stream().mapToInt(acs -> acs.countOfRuns).sum();
+
+                    mostEventsDao.updateDifferentCourseRecord(athlete.athleteId, globalCourseCount, globalTotalCourseCount);
+                }
+
+                writeMostEvents(writer, differentEventRecords);
+            }
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
-            writeMostEvents(writer, differentEventRecords, true);
+            {
+                System.out.print("Getting first runs ");
+                final Map<Integer, List<CourseDate>> athleteIdToFirstRuns = new HashMap<>();
 
+                mostEventsDao.getFirstRuns().forEach(record ->
+                {
+                    int athleteId = (int) record[0];
+                    CourseDate firstRun = new CourseDate(courseRepository.getCourse((int) record[1]), (Date) record[2]);
+                    List<CourseDate> firstRuns = athleteIdToFirstRuns.computeIfAbsent(athleteId, k -> new ArrayList<>());
+                    firstRuns.add(firstRun);
+                });
+                System.out.println("DONE");
+
+                writeMostEventsExtended(writer, differentEventRecords, athleteIdToFirstRuns);
+            }
             writeMostVolunteers(writer);
 
             writePIndex(writer);
@@ -605,46 +630,27 @@ public class MostEventStats
         }
     }
 
-    private void writeMostEvents(HtmlWriter writer, List<MostEventsDao.MostEventsRecord> differentEventRecords, boolean extended) throws XMLStreamException
+    private void writeMostEventsExtended(HtmlWriter writer,
+                                         List<MostEventsDao.MostEventsRecord> differentEventRecords,
+                                         Map<Integer, List<CourseDate>> athleteIdToFirstRuns) throws XMLStreamException
     {
-        final Map<Integer, List<CourseDate>> athleteIdToFirstRuns;
-        if(extended)
+        try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Events (Extended)").build())
         {
-            System.out.print("Getting first runs ");
-            athleteIdToFirstRuns = new HashMap<>();
-
-            mostEventsDao.getFirstRuns().forEach(record ->
+            try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, urlGenerator, true))
             {
-                int athleteId = (int) record[0];
-                CourseDate firstRun = new CourseDate(courseRepository.getCourse((int) record[1]), (Date) record[2]);
-                List<CourseDate> firstRuns = athleteIdToFirstRuns.computeIfAbsent(athleteId, k -> new ArrayList<>());
-                firstRuns.add(firstRun);
-            });
-            System.out.println("DONE");
-        }
-        else
-        {
-            athleteIdToFirstRuns = emptyMap();
-        }
-
-        try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, urlGenerator, extended))
-        {
-            for (MostEventsDao.MostEventsRecord der : differentEventRecords)
-            {
-                Athlete athlete = athleteIdToAthlete.get(der.athlete.athleteId);
-                List<AthleteCourseSummary> athleteCourseSummaries = athleteIdToAthleteCourseSummaries.get(der.athlete.athleteId);
-
-                int courseCount = athleteCourseSummaries.size();
-                int totalCourseCount = athleteCourseSummaries.stream().mapToInt(acs -> acs.countOfRuns).sum();
-
-                mostEventsDao.updateDifferentCourseRecord(athlete.athleteId, courseCount, totalCourseCount);
-
-                final List<CourseDate> listOfFirstRuns;
-                final String firstRuns;
-                final int regionnaireCount;
-                final String runsNeeded;
-                if (extended)
+                for (MostEventsDao.MostEventsRecord der : differentEventRecords)
                 {
+                    Athlete athlete = athleteIdToAthlete.get(der.athlete.athleteId);
+                    List<AthleteCourseSummary> athleteCourseSummaries = athleteIdToAthleteCourseSummaries.get(der.athlete.athleteId);
+                    int globalCourseCount = athleteCourseSummaries.size();
+                    int globalTotalCourseCount = athleteCourseSummaries.stream().mapToInt(acs -> acs.countOfRuns).sum();
+
+                    final List<CourseDate> listOfFirstRuns;
+                    final String firstRuns;
+                    final int regionnaireCount;
+                    final String runsNeeded;
+                    final MostEventsRecord mostEventsRecord;
+
                     listOfFirstRuns = athleteIdToFirstRuns.get(der.athlete.athleteId);
                     listOfFirstRuns.sort(CourseDate.COMPARATOR);
 
@@ -663,22 +669,39 @@ public class MostEventStats
                             "[" + listOfFirstRuns.stream().map(fr -> String.valueOf(fr.course.courseId)).collect(Collectors.joining(",")) + "]," +
                             "[" + firstRunDatesHtmlString + "]" +
                             "]";
-                }
-                else
-                {
-                    runsNeeded = null;
-                    firstRuns = null;
-                    regionnaireCount = -1;
-                }
+                    mostEventsRecord = new MostEventsRecord(athlete,
+                            der.differentRegionCourseCount, der.totalRegionRuns,
+                            globalCourseCount, globalTotalCourseCount,
+                            der.positionDelta, der.isNewEntry,
+                            firstRuns,
+                            regionnaireCount,
+                            runsNeeded);
 
-                tableWriter.writeMostEventRecord(
-                        new MostEventsTableHtmlWriter.Record(athlete,
+                    tableWriter.writeMostEventRecord(mostEventsRecord);
+                }
+            }
+        }
+    }
+
+    private void writeMostEvents(HtmlWriter writer, List<MostEventsDao.MostEventsRecord> differentEventRecords) throws XMLStreamException
+    {
+        try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Events").build())
+        {
+            try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, urlGenerator, false))
+            {
+                for (MostEventsDao.MostEventsRecord der : differentEventRecords)
+                {
+                    Athlete athlete = athleteIdToAthlete.get(der.athlete.athleteId);
+                    List<AthleteCourseSummary> athleteCourseSummaries = athleteIdToAthleteCourseSummaries.get(der.athlete.athleteId);
+                    int globalCourseCount = athleteCourseSummaries.size();
+                    int globalTotalCourseCount = athleteCourseSummaries.stream().mapToInt(acs -> acs.countOfRuns).sum();
+
+                    final MostEventsRecord mostEventsRecord = new MostEventsRecord(athlete,
                                 der.differentRegionCourseCount, der.totalRegionRuns,
-                                courseCount, totalCourseCount,
-                                der.positionDelta, der.isNewEntry,
-                                firstRuns,
-                                regionnaireCount,
-                                runsNeeded));
+                                globalCourseCount, globalTotalCourseCount,
+                                der.positionDelta, der.isNewEntry);
+                    tableWriter.writeMostEventRecord(mostEventsRecord);
+                }
             }
         }
     }

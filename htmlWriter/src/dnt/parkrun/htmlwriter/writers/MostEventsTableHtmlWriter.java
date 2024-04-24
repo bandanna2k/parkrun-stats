@@ -1,8 +1,8 @@
 package dnt.parkrun.htmlwriter.writers;
 
 import dnt.parkrun.common.UrlGenerator;
-import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.htmlwriter.BaseWriter;
+import dnt.parkrun.htmlwriter.MostEventsRecord;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -18,11 +18,6 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         super(writer);
         this.urlGenerator = urlGenerator;
         this.extended = extended;
-
-        startDetails();
-        startElement("summary");
-        writer.writeCharacters(extended ? "Most Events (Extended)" : "Most Events");
-        endElement("summary");
 
         startElement("table", "class", "sortable most-events");
         writeHeader(writer);
@@ -102,9 +97,6 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             writer.writeCharacters("* Hover over position arrows to see weekly movement.");
             endElement("p");
             endElement("center");
-
-            endDetails();
-
         }
         catch (XMLStreamException e)
         {
@@ -112,47 +104,47 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         }
     }
 
-    public void writeMostEventRecord(Record record) throws XMLStreamException
+    public void writeMostEventRecord(MostEventsRecord mostEventsRecord) throws XMLStreamException
     {
        writer.writeStartElement("tr");
 
         // Up/Down
-        writeTableDataWithDelta(record.positionDelta, record.isNewEntry);
+        writeTableDataWithDelta(mostEventsRecord.positionDelta, mostEventsRecord.isNewEntry);
 
         // Name
         startElement("td");
         writer.writeStartElement("a");
-        writer.writeAttribute("href", urlGenerator.generateAthleteEventSummaryUrl(record.athlete.athleteId).toString());
-        writer.writeAttribute("target", String.valueOf(record.athlete.name));
-        writer.writeCharacters(record.athlete.name);
+        writer.writeAttribute("href", urlGenerator.generateAthleteEventSummaryUrl(mostEventsRecord.athlete.athleteId).toString());
+        writer.writeAttribute("target", String.valueOf(mostEventsRecord.athlete.name));
+        writer.writeCharacters(mostEventsRecord.athlete.name);
         endElement("a");
         endElement("td");
 
         // Different region courses
         startElement("td");
-        writer.writeCharacters(String.valueOf(record.differentRegionCourseCount));
+        writer.writeCharacters(String.valueOf(mostEventsRecord.differentRegionCourseCount));
         endElement("td");
 
         // Total region runs
         startElement("td");
-        writer.writeCharacters(String.valueOf(record.totalRegionRuns));
+        writer.writeCharacters(String.valueOf(mostEventsRecord.totalRegionRuns));
         endElement("td");
 
         // Different worldwide courses (desktop)
         startElement("td", "class", "dt");
-        writer.writeCharacters(String.valueOf(record.differentCourseCount));
+        writer.writeCharacters(String.valueOf(mostEventsRecord.differentGlobalCourseCount));
         endElement("td");
 
         // Total worldwide runs (desktop)
         startElement("td", "class", "dt");
-        writer.writeCharacters(String.valueOf(record.totalRuns));
+        writer.writeCharacters(String.valueOf(mostEventsRecord.totalGlobalRuns));
         endElement("td");
 
         if(extended)
         {
             // Regionnaire count
             startElement("td");
-            writer.writeCharacters(String.valueOf(record.regionnaireCount));
+            writer.writeCharacters(String.valueOf(mostEventsRecord.regionnaireCount));
             endElement("td");
         }
 
@@ -160,7 +152,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         {
             // Max courses needed
             startElement("td", "class", "dt");
-            writer.writeCharacters(record.runsNeeded);
+            writer.writeCharacters(mostEventsRecord.runsNeeded);
             endElement("td");
         }
 
@@ -170,7 +162,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             startElement("span", "class", "click-me",
                     "onclick",
                     "dialog.showModal();" +
-                            "setFirstRuns('" + record.athlete.name.replace("'", "\\'") + "'," + record.firstRuns + ");" +
+                            "setFirstRuns('" + mostEventsRecord.athlete.name.replace("'", "\\'") + "'," + mostEventsRecord.firstRuns + ");" +
                             "refreshStartDates();"
             );
             writer.writeCharacters("\uD83D\uDCC8");
@@ -181,51 +173,4 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         endElement("tr");
     }
 
-    public static class Record
-    {
-        public final Athlete athlete;
-        public final int differentRegionCourseCount;
-        public final int totalRegionRuns;
-        public final int differentCourseCount;
-        public final int totalRuns;
-        public final String firstRuns;
-        public final int regionnaireCount;
-
-        public final int positionDelta;
-        public final boolean isNewEntry;
-        public final String runsNeeded;
-
-        public Record(Athlete athlete,
-                      int differentRegionCourseCount, int totalRegionRuns,
-                      int differentCourseCount, int totalRuns,
-                      int positionDelta, boolean isNewEntry,
-                      String firstRuns, int regionnaireCount, String runsNeeded)
-        {
-            this.athlete = athlete;
-            this.differentRegionCourseCount = differentRegionCourseCount;
-            this.totalRegionRuns = totalRegionRuns;
-            this.differentCourseCount = differentCourseCount;
-            this.totalRuns = totalRuns;
-            this.positionDelta = positionDelta;
-            this.isNewEntry = isNewEntry;
-            this.firstRuns = firstRuns;
-            this.regionnaireCount = regionnaireCount;
-            this.runsNeeded = runsNeeded;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "Record{" +
-                    "athlete=" + athlete +
-                    ", differentRegionCourseCount=" + differentRegionCourseCount +
-                    ", totalRegionRuns=" + totalRegionRuns +
-                    ", differentCourseCount=" + differentCourseCount +
-                    ", totalRuns=" + totalRuns +
-                    ", positionDelta=" + positionDelta +
-                    ", firstRuns='" + firstRuns + '\'' +
-                    ", regionnaireCount=" + regionnaireCount +
-                    '}';
-        }
-    }
 }
