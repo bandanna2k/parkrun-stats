@@ -648,11 +648,10 @@ public class MostEventStats
                     listOfFirstRuns = athleteIdToFirstRuns.get(der.athlete.athleteId);
                     listOfFirstRuns.sort(CourseDate.COMPARATOR);
 
-                    regionnaireCount = getRegionnaireCount(new ArrayList<>(startDates), new ArrayList<>(), new ArrayList<>(listOfFirstRuns));
-                    List<CourseDate> listOfRegionnaireDates = getListOfRegionnaireDates(new ArrayList<>(startDates), new ArrayList<>(), new ArrayList<>(listOfFirstRuns));
+                    List<CourseDate> listOfRegionnaireDates = getListOfRegionnaireDates(startDates, stopDates, listOfFirstRuns);
+                    regionnaireCount = listOfRegionnaireDates.size();
 
-                    Object[] result = getRunsNeededAndMaxRunsNeeded(
-                            new ArrayList<>(startDates), new ArrayList<>(stopDates), new ArrayList<>(listOfFirstRuns));
+                    Object[] result = getRunsNeededAndMaxRunsNeeded(startDates, stopDates, listOfFirstRuns);
                     runsNeeded = result[0] + " (" + result[1] + ")";
 
                     String firstRunDatesHtmlString = listOfFirstRuns.stream().map(fr ->
@@ -685,10 +684,17 @@ public class MostEventStats
     }
 
     static Object[] getRunsNeededAndMaxRunsNeeded(
-            List<CourseDate> sortedStartDates,
-            List<CourseDate> sortedStopDates,
-            List<CourseDate> sortedFirstRuns)
+            List<CourseDate> startDates,
+            List<CourseDate> stopDates,
+            List<CourseDate> firstRuns)
     {
+        List<CourseDate> sortedStartDates = new ArrayList<>(startDates);
+        List<CourseDate> sortedStopDates = new ArrayList<>(stopDates);
+        List<CourseDate> sortedFirstRuns = new ArrayList<>(firstRuns);
+        sortedStartDates.sort(CourseDate.COMPARATOR);
+        sortedStopDates.sort(CourseDate.COMPARATOR);
+        sortedFirstRuns.sort(CourseDate.COMPARATOR);
+
         int maxBehind = -1;
         int behindNow = -1;
         final int totalEvents = sortedStartDates.size();
