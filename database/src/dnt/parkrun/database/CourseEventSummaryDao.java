@@ -20,6 +20,36 @@ public class CourseEventSummaryDao extends BaseDao
         this.courseRepository = courseRepository;
     }
 
+    public List<CourseEventSummary> getCourseEventSummaries(Course course)
+    {
+        String sql = STR."""
+                select course_id, event_number, date, finishers,
+                    fma.name as first_male_name, first_male_athlete_id,
+                    ffa.name as first_female_name, first_female_athlete_id
+                from course_event_summary
+                left join athlete fma on first_male_athlete_id = fma.athlete_id
+                left join athlete ffa on first_female_athlete_id = ffa.athlete_id
+                where course_id = :courseId
+                """;
+        return jdbc.query(sql, new MapSqlParameterSource("courseId", course.courseId), (rs, rowNum) ->
+        {
+            int firstMaleAthleteId = rs.getInt("first_male_athlete_id");
+            int firstFemaleAthleteId = rs.getInt("first_female_athlete_id");
+            Optional<Athlete> firstMale = Optional.ofNullable(
+                    firstMaleAthleteId == Athlete.NO_ATHLETE_ID ? null : Athlete.from(rs.getString("first_male_name"), firstMaleAthleteId));
+            Optional<Athlete> firstFemale = Optional.ofNullable(
+                    firstFemaleAthleteId == Athlete.NO_ATHLETE_ID ? null : Athlete.from(rs.getString("first_female_name"), firstFemaleAthleteId));
+            return new CourseEventSummary(
+                    course,
+                    rs.getInt("event_number"),
+                    rs.getDate("date"),
+                    rs.getInt("finishers"),
+                    firstMale,
+                    firstFemale
+            );
+        });
+    }
+
     public List<CourseEventSummary> getCourseEventSummaries()
     {
         String sql = "select course_id, event_number, date, finishers," +

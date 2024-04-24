@@ -86,43 +86,43 @@ public class WeekendResults
                 .filter(e -> e != NZ)
                 .forEach(e -> courseRepository.filterByCountryCode(e.getCountryCode()));
 
-        List<CourseEventSummary> courseEventSummariesToGet = new ArrayList<>();
-
-        System.out.println("* Get course summaries from DAO *");
-        List<CourseEventSummary> courseEventSummariesFromDao = courseEventSummaryDao.getCourseEventSummaries();
-        System.out.println("Count: " + courseEventSummariesFromDao.size());
-
-        System.out.println("* Get course summaries from Web *");
-        List<CourseEventSummary> courseEventSummariesFromWeb = getCourseEventSummariesFromWeb();
-
-        System.out.println("* Filtering existing course event summaries *");
-        courseEventSummariesFromWeb.removeAll(courseEventSummariesFromDao);
-
-        courseEventSummariesToGet.addAll(courseEventSummariesFromWeb);
-        System.out.println("Count: " + courseEventSummariesToGet.size());
-
-        System.out.println("* Get all course event summaries *");
-        for (CourseEventSummary ces : courseEventSummariesToGet)
+        courseRepository.forEachCourse(course ->
         {
-            if(ces.course.status != Course.Status.RUNNING)
+            if(course.status != Course.Status.RUNNING) return;
+
+            System.out.printf("* [%s] Get course summaries from database... ", course.longName);
+            List<CourseEventSummary> courseEventSummariesFromDao = courseEventSummaryDao.getCourseEventSummaries(course);
+            System.out.printf("Count: %d *%n", courseEventSummariesFromDao.size());
+
+            System.out.printf("* [%s] Get course summaries from web... ", course.longName);
+            List<CourseEventSummary> courseEventSummariesFromWeb = getCourseEventSummariesFromWeb(course);
+            System.out.printf("Count: %d *%n", courseEventSummariesFromDao.size());
+
+            System.out.printf("* [%s] Filtering existing course event summaries *%n", course.longName);
+            courseEventSummariesFromWeb.removeAll(courseEventSummariesFromDao);
+
+            List<CourseEventSummary> courseEventSummariesToGet = new ArrayList<>(courseEventSummariesFromWeb);
+            System.out.printf("* [%s] Courses to download: %d *%n", course.longName, courseEventSummariesToGet.size());
+
+            System.out.printf("* [%s] Getting course events *%n", course.longName);
+            for (CourseEventSummary ces : courseEventSummariesToGet)
             {
-                continue;
+                System.out.printf("* Processing %s *%n", ces);
+
+                tryTwiceIfFails(() -> {
+                    dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(ces.course)
+                            .webpageProvider(webpageProviderFactory.createCourseEventWebpageProvider(ces.course.name, ces.eventNumber))
+                            .forEachAthlete(athleteDao::insert)
+                            .forEachResult(resultDao::insert)
+                            .forEachVolunteer(volunteerDao::insert)
+                            .build();
+                    parser.parse();
+
+                    courseEventSummaryDao.insert(ces);
+                });
             }
-
-            System.out.printf("* Processing %s *\n", ces);
-
-            tryTwiceIfFails(() -> {
-                dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(ces.course)
-                        .webpageProvider(webpageProviderFactory.createCourseEventWebpageProvider(ces.course.name, ces.eventNumber))
-                        .forEachAthlete(athleteDao::insert)
-                        .forEachResult(resultDao::insert)
-                        .forEachVolunteer(volunteerDao::insert)
-                        .build();
-                parser.parse();
-
-                courseEventSummaryDao.insert(ces);
-            });
-        }
+            System.out.println();
+        });
     }
 
     private void tryTwiceIfFails(Runnable runnable)
@@ -167,19 +167,17 @@ public class WeekendResults
         reader.read();
     }
 
-    private List<CourseEventSummary> getCourseEventSummariesFromWeb()
+    private List<CourseEventSummary> getCourseEventSummariesFromWeb(Course course)
     {
         List<CourseEventSummary> courseEventSummaries = new ArrayList<>();
-        for (Course course : courseRepository.getCourses(NZ))
-        {
-            System.out.printf("* Processing %s *\n", course);
-            Parser courseEventSummaryParser = new Parser.Builder()
-                    .course(course)
-                    .webpageProvider(webpageProviderFactory.createCourseEventSummaryWebpageProvider(course.name))
-                    .forEachCourseEvent(courseEventSummaries::add)
-                    .build();
-            courseEventSummaryParser.parse();
-        }
+
+        Parser courseEventSummaryParser = new Parser.Builder()
+                .course(course)
+                .webpageProvider(webpageProviderFactory.createCourseEventSummaryWebpageProvider(course.name))
+                .forEachCourseEvent(courseEventSummaries::add)
+                .build();
+        courseEventSummaryParser.parse();
+
         return courseEventSummaries;
     }
 }
