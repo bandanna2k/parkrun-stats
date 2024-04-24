@@ -27,11 +27,6 @@ public class CourseRepository
         return courseLongNameToCourse.get(courseLongName);
     }
 
-    public void filterByCountryCode(int countryCode)
-    {
-        courseNameToCourse.entrySet().removeIf(entry -> entry.getValue().country.countryCode == countryCode);
-    }
-
     public Collection<Course> getCourses(Country country)
     {
         List<Course> courses = courseNameToCourse.values().stream().filter(c -> c.country == country).collect(Collectors.toList());

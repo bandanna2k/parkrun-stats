@@ -5,7 +5,6 @@ import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
 import dnt.parkrun.database.*;
-import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.CourseRepository;
@@ -18,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static dnt.parkrun.datastructures.Country.NZ;
@@ -81,12 +79,7 @@ public class WeekendResults
             addCourses(file, status);
         }
 
-        System.out.println("* Filter courses *");
-        Arrays.stream(Country.values())
-                .filter(e -> e != NZ)
-                .forEach(e -> courseRepository.filterByCountryCode(e.getCountryCode()));
-
-        courseRepository.forEachCourse(course ->
+        courseRepository.getCourses(NZ).forEach(course ->
         {
             if(course.status != Course.Status.RUNNING) return;
 
