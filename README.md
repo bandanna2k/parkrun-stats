@@ -24,8 +24,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - Need a loading icon whilst fastest times page is loading 
 
-- Bug - Change key on course_event_summary???
-
 - Friends table including at what venues
   - 'Most runs with other athletes' table
 
@@ -38,6 +36,8 @@ Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tab
 
 
 ## Issues Completed
+
+- 25/4/2024 - Bug - Change key on course_event_summary.
 
 - 24/4/2024 - Weekly results - Backfill each course at a time. Just encase a course fails to get event history.
 

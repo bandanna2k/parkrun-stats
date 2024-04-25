@@ -13,7 +13,6 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class BestFriendsTest
 {
@@ -47,7 +46,7 @@ public class BestFriendsTest
         top10InRegion.forEach(atEvent -> highRunCountAthletes.add(atEvent.athlete.athleteId));
 
         List<HowManyRunsWithOthers> processors = highRunCountAthletes.stream()
-                .map(HowManyRunsWithOthers::new).collect(Collectors.toList());
+                .map(HowManyRunsWithOthers::new).toList();
 
         Map<Integer, AthleteIdCount> athleteIdToFriendCount = new HashMap<>();
         resultDao.tableScan(result ->
