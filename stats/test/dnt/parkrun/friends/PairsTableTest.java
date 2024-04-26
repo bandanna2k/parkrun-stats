@@ -47,26 +47,5 @@ public class PairsTableTest
             });
             System.out.println();
         });
-
-//
-//        for (int j = athletes.size() - 1; j > 0; j--)
-//        {
-//            Athlete athlete = athletes.get(j);
-//            System.out.printf("%s\t", athlete.name.charAt(0));
-//        }
-//
-//        AtomicInteger lastAthleteId = new AtomicInteger(-1);
-//        pairsTable.forEach((athlete1, athlete2) -> {
-//            if(athlete1.athleteId != lastAthleteId.get())
-//            {
-//                lastAthleteId.set(athlete1.athleteId);
-//                System.out.println();
-//                String name10Characters = String.format("%1$10s", athlete1.name).substring(0, 10); // Row names
-//                System.out.printf(name10Characters + "\t", athlete1.name);
-//            }
-//
-//            System.out.printf("%d\t", random.nextInt(10));
-//        });
     }
-
 }
