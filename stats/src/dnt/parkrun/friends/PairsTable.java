@@ -2,6 +2,7 @@ package dnt.parkrun.friends;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 
 public class PairsTable<T>
@@ -17,37 +18,52 @@ public class PairsTable<T>
         this.list1 = new ArrayList<>(list);
         this.list2 = new ArrayList<>(list);
         loop();
+
+        assert valid();
     }
 
-    private void loop()
+    private boolean valid()
     {
-//            this.result = new ArrayList<>();
-        for (int i = 0; i < list1.size() - 1; i++)
-        {
-            List<T> rowList = new ArrayList<>();
+        AtomicBoolean result = new AtomicBoolean(true);
+        forEach((t, ts) -> {
+            ts.forEach(t1 -> {
+                if(t == t1) result.set(false);
+            });
+        });
+        return result.get();
+    }
 
-            T object1 = list1.get(i);
+    private void loop() {
+        for (int i = 0; i < list1.size() - 1; i++) {
+            List<T> rowList = new ArrayList<>();
 
             for (int j = list2.size() - 1; j > 0; j--)
             {
-                T object2 = list2.getFirst();
-
-                records.add(new Record(object1, object2));
-
-                rowList.add(object2);
+                rowList.add(list2.get(j));
             }
 
-            list2.removeLast();
+            list2.remove(0);
             result.add(rowList);
         }
     }
 
-    public void forEach(BiConsumer<T, T> consumer)
+    public void consumeFirst(BiConsumer<T, List<T>> consumer)
     {
-        records.forEach(record ->
+        final T item = list1.get(0);
+        final List<T> items = result.get(0);
+
+        consumer.accept(item, items);
+    }
+
+    public void forEach(BiConsumer<T, List<T>> consumer)
+    {
+        for (int i = 0; i < result.size(); i++)
         {
-            consumer.accept(record.row, record.column);
-        });
+            final T item = list1.get(i);
+            final List<T> items = result.get(i);
+
+            consumer.accept(item, items);
+        }
     }
 
     private class Record
