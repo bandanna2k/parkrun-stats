@@ -22,6 +22,9 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- Weekly Results should use database, not events json. Invariants do this work now.
+Doing it this way causes problems.
+
 - Invariant - Event number must equal date.  
 
 - Need a loading icon whilst fastest times page is loading 

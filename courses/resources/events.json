@@ -7359,8 +7359,8 @@
         "geometry": {
           "type": "Point",
           "coordinates": [
-            -0.83814,
-            51.168607
+            -0.836903,
+            51.16858
           ]
         },
         "properties": {
@@ -7584,8 +7584,8 @@
           ]
         },
         "properties": {
-          "eventname": "cornwall",
-          "EventLongName": "Cornwall parkrun",
+          "eventname": "cornwallpark",
+          "EventLongName": "Cornwall Park parkrun",
           "EventShortName": "Cornwall Park",
           "LocalisedEventLongName": null,
           "countrycode": 65,
@@ -8991,26 +8991,6 @@
           "countrycode": 3,
           "seriesid": 1,
           "EventLocation": "Lake Tuggeranong"
-        }
-      },
-      {
-        "id": 502,
-        "type": "Feature",
-        "geometry": {
-          "type": "Point",
-          "coordinates": [
-            -1.776459,
-            53.70627
-          ]
-        },
-        "properties": {
-          "eventname": "brighouse-juniors",
-          "EventLongName": "Brighouse junior parkrun",
-          "EventShortName": "Brighouse juniors",
-          "LocalisedEventLongName": "Brighouse junior parkrun",
-          "countrycode": 97,
-          "seriesid": 2,
-          "EventLocation": "Wellholme Park"
         }
       },
       {
@@ -15219,8 +15199,8 @@
         "geometry": {
           "type": "Point",
           "coordinates": [
-            153.113665,
-            -26.708909
+            153.106718,
+            -26.709852
           ]
         },
         "properties": {
@@ -33114,26 +33094,6 @@
         }
       },
       {
-        "id": 2319,
-        "type": "Feature",
-        "geometry": {
-          "type": "Point",
-          "coordinates": [
-            -79.232377,
-            45.321961
-          ]
-        },
-        "properties": {
-          "eventname": "averybeach",
-          "EventLongName": "Avery Beach parkrun, Huntsville",
-          "EventShortName": "Avery Beach",
-          "LocalisedEventLongName": null,
-          "countrycode": 14,
-          "seriesid": 1,
-          "EventLocation": "Avery Beach Park"
-        }
-      },
-      {
         "id": 2320,
         "type": "Feature",
         "geometry": {
@@ -44154,26 +44114,6 @@
         }
       },
       {
-        "id": 3073,
-        "type": "Feature",
-        "geometry": {
-          "type": "Point",
-          "coordinates": [
-            -7.575301,
-            52.854318
-          ]
-        },
-        "properties": {
-          "eventname": "stfergalscollege-juniors",
-          "EventLongName": "St Fergal\u2019s College junior parkrun",
-          "EventShortName": "St Fergal\u2019s College juniors",
-          "LocalisedEventLongName": null,
-          "countrycode": 42,
-          "seriesid": 2,
-          "EventLocation": "St Fergal\u2019s College"
-        }
-      },
-      {
         "id": 3074,
         "type": "Feature",
         "geometry": {
@@ -49279,8 +49219,8 @@
         "geometry": {
           "type": "Point",
           "coordinates": [
-            28.213233,
-            -26.103518
+            28.217276,
+            -26.103947
           ]
         },
         "properties": {
@@ -50134,6 +50074,26 @@
         }
       },
       {
+        "id": 3436,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            153.039406,
+            -27.233548
+          ]
+        },
+        "properties": {
+          "eventname": "capestonelake",
+          "EventLongName": "Capestone Lake parkrun",
+          "EventShortName": "Capestone Lake",
+          "LocalisedEventLongName": null,
+          "countrycode": 3,
+          "seriesid": 1,
+          "EventLocation": "Capestone Lake"
+        }
+      },
+      {
         "id": 3437,
         "type": "Feature",
         "geometry": {
@@ -50291,6 +50251,606 @@
           "countrycode": 65,
           "seriesid": 1,
           "EventLocation": "Gordon Carmichael Reserve"
+        }
+      },
+      {
+        "id": 3445,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.899066,
+            54.393274
+          ]
+        },
+        "properties": {
+          "eventname": "montaltoestate",
+          "EventLongName": "Montalto Estate parkrun",
+          "EventShortName": "Montalto Estate",
+          "LocalisedEventLongName": null,
+          "countrycode": 97,
+          "seriesid": 1,
+          "EventLocation": "Montalto Estate"
+        }
+      },
+      {
+        "id": 3446,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -0.088633,
+            51.066755
+          ]
+        },
+        "properties": {
+          "eventname": "wakehurst",
+          "EventLongName": "Wakehurst parkrun",
+          "EventShortName": "Wakehurst",
+          "LocalisedEventLongName": null,
+          "countrycode": 97,
+          "seriesid": 1,
+          "EventLocation": "Wakehurst"
+        }
+      },
+      {
+        "id": 3447,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            172.769775,
+            -43.57302
+          ]
+        },
+        "properties": {
+          "eventname": "scarborough",
+          "EventLongName": "Scarborough parkrun",
+          "EventShortName": "Scarborough",
+          "LocalisedEventLongName": null,
+          "countrycode": 65,
+          "seriesid": 1,
+          "EventLocation": "Scarborough"
+        }
+      },
+      {
+        "id": 3448,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            31.970637,
+            -25.438527
+          ]
+        },
+        "properties": {
+          "eventname": "kambakugolfclub",
+          "EventLongName": "Kambaku Golf Club parkrun",
+          "EventShortName": "Kambaku Golf Club",
+          "LocalisedEventLongName": null,
+          "countrycode": 85,
+          "seriesid": 1,
+          "EventLocation": "Kambaku Golf Club"
+        }
+      },
+      {
+        "id": 3449,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            137.585902,
+            -33.040603
+          ]
+        },
+        "properties": {
+          "eventname": "whyallaforeshore",
+          "EventLongName": "Whyalla Foreshore parkrun",
+          "EventShortName": "Whyalla Foreshore",
+          "LocalisedEventLongName": null,
+          "countrycode": 3,
+          "seriesid": 1,
+          "EventLocation": "Whyalla Foreshore"
+        }
+      },
+      {
+        "id": 3450,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            115.714384,
+            -33.275814
+          ]
+        },
+        "properties": {
+          "eventname": "ridleyplaceforeshore",
+          "EventLongName": "Ridley Place Foreshore parkrun",
+          "EventShortName": "Ridley Place Foreshore",
+          "LocalisedEventLongName": null,
+          "countrycode": 3,
+          "seriesid": 1,
+          "EventLocation": "Ridley Place Foreshore"
+        }
+      },
+      {
+        "id": 3451,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            121.893784,
+            -33.863295
+          ]
+        },
+        "properties": {
+          "eventname": "esperanceforeshore",
+          "EventLongName": "Esperance Foreshore parkrun",
+          "EventShortName": "Esperance Foreshore",
+          "LocalisedEventLongName": null,
+          "countrycode": 3,
+          "seriesid": 1,
+          "EventLocation": "Esperance Foreshore"
+        }
+      },
+      {
+        "id": 3452,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            175.862373,
+            -37.197017
+          ]
+        },
+        "properties": {
+          "eventname": "moanapointreserve",
+          "EventLongName": "Moana Point Reserve parkrun",
+          "EventShortName": "Moana Point Reserve",
+          "LocalisedEventLongName": null,
+          "countrycode": 65,
+          "seriesid": 1,
+          "EventLocation": "Moana Point Reserve"
+        }
+      },
+      {
+        "id": 3453,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -7.265494,
+            52.696337
+          ]
+        },
+        "properties": {
+          "eventname": "kilkennycountrysidepark-juniors",
+          "EventLongName": "Kilkenny Countryside Park junior parkrun",
+          "EventShortName": "Kilkenny Countryside Park juniors",
+          "LocalisedEventLongName": null,
+          "countrycode": 42,
+          "seriesid": 2,
+          "EventLocation": "Kilkenny Countryside Park juniors"
+        }
+      },
+      {
+        "id": 3454,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            152.01537,
+            -29.054042
+          ]
+        },
+        "properties": {
+          "eventname": "jubileetenterfield",
+          "EventLongName": "Jubilee parkrun, Tenterfield",
+          "EventShortName": "Jubilee, Tenterfield",
+          "LocalisedEventLongName": null,
+          "countrycode": 3,
+          "seriesid": 1,
+          "EventLocation": "Jubilee, Tenterfield"
+        }
+      },
+      {
+        "id": 3455,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            152.992548,
+            -27.993368
+          ]
+        },
+        "properties": {
+          "eventname": "jeunepark",
+          "EventLongName": "Jeune Park parkrun",
+          "EventShortName": "Jeune Park",
+          "LocalisedEventLongName": null,
+          "countrycode": 3,
+          "seriesid": 1,
+          "EventLocation": "Jeune Park"
+        }
+      },
+      {
+        "id": 3456,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -1.174603,
+            53.128883
+          ]
+        },
+        "properties": {
+          "eventname": "berryhill-juniors",
+          "EventLongName": "Berry Hill junior parkrun",
+          "EventShortName": "Berry Hill juniors",
+          "LocalisedEventLongName": null,
+          "countrycode": 97,
+          "seriesid": 2,
+          "EventLocation": "Berry Hill juniors"
+        }
+      },
+      {
+        "id": 3457,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -3.057944,
+            53.206025
+          ]
+        },
+        "properties": {
+          "eventname": "wepre-juniors",
+          "EventLongName": "Wepre junior parkrun",
+          "EventShortName": "Wepre juniors",
+          "LocalisedEventLongName": null,
+          "countrycode": 97,
+          "seriesid": 2,
+          "EventLocation": "Wepre juniors"
+        }
+      },
+      {
+        "id": 3458,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -3.789728,
+            51.755941
+          ]
+        },
+        "properties": {
+          "eventname": "cycleroute43ystalyfera",
+          "EventLongName": "Cycle Route 43 parkrun, Ystalyfera",
+          "EventShortName": "Cycle Route 43, Ystalyfera",
+          "LocalisedEventLongName": null,
+          "countrycode": 97,
+          "seriesid": 1,
+          "EventLocation": "Cycle Route 43, Ystalyfera"
+        }
+      },
+      {
+        "id": 3460,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -1.939551,
+            53.448255
+          ]
+        },
+        "properties": {
+          "eventname": "manorparkglossop-juniors",
+          "EventLongName": "Manor Park junior parkrun, Glossop",
+          "EventShortName": "Manor Park juniors, Glossop",
+          "LocalisedEventLongName": null,
+          "countrycode": 97,
+          "seriesid": 2,
+          "EventLocation": "Manor Park, Glossop"
+        }
+      },
+      {
+        "id": 3461,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            19.412511,
+            53.260214
+          ]
+        },
+        "properties": {
+          "eventname": "lasekmiejski",
+          "EventLongName": "parkrun Lasek Miejski",
+          "EventShortName": "Lasek Miejski",
+          "LocalisedEventLongName": null,
+          "countrycode": 74,
+          "seriesid": 1,
+          "EventLocation": "Lasek Miejski"
+        }
+      },
+      {
+        "id": 3462,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            9.544284,
+            61.770948
+          ]
+        },
+        "properties": {
+          "eventname": "loftsgardsbrua",
+          "EventLongName": "Loftsgardsbrua parkrun",
+          "EventShortName": "Loftsgardsbrua",
+          "LocalisedEventLongName": null,
+          "countrycode": 67,
+          "seriesid": 1,
+          "EventLocation": "Loftsgardsbrua"
+        }
+      },
+      {
+        "id": 3463,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -75.905183,
+            45.267695
+          ]
+        },
+        "properties": {
+          "eventname": "ottawacarletontrailway",
+          "EventLongName": "Ottawa-Carleton Trailway parkrun",
+          "EventShortName": "Ottawa-Carleton Trailway",
+          "LocalisedEventLongName": null,
+          "countrycode": 14,
+          "seriesid": 1,
+          "EventLocation": "Ottawa-Carleton Trailway"
+        }
+      },
+      {
+        "id": 3464,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.756237,
+            49.184318
+          ]
+        },
+        "properties": {
+          "eventname": "tyneheadregional",
+          "EventLongName": "Tynehead Regional parkrun",
+          "EventShortName": "Tynehead Regional",
+          "LocalisedEventLongName": null,
+          "countrycode": 14,
+          "seriesid": 1,
+          "EventLocation": "Tynehead Regional"
+        }
+      },
+      {
+        "id": 3465,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -78.881377,
+            38.428261
+          ]
+        },
+        "properties": {
+          "eventname": "purcell",
+          "EventLongName": "Purcell parkrun",
+          "EventShortName": "Purcell",
+          "LocalisedEventLongName": null,
+          "countrycode": 98,
+          "seriesid": 1,
+          "EventLocation": "Purcell"
+        }
+      },
+      {
+        "id": 3466,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -88.266416,
+            40.086144
+          ]
+        },
+        "properties": {
+          "eventname": "morrisseypark",
+          "EventLongName": "Morrissey Park parkrun",
+          "EventShortName": "Morrissey Park",
+          "LocalisedEventLongName": null,
+          "countrycode": 98,
+          "seriesid": 1,
+          "EventLocation": "Morrissey Park"
+        }
+      },
+      {
+        "id": 3467,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -7.986112,
+            54.287475
+          ]
+        },
+        "properties": {
+          "eventname": "glenfarnewood",
+          "EventLongName": "Glenfarne Wood parkrun",
+          "EventShortName": "Glenfarne Wood",
+          "LocalisedEventLongName": null,
+          "countrycode": 42,
+          "seriesid": 1,
+          "EventLocation": "Glenfarne Wood"
+        }
+      },
+      {
+        "id": 3468,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -1.007716,
+            51.44823
+          ]
+        },
+        "properties": {
+          "eventname": "prospect-juniors",
+          "EventLongName": "Prospect junior parkrun",
+          "EventShortName": "Prospect juniors",
+          "LocalisedEventLongName": null,
+          "countrycode": 97,
+          "seriesid": 2,
+          "EventLocation": "Prospect juniors"
+        }
+      },
+      {
+        "id": 3472,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -3.319064,
+            52.514615
+          ]
+        },
+        "properties": {
+          "eventname": "hafanyrafon-juniors",
+          "EventLongName": "Hafan Yr Afon junior parkrun",
+          "EventShortName": "Hafan Yr Afon juniors",
+          "LocalisedEventLongName": null,
+          "countrycode": 97,
+          "seriesid": 2,
+          "EventLocation": "Hafan Yr Afon juniors"
+        }
+      },
+      {
+        "id": 3473,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -4.069961,
+            55.679393
+          ]
+        },
+        "properties": {
+          "eventname": "strathaven-juniors",
+          "EventLongName": "Strathaven junior parkrun",
+          "EventShortName": "Strathaven juniors",
+          "LocalisedEventLongName": null,
+          "countrycode": 97,
+          "seriesid": 2,
+          "EventLocation": "Strathaven juniors"
+        }
+      },
+      {
+        "id": 3474,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            174.812349,
+            -36.863563
+          ]
+        },
+        "properties": {
+          "eventname": "orakeibay",
+          "EventLongName": "\u014cr\u0101kei Bay parkrun",
+          "EventShortName": "\u014cr\u0101kei Bay",
+          "LocalisedEventLongName": null,
+          "countrycode": 65,
+          "seriesid": 1,
+          "EventLocation": "\u014cr\u0101kei Bay"
+        }
+      },
+      {
+        "id": 3475,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -74.669171,
+            40.21262
+          ]
+        },
+        "properties": {
+          "eventname": "veteranspark",
+          "EventLongName": "Veterans Park parkrun",
+          "EventShortName": "Veterans Park",
+          "LocalisedEventLongName": null,
+          "countrycode": 98,
+          "seriesid": 1,
+          "EventLocation": "Veterans Park"
+        }
+      },
+      {
+        "id": 3476,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            169.384943,
+            -45.236725
+          ]
+        },
+        "properties": {
+          "eventname": "otagocentralrailtrailalexandra",
+          "EventLongName": "Otago Central Rail Trail parkrun, Alexandra",
+          "EventShortName": "Otago Central Rail Trail, Alexandra",
+          "LocalisedEventLongName": null,
+          "countrycode": 65,
+          "seriesid": 1,
+          "EventLocation": "Otago Central Rail Trail, Alexandra"
+        }
+      },
+      {
+        "id": 3478,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            20.39766,
+            53.391852
+          ]
+        },
+        "properties": {
+          "eventname": "lasmiejski",
+          "EventLongName": "parkrun Las Miejski",
+          "EventShortName": "Las Miejski",
+          "LocalisedEventLongName": null,
+          "countrycode": 74,
+          "seriesid": 1,
+          "EventLocation": "Las Miejski"
+        }
+      },
+      {
+        "id": 3479,
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -1.46929,
+            53.253722
+          ]
+        },
+        "properties": {
+          "eventname": "holmebrookvalley-juniors",
+          "EventLongName": "Holmebrook Valley junior parkrun",
+          "EventShortName": "Holmebrook Valley juniors",
+          "LocalisedEventLongName": null,
+          "countrycode": 97,
+          "seriesid": 2,
+          "EventLocation": "Holmebrook Valley juniors"
         }
       }
     ]

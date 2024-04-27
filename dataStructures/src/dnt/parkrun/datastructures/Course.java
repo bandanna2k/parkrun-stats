@@ -80,7 +80,7 @@ public class Course
         private String name;
         private String longName;
         private Status status;
-        private int courseId;
+        private int courseId = NO_COURSE_ID;
 
         public Course build()
         {
