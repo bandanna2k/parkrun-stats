@@ -22,6 +22,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- Invariant - Event number must equal date.  
+
 - Need a loading icon whilst fastest times page is loading 
 
 - Friends table including at what venues

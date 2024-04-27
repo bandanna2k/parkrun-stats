@@ -150,7 +150,7 @@ public class HowYouDoingTest
                     Course upToDateCourse = upToDateCourses.get(course.name);
                     if(upToDateCourse == null)
                     {
-                        softly.fail("Existing course now removed " + course.country + "\t" + course.name);
+                        softly.fail("Existing course now removed from json file " + course.country + "\t" + course.name);
 
                         if(disableDatabaseRuns)
                         {

@@ -83,7 +83,7 @@ public abstract class Region
     public static boolean isAuckland(Course course)
     {
         String[] list = {"hobsonvillepoint",
-                "cornwall",
+                "cornwallpark",
                 "barrycurtis",
                 "millwater",
                 "westernsprings",
