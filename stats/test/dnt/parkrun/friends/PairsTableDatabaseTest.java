@@ -36,6 +36,7 @@ public class PairsTableDatabaseTest
 
         athletes = new ArrayList<>();
         athletes.add(Athlete.from("Julie GORDON", 293223));
+        athletes.add(Athlete.from("Sarah JANTSCHER", 1048005));
         athletes.add(Athlete.from("Dan JOE", 4225353));
         athletes.add(Athlete.from("Paul GORDON", 293227));
         athletes.add(Athlete.from("Alison KING", 2147564));
@@ -48,6 +49,7 @@ public class PairsTableDatabaseTest
         athletes.add(Athlete.from("David NORTH", 414811));
         athletes.add(Athlete.from("Allan JANES", 547976));
         athletes.add(Athlete.from("Zoe NORTH", 4072508));
+        athletes.sort(Comparator.comparingInt(r -> -r.athleteId));
     }
 
     @Test
@@ -84,12 +86,13 @@ public class PairsTableDatabaseTest
 
             String name10Characters = String.format("%1$10s", rowAthlete.name).substring(0, 10); // Row names
             System.out.printf(name10Characters + "\t");
+//            System.out.printf("%d\t", rowAthlete.athleteId);
 
             athletes.forEach(colAthlete -> {
                 String key = rowAthlete.athleteId + " " + colAthlete.athleteId;
                 HowManyRunsWithFriend processor = processors.get(key);
                 System.out.printf("%d\t", processors.get(key).runs.size());
-                //System.out.printf("%s\t", processor.inputAthleteId);
+                //System.out.printf("%d\t", colAthlete.athleteId);
             });
             System.out.println();
         });
