@@ -33,7 +33,7 @@ docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
   "DROP USER 'test'@'%';"
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
-  "CREATE USER 'test'@'*' IDENTIFIED BY 'qa';"
+  "CREATE USER 'test'@'%' IDENTIFIED BY 'qa';"
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
   "GRANT CREATE, INSERT, SELECT, UPDATE, DELETE, DROP ON parkrun_stats_test.* TO 'test'@'%';"
 
