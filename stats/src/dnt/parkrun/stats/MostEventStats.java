@@ -35,6 +35,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
+import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.*;
 import static dnt.parkrun.region.Region.getNzRegionRunCount;
@@ -66,9 +67,9 @@ public class MostEventStats
         Date date = args.length == 0 ? getParkrunDay(new Date()) : DateConverter.parseWebsiteDate(args[0]);
 
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "stats", "statsfractalstats");
+                getDataSourceUrl("parkrun_stats"), "stats", "statsfractalstats");
         DataSource statsDataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/weekly_stats", "stats", "statsfractalstats");
+                getDataSourceUrl("weekly_stats"), "stats", "statsfractalstats");
 
         MostEventStats stats = MostEventStats.newInstance(dataSource, statsDataSource, date);
         File file = stats.generateStats();
