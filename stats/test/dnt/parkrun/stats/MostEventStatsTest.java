@@ -14,6 +14,8 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.util.Date;
 
+import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
+
 public class MostEventStatsTest
 {
     private NamedParameterJdbcTemplate jdbc;
@@ -25,7 +27,7 @@ public class MostEventStatsTest
         MostEventStats.class.getClassLoader().setClassAssertionStatus(MostEventStats.class.getName(), false);
 
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
+                getDataSourceUrl("parkrun_stats_test"), "test", "qa");
 
         stats = MostEventStats.newInstance(dataSource, dataSource, Date.from(Instant.EPOCH));
 

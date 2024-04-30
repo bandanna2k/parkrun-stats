@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 
 public class ParsersTest
@@ -41,7 +42,7 @@ public class ParsersTest
     public void testCourseEvent() throws IOException, SQLException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+                getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
         CourseRepository courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
 
@@ -62,7 +63,7 @@ public class ParsersTest
     public void testAthleteCourseSummary() throws SQLException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+                getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
         CourseRepository courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
 

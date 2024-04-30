@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.RUNNING;
 
@@ -28,7 +29,7 @@ public class PendingCoursesTest
     public void showPendingCoursesWithResults() throws SQLException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+                getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
         CourseRepository courseRepository = new CourseRepository();
         CourseDao courseDao = new CourseDao(dataSource, courseRepository);
 

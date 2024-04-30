@@ -10,6 +10,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
+import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.region.Region.isSameNzRegion;
 import static org.junit.Assert.assertTrue;
 
@@ -19,7 +20,7 @@ public class ProvinceTest
     public void allNzCoursesShouldHaveAProvince() throws SQLException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "stats", "statsfractalstats");
+                getDataSourceUrl("parkrun_stats"), "stats", "statsfractalstats");
         CourseRepository courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
 

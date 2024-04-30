@@ -29,6 +29,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import static dnt.parkrun.common.DateConverter.ONE_DAY_IN_MILLIS;
+import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -46,7 +47,7 @@ public class HowYouDoingTest
         public static Object[] data() throws SQLException
         {
             DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+                    getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
             CourseRepository courseRepository = new CourseRepository();
             CourseDao courseDao = new CourseDao(dataSource, courseRepository);
 
@@ -90,7 +91,7 @@ public class HowYouDoingTest
         public void areCoursesUpToDate() throws IOException, SQLException
         {
             DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+                    getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
             CourseRepository courseRepository = new CourseRepository();
             CourseDao courseDao = new CourseDao(dataSource, courseRepository);
 

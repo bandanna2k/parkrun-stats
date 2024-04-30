@@ -14,6 +14,8 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import java.util.*;
 
+import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
+
 public class PairsTableDatabaseTest
 {
     private List<Athlete> athletes;
@@ -47,13 +49,6 @@ public class PairsTableDatabaseTest
         athletes.add(Athlete.from("Allan JANES", 547976));
         athletes.add(Athlete.from("Zoe NORTH", 4072508));
         athletes.sort(Comparator.comparingInt(r -> -r.athleteId));
-    }
-
-    private static String getDataSourceUrl(String database)
-    {
-        return String.format("jdbc:mysql://%s/%s",
-                System.getProperty("parkrun_stats.mysql.host","localhost"),
-                database);
     }
 
     @Test
