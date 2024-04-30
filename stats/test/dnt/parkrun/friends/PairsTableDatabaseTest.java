@@ -16,19 +16,16 @@ import java.util.*;
 
 public class PairsTableDatabaseTest
 {
-    private final Random random = new Random();
-
     private List<Athlete> athletes;
     private ResultDao resultDao;
     private AthleteDao athleteDao;
     private CourseRepository courseRepository;
 
-
     @Before
     public void setUp() throws Exception
     {
         final DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+                getDataSourceUrl("parkrun_stats"), "stats", "statsfractalstats");
         resultDao = new ResultDao(dataSource);
         athleteDao = new AthleteDao(dataSource);
         courseRepository = new CourseRepository();
@@ -50,6 +47,13 @@ public class PairsTableDatabaseTest
         athletes.add(Athlete.from("Allan JANES", 547976));
         athletes.add(Athlete.from("Zoe NORTH", 4072508));
         athletes.sort(Comparator.comparingInt(r -> -r.athleteId));
+    }
+
+    private static String getDataSourceUrl(String database)
+    {
+        return String.format("jdbc:mysql://%s/%s",
+                System.getProperty("parkrun_stats.mysql.host","localhost"),
+                database);
     }
 
     @Test
