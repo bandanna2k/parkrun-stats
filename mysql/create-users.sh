@@ -9,27 +9,27 @@
 
 # dao
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
-  "DROP USER 'dao'@'127.0.0.1';"
+  "DROP USER 'dao'@'*';"
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
-  "CREATE USER 'dao'@'127.0.0.1' IDENTIFIED BY 'daoFractaldao';"
+  "CREATE USER 'dao'@'*' IDENTIFIED BY 'daoFractaldao';"
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
-  "GRANT SELECT, INSERT, UPDATE, DELETE ON parkrun_stats.* TO 'dao'@'127.0.0.1';"
+  "GRANT SELECT, INSERT, UPDATE, DELETE ON parkrun_stats.* TO 'dao'@'*';"
 
 # stats
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
-  "DROP USER 'stats'@'127.0.0.1';"
+  "DROP USER 'stats'@'*';"
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
-  "CREATE USER 'stats'@'127.0.0.1' IDENTIFIED BY 'statsfractalstats';"
+  "CREATE USER 'stats'@'*' IDENTIFIED BY 'statsfractalstats';"
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
-  "GRANT CREATE, UPDATE, SELECT, INSERT ON weekly_stats.* TO 'stats'@'127.0.0.1';"
+  "GRANT CREATE, UPDATE, SELECT, INSERT ON weekly_stats.* TO 'stats'@'*';"
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
-  "GRANT SELECT ON parkrun_stats.* TO 'stats'@'127.0.0.1';"
+  "GRANT SELECT ON parkrun_stats.* TO 'stats'@'*';"
 
 # test
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
-  "DROP USER 'test'@'127.0.0.1';"
+  "DROP USER 'test'@'*';"
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
-  "CREATE USER 'test'@'127.0.0.1' IDENTIFIED BY 'qa';"
+  "CREATE USER 'test'@'*' IDENTIFIED BY 'qa';"
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
-  "GRANT CREATE, INSERT, SELECT, UPDATE, DELETE, DROP ON parkrun_stats_test.* TO 'test'@'127.0.0.1';"
+  "GRANT CREATE, INSERT, SELECT, UPDATE, DELETE, DROP ON parkrun_stats_test.* TO 'test'@'*';"
 
