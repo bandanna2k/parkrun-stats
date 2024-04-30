@@ -22,6 +22,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- Average attendance
+
 - Weekly Results should use database, not events json. Invariants do this work now.
 Doing it this way causes problems.
 
