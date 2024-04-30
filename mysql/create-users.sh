@@ -9,6 +9,8 @@
 
 # dao
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
+  "DROP USER 'dao'@'127.0.0.1';"
+docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
   "DROP USER 'dao'@'*';"
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
   "CREATE USER 'dao'@'*' IDENTIFIED BY 'daoFractaldao';"
@@ -16,6 +18,8 @@ docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
   "GRANT SELECT, INSERT, UPDATE, DELETE ON parkrun_stats.* TO 'dao'@'*';"
 
 # stats
+docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
+  "DROP USER 'stats'@'127.0.0.1';"
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
   "DROP USER 'stats'@'*';"
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
@@ -26,6 +30,8 @@ docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
   "GRANT SELECT ON parkrun_stats.* TO 'stats'@'*';"
 
 # test
+docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
+  "DROP USER 'test'@'127.0.0.1';"
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
   "DROP USER 'test'@'*';"
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
