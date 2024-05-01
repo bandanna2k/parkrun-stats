@@ -28,6 +28,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 Doing it this way causes problems.
 
 - Socks
+Try 10 docker containers running tor (confirm different IPs)
+Proxychain between containers 
 
 - Invariant - Event number must equal date.  
 

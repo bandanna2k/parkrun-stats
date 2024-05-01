@@ -21,5 +21,6 @@
     <orderEntry type="module" module-name="database" />
     <orderEntry type="module" module-name="courseEventSummary" />
     <orderEntry type="module" module-name="webpageProvider" />
+    <orderEntry type="library" name="jsoup" level="project" />
   </component>
 </module>
