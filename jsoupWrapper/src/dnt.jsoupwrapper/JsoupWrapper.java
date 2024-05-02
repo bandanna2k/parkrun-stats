@@ -9,20 +9,20 @@ import java.io.IOException;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.Random;
+import java.util.function.Supplier;
 
 public class JsoupWrapper
 {
     private static final Random RANDOM = new Random();
 
-    public final boolean shouldSleep;
+    private final boolean shouldSleep;
+    private final Supplier<Proxy> proxyFactory;
 
-    public JsoupWrapper()
-    {
-        this(true);
-    }
-    public JsoupWrapper(boolean shouldSleep)
+
+    private JsoupWrapper(boolean shouldSleep, Supplier<Proxy> proxyFactory)
     {
         this.shouldSleep = shouldSleep;
+        this.proxyFactory = proxyFactory;
     }
 
     public Document newDocument(URL url)
@@ -39,10 +39,9 @@ Document doc = Jsoup.connect("url").proxy(proxy).get();
             counter--;
             try
             {
-                Proxy socks = null;
                 Connection connection = Jsoup
                         .connect(url.toString())
-                        .proxy(socks)
+                        .proxy(proxyFactory.get())
                         .timeout(10000);
                 if(shouldSleep)
                 {
@@ -77,6 +76,28 @@ Document doc = Jsoup.connect("url").proxy(proxy).get();
         catch (IOException e)
         {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static class Builder
+    {
+        private boolean shouldSleep = true;
+        private Supplier<Proxy> proxyFactory = () -> null;
+
+        public JsoupWrapper build()
+        {
+            return new JsoupWrapper(shouldSleep, proxyFactory);
+        }
+
+        public Builder shouldSleep(boolean shouldSleep)
+        {
+            this.shouldSleep = shouldSleep;
+            return this;
+        }
+        public Builder proxyFactory(Supplier<Proxy> proxyFactory)
+        {
+            this.proxyFactory = proxyFactory;
+            return this;
         }
     }
 }

@@ -105,7 +105,7 @@ public class Parser
 
     public static class Builder
     {
-        private final JsoupWrapper jsoupWrapper = new JsoupWrapper(true);
+        private final JsoupWrapper jsoupWrapper = new JsoupWrapper.Builder().build();
         private Document doc;
         private Consumer<AthleteCourseEvent> consumer = ace -> {};
 

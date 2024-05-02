@@ -30,15 +30,7 @@ public class WhatsMyIp
     }
 
     @Test
-    @Ignore
     public void shouldGetIpAddressWithSocks() throws IOException
-    {
-        for (int i = 0; i < 2; i++)
-        {
-            shouldGetIpAddressWithSocks(i);
-        }
-    }
-    public void shouldGetIpAddressWithSocks(int i) throws IOException
     {
         /*
          ssh -D 9050 -q -C -N northd@localhost
@@ -53,13 +45,24 @@ public class WhatsMyIp
          sudo systemctl start tor
 
          */
-        InetSocketAddress address = new InetSocketAddress("127.0.0.1", 9050);
-        Document doc = Jsoup
-                .connect("https://api.my-ip.io/v2/ip.xml")
-                .proxy(new Proxy(Proxy.Type.SOCKS, address))
-                .get();
-        Elements result = doc.getElementsByTag("result");
-        System.out.println(result);
+        {
+            InetSocketAddress address = new InetSocketAddress("127.0.0.1", 9051);
+            Document doc = Jsoup
+                    .connect("https://api.my-ip.io/v2/ip.xml")
+                    .proxy(new Proxy(Proxy.Type.SOCKS, address))
+                    .get();
+            Elements result = doc.getElementsByTag("result");
+            System.out.println(result);
+        }
+        {
+            InetSocketAddress address = new InetSocketAddress("127.0.0.1", 9052);
+            Document doc = Jsoup
+                    .connect("https://api.my-ip.io/v2/ip.xml")
+                    .proxy(new Proxy(Proxy.Type.SOCKS, address))
+                    .get();
+            Elements result = doc.getElementsByTag("result");
+            System.out.println(result);
+        }
     }
 
     @Test

@@ -1,6 +1,5 @@
 package dnt.parkrun.courseeventsummary;
 
-import dnt.jsoupwrapper.JsoupWrapper;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Course;
@@ -32,7 +31,7 @@ public class Parser
     public void parse()
     {
         Elements tableElements = doc.getElementsByClass("Results-table");
-
+        System.out.println(doc);
         Element firstTable = tableElements.get(0);
 
         List<Node> firstTableRows = firstTable.childNodes().get(1).childNodes();
@@ -120,20 +119,10 @@ public class Parser
 
     public static class Builder
     {
-        private final JsoupWrapper jsoupWrapper;
         private Document doc;
         private Consumer<CourseEventSummary> consumer = ehr -> {};
         private Course course;
         private WebpageProvider webpageProvider;
-
-        public Builder()
-        {
-            this(true);
-        }
-        public Builder(boolean shouldSleep)
-        {
-            this.jsoupWrapper = new JsoupWrapper(shouldSleep);
-        }
 
         public Parser build()
         {

@@ -183,7 +183,7 @@ public class Parser
 
     public static class Builder
     {
-        private final JsoupWrapper jsoupWrapper = new JsoupWrapper(true);
+        private final JsoupWrapper jsoupWrapper = new JsoupWrapper.Builder().build();
         private Document doc;
         private Consumer<AthleteCourseSummary> consumer = es -> {};
         private Consumer<Course> courseNotFoundConsumer = s -> System.out.println("WARNING Course not found: " + s);
