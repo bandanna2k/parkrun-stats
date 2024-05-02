@@ -13,16 +13,14 @@ import java.io.Closeable;
 public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Closeable
 {
     private final UrlGenerator urlGenerator;
+    private final boolean extended;
 
-    public AttendanceRecordsTableHtmlWriter(XMLStreamWriter writer, UrlGenerator urlGenerator) throws XMLStreamException
+    public AttendanceRecordsTableHtmlWriter(XMLStreamWriter writer, UrlGenerator urlGenerator, boolean extended)
+            throws XMLStreamException
     {
         super(writer);
         this.urlGenerator = urlGenerator;
-
-        startDetails();
-        startElement("summary");
-        writer.writeCharacters("Attendance Records");
-        endElement("summary");
+        this.extended = extended;
 
         writer.writeStartElement("table");
         writer.writeAttribute("class", "sortable name-data");
@@ -54,7 +52,12 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         startElement("th");
         writer.writeCharacters("Record Event Finishers");
         endElement("th");
-
+        if(extended)
+        {
+            startElement("th");
+            writer.writeCharacters("Average Time");
+            endElement("th");
+        }
         endElement("tr");
         endElement("thead");
     }
@@ -74,8 +77,6 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
             writer.writeCharacters("* Hover over record attendance arrows to see difference since last record.");
             endElement("p");
             endElement("center");
-
-            endDetails();
         }
         catch (XMLStreamException e)
         {
@@ -146,6 +147,13 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         writer.writeCharacters(String.valueOf(record.recordEventFinishers));
         endElement("td");
 
+        // Average
+        if(extended)
+        {
+            startElement("td");
+            writer.writeCharacters(record.average.toHtmlString());
+            endElement("td");
+        }
         endElement("tr");
     }
 }

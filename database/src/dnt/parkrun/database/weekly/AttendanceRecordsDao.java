@@ -2,6 +2,7 @@ package dnt.parkrun.database.weekly;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.BaseDao;
+import dnt.parkrun.datastructures.Time;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -112,6 +113,6 @@ public class AttendanceRecordsDao extends BaseDao
                         rs.getInt("record_event_number"),
                         rs.getDate("record_event_date"),
                         rs.getInt("record_event_finishers"),
-                        (int)(rs.getDouble("average"))));
+                        Time.from((int)(rs.getDouble("average")))));
     }
 }
