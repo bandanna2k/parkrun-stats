@@ -14,6 +14,7 @@ public class AttendanceRecord
     public final int recordEventFinishers;
     public final int recordEventNumber;
     public final Date recordEventDate;
+    public final int average;
 
     public int recentAttendanceDelta = 0;
     public int maxAttendanceDelta = 0;
@@ -21,7 +22,8 @@ public class AttendanceRecord
 
     public AttendanceRecord(int courseId,
                             int recentEventNumber, Date recentEventDate, int recentEventFinishers,
-                            int recordEventNumber, Date recordEventDate, int recordEventFinishers)
+                            int recordEventNumber, Date recordEventDate, int recordEventFinishers,
+                            int average)
     {
         this.courseId = courseId;
         this.recentEventNumber = recentEventNumber;
@@ -30,20 +32,22 @@ public class AttendanceRecord
         this.recordEventNumber = recordEventNumber;
         this.recordEventFinishers = recordEventFinishers;
         this.recordEventDate = recordEventDate;
+        this.average = average;
     }
 
     @Override
     public String toString()
     {
         return "AttendanceRecord{" +
-                "courseSmallTest='" + courseSmallTest + '\'' +
+                "courseId=" + courseId +
+                ", courseSmallTest='" + courseSmallTest + '\'' +
                 ", recentEventFinishers=" + recentEventFinishers +
-                ", courseId=" + courseId +
                 ", recentEventNumber=" + recentEventNumber +
                 ", recentEventDate=" + recentEventDate +
                 ", recordEventFinishers=" + recordEventFinishers +
                 ", recordEventNumber=" + recordEventNumber +
                 ", recordEventDate=" + recordEventDate +
+                ", average=" + average +
                 ", recentAttendanceDelta=" + recentAttendanceDelta +
                 ", maxAttendanceDelta=" + maxAttendanceDelta +
                 '}';

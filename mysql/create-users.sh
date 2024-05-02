@@ -1,3 +1,4 @@
+# SELECT User, Host FROM mysql.user;
 
 # dao
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \

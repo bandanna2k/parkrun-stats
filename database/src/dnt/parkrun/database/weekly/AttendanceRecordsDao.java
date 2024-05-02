@@ -39,11 +39,15 @@ public class AttendanceRecordsDao extends BaseDao
 
     private void generateAttendanceRecordTable()
     {
+        /*
+        Can get 2 dates for record attendance.
+         */
         String sql = STR."""
                 create table if not exists \{tableName()}
                 select c.course_id, c.country_code,
                                     max as record_event_finishers, ces.date as record_event_date,
-                                    sub3.recent_event_finishers, sub3.recent_event_date
+                                    sub3.recent_event_finishers, sub3.recent_event_date,
+                                    average
                         from  \{courseTable()} c
                         left join
                         (
@@ -57,9 +61,18 @@ public class AttendanceRecordsDao extends BaseDao
                             group by course_id
                             order by course_id asc
                         ) as sub2 on c.course_id = sub2.course_id
+
+                        left join
+                        (
+                            select course_id, avg(time_seconds) as average
+                            from \{resultTable()}
+                            group by course_id
+                        ) as sub5 on c.course_id = sub5.course_id
+
                         left join  \{courseEventSummaryTable()} ces
                         on c.course_id = ces.course_id
                         and ces.finishers = sub2.max
+
                         left join
                         (
                             select ces.course_id, ces.event_number as recent_event_number, finishers as recent_event_finishers, recent_event_date
@@ -83,7 +96,8 @@ public class AttendanceRecordsDao extends BaseDao
         String sql = STR."""
             select c.course_id,
                 recent_ces.event_number as recent_event_number, recent_event_date, recent_event_finishers,
-                record_ces.event_number as record_event_number, record_event_date, record_event_finishers
+                record_ces.event_number as record_event_number, record_event_date, record_event_finishers,
+                average
             from \{attendanceTableName} at
             join \{courseTable()} c using (course_id)
             join \{courseEventSummaryTable()} recent_ces on c.course_id = recent_ces.course_id and recent_ces.date = recent_event_date
@@ -97,6 +111,7 @@ public class AttendanceRecordsDao extends BaseDao
                         rs.getInt("recent_event_finishers"),
                         rs.getInt("record_event_number"),
                         rs.getDate("record_event_date"),
-                        rs.getInt("record_event_finishers")));
+                        rs.getInt("record_event_finishers"),
+                        (int)(rs.getDouble("average"))));
     }
 }

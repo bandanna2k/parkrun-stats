@@ -27,10 +27,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 - Weekly Results should use database, not events json. Invariants do this work now.
 Doing it this way causes problems.
 
-- Socks
-Try 10 docker containers running tor (confirm different IPs)
-Proxychain between containers 
-
 - Invariant - Event number must equal date.  
 
 - Need a loading icon whilst fastest times page is loading 
@@ -47,6 +43,11 @@ Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tab
 
 
 ## Issues Completed
+
+- 2/9/2024 - Socks
+  Try 10 docker containers running tor (confirm different IPs)
+  Proxychain between containers
+  Stop for now. parkrun blocking IPs
 
 - 25/4/2024 - Bug - Change key on course_event_summary.
 
