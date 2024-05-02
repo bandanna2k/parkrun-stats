@@ -1,0 +1,10 @@
+# docker compose up -d
+services:
+  tor_agent1:
+    image: tor_agent:latest
+    ports:
+      - "9051:9050"
+  tor_agent2:
+    image: tor_agent:latest
+    ports:
+      - "9052:9050"

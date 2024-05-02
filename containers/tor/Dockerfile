@@ -1,9 +1,13 @@
+# docker build . -t tor_agent
 FROM alpine:3.14
-
-RUN apk add --no-cache tor
 
 RUN apk add --no-cache bash
 ENTRYPOINT ["/bin/sh"]
+
+RUN apk add --no-cache curl
+
+RUN apk add --no-cache tor
+COPY torrc /etc/tor/torrc
 
 # Set `tor` as the default user during the container runtime
 USER tor
