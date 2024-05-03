@@ -22,7 +22,12 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Average attendance records needs to passed through to attendance html writer
+- Menu (Uber app) for 3 programs
+Invariants (Quick) DONE
+Invariants
+Weekly Results (needs nothing and 10 minutes)
+Speed Stats (needs weekly results)
+Most Events (needs weekly results and 1 hour)
 
 - Weekly Results should use database, not events json. Invariants do this work now.
 Doing it this way causes problems.
@@ -43,6 +48,8 @@ Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tab
 
 
 ## Issues Completed
+
+- 3/5/2024 - Average attendance records needs to passed through to attendance html writer
 
 - 2/9/2024 - Socks
   Try 10 docker containers running tor (confirm different IPs)

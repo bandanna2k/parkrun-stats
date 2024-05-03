@@ -31,7 +31,6 @@ public class Parser
     public void parse()
     {
         Elements tableElements = doc.getElementsByClass("Results-table");
-        System.out.println(doc);
         Element firstTable = tableElements.get(0);
 
         List<Node> firstTableRows = firstTable.childNodes().get(1).childNodes();
