@@ -177,7 +177,15 @@ public class MostEventStats
             writer.writer.writeCharacters(new SimpleDateFormat("yyyy MMM dd hh:mm").format(new Date()));
             writer.writer.writeEndElement();
 
-            writeAttendanceRecords(writer, false);
+
+            List<AttendanceRecord> attendanceRecords = generateAndGetAttendanceRecords();
+            attendanceRecords.sort(Comparator.comparing(attendanceRecord ->
+            {
+                Course course = courseRepository.getCourse(attendanceRecord.courseId);
+                return course.name;
+            }));
+
+            writeAttendanceRecords(writer, attendanceRecords, false);
 
             {
                 for (MostEventsDao.MostEventsRecord der : differentEventRecords)
@@ -196,7 +204,7 @@ public class MostEventStats
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
-            writeAttendanceRecords(writer, true);
+            writeAttendanceRecords(writer, attendanceRecords, true);
 
             {
                 System.out.print("Getting first runs ");
@@ -838,7 +846,7 @@ public class MostEventStats
         return date;
     }
 
-    private void writeAttendanceRecords(HtmlWriter writer, boolean extended) throws XMLStreamException
+    private void writeAttendanceRecords(HtmlWriter writer, List<AttendanceRecord> attendanceRecords, boolean extended) throws XMLStreamException
     {
         String title = extended ? "Attendance Records (Extended)" : "Attendance Records";
         try(CollapsableTitleHtmlWriter collapsableWriter = new CollapsableTitleHtmlWriter.Builder(writer.writer, title).build())
@@ -846,25 +854,16 @@ public class MostEventStats
             try (AttendanceRecordsTableHtmlWriter tableWriter =
                          new AttendanceRecordsTableHtmlWriter(writer.writer, urlGenerator, extended))
             {
-                tableWriter.writer.writeStartElement("tbody");
-                List<AttendanceRecord> attendanceRecords = generateAndGetAttendanceRecords().stream()
-                        .peek(ar -> {
-                            Course course = courseRepository.getCourse(ar.courseId);
-                            if(course.status == PENDING) ar.courseSmallTest = "not started yet";
-                            else if(course.status == STOPPED) ar.courseSmallTest = "no longer takes place";
-                            else if(ar.recentEventDate.before(date)) ar.courseSmallTest = "not run this week";
-                        })
-                        .collect(Collectors.toList());
-                attendanceRecords.sort(Comparator.comparing(attendanceRecord ->
-                {
-                    Course course = courseRepository.getCourse(attendanceRecord.courseId);
-                    return course.name;
-                }));
                 for (AttendanceRecord ar : attendanceRecords)
                 {
+                    Course course = courseRepository.getCourse(ar.courseId);
+                    if(course.status == RUNNING) {}
+                    else if(course.status == PENDING) ar.courseSmallTest = "not started yet";
+                    else if(course.status == STOPPED) ar.courseSmallTest = "no longer takes place";
+                    else if(ar.recentEventDate.before(date)) ar.courseSmallTest = "not run this week";
+
                     tableWriter.writeAttendanceRecord(ar, courseRepository.getCourse(ar.courseId));
                 }
-                tableWriter.writer.writeEndElement(); // tbody
             }
         }
     }
