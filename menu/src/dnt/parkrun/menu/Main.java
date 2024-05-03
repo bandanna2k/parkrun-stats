@@ -1,7 +1,6 @@
 package dnt.parkrun.menu;
 
-import dnt.parkrun.stats.invariants.ParsersTest;
-import org.junit.internal.TextListener;
+import dnt.parkrun.stats.invariants.*;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
@@ -40,19 +39,35 @@ public class Main
             case "Q":
                 runInvariantsQuick();
                 break;
+            case "I":
+                runInvariantsFull();
             default:
                 System.out.printf("No action for '%s'%n", choice);
         }
     }
 
+    private void runInvariantsFull()
+    {
+        runInvariants(InvariantTest.class,
+                ParsersTest.class,
+                ProvinceTest.class);
+    }
+
     private void runInvariantsQuick()
     {
-        JUnitCore junit = new JUnitCore();
-        junit.addListener(new TextListener(System.out));
+        runInvariants(HowYouDoingTest.class,
+                InvariantTest.class,
+                ParsersTest.class,
+                PendingCoursesTest.class,
+                ProvinceTest.class);
+    }
 
-        Result result = junit.run(
-                ParsersTest.class
-        );
+    private void runInvariants(Class... classes)
+    {
+        JUnitCore junit = new JUnitCore();
+//        junit.addListener(new TextListener(System.out));
+
+        Result result = junit.run(classes);
 
         resultReport(result);
     }

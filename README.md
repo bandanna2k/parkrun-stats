@@ -24,7 +24,7 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - Menu (Uber app) for 3 programs
 Invariants (Quick) DONE
-Invariants
+Invariants DONE
 Weekly Results (needs nothing and 10 minutes)
 Speed Stats (needs weekly results)
 Most Events (needs weekly results and 1 hour)
