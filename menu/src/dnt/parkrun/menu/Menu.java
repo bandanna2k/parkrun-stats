@@ -9,6 +9,7 @@ import dnt.parkrun.stats.speed.AgeCategoryRecord;
 import dnt.parkrun.stats.speed.SpeedStats;
 import dnt.parkrun.webpageprovider.WebpageProviderFactoryImpl;
 import dnt.parkrun.weekendresults.WeekendResults;
+import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -101,7 +102,7 @@ public class Menu
         try
         {
             DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+                    getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
             WeekendResults weekendResults = WeekendResults.newInstance(
                     dataSource,
                     new WebpageProviderFactoryImpl(new UrlGenerator(NZ.baseUrl)));
@@ -152,11 +153,24 @@ public class Menu
     {
         JUnitCore junit = new JUnitCore();
         junit.addListener(new RunListener() {
+            private String methodName;
+
+            @Override
+            public void testStarted(Description description) throws Exception
+            {
+                methodName = description.getMethodName();
+                System.out.printf("Started: Test: %s%n", methodName);
+                super.testStarted(description);
+            }
             @Override
             public void testFailure(Failure failure) throws Exception
             {
-                System.out.printf("FAILED: Test: %s, Failure: %s%n", failure.getTestHeader(), failure.getMessage());
+                System.out.printf("FAILED: Test: %s, Failure: %s%n", methodName, failure.getMessage());
                 super.testFailure(failure);
+            }
+            @Override
+            public void testFinished(Description description) throws Exception
+            {
             }
         });
 
@@ -180,7 +194,7 @@ public class Menu
         System.out.println("----------------------");
         System.out.println("Quick          - Quick run invariants                                 (re-runnable, takes 1 minute");
         System.out.println("Invariant      - Run Invariants                                       (re-runnable, takes 5 minutes)");
-        System.out.println("Weekly         - Weekly results        needs 'Invariants' to pass     (re-runnable, downloads from web, 5 minutes. Many days if new)");
+        System.out.println("Weekly         - Weekly results        needs 'Invariants' to pass     (re-runnable, downloads from web, 15 minutes. Many days if new)");
         System.out.println("Most           - Move Events results   needs 'Weekly Results'         (re-runnable, downloads from web, 1 hours)");
         System.out.println("Speed          - Speed Stats           needs 'Weekly Results'         (just uses database, 10 seconds, )");
         System.out.println("Exit(X)        - Exit");

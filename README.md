@@ -22,25 +22,25 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- Batch write results/volunteers. Comms over the network is sloooooow.
+
 - Menu (Uber app) for 3 programs
 Invariants (Quick) DONE
 Invariants DONE
-Weekly Results (needs nothing and 10 minutes)
+Weekly Results (needs nothing and 10 minutes) DONE
 Speed Stats (needs weekly results)
 Most Events (needs weekly results and 1 hour)
 
-- Weekly Results should use database, not events json. Invariants do this work now.
-Doing it this way causes problems.
-
 - Invariant - Event number must equal date.  
 
-- Need a loading icon whilst fastest times page is loading 
+- Need a loading icon whilst fastest times page is loading
+Low priority
 
 - Friends table including at what venues
   - 'Most runs with other athletes' table
 
-- Low priority
-Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables. ???
+- Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables. ???
+Low priority
 
 ## Ideas
 
@@ -48,6 +48,9 @@ Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tab
 
 
 ## Issues Completed
+
+- 4/5/2024 Weekly Results should use database, not events json. Invariants do this work now.
+  Doing it this way causes problems.
 
 - 3/5/2024 - Average attendance records needs to passed through to attendance html writer
 
