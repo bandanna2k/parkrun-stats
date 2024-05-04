@@ -1,7 +1,6 @@
 package dnt.parkrun.mostevents;
 
 import com.mysql.jdbc.Driver;
-import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.filewebpageprovider.FileWebpageProvider;
 import dnt.parkrun.webpageprovider.WebpageProvider;
 import dnt.parkrun.webpageprovider.WebpageProviderFactory;
@@ -16,7 +15,8 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
+
+import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 
 public class WeekendResultsTest
 {
@@ -27,14 +27,9 @@ public class WeekendResultsTest
     public void setUp() throws Exception
     {
         dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
+                getDataSourceUrl("parkrun_stats_test"), "test", "qa");
 
-        weekendResults = WeekendResults.newInstance(
-                dataSource,
-                List.of(
-                        new Object[]{"test/test.events.json", Course.Status.RUNNING},
-                        new Object[]{"test/test.events.missing.json", Course.Status.STOPPED}
-                ), new TestWebpageProviderFactory());
+        weekendResults = WeekendResults.newInstance(dataSource, new TestWebpageProviderFactory());
 
         NamedParameterJdbcTemplate jdbc = new NamedParameterJdbcTemplate(dataSource);
         jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);

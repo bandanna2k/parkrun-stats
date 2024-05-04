@@ -23,18 +23,13 @@ import static dnt.parkrun.datastructures.Country.NZ;
 
 public class WeekendResults
 {
-    private final List<Object[]> listOfCourseAndStatus;
-
     public static void main(String[] args) throws SQLException, IOException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
         WeekendResults weekendResults = WeekendResults.newInstance(
                 dataSource,
-                List.of(
-                        new Object[] { "events.json", Course.Status.RUNNING },
-                        new Object[] { "events.missing.json", Course.Status.STOPPED }
-                        ), new WebpageProviderFactoryImpl(new UrlGenerator(NZ.baseUrl)));
+                new WebpageProviderFactoryImpl(new UrlGenerator(NZ.baseUrl)));
 
         weekendResults.fetchWeekendResults();
     }
@@ -49,10 +44,8 @@ public class WeekendResults
     private final WebpageProviderFactory webpageProviderFactory;
 
     private WeekendResults(DataSource dataSource,
-                           List<Object[]> listOfCourseAndStatus,
                            WebpageProviderFactory webpageProviderFactory) throws SQLException
     {
-        this.listOfCourseAndStatus = listOfCourseAndStatus;
         this.courseRepository = new CourseRepository();
         this.courseDao = new CourseDao(dataSource, courseRepository);
         this.athleteDao = new AthleteDao(dataSource);
@@ -63,22 +56,13 @@ public class WeekendResults
     }
 
     public static WeekendResults newInstance(DataSource dataSource,
-                                             List<Object[]> listOfCourseAndStatus,
                                              WebpageProviderFactory webpageProviderFactory) throws SQLException
     {
-        return new WeekendResults(dataSource, listOfCourseAndStatus, webpageProviderFactory);
+        return new WeekendResults(dataSource, webpageProviderFactory);
     }
 
     public void fetchWeekendResults() throws IOException
     {
-        System.out.println("* Adding courses *");
-        for (Object[] eventFiles : listOfCourseAndStatus)
-        {
-            String file = (String) eventFiles[0];
-            Course.Status status = (Course.Status) eventFiles[1];
-            addCourses(file, status);
-        }
-
         courseRepository.getCourses(NZ).forEach(course ->
         {
             if(course.status != Course.Status.RUNNING) return;
