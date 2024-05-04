@@ -24,6 +24,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - Batch write results/volunteers. Comms over the network is sloooooow.
 
+- Last records shown on menu
+
 - Menu (Uber app) for 3 programs
 Invariants (Quick) DONE
 Invariants DONE

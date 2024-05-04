@@ -28,6 +28,7 @@ public class ParserTest
     {
         return new Object[] {
                 ("/example.event.with.unknowns.html"),
+                ("/test/bushynewzealand/example.event.large.html"),
                 ("/example.event.with.hour.plus.times.html"),
                 ("/example.event.with.no.gender.html"),
                 ("/example.event.with.assist.athlete.html"),

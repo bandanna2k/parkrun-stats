@@ -69,9 +69,6 @@ public class WeekendResults
         {
             if(course.status != Course.Status.RUNNING) return;
 
-            if(course.name.startsWith("a")) return;
-            if(course.name.startsWith("b")) return;
-
             System.out.printf("* [%s] Get course summaries from database... ", course.longName);
             List<CourseEventSummary> courseEventSummariesFromDao = courseEventSummaryDao.getCourseEventSummaries(course);
             System.out.printf("Count: %d *%n", courseEventSummariesFromDao.size());

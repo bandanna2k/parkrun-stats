@@ -1,6 +1,11 @@
 package dnt.parkrun.mostevents;
 
-import com.mysql.jdbc.Driver;
+import dnt.parkrun.database.BaseDaoTest;
+import dnt.parkrun.database.CourseDao;
+import dnt.parkrun.database.CourseEventSummaryDao;
+import dnt.parkrun.datastructures.Course;
+import dnt.parkrun.datastructures.CourseEventSummary;
+import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.filewebpageprovider.FileWebpageProvider;
 import dnt.parkrun.webpageprovider.WebpageProvider;
 import dnt.parkrun.webpageprovider.WebpageProviderFactory;
@@ -9,25 +14,31 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Optional;
 
-import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
+import static dnt.parkrun.datastructures.Country.NZ;
 
-public class WeekendResultsTest
+public class WeekendResultsTest extends BaseDaoTest
 {
-    private DataSource dataSource;
     private WeekendResults weekendResults;
 
     @Before
     public void setUp() throws Exception
     {
-        dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl("parkrun_stats_test"), "test", "qa");
+        CourseRepository courseRepository = new CourseRepository();
+        CourseDao courseDao = new CourseDao(dataSource, courseRepository);
+
+        Course bushy = courseDao.insert(new Course(Course.NO_COURSE_ID, "bushynewzealand", NZ, "Fake Bushy parkrun", Course.Status.RUNNING));
+
+        CourseEventSummaryDao courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
+        courseEventSummaryDao.insert(new CourseEventSummary(bushy, 1, Date.from(Instant.EPOCH), 2545,
+                Optional.of(johnDoe), Optional.of(janeDoe)));
 
         weekendResults = WeekendResults.newInstance(dataSource, new TestWebpageProviderFactory());
 

@@ -1,6 +1,7 @@
 package dnt.parkrun.database;
 
 import com.mysql.jdbc.Driver;
+import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Course;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -21,6 +22,14 @@ public abstract class BaseDaoTest
             new Course(NO_COURSE_ID, "ellidaardalur", UNKNOWN, "Elliðaárdalur", Course.Status.RUNNING);
     public static final Course CORNWALL =
             new Course(NO_COURSE_ID, "cornwall", NZ, "Cornwall Park", Course.Status.RUNNING);
+
+    public static Athlete janeDoe = Athlete.fromAthleteSummaryLink(
+            "Jane DOE", "https://www.parkrun.co.nz/parkrunner/902393/");
+    public static Athlete johnDoe = Athlete.fromAthleteSummaryLink(
+            "John DOE", "https://www.parkrun.co.nz/parkrunner/902394/");
+
+
+
     @BeforeClass
     public static void beforeClass()
     {
