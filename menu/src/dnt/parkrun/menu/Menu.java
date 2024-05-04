@@ -48,6 +48,9 @@ public class Menu
         switch (choice)
         {
             case "X": break;
+            case "WEEKLY", "W":
+                runWeeklyResults();
+                break;
             case "SPEED", "S":
                 runSpeedStats();
                 break;
@@ -59,6 +62,11 @@ public class Menu
             default:
                 System.out.printf("No action for '%s'%n", choice);
         }
+    }
+
+    private void runWeeklyResults()
+    {
+
     }
 
     private void runSpeedStats()
