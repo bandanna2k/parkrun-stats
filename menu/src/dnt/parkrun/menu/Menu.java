@@ -11,6 +11,8 @@ import dnt.parkrun.webpageprovider.WebpageProviderFactoryImpl;
 import dnt.parkrun.weekendresults.WeekendResults;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
@@ -149,6 +151,14 @@ public class Menu
     private void runInvariants(Class... classes)
     {
         JUnitCore junit = new JUnitCore();
+        junit.addListener(new RunListener() {
+            @Override
+            public void testFailure(Failure failure) throws Exception
+            {
+                System.out.printf("FAILED: Test: %s, Failure: %s%n", failure.getTestHeader(), failure.getMessage());
+                super.testFailure(failure);
+            }
+        });
 
         Result result = junit.run(classes);
 
