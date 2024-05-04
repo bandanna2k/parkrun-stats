@@ -12,6 +12,12 @@ public class VolunteerDao extends BaseDao
 {
     public static final int MIN_VOLUNTEER_COUNT = 20;
 
+    private static String SQL_FOR_INSERT = "insert into event_volunteer (" +
+            "athlete_id, course_id, date" +
+            ") values ( " +
+            ":athleteId, :courseId, :date" +
+            ")";
+
     public VolunteerDao(DataSource dataSource)
     {
         super(dataSource);
@@ -19,16 +25,19 @@ public class VolunteerDao extends BaseDao
 
     public void insert(Volunteer volunteer)
     {
-        String sql = "insert into event_volunteer (" +
-                "athlete_id, course_id, date" +
-                ") values ( " +
-                ":athleteId, :courseId, :date" +
-                ")";
-        jdbc.update(sql, new MapSqlParameterSource()
+        jdbc.update(SQL_FOR_INSERT, new MapSqlParameterSource()
                 .addValue("athleteId", volunteer.athlete.athleteId)
                 .addValue("courseId", volunteer.courseId)
                 .addValue("date", volunteer.date)
         );
+    }
+
+    public void insert(List<Volunteer> volunteers)
+    {
+        jdbc.batchUpdate(SQL_FOR_INSERT, volunteers.stream().map(volunteer -> new MapSqlParameterSource()
+                .addValue("athleteId", volunteer.athlete.athleteId)
+                .addValue("courseId", volunteer.courseId)
+                .addValue("date", volunteer.date)).toArray(MapSqlParameterSource[]::new));
     }
 
     public static String getSqlForVolunteersAtDifferentCourse(String volunteerTable)

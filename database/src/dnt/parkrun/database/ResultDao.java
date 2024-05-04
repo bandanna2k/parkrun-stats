@@ -12,6 +12,13 @@ import java.util.function.Consumer;
 
 public class ResultDao extends BaseDao
 {
+
+    public static final String SQL_FOR_INSERT = "insert into result (" +
+            "athlete_id, course_id, date, position, time_seconds, age_group, age_grade" +
+            ") values ( " +
+            ":athleteId, :courseId, :date, :position, :time_seconds, :ageCategory, :ageGrade" +
+            ")";
+
     public ResultDao(DataSource dataSource)
     {
         super(dataSource);
@@ -73,12 +80,7 @@ public class ResultDao extends BaseDao
 
     public void insert(Result result)
     {
-        String sql = "insert into result (" +
-                "athlete_id, course_id, date, position, time_seconds, age_group, age_grade" +
-                ") values ( " +
-                ":athleteId, :courseId, :date, :position, :time_seconds, :ageCategory, :ageGrade" +
-                ")";
-        jdbc.update(sql, new MapSqlParameterSource()
+        jdbc.update(SQL_FOR_INSERT, new MapSqlParameterSource()
                 .addValue("athleteId", result.athlete.athleteId)
                 .addValue("courseId", result.courseId)
                 .addValue("date", result.date)
@@ -86,6 +88,19 @@ public class ResultDao extends BaseDao
                 .addValue("time_seconds", result.time == null ? 0 : result.time.getTotalSeconds())
                 .addValue("ageCategory", result.ageCategory.dbCode)
                 .addValue("ageGrade", result.ageGrade.getAgeGradeForDb())
+        );
+    }
+
+    public void insert(List<Result> results)
+    {
+        jdbc.batchUpdate(SQL_FOR_INSERT, results.stream().map(result -> new MapSqlParameterSource()
+                .addValue("athleteId", result.athlete.athleteId)
+                .addValue("courseId", result.courseId)
+                .addValue("date", result.date)
+                .addValue("position", result.position)
+                .addValue("time_seconds", result.time == null ? 0 : result.time.getTotalSeconds())
+                .addValue("ageCategory", result.ageCategory.dbCode)
+                .addValue("ageGrade", result.ageGrade.getAgeGradeForDb())).toArray(MapSqlParameterSource[]::new)
         );
     }
 

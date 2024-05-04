@@ -9,11 +9,19 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AthleteDao
 {
 
+    public static final String SQL_FOR_INSERT = "insert into athlete (" +
+            "athlete_id, name" +
+            ") values ( " +
+            ":athleteId, :name" +
+            ") on duplicate key " +
+            "update " +
+            "name = :name";
     private final NamedParameterJdbcOperations jdbc;
 
     public AthleteDao(DataSource dataSource) throws SQLException
@@ -23,18 +31,18 @@ public class AthleteDao
 
     public Athlete insert(Athlete athlete)
     {
-        String sql = "insert into athlete (" +
-                "athlete_id, name" +
-                ") values ( " +
-                ":athleteId, :name" +
-                ") on duplicate key " +
-                "update " +
-                "name = :name";
-        jdbc.update(sql, new MapSqlParameterSource()
+        jdbc.update(SQL_FOR_INSERT, new MapSqlParameterSource()
                 .addValue("athleteId", athlete.athleteId)
                 .addValue("name", athlete.name)
         );
         return getAthlete(athlete.athleteId);
+    }
+
+    public void insert(List<Athlete> athletes)
+    {
+        jdbc.batchUpdate(SQL_FOR_INSERT, athletes.stream().map(athlete -> new MapSqlParameterSource()
+                .addValue("athleteId", athlete.athleteId)
+                .addValue("name", athlete.name)).toArray(MapSqlParameterSource[]::new));
     }
 
     public Athlete getAthlete(int athleteId)

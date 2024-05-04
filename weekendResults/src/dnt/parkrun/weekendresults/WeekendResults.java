@@ -5,9 +5,7 @@ import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
 import dnt.parkrun.database.*;
-import dnt.parkrun.datastructures.Course;
-import dnt.parkrun.datastructures.CourseEventSummary;
-import dnt.parkrun.datastructures.CourseRepository;
+import dnt.parkrun.datastructures.*;
 import dnt.parkrun.webpageprovider.WebpageProviderFactory;
 import dnt.parkrun.webpageprovider.WebpageProviderFactoryImpl;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -89,15 +87,22 @@ public class WeekendResults
                 System.out.printf("* Processing %s *%n", ces);
 
                 tryTwiceIfFails(() -> {
+                    List<Athlete> runners = new ArrayList<>();
+                    List<Result> results = new ArrayList<>();
+                    List<Volunteer> volunteers = new ArrayList<>();
+
                     dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(ces.course)
                             .webpageProvider(webpageProviderFactory.createCourseEventWebpageProvider(ces.course.name, ces.eventNumber))
-                            .forEachAthlete(athleteDao::insert)
-                            .forEachResult(resultDao::insert)
-                            .forEachVolunteer(volunteerDao::insert)
+                            .forEachAthlete(runners::add)
+                            .forEachResult(results::add)
+                            .forEachVolunteer(volunteers::add)
                             .build();
                     parser.parse();
 
                     courseEventSummaryDao.insert(ces);
+                    athleteDao.insert(runners);
+                    volunteerDao.insert(volunteers);
+                    resultDao.insert(results);
                 });
             }
             System.out.println();
