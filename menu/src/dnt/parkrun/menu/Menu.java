@@ -1,10 +1,14 @@
 package dnt.parkrun.menu;
 
 import com.mysql.jdbc.Driver;
+import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.datastructures.AgeCategory;
+import dnt.parkrun.stats.MostEventStats;
 import dnt.parkrun.stats.invariants.*;
 import dnt.parkrun.stats.speed.AgeCategoryRecord;
 import dnt.parkrun.stats.speed.SpeedStats;
+import dnt.parkrun.webpageprovider.WebpageProviderFactoryImpl;
+import dnt.parkrun.weekendresults.WeekendResults;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -16,10 +20,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
+import static dnt.parkrun.datastructures.Country.NZ;
+import static dnt.parkrun.stats.MostEventStats.getParkrunDay;
 
 public class Menu
 {
@@ -49,10 +56,13 @@ public class Menu
         {
             case "X": break;
             case "WEEKLY", "W":
-                runWeeklyResults();
+                fetchWeeklyResults();
+                break;
+            case "MOST", "M":
+                captureMostEvent();
                 break;
             case "SPEED", "S":
-                runSpeedStats();
+                fetchSpeedStats();
                 break;
             case "QUICK", "Q":
                 runInvariantsQuick();
@@ -64,12 +74,44 @@ public class Menu
         }
     }
 
-    private void runWeeklyResults()
+    private void captureMostEvent()
     {
+        try
+        {
+            DataSource dataSource = new SimpleDriverDataSource(new Driver(),
+                    getDataSourceUrl("parkrun_stats"), "stats", "statsfractalstats");
+            DataSource statsDataSource = new SimpleDriverDataSource(new Driver(),
+                    getDataSourceUrl("weekly_stats"), "stats", "statsfractalstats");
 
+            MostEventStats stats = MostEventStats.newInstance(dataSource, statsDataSource, getParkrunDay(new Date()));
+            File file = stats.generateStats();
+
+            new ProcessBuilder("xdg-open", file.getAbsolutePath()).start();
+        }
+        catch (SQLException | IOException | XMLStreamException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
-    private void runSpeedStats()
+    private void fetchWeeklyResults()
+    {
+        try
+        {
+            DataSource dataSource = new SimpleDriverDataSource(new Driver(),
+                    "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+            WeekendResults weekendResults = WeekendResults.newInstance(
+                    dataSource,
+                    new WebpageProviderFactoryImpl(new UrlGenerator(NZ.baseUrl)));
+            weekendResults.fetchWeekendResults();
+        }
+        catch (SQLException | IOException e)
+        {
+            System.out.println("ERROR: " + e.getMessage());
+        }
+    }
+
+    private void fetchSpeedStats()
     {
         try
         {
@@ -88,14 +130,14 @@ public class Menu
         }
     }
 
-    private void runInvariantsFull()
+    private void runInvariantsQuick()
     {
         runInvariants(InvariantTest.class,
                 ParsersTest.class,
                 ProvinceTest.class);
     }
 
-    private void runInvariantsQuick()
+    private void runInvariantsFull()
     {
         runInvariants(HowYouDoingTest.class,
                 InvariantTest.class,
@@ -126,10 +168,12 @@ public class Menu
     private void displayOptions()
     {
         System.out.println("----------------------");
-        System.out.println("Quick     - Quick run invariants                            (re-runnable, takes 1 minute");
-        System.out.println("Invariant - Run Invariants                                  (re-runnable, takes 5 minutes)");
-        System.out.println("Speed     - Speed Stats           needs 'Weekly Results'    (just uses database, 10 seconds, )");
-        System.out.println("Exit(X)   - Exit");
+        System.out.println("Quick          - Quick run invariants                                 (re-runnable, takes 1 minute");
+        System.out.println("Invariant      - Run Invariants                                       (re-runnable, takes 5 minutes)");
+        System.out.println("Weekly         - Weekly results        needs 'Invariants' to pass     (re-runnable, downloads from web, 5 minutes. Many days if new)");
+        System.out.println("Most           - Move Events results   needs 'Weekly Results'         (re-runnable, downloads from web, 1 hours)");
+        System.out.println("Speed          - Speed Stats           needs 'Weekly Results'         (just uses database, 10 seconds, )");
+        System.out.println("Exit(X)        - Exit");
         System.out.println("----------------------");
     }
 }

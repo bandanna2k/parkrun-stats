@@ -34,6 +34,8 @@ public class WeekendResults
         weekendResults.fetchWeekendResults();
     }
 
+
+
     private final CourseRepository courseRepository;
 
     private final AthleteDao athleteDao;

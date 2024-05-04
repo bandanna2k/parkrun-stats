@@ -8,7 +8,7 @@
     <orderEntry type="jdk" jdkName="21" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="stats" />
-    <orderEntry type="library" name="junit.platform.launcher" level="project" />
+    <orderEntry type="module" module-name="weekendResults" />
     <orderEntry type="library" name="junit" level="project" />
     <orderEntry type="module-library">
       <library>
@@ -19,5 +19,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="junit.platform.launcher" level="project" />
   </component>
 </module>
