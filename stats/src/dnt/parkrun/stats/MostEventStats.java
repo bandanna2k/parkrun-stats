@@ -161,7 +161,7 @@ public class MostEventStats
 
         downloadAthleteCourseSummaries(differentEventRecords);
 
-        try (HtmlWriter writer = HtmlWriter.newInstance(date, "stats", "most_events.css"))
+        try (HtmlWriter writer = HtmlWriter.newInstance(date, COUNTRY, "stats", "most_events.css"))
         {
             String startDatesJs = "[" +
                     "[" + startDates.stream().map(sd -> String.valueOf(sd.date.getTime() / 1000)).collect(Collectors.joining(",")) + "]," +
@@ -651,7 +651,7 @@ public class MostEventStats
     {
         try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Events (Extended)").build())
         {
-            try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, urlGenerator, true))
+            try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, COUNTRY, true))
             {
                 for (MostEventsDao.MostEventsRecord der : differentEventRecords)
                 {
@@ -702,7 +702,7 @@ public class MostEventStats
     {
         try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Events").build())
         {
-            try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, urlGenerator, false))
+            try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, COUNTRY, false))
             {
                 for (MostEventsDao.MostEventsRecord der : differentEventRecords)
                 {

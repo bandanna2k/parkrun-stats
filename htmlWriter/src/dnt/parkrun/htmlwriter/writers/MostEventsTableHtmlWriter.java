@@ -1,6 +1,7 @@
 package dnt.parkrun.htmlwriter.writers;
 
 import dnt.parkrun.common.UrlGenerator;
+import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.htmlwriter.BaseWriter;
 import dnt.parkrun.htmlwriter.MostEventsRecord;
 
@@ -10,14 +11,17 @@ import java.io.Closeable;
 
 public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 {
+    private final Country country;
     private final UrlGenerator urlGenerator;
     private final boolean extended;
 
-    public MostEventsTableHtmlWriter(XMLStreamWriter writer, UrlGenerator urlGenerator, boolean extended) throws XMLStreamException
+    public MostEventsTableHtmlWriter(XMLStreamWriter writer, Country country, boolean extended)
+            throws XMLStreamException
     {
         super(writer);
-        this.urlGenerator = urlGenerator;
         this.extended = extended;
+        this.country = country;
+        this.urlGenerator = new UrlGenerator(country.baseUrl);
 
         startElement("table", "class", "sortable most-events");
         writeHeader(writer);
@@ -58,7 +62,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             startElement("th");
             information("Regionnaire Count",
                     "Regionnaire is someone who has completed all parkruns in a region. " +
-                            "This region being New Zealand. This count is how many times it has been achieved.");
+                            "This region being " + country.countryName + ". This count is how many times it has been achieved.");
             endElement("th");
         }
 

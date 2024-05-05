@@ -5,6 +5,7 @@ import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.datastructures.AgeCategory;
+import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.htmlwriter.HtmlWriter;
@@ -29,6 +30,8 @@ import static dnt.parkrun.stats.speed.AgeCategoryRecordsHtmlWriter.Type.AGE_GRAD
 
 public class SpeedStats
 {
+    private static final Country COUNTRY = NZ;
+
     private final CourseRepository courseRepository;
 
     /*
@@ -51,7 +54,7 @@ public class SpeedStats
     private Date mostRecentDate = new Date(Long.MIN_VALUE);
     private final ResultDao resultDao;
 
-    private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
+    private final UrlGenerator urlGenerator = new UrlGenerator(COUNTRY.baseUrl);
 
     private SpeedStats(DataSource dataSource)
     {
@@ -86,7 +89,7 @@ public class SpeedStats
 
     public File generateFastTimeStats(Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord) throws IOException, XMLStreamException
     {
-        try (HtmlWriter writer = HtmlWriter.newInstance(mostRecentDate, "stats_for_speed", "speed_stats.css"))
+        try (HtmlWriter writer = HtmlWriter.newInstance(mostRecentDate, COUNTRY, "stats_for_speed", "speed_stats.css"))
         {
             writer.writer.writeStartElement("p");
             writer.writer.writeAttribute("align", "right");

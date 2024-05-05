@@ -1,6 +1,7 @@
 package dnt.parkrun.htmlwriter;
 
 import dnt.parkrun.common.DateConverter;
+import dnt.parkrun.datastructures.Country;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -14,8 +15,9 @@ public class HtmlWriter extends BaseWriter
     private final Date date;
     private final File file;
     private final String cssFilename;
+    private final Country country;
 
-    public static HtmlWriter newInstance(Date date, String prefix, String cssFile) throws IOException, XMLStreamException
+    public static HtmlWriter newInstance(Date date, Country country, String prefix, String cssFile) throws IOException, XMLStreamException
     {
         File file = new File(prefix + "_" + DateConverter.formatDateForDbTable(date) + ".html");
 
@@ -23,15 +25,16 @@ public class HtmlWriter extends BaseWriter
                 .newInstance()
                 .createXMLStreamWriter(
                         new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
-        return new HtmlWriter(writer, date, file, cssFile);
+        return new HtmlWriter(writer, date, country, file, cssFile);
     }
 
-    private HtmlWriter(XMLStreamWriter writer, Date date, File file, String cssFilename) throws XMLStreamException, IOException
+    private HtmlWriter(XMLStreamWriter writer, Date date, Country country, File file, String cssFilename) throws XMLStreamException, IOException
     {
         super(writer);
         this.date = date;
         this.file = file;
         this.cssFilename = cssFilename;
+        this.country = country;
 
         startHtml();
     }
@@ -43,7 +46,7 @@ public class HtmlWriter extends BaseWriter
         startElement("html");
 
         startElement("title");
-        writer.writeCharacters("New Zealand parkrun Statistics for Events on " + DateConverter.formatDateForHtml(date));
+        writer.writeCharacters(country.countryName + " parkrun Statistics for Events on " + DateConverter.formatDateForHtml(date));
         endElement("title");
 
         writer.writeStartElement("style\n");
