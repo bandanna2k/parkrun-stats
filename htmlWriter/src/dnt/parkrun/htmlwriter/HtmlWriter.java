@@ -45,9 +45,25 @@ public class HtmlWriter extends BaseWriter
 
         startElement("html");
 
+        String title = country.countryName + " parkrun Most Events and Attendance Records for Events on and prior to " + DateConverter.formatDateForHtml(date);
         startElement("title");
-        writer.writeCharacters(country.countryName + " parkrun Statistics for Events on " + DateConverter.formatDateForHtml(date));
+        writer.writeCharacters(title);
         endElement("title");
+
+        startElement("head");
+
+        startElement("meta", "charset", "UTF-8");
+        endElement("meta");
+
+        startElement("meta", "name", "description", "content", title);
+        endElement("meta");
+
+        startElement("meta",
+                "name", "keywords",
+                "content", "Most Events parkrun Attendance Records pIndex Most Volunteer Volunteering 90% Club");
+        endElement("meta");
+
+        endElement("head");
 
         writer.writeStartElement("style\n");
         try(BufferedReader reader1 = new BufferedReader(new InputStreamReader(

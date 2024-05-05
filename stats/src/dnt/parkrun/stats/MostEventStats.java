@@ -861,8 +861,7 @@ public class MostEventStats
                 for (AttendanceRecord ar : attendanceRecords)
                 {
                     Course course = courseRepository.getCourse(ar.courseId);
-                    if(course.status == RUNNING) {}
-                    else if(course.status == PENDING) ar.courseSmallTest = "not started yet";
+                    if(course.status == PENDING) ar.courseSmallTest = "not started yet";
                     else if(course.status == STOPPED) ar.courseSmallTest = "no longer takes place";
                     else if(ar.recentEventDate.before(date)) ar.courseSmallTest = "not run this week";
 

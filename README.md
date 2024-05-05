@@ -22,18 +22,11 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- New Zealand to only occur once in the code.
+- Meta data needs importing from constructor as speed keywords different to most events keywords.
 
-- Add META data
-Most Events parkrun NZ New Zealand
-Attendance Records
-pIndex
-Most Volunteer Volunteering
-90% Club
+- Import CSS at the end
 
-- Not run this week not working
-
-- CourseEventChecker failed - Unknown athlete now filled in (seeds 1714883664994, 1714893450640)
+- CourseEventChecker failed - Unknown athlete now filled in (seeds 1714883664994, 1714893450640, 1714904703501)
 
 - Start date to attendance records
 
@@ -54,6 +47,17 @@ Low priority
 
 
 ## Issues Completed
+
+- 5/5/2024 Add META data
+  Most Events parkrun NZ New Zealand
+  Attendance Records
+  pIndex
+  Most Volunteer Volunteering
+  90% Club
+
+- 5/5/2024 Not run this week not working
+
+- 5/5/2024 New Zealand to only occur once in the code.
 
 - 5/5/2024 Column definition to attendance records
 
