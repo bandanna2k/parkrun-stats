@@ -76,6 +76,8 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             // Chart
             startElement("th", "class", "dt");
             endElement("th");
+            startElement("th", "class", "dt");
+            endElement("th");
         }
 
         endElement("tr");
@@ -166,7 +168,14 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
                             "refreshStartDates();"
             );
             writer.writeCharacters("\uD83D\uDCC8");
-            endElement("div");
+            endElement("span");
+            endElement("td");
+
+            startElement("td", "class", "dt");
+            startElement("span", "class", "click-me",
+                    "onclick", "downloadChart()");
+            writer.writeCharacters("\uD83D\uDDBC");
+            endElement("span");
             endElement("td");
         }
 

@@ -22,7 +22,15 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- CourseEventChecker failed - Unknown athlete now filled in (seed 1714883664994)
+
+- Start date to attendance records
+
+- Column definition to attendance records
+
 - pIndex, where did Helen Watson come from?
+Stats are correct. Running at Cornwall Park gave here pIndex of 6 in NZ. But total Global pIndex of 7. 
+She has run lots of runs at Delamere nr Liverpool and Northwich nr Liverpool
 
 - Last records shown on menu
 
