@@ -23,7 +23,7 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         this.extended = extended;
 
         writer.writeStartElement("table");
-        writer.writeAttribute("class", "sortable name-data");
+        writer.writeAttribute("class", "sortable bold1 left1 define2 define3 define6");
 
         writeHeader(writer);
     }

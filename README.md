@@ -22,24 +22,22 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- CourseEventChecker failed - Unknown athlete now filled in (seed 1714883664994)
+- New Zealand to only occur once in the code.
+
+- Add META data
+Most Events parkrun NZ New Zealand
+Attendance Records
+pIndex
+Most Volunteer Volunteering
+90% Club
+
+- CourseEventChecker failed - Unknown athlete now filled in (seeds 1714883664994, 1714893450640)
 
 - Start date to attendance records
 
 - Column definition to attendance records
 
-- pIndex, where did Helen Watson come from?
-Stats are correct. Running at Cornwall Park gave here pIndex of 6 in NZ. But total Global pIndex of 7. 
-She has run lots of runs at Delamere nr Liverpool and Northwich nr Liverpool
-
 - Last records shown on menu
-
-- Menu (Uber app) for 3 programs
-Invariants (Quick) DONE
-Invariants DONE
-Weekly Results (needs nothing and 10 minutes) DONE
-Speed Stats (needs weekly results)
-Most Events (needs weekly results and 1 hour)
 
 - Invariant - Event number must equal date.  
 
@@ -58,6 +56,17 @@ Low priority
 
 
 ## Issues Completed
+
+- 5/5/2024 - pIndex, where did Helen Watson come from?
+Stats are correct. Running at Cornwall Park gave here pIndex of 6 in NZ which is the requirement for pIndex table.
+But total Global pIndex of 7. She has run lots of runs at Delamere nr Liverpool and Northwich nr Liverpool
+
+- 5/5/2024 - Menu (Uber app) for 3 programs
+Invariants (Quick) DONE
+Invariants DONE
+Weekly Results (needs nothing and 10 minutes) DONE
+Speed Stats (needs weekly results) DONE
+Most Events (needs weekly results and 1 hour) DONE
 
 - 5/5/2024 Batch write results/volunteers. Comms over the network is sloooooow.
 
