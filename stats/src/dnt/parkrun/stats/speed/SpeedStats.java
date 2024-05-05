@@ -17,6 +17,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -87,6 +88,11 @@ public class SpeedStats
     {
         try (HtmlWriter writer = HtmlWriter.newInstance(mostRecentDate, "stats_for_speed", "speed_stats.css"))
         {
+            writer.writer.writeStartElement("p");
+            writer.writer.writeAttribute("align", "right");
+            writer.writer.writeCharacters(new SimpleDateFormat("yyyy MMM dd hh:mm").format(new Date()));
+            writer.writer.writeEndElement();
+
             writeAgeCategoryRecords(writer, courseToAgeGroupToAgeGradeRecord);
 
             writer.writer.writeStartElement("hr");

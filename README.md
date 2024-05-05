@@ -22,7 +22,7 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Batch write results/volunteers. Comms over the network is sloooooow.
+- pIndex, where did Helen Watson come from?
 
 - Last records shown on menu
 
@@ -50,6 +50,8 @@ Low priority
 
 
 ## Issues Completed
+
+- 5/5/2024 Batch write results/volunteers. Comms over the network is sloooooow.
 
 - 4/5/2024 Weekly Results should use database, not events json. Invariants do this work now.
   Doing it this way causes problems.
