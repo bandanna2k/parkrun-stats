@@ -172,10 +172,10 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             endElement("td");
 
             startElement("td", "class", "dt");
-            startElement("span", "class", "click-me",
-                    "onclick", "downloadChart()");
-            writer.writeCharacters("\uD83D\uDDBC");
-            endElement("span");
+//            startElement("span", "class", "click-me",
+//                    "onclick", "downloadChart()");
+//            writer.writeCharacters("\uD83D\uDDBC");
+//            endElement("span");
             endElement("td");
         }
 

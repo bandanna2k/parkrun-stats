@@ -174,7 +174,7 @@ public class MostEventStats
 
             writer.writer.writeStartElement("p");
             writer.writer.writeAttribute("align", "right");
-            writer.writer.writeCharacters(new SimpleDateFormat("yyyy MMM dd hh:mm").format(new Date()));
+            writer.writer.writeCharacters(new SimpleDateFormat("yyyy MMM dd HH:mm").format(new Date()));
             writer.writer.writeEndElement();
 
 
