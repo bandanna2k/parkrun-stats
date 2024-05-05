@@ -31,13 +31,11 @@ pIndex
 Most Volunteer Volunteering
 90% Club
 
+- Not run this week not working
+
 - CourseEventChecker failed - Unknown athlete now filled in (seeds 1714883664994, 1714893450640)
 
 - Start date to attendance records
-
-- Column definition to attendance records
-
-- Last records shown on menu
 
 - Invariant - Event number must equal date.  
 
@@ -56,6 +54,10 @@ Low priority
 
 
 ## Issues Completed
+
+- 5/5/2024 Column definition to attendance records
+
+- 5/5/2024 Last records shown on menu
 
 - 5/5/2024 - pIndex, where did Helen Watson come from?
 Stats are correct. Running at Cornwall Park gave here pIndex of 6 in NZ which is the requirement for pIndex table.

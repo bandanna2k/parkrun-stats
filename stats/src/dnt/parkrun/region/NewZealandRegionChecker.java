@@ -1,27 +1,13 @@
 package dnt.parkrun.region;
 
-import dnt.parkrun.datastructures.AthleteCourseSummary;
 import dnt.parkrun.datastructures.Course;
 
 import java.util.Arrays;
-import java.util.List;
 
-public abstract class Region
+public class NewZealandRegionChecker extends RegionChecker
 {
-    public static int getNzRegionRunCount(Course homeParkrun, List<AthleteCourseSummary> summariesForAthlete)
-    {
-        int count = 0;
-        for (AthleteCourseSummary acs : summariesForAthlete)
-        {
-            if (isSameNzRegion(homeParkrun, acs.course))
-            {
-                count += acs.countOfRuns;
-            }
-        }
-        return count;
-    }
-
-    public static boolean isSameNzRegion(Course homeParkrun, Course course)
+    @Override
+    public boolean isSameRegion(Course homeParkrun, Course course)
     {
         if (course == null) return false;
         if (isAuckland(homeParkrun) && isAuckland(course)) { return true; }

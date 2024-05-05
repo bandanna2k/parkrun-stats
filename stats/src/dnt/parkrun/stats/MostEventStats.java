@@ -21,6 +21,8 @@ import dnt.parkrun.htmlwriter.MostEventsRecord;
 import dnt.parkrun.htmlwriter.StatsRecord;
 import dnt.parkrun.htmlwriter.writers.*;
 import dnt.parkrun.pindex.PIndex;
+import dnt.parkrun.region.RegionChecker;
+import dnt.parkrun.region.RegionCheckerFactory;
 import dnt.parkrun.stats.invariants.CourseEventSummaryChecker;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
@@ -38,12 +40,13 @@ import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.*;
-import static dnt.parkrun.region.Region.getNzRegionRunCount;
 import static java.util.Calendar.SATURDAY;
 import static java.util.Collections.emptyList;
 
 public class MostEventStats
 {
+    private static final Country COUNTRY = NZ;
+
     public static final int MIN_P_INDEX = 5;
     public static final Comparator<PIndexTableHtmlWriter.Record> PINDEX_RECORD_COMPARATOR = (pIndexRecord1, pIndexRecord2) ->
     {
@@ -102,7 +105,7 @@ public class MostEventStats
     private final Map<Integer, List<AthleteCourseSummary>> athleteIdToAthleteCourseSummaries = new HashMap<>();
     private final List<CourseDate> startDates = new ArrayList<>();
     private final List<CourseDate> stopDates = new ArrayList<>();
-    private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
+    private final UrlGenerator urlGenerator = new UrlGenerator(COUNTRY.baseUrl);
 
     private MostEventStats(DataSource dataSource,
                            DataSource statsDataSource,
@@ -140,7 +143,7 @@ public class MostEventStats
         System.out.println("Done");
 
         System.out.print("Getting stop dates ");
-        stopDates.addAll(courseEventSummaryDao.getCourseStopDates(NZ));
+        stopDates.addAll(courseEventSummaryDao.getCourseStopDates(COUNTRY));
         System.out.println("Done");
 
         System.out.println("* Generating most events table *");
@@ -299,6 +302,7 @@ public class MostEventStats
 
     private void writePIndex(HtmlWriter writer) throws XMLStreamException
     {
+        RegionChecker regionChecker = new RegionCheckerFactory().getRegionChecker(COUNTRY);
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter.Builder(writer.writer, "p-Index Tables").build())
         {
             writer.writer.writeStartElement("p");
@@ -312,7 +316,7 @@ public class MostEventStats
 
             // p-Index
             Set<Integer> regionalPIndexAthletes = new HashSet<>();
-            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, urlGenerator, "New Zealand p-Index"))
+            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, urlGenerator, COUNTRY.countryName + " p-Index"))
             {
                 List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
                 for (Map.Entry<Integer, List<AthleteCourseSummary>> entry : athleteIdToAthleteCourseSummaries.entrySet())
@@ -335,7 +339,7 @@ public class MostEventStats
                     }
 
                     PIndex.Result regionPIndex = PIndex.pIndexAndNeeded(summariesForAthlete.stream()
-                            .filter(acs -> acs.course.country == NZ).collect(Collectors.toList()));
+                            .filter(acs -> acs.course.country == COUNTRY).collect(Collectors.toList()));
                     if (regionPIndex.pIndex <= MIN_P_INDEX)
                     {
                         continue;
@@ -345,15 +349,15 @@ public class MostEventStats
                         AthleteCourseSummary maxAthleteCourseSummary = getMaxAthleteCourseSummary(summariesForAthlete);
                         Course globalHomeParkrun = maxAthleteCourseSummary.course;
                         assert globalHomeParkrun != null : "Home parkrun is null, how?";
-                        if (globalHomeParkrun.country != NZ)
+                        if (globalHomeParkrun.country != COUNTRY)
                         {
                             continue;
                         }
                         regionalPIndexAthletes.add(athleteId);
                     }
 
-                    AthleteCourseSummary maxAthleteCourseSummaryInRegion = getMaxAthleteCourseSummaryInRegion(summariesForAthlete, NZ);
-                    double provinceRunCount = getNzRegionRunCount(maxAthleteCourseSummaryInRegion.course, summariesForAthlete);
+                    AthleteCourseSummary maxAthleteCourseSummaryInRegion = getMaxAthleteCourseSummaryInRegion(summariesForAthlete, COUNTRY);
+                    double provinceRunCount = regionChecker.getRegionRunCount(maxAthleteCourseSummaryInRegion.course, summariesForAthlete);
                     double totalRuns = getTotalRuns(summariesForAthlete);
                     double homeRatio = provinceRunCount / totalRuns;
 
@@ -398,7 +402,7 @@ public class MostEventStats
                     }
 
                     PIndex.Result regionPIndex = PIndex.pIndexAndNeeded(summariesForAthlete.stream()
-                            .filter(acs -> acs.course.country == NZ).collect(Collectors.toList()));
+                            .filter(acs -> acs.course.country == COUNTRY).collect(Collectors.toList()));
                     if (regionPIndex.pIndex <= MIN_P_INDEX)
                     {
                         continue;
@@ -415,8 +419,8 @@ public class MostEventStats
 //                        regionalPIndexAthletes.add(athleteId);
 //                    }
 
-                    AthleteCourseSummary maxAthleteCourseSummaryInRegion = getMaxAthleteCourseSummaryInRegion(summariesForAthlete, NZ);
-                    double provinceRunCount = getNzRegionRunCount(maxAthleteCourseSummaryInRegion.course, summariesForAthlete);
+                    AthleteCourseSummary maxAthleteCourseSummaryInRegion = getMaxAthleteCourseSummaryInRegion(summariesForAthlete, COUNTRY);
+                    double provinceRunCount = regionChecker.getRegionRunCount(maxAthleteCourseSummaryInRegion.course, summariesForAthlete);
                     double totalRuns = getTotalRuns(summariesForAthlete);
                     double homeRatio = provinceRunCount / totalRuns;
                     pIndexDao.writePIndexRecord(new PIndexDao.PIndexRecord(athleteId, globalPIndex.pIndex, globalPIndex.neededForNextPIndex, homeRatio));
@@ -484,8 +488,8 @@ public class MostEventStats
         {
             // Populate top 10 runs at courses
             Top10RunsDao top10RunsDao = new Top10RunsDao(statsDataSource);
-            List<Course> courses = courseRepository.getCourses(NZ).stream()
-                    .filter(c -> c.status == RUNNING).collect(Collectors.toList());
+            List<Course> courses = courseRepository.getCourses(COUNTRY).stream()
+                    .filter(c -> c.status == RUNNING).toList();
             for (Course course : courses)
             {
                 List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);
@@ -498,11 +502,11 @@ public class MostEventStats
             }
 
             try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(
-                    writer.writer, urlGenerator, "New Zealand", "Run"))
+                    writer.writer, urlGenerator,  COUNTRY.countryName, "Run"))
             {
                 List<AtEvent> top10InRegion = top10Dao.getTop10InRegion();
 
-                assert !top10InRegion.isEmpty() : "WARNING: Top 10 runs in NZ list is empty";
+                assert !top10InRegion.isEmpty() : "WARNING: Top 10 runs in region list is empty";
                 for (AtEvent r : top10InRegion)
                 {
                     top10InRegionHtmlWriter.writeRecord(new StatsRecord()
@@ -564,8 +568,8 @@ public class MostEventStats
                 .open().build())
         {
             Top10VolunteersDao top10VolunteersDao = new Top10VolunteersDao(statsDataSource);
-            List<Course> courses = courseRepository.getCourses(NZ).stream()
-                    .filter(c -> c.status == RUNNING).collect(Collectors.toList());
+            List<Course> courses = courseRepository.getCourses(COUNTRY).stream()
+                    .filter(c -> c.status == RUNNING).toList();
             for (Course course : courses)
             {
                 List<AtEvent> top10 = top10VolunteerDao.getTop10VolunteersAtCourse(course.name);
@@ -578,10 +582,10 @@ public class MostEventStats
             }
 
             try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(
-                    writer.writer, urlGenerator,"New Zealand", "Volunteer"))
+                    writer.writer, urlGenerator,COUNTRY.countryName, "Volunteer"))
             {
                 List<Object[]> top10VolunteersInRegion = top10VolunteerDao.getTop10VolunteersInRegion();
-                assert !top10VolunteersInRegion.isEmpty() : "WARNING: Top 10 runs in NZ list is empty";
+                assert !top10VolunteersInRegion.isEmpty() : "WARNING: Top 10 runs in region list is empty";
 
                 for (Object[] record : top10VolunteersInRegion)
                 {
