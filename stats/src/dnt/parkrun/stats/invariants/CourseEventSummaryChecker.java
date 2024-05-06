@@ -34,7 +34,7 @@ public class CourseEventSummaryChecker
 
     private final Set<String> courseIdToEventNumberToFix = new HashSet<>()
     {{
-//            add("trenthammemorial145");
+//            add("owairaka158");
 //            add("westernsprings346");
     }};
     private final List<String> errors = new ArrayList<>();
@@ -47,10 +47,10 @@ public class CourseEventSummaryChecker
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
 
-        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
-                dataSource, DEFAULT_ITERATION_COUNT, System.currentTimeMillis());
 //        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
-//                dataSource, DEFAULT_ITERATION_COUNT, 1714998953808L);
+//                dataSource, DEFAULT_ITERATION_COUNT, System.currentTimeMillis());
+        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
+                dataSource, DEFAULT_ITERATION_COUNT, 1714999522463L);
 
         List<String> errors = checker.validate();
         errors.forEach(error -> System.out.println("ERROR: " + error));
