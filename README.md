@@ -27,8 +27,9 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 - Import CSS at the end
 
 - CourseEventChecker failed - Unknown athlete now filled in (seeds 1714883664994, 1714893450640, 1714904703501)
-delete from results first
-delete from course event summary
+need to make seeds work the next week as well DONE
+delete from results first DONE
+delete from course event summary DONE
 
 - Start date/average attendance to attendance records
 

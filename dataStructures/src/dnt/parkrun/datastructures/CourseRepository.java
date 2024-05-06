@@ -2,7 +2,6 @@ package dnt.parkrun.datastructures;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class CourseRepository
 {
@@ -27,9 +26,9 @@ public class CourseRepository
         return courseLongNameToCourse.get(courseLongName);
     }
 
-    public Collection<Course> getCourses(Country country)
+    public List<Course> getCourses(Country country)
     {
-        List<Course> courses = courseNameToCourse.values().stream().filter(c -> c.country == country).collect(Collectors.toList());
+        List<Course> courses = new ArrayList<>(courseNameToCourse.values().stream().filter(c -> c.country == country).toList());
         courses.sort(Comparator.comparing(course -> course.name));
         return courses;
     }

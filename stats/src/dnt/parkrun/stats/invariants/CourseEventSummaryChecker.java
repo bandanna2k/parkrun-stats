@@ -6,6 +6,7 @@ import dnt.parkrun.courseevent.Parser;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.CourseEventSummaryDao;
 import dnt.parkrun.database.ResultDao;
+import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.datastructures.Result;
@@ -14,18 +15,17 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 
 public class CourseEventSummaryChecker
 {
-    public static final int DEAFULT_ITERATION_COUNT = 1;
+    public static final int DEFAULT_ITERATION_COUNT = 1;
 
     private final Random random; // SEED
     private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
@@ -34,11 +34,13 @@ public class CourseEventSummaryChecker
 
     private final Set<String> courseIdToEventNumberToFix = new HashSet<>()
     {{
-//            add("whanganuiriverbank167");
+//            add("trenthammemorial145");
 //            add("westernsprings346");
     }};
     private final List<String> errors = new ArrayList<>();
     private final int iterations;
+    private final CourseRepository courseRepository;
+    private final List<Course> courses;
 
     public static void main(String[] args) throws SQLException
     {
@@ -46,8 +48,12 @@ public class CourseEventSummaryChecker
                 getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
 
         CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
-                dataSource, DEAFULT_ITERATION_COUNT, System.currentTimeMillis());
-        checker.validate();
+                dataSource, DEFAULT_ITERATION_COUNT, System.currentTimeMillis());
+//        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
+//                dataSource, DEFAULT_ITERATION_COUNT, 1714998953808L);
+
+        List<String> errors = checker.validate();
+        errors.forEach(error -> System.out.println("ERROR: " + error));
     }
 
     public CourseEventSummaryChecker(DataSource dataSource)
@@ -62,8 +68,9 @@ public class CourseEventSummaryChecker
 
         this.iterations = iterations;
 
-        CourseRepository courseRepository = new CourseRepository();
+        courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
+        courses = courseRepository.getCourses(NZ).stream().filter(course -> course.status == Course.Status.RUNNING).toList();
         resultDao = new ResultDao(dataSource);
         courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
     }
@@ -72,44 +79,115 @@ public class CourseEventSummaryChecker
     {
         List<CourseEventSummary> courseEventSummaries = courseEventSummaryDao.getCourseEventSummaries();
 
-        checkResultsFromThisMonth(courseEventSummaries);
-        checkResultsFromLast60Days(courseEventSummaries);
-        checkResultsFromLast350Days(courseEventSummaries);
-        checkResults(courseEventSummaries);
+        checkResultsForRecentRun(courseEventSummaries);
+        checkResultsForLast4Weeks(courseEventSummaries);
+        checkResultsForLast8Weeks(courseEventSummaries);
+        checkResultsForLast52Weeks(courseEventSummaries);
+//        checkResults(courseEventSummaries);
 
         return errors;
     }
 
-    private void checkResultsFromThisMonth(List<CourseEventSummary> courseEventSummaries)
+    private void checkResultsForRecentRun(List<CourseEventSummary> courseEventSummaries)
     {
-        Calendar firstOfTheMonthCalendar = Calendar.getInstance();
-        firstOfTheMonthCalendar.set(Calendar.DAY_OF_MONTH, DEAFULT_ITERATION_COUNT);
-        Date firstOfTheMonth = Date.from(firstOfTheMonthCalendar.toInstant());
+        int courseIndex = random.nextInt(courses.size());
+        Course course = courses.get(courseIndex);
+        Date recentDate = getParkrunDay(new Date());
+
         List<CourseEventSummary> summariesForThisMonth = courseEventSummaries.stream()
-                .filter(ces -> ces.date.after(firstOfTheMonth))
+                .filter(ces ->
+                {
+                    if(ces.course.courseId != course.courseId) return false;
+                    return ces.date.compareTo(recentDate) == 0;
+                })
                 .collect(Collectors.toList());
+        assert summariesForThisMonth.size() <= 1;
+        if (summariesForThisMonth.isEmpty()) errors.add(String.format("ERROR: Recent run. No results for '%s' on %s%n", course.name, recentDate));
         checkResults(summariesForThisMonth);
     }
 
-    private void checkResultsFromLast60Days(List<CourseEventSummary> courseEventSummaries)
+    private void checkResultsForLast4Weeks(List<CourseEventSummary> courseEventSummaries)
     {
-        Instant now = Instant.now();
-        Instant pastTime = now.minus(60, ChronoUnit.DAYS);
+        int courseIndex = random.nextInt(courses.size());
+        Course course = courses.get(courseIndex);
+
+        int amountToSubtract = 7 * -(1 + random.nextInt(4));
+        Date recentDate = getParkrunDay(new Date());
+        Calendar calendarInThePast = Calendar.getInstance();
+        calendarInThePast.setTime(recentDate);
+        calendarInThePast.add(Calendar.DAY_OF_MONTH, amountToSubtract);
+
+        Date dateInThePast = Date.from(calendarInThePast.toInstant());
+
         List<CourseEventSummary> summariesForThisMonth = courseEventSummaries.stream()
-                .filter(ces -> ces.date.after(Date.from(pastTime)))
+                .filter(ces ->
+                {
+                    if(ces.course.courseId != course.courseId) return false;
+                    return ces.date.compareTo(dateInThePast) == 0;
+                })
                 .collect(Collectors.toList());
+        assert summariesForThisMonth.size() <= 1;
+        if (summariesForThisMonth.isEmpty()) errors.add(String.format("ERROR: Last 4 weeks. No results for '%s' on %s%n", course.name, dateInThePast));
         checkResults(summariesForThisMonth);
     }
 
-    private void checkResultsFromLast350Days(List<CourseEventSummary> courseEventSummaries)
+    private void checkResultsForLast8Weeks(List<CourseEventSummary> courseEventSummaries)
     {
-        Instant now = Instant.now();
-        Instant pastTime = now.minus(350, ChronoUnit.DAYS);
+        int courseIndex = random.nextInt(courses.size());
+        Course course = courses.get(courseIndex);
+
+        int amountToSubtract = 7 * -(1 + random.nextInt(8));
+        Date recentDate = getParkrunDay(new Date());
+        Calendar calendarInThePast = Calendar.getInstance();
+        calendarInThePast.setTime(recentDate);
+        calendarInThePast.add(Calendar.DAY_OF_MONTH, amountToSubtract);
+
+        Date dateInThePast = Date.from(calendarInThePast.toInstant());
+
         List<CourseEventSummary> summariesForThisMonth = courseEventSummaries.stream()
-                .filter(ces -> ces.date.after(Date.from(pastTime)))
+                .filter(ces ->
+                {
+                    if(ces.course.courseId != course.courseId) return false;
+                    return ces.date.compareTo(dateInThePast) == 0;
+                })
                 .collect(Collectors.toList());
+        assert summariesForThisMonth.size() <= 1;
+        if (summariesForThisMonth.isEmpty()) errors.add(String.format("ERROR: Last 8 weeks. No results for '%s' on %s%n", course.name, dateInThePast));
         checkResults(summariesForThisMonth);
     }
+
+    private void checkResultsForLast52Weeks(List<CourseEventSummary> courseEventSummaries)
+    {
+        int courseIndex = random.nextInt(courses.size());
+        Course course = courses.get(courseIndex);
+
+        int amountToSubtract = 7 * -(1 + random.nextInt(52));
+        Date recentDate = getParkrunDay(new Date());
+        Calendar calendarInThePast = Calendar.getInstance();
+        calendarInThePast.setTime(recentDate);
+        calendarInThePast.add(Calendar.DAY_OF_MONTH, amountToSubtract);
+
+        Date dateInThePast = Date.from(calendarInThePast.toInstant());
+
+        List<CourseEventSummary> summariesForThisMonth2 = courseEventSummaries.stream()
+                .filter(ces ->
+                {
+                    if(ces.course.courseId != course.courseId) return false;
+                    return true;
+                })
+                .collect(Collectors.toList());
+        List<CourseEventSummary> summariesForThisMonth = courseEventSummaries.stream()
+                .filter(ces ->
+                {
+                    if(ces.course.courseId != course.courseId) return false;
+                    return ces.date.compareTo(dateInThePast) == 0;
+                })
+                .collect(Collectors.toList());
+        assert summariesForThisMonth.size() <= 1;
+        if (summariesForThisMonth.isEmpty()) errors.add(String.format("ERROR: Last 52 weeks. No results for '%s' on %s%n", course.name, dateInThePast));
+        checkResults(summariesForThisMonth);
+    }
+
 
     private void checkResults(List<CourseEventSummary> summaries)
     {

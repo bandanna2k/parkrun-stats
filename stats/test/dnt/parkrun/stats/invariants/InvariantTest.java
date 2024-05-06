@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
-import static dnt.parkrun.stats.invariants.CourseEventSummaryChecker.DEAFULT_ITERATION_COUNT;
+import static dnt.parkrun.stats.invariants.CourseEventSummaryChecker.DEFAULT_ITERATION_COUNT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class InvariantTest
@@ -42,7 +42,7 @@ public class InvariantTest
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
-        CourseEventSummaryChecker courseEventSummaryChecker = new CourseEventSummaryChecker(dataSource, DEAFULT_ITERATION_COUNT, System.currentTimeMillis());
+        CourseEventSummaryChecker courseEventSummaryChecker = new CourseEventSummaryChecker(dataSource, DEFAULT_ITERATION_COUNT, System.currentTimeMillis());
         List<String> validate = courseEventSummaryChecker.validate();
         assertThat(validate).isEmpty();
     }

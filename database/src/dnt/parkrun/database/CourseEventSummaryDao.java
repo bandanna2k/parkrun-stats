@@ -57,7 +57,8 @@ public class CourseEventSummaryDao extends BaseDao
                 "ffa.name as first_female_name, first_female_athlete_id " +
                 "from course_event_summary " +
                 "left join athlete fma on first_male_athlete_id = fma.athlete_id " +
-                "left join athlete ffa on first_female_athlete_id = ffa.athlete_id ";
+                "left join athlete ffa on first_female_athlete_id = ffa.athlete_id " +
+                "order by date asc, course_id asc";
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             int courseId = rs.getInt("course_id");

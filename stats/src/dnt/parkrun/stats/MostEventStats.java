@@ -37,11 +37,11 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
+import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.*;
-import static dnt.parkrun.stats.invariants.CourseEventSummaryChecker.DEAFULT_ITERATION_COUNT;
-import static java.util.Calendar.SATURDAY;
+import static dnt.parkrun.stats.invariants.CourseEventSummaryChecker.DEFAULT_ITERATION_COUNT;
 import static java.util.Collections.emptyList;
 
 public class MostEventStats
@@ -80,7 +80,7 @@ public class MostEventStats
 
         new ProcessBuilder("xdg-open", file.getAbsolutePath()).start();
 
-        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(dataSource, DEAFULT_ITERATION_COUNT, System.currentTimeMillis());
+        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(dataSource, DEFAULT_ITERATION_COUNT, System.currentTimeMillis());
         List<String> validate = checker.validate();
         if(!validate.isEmpty())
         {
@@ -1111,25 +1111,4 @@ public class MostEventStats
         }
     }
 
-
-
-    public static Date getParkrunDay(Date result)
-    {
-        Calendar calResult = Calendar.getInstance();
-        calResult.setTime(result);
-
-        for (int i = 0; i < 7; i++)
-        {
-            if (calResult.get(Calendar.DAY_OF_WEEK) == SATURDAY)
-            {
-                calResult.set(Calendar.HOUR_OF_DAY, 0);
-                calResult.set(Calendar.MINUTE, 0);
-                calResult.set(Calendar.SECOND, 0);
-                calResult.set(Calendar.MILLISECOND, 0);
-                return calResult.getTime();
-            }
-            calResult.add(Calendar.DAY_OF_MONTH, -1);
-        }
-        throw new UnsupportedOperationException();
-    }
 }
