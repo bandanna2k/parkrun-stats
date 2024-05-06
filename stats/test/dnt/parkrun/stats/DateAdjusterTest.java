@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import java.util.Date;
 
-import static dnt.parkrun.stats.MostEventStats.getParkrunDay;
+import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
 
 public class DateAdjusterTest
 {

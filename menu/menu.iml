@@ -9,7 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="stats" />
     <orderEntry type="module" module-name="weekendResults" />
-    <orderEntry type="library" name="junit" level="project" />
+    <orderEntry type="module" module-name="common" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -20,5 +20,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="junit.platform.launcher" level="project" />
+    <orderEntry type="library" name="junit" level="project" />
   </component>
 </module>

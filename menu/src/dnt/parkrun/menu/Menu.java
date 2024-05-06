@@ -27,9 +27,9 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
+import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
-import static dnt.parkrun.stats.MostEventStats.getParkrunDay;
 
 public class Menu
 {

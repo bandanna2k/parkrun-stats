@@ -171,7 +171,7 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
 
         public Stub(DataSource dataSource, int iterations, List<Result> stubResults)
         {
-            super(dataSource, iterations);
+            super(dataSource, iterations, 1L);
             this.stubResults = stubResults;
         }
 
