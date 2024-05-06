@@ -17,7 +17,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
@@ -35,7 +34,7 @@ public class PendingCoursesTest
 
         List<Course> pendingCourses = courseDao.getCourses(NZ).stream()
                 .filter(c -> c.status == Course.Status.PENDING)
-                .collect(Collectors.toList());
+                .toList();
 
         Set<String> coursesToStart = new HashSet<>() {{
 //            add("scarborough");

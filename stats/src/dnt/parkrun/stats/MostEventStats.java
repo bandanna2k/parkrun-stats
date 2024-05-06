@@ -40,6 +40,7 @@ import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.*;
+import static dnt.parkrun.stats.invariants.CourseEventSummaryChecker.DEAFULT_ITERATION_COUNT;
 import static java.util.Calendar.SATURDAY;
 import static java.util.Collections.emptyList;
 
@@ -79,7 +80,7 @@ public class MostEventStats
 
         new ProcessBuilder("xdg-open", file.getAbsolutePath()).start();
 
-        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(dataSource, 1);
+        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(dataSource, DEAFULT_ITERATION_COUNT, System.currentTimeMillis());
         List<String> validate = checker.validate();
         if(!validate.isEmpty())
         {

@@ -1,5 +1,6 @@
 package dnt.parkrun.stats.invariants;
 
+import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseevent.Parser;
 import dnt.parkrun.database.CourseDao;
@@ -9,18 +10,23 @@ import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 
 public class CourseEventSummaryChecker
 {
+    public static final int DEAFULT_ITERATION_COUNT = 1;
+
     private final Random random; // SEED
     private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
     private final CourseEventSummaryDao courseEventSummaryDao;
@@ -34,16 +40,25 @@ public class CourseEventSummaryChecker
     private final List<String> errors = new ArrayList<>();
     private final int iterations;
 
-    public CourseEventSummaryChecker(DataSource dataSource)
+    public static void main(String[] args) throws SQLException
     {
-        this(dataSource, 4);
+        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
+                getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
+
+        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
+                dataSource, DEAFULT_ITERATION_COUNT, System.currentTimeMillis());
+        checker.validate();
     }
 
-    public CourseEventSummaryChecker(DataSource dataSource, int iterations)
+    public CourseEventSummaryChecker(DataSource dataSource)
     {
-        long time = System.currentTimeMillis();
-        System.out.printf("Random seed for %s: %d%n", this.getClass().getSimpleName(), time);
-        this.random = new Random(time);
+        this(dataSource, 4, System.currentTimeMillis());
+    }
+
+    public CourseEventSummaryChecker(DataSource dataSource, int iterations, long seed)
+    {
+        System.out.printf("Random seed for %s: %d%n", this.getClass().getSimpleName(), seed);
+        this.random = new Random(seed);
 
         this.iterations = iterations;
 
@@ -68,7 +83,7 @@ public class CourseEventSummaryChecker
     private void checkResultsFromThisMonth(List<CourseEventSummary> courseEventSummaries)
     {
         Calendar firstOfTheMonthCalendar = Calendar.getInstance();
-        firstOfTheMonthCalendar.set(Calendar.DAY_OF_MONTH, 1);
+        firstOfTheMonthCalendar.set(Calendar.DAY_OF_MONTH, DEAFULT_ITERATION_COUNT);
         Date firstOfTheMonth = Date.from(firstOfTheMonthCalendar.toInstant());
         List<CourseEventSummary> summariesForThisMonth = courseEventSummaries.stream()
                 .filter(ces -> ces.date.after(firstOfTheMonth))
