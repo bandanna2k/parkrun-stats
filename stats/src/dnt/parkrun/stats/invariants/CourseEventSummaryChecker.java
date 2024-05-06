@@ -114,7 +114,7 @@ public class CourseEventSummaryChecker
             if (courseIdToEventNumberToFix.contains(key))
             {
                 System.out.printf("INFO Fixing results for course: %s, date: %s %n", ces.course.name, ces.date);
-                resultDao.deleteResults(ces.course.courseId, ces.date);
+                resultDao.delete(ces.course.courseId, ces.date);
                 System.out.printf("WARNING Deleted results for course: %s, date: %s %n", ces.course.name, ces.date);
                 resultsFromWeb.forEach(resultDao::insert);
                 System.out.printf("INFO Results re-entered%n");

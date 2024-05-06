@@ -28,8 +28,8 @@ public class ResultDao extends BaseDao
     List<Result> getResults()
     {
         String sql = "select * from result " +
-                "right join athlete using (athlete_id) " +
-                "order by course_id asc, date desc, position asc, athlete_id asc";
+                "left join athlete using (athlete_id) " +
+                "order by course_id asc, date asc, position asc, athlete_id asc";
         List<Result> query = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             Integer ageCategory = rs.getInt("age_group");
@@ -196,7 +196,7 @@ public class ResultDao extends BaseDao
         );
     }
 
-    public void deleteResults(Integer courseId, Date date)
+    public void delete(int courseId, Date date)
     {
         String sql = "delete from result " +
                 "where course_id = :courseId " +

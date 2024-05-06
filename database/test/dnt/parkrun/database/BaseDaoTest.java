@@ -27,6 +27,8 @@ public abstract class BaseDaoTest
             "Jane DOE", "https://www.parkrun.co.nz/parkrunner/902393/");
     public static Athlete johnDoe = Athlete.fromAthleteSummaryLink(
             "John DOE", "https://www.parkrun.co.nz/parkrunner/902394/");
+    public static Athlete juniorDoeAdere = Athlete.fromAthleteSummaryLink(
+            "Junior DOE-ADERE", "https://www.parkrun.co.nz/parkrunner/902395/");
 
 
 
