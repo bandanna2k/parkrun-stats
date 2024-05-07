@@ -41,7 +41,6 @@ import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.*;
-import static dnt.parkrun.stats.invariants.CourseEventSummaryChecker.DEFAULT_ITERATION_COUNT;
 import static java.util.Collections.emptyList;
 
 public class MostEventStats
@@ -80,7 +79,7 @@ public class MostEventStats
 
         new ProcessBuilder("xdg-open", file.getAbsolutePath()).start();
 
-        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(dataSource, DEFAULT_ITERATION_COUNT, System.currentTimeMillis());
+        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(dataSource, System.currentTimeMillis());
         List<String> validate = checker.validate();
         if(!validate.isEmpty())
         {
@@ -99,7 +98,6 @@ public class MostEventStats
     private final CourseEventSummaryDao courseEventSummaryDao;
     private final PIndexDao pIndexDao;
     private final VolunteerCountDao volunteerCountDao;
-    private MostEventsDao mostEventsDao;
     private final VolunteerDao volunteerDao;
 
     private final Map<Integer, Athlete> athleteIdToAthlete = new HashMap<>();
@@ -148,8 +146,8 @@ public class MostEventStats
         System.out.println("Done");
 
         System.out.println("* Generating most events table *");
-        this.mostEventsDao = MostEventsDao.getOrCreate(statsDataSource, date);
-        this.mostEventsDao.populateMostEventsTable();
+        MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(statsDataSource, date);
+        mostEventsDao.populateMostEventsTable();
 
         System.out.println("* Get most events *");
         List<MostEventsDao.MostEventsRecord> differentEventRecords = mostEventsDao.getMostEvents();

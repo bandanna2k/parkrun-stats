@@ -22,6 +22,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- Invariants need to rewrite volunteer data
+
 - Invariant failure 1715060469834
 
 - Quick invariants fail

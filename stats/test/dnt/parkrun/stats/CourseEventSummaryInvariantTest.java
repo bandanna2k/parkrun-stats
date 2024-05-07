@@ -61,7 +61,7 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
     @Test
     public void checkHappyPath()
     {
-        CourseEventSummaryChecker checker = new Stub(dataSource, 1,
+        CourseEventSummaryChecker checker = new Stub(dataSource,
                 List.of(
                         new Result(course.courseId, date, 1, girl, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89)),
                         new Result(course.courseId, date, 2, boy, Time.from("22:23"), SM30_34, AgeGrade.newInstance(70.89))
@@ -73,7 +73,7 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
     @Test
     public void checkResultSetsOfDifferentSize()
     {
-        CourseEventSummaryChecker checker = new Stub(dataSource, 1,
+        CourseEventSummaryChecker checker = new Stub(dataSource,
                 List.of(
                         new Result(course.courseId, date, 1, girl, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89))
                 ));
@@ -85,7 +85,7 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
     @Test
     public void checkAgeGrade()
     {
-        CourseEventSummaryChecker checker = new Stub(dataSource, 1,
+        CourseEventSummaryChecker checker = new Stub(dataSource,
                 List.of(
                         new Result(course.courseId, date, 1, girl, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89)),
                         new Result(course.courseId, date, 2, boy, Time.from("22:23"), SM30_34, AgeGrade.newInstance(67.89))
@@ -98,7 +98,7 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
     @Test
     public void checkAgeGroup()
     {
-        CourseEventSummaryChecker checker = new Stub(dataSource, 1,
+        CourseEventSummaryChecker checker = new Stub(dataSource,
                 List.of(
                         new Result(course.courseId, date, 1, girl, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89)),
                         new Result(course.courseId, date, 2, boy, Time.from("22:23"), SM25_29, AgeGrade.newInstance(70.89))
@@ -111,7 +111,7 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
     @Test
     public void checkAthlete()
     {
-        CourseEventSummaryChecker checker = new Stub(dataSource, 1,
+        CourseEventSummaryChecker checker = new Stub(dataSource,
                 List.of(
                         new Result(course.courseId, date, 1, boy, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89)),
                         new Result(course.courseId, date, 2, boy, Time.from("22:23"), SM30_34, AgeGrade.newInstance(70.89))
@@ -124,7 +124,7 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
     @Test
     public void checkTimeDoesNotMatch()
     {
-        CourseEventSummaryChecker checker = new Stub(dataSource, 1,
+        CourseEventSummaryChecker checker = new Stub(dataSource,
                 List.of(
                         new Result(course.courseId, date, 1, girl, Time.from("22:20"), SM25_29, AgeGrade.newInstance(67.89)),
                         new Result(course.courseId, date, 2, boy, Time.from("22:23"), SM30_34, AgeGrade.newInstance(70.89))
@@ -141,7 +141,7 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
         resultDao.insert(new Result(course.courseId, date,
                 1, Athlete.NO_ATHLETE, null, UNKNOWN, AgeGrade.newInstanceNoAgeGrade()));
 
-        CourseEventSummaryChecker checker = new Stub(dataSource, 1,
+        CourseEventSummaryChecker checker = new Stub(dataSource,
                 List.of(
                         new Result(course.courseId, date, 1, Athlete.NO_ATHLETE, null, UNKNOWN, AgeGrade.newInstanceNoAgeGrade())
                 ));
@@ -156,7 +156,7 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
         resultDao.insert(new Result(course.courseId, date,
                 1, Athlete.NO_ATHLETE, null, UNKNOWN, AgeGrade.newInstanceNoAgeGrade()));
 
-        CourseEventSummaryChecker checker = new Stub(dataSource, 1,
+        CourseEventSummaryChecker checker = new Stub(dataSource,
                 List.of(
                         new Result(course.courseId, date, 1, Athlete.NO_ATHLETE, Time.NO_TIME, UNKNOWN, AgeGrade.newInstanceNoAgeGrade())
                 ));
@@ -169,9 +169,9 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
     {
         private final List<Result> stubResults;
 
-        public Stub(DataSource dataSource, int iterations, List<Result> stubResults)
+        public Stub(DataSource dataSource, List<Result> stubResults)
         {
-            super(dataSource, iterations, 1L);
+            super(dataSource, 1L);
             this.stubResults = stubResults;
         }
 

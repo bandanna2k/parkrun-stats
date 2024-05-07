@@ -6,18 +6,15 @@ import dnt.parkrun.courseevent.Parser;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.CourseEventSummaryDao;
 import dnt.parkrun.database.ResultDao;
-import dnt.parkrun.datastructures.Course;
-import dnt.parkrun.datastructures.CourseEventSummary;
-import dnt.parkrun.datastructures.CourseRepository;
-import dnt.parkrun.datastructures.Result;
+import dnt.parkrun.datastructures.*;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
@@ -33,40 +30,29 @@ public class CourseEventSummaryChecker
     private final ResultDao resultDao;
 
     private final List<String> errors = new ArrayList<>();
-    private final int iterations;
     private final CourseRepository courseRepository;
     private final List<Course> courses;
-    private final Set<String> courseIdToEventNumberToFix = new HashSet<>()
-    {{
-//            add("hagley462");
-//            add("westernsprings346");
-    }};
 
     public static void main(String[] args) throws SQLException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
 
-//        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
-//                dataSource, DEFAULT_ITERATION_COUNT, System.currentTimeMillis());
         CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
-                dataSource, DEFAULT_ITERATION_COUNT, 1715060469834L);
+                dataSource, System.currentTimeMillis());
+//        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
+//                dataSource, DEFAULT_ITERATION_COUNT, 1715060469834L);
+
+//        checker.rewriteCourseEvent("flaxmere", 222);
 
         List<String> errors = checker.validate();
         errors.forEach(error -> System.out.println("ERROR: " + error));
     }
 
-    public CourseEventSummaryChecker(DataSource dataSource)
-    {
-        this(dataSource, 4, System.currentTimeMillis());
-    }
-
-    public CourseEventSummaryChecker(DataSource dataSource, int iterations, long seed)
+    public CourseEventSummaryChecker(DataSource dataSource, long seed)
     {
         System.out.printf("Random seed for %s: %d%n", this.getClass().getSimpleName(), seed);
         this.random = new Random(seed);
-
-        this.iterations = iterations;
 
         courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
@@ -100,10 +86,16 @@ public class CourseEventSummaryChecker
                     if(ces.course.courseId != course.courseId) return false;
                     return ces.date.compareTo(recentDate) == 0;
                 })
-                .collect(Collectors.toList());
+                .toList();
         assert summariesForThisMonth.size() <= 1;
-        if (summariesForThisMonth.isEmpty()) errors.add(String.format("ERROR: Recent run. No results for '%s' on %s%n", course.name, recentDate));
-        checkResults(summariesForThisMonth);
+        if (summariesForThisMonth.isEmpty())
+        {
+            errors.add(String.format("ERROR: Recent run. No results for '%s' on %s%n", course.name, recentDate));
+        }
+        else
+        {
+            checkResults(summariesForThisMonth.getFirst());
+        }
     }
 
     private void checkResultsForLast4Weeks(List<CourseEventSummary> courseEventSummaries)
@@ -125,10 +117,16 @@ public class CourseEventSummaryChecker
                     if(ces.course.courseId != course.courseId) return false;
                     return ces.date.compareTo(dateInThePast) == 0;
                 })
-                .collect(Collectors.toList());
+                .toList();
         assert summariesForThisMonth.size() <= 1;
-        if (summariesForThisMonth.isEmpty()) errors.add(String.format("ERROR: Last 4 weeks. No results for '%s' on %s%n", course.name, dateInThePast));
-        checkResults(summariesForThisMonth);
+        if (summariesForThisMonth.isEmpty())
+        {
+            errors.add(String.format("ERROR: Last 4 weeks. No results for '%s' on %s%n", course.name, dateInThePast));
+        }
+        else
+        {
+            checkResults(summariesForThisMonth.getFirst());
+        }
     }
 
     private void checkResultsForLast8Weeks(List<CourseEventSummary> courseEventSummaries)
@@ -150,10 +148,16 @@ public class CourseEventSummaryChecker
                     if(ces.course.courseId != course.courseId) return false;
                     return ces.date.compareTo(dateInThePast) == 0;
                 })
-                .collect(Collectors.toList());
+                .toList();
         assert summariesForThisMonth.size() <= 1;
-        if (summariesForThisMonth.isEmpty()) errors.add(String.format("ERROR: Last 8 weeks. No results for '%s' on %s%n", course.name, dateInThePast));
-        checkResults(summariesForThisMonth);
+        if (summariesForThisMonth.isEmpty())
+        {
+            errors.add(String.format("ERROR: Last 8 weeks. No results for '%s' on %s%n", course.name, dateInThePast));
+        }
+        else
+        {
+            checkResults(summariesForThisMonth.getFirst());
+        }
     }
 
     private void checkResultsForLast52Weeks(List<CourseEventSummary> courseEventSummaries)
@@ -169,55 +173,33 @@ public class CourseEventSummaryChecker
 
         Date dateInThePast = Date.from(calendarInThePast.toInstant());
 
-        List<CourseEventSummary> summariesForThisMonth2 = courseEventSummaries.stream()
-                .filter(ces ->
-                {
-                    if(ces.course.courseId != course.courseId) return false;
-                    return true;
-                })
-                .collect(Collectors.toList());
         List<CourseEventSummary> summariesForThisMonth = courseEventSummaries.stream()
                 .filter(ces ->
                 {
                     if(ces.course.courseId != course.courseId) return false;
                     return ces.date.compareTo(dateInThePast) == 0;
                 })
-                .collect(Collectors.toList());
+                .toList();
         assert summariesForThisMonth.size() <= 1;
-        if (summariesForThisMonth.isEmpty()) errors.add(String.format("ERROR: Last 52 weeks. No results for '%s' on %s%n", course.name, dateInThePast));
-        checkResults(summariesForThisMonth);
-    }
-
-
-    private void checkResults(List<CourseEventSummary> summaries)
-    {
-        if(summaries.isEmpty()) return;
-
-        for (int i = 0; i < iterations; i++)
+        if (summariesForThisMonth.isEmpty())
         {
-            int randIndex = random.nextInt(summaries.size());
-            CourseEventSummary ces = summaries.get(randIndex);
-
-            List<Result> resultsFromDao = resultDao.getResults(ces.course.courseId, ces.date);
-            List<Result> resultsFromWeb = getResultsFromWeb(ces);
-
-            areResultsOk(ces, resultsFromDao, resultsFromWeb);
-
-            String key = ces.course.name + ces.eventNumber;
-            if (courseIdToEventNumberToFix.contains(key))
-            {
-                System.out.printf("INFO Fixing results for course: %s, date: %s %n", ces.course.name, ces.date);
-                resultDao.delete(ces.course.courseId, ces.date);
-                System.out.printf("WARNING Deleted results for course: %s, date: %s %n", ces.course.name, ces.date);
-                courseEventSummaryDao.delete(ces.course.courseId, ces.date);
-                System.out.printf("WARNING Deleted course event summary for course: %s, date: %s %n", ces.course.name, ces.date);
-                courseEventSummaryDao.insert(ces);
-                System.out.printf("INFO Course Event Summary re-entered%n");
-                resultsFromWeb.forEach(resultDao::insert);
-                System.out.printf("INFO Results re-entered%n");
-            }
+            errors.add(String.format("ERROR: Last 52 weeks. No results for '%s' on %s%n", course.name, dateInThePast));
+        }
+        else
+        {
+            checkResults(summariesForThisMonth.getFirst());
         }
     }
+
+    private void checkResults(CourseEventSummary summary)
+    {
+        List<Result> resultsFromDao = resultDao.getResults(summary.course.courseId, summary.date);
+        List<Result> resultsFromWeb = getResultsFromWeb(summary);
+
+        areResultsOk(summary, resultsFromDao, resultsFromWeb);
+    }
+
+
 
     protected List<Result> getResultsFromWeb(CourseEventSummary ces)
     {
@@ -277,5 +259,58 @@ public class CourseEventSummaryChecker
 //                    .describedAs("Age grade too small. " + comparison.get() + item1)
 //                    .matches(item -> item.equals(BigDecimal.ZERO) || item.doubleValue() < 2.0);
         }
+    }
+
+    private void rewriteCourseEvent(String courseName, int eventNumber)
+    {
+        Course course = courseRepository.getCourseFromName(courseName);
+
+        // Get course event summary from web
+        AtomicReference<CourseEventSummary> maybeCourseEventSummary = new AtomicReference<>();
+        {
+            dnt.parkrun.courseeventsummary.Parser parser = new dnt.parkrun.courseeventsummary.Parser.Builder()
+                    .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventSummaryUrl(course.name)))
+                    .course(course)
+                    .forEachCourseEvent(ces ->
+                    {
+                        if(eventNumber == ces.eventNumber) maybeCourseEventSummary.set(ces);
+                    })
+                    .build();
+            parser.parse();
+        }
+        assert maybeCourseEventSummary.get() != null;
+        CourseEventSummary newCourseEventSummary = maybeCourseEventSummary.get();
+
+        {
+            System.out.printf("INFO Fixing results for course: %s, date: %s, event number: %d %n",
+                    course.name, newCourseEventSummary.date, eventNumber);
+
+            System.out.print("WARNING Deleting results ... ");
+            resultDao.delete(course.courseId, newCourseEventSummary.date);
+            System.out.printf("Done%n");
+
+            System.out.print("WARNING Deleting course event summary ... ");
+            courseEventSummaryDao.delete(course.courseId, newCourseEventSummary.date);
+            System.out.printf("Done%n");
+        }
+
+        List<Result> newResults = new ArrayList<>();
+        List<Volunteer> newVolunteers = new ArrayList<>();
+        {
+            Parser parser = new Parser.Builder(course)
+                    .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(course.name, eventNumber)))
+                    .forEachResult(newResults::add)
+                    .forEachVolunteer(newVolunteers::add)
+                    .build();
+            parser.parse();
+        }
+
+        System.out.print("INFO Re-entering course event summary ... ");
+        courseEventSummaryDao.insert(maybeCourseEventSummary.get());
+        System.out.printf("Done%n");
+
+        System.out.print("INFO Re-entering results ... ");
+        resultDao.insert(newResults);
+        System.out.printf("Done%n");
     }
 }

@@ -4,24 +4,28 @@ import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.AthleteDao;
+import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
-import static dnt.parkrun.stats.invariants.CourseEventSummaryChecker.DEFAULT_ITERATION_COUNT;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 public class InvariantTest
 {
@@ -42,7 +46,7 @@ public class InvariantTest
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
-        CourseEventSummaryChecker courseEventSummaryChecker = new CourseEventSummaryChecker(dataSource, DEFAULT_ITERATION_COUNT, System.currentTimeMillis());
+        CourseEventSummaryChecker courseEventSummaryChecker = new CourseEventSummaryChecker(dataSource, System.currentTimeMillis());
         List<String> validate = courseEventSummaryChecker.validate();
         assertThat(validate).isEmpty();
     }
@@ -68,6 +72,9 @@ public class InvariantTest
     @Test
     public void courseEventSummaryFinishersShouldMatchResultCount()
     {
+        CourseRepository courseRepository = new CourseRepository();
+        new CourseDao(dataSource, courseRepository);
+
         String sql = """
                 select ces.course_id, ces.date, ces.finishers, count(r.athlete_id) as result_count
                 from course_event_summary ces
@@ -77,19 +84,35 @@ public class InvariantTest
                 group by ces.course_id, ces.date, ces.finishers
                 having
                     ces.finishers <> result_count
-                limit 10;
+                limit 10
                 """;
         List<Object[]> query = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             return new Object[]{
                     rs.getInt("course_id"),
                     rs.getDate("date"),
-                    rs.getString("result_count")
+                    rs.getInt("result_count")
             };
         });
-        Assertions.assertThat(query.size())
-                .describedAs(query.stream().map(fields -> String.format("Course: %s, %s, Result Count: %s",fields[0], fields[1], fields[2])).toList().toString())
-                .isEqualTo(0);
+
+        if(!query.isEmpty())
+        {
+            query.forEach(fields -> {
+                int courseId = (int) fields[0];
+                Course course = courseRepository.getCourse(courseId);
+
+                Date date = (Date) fields[1];
+                int resultCount = (int) fields[2];
+
+                Integer eventNumber = jdbc.queryForObject("select event_number from course_event_summary where course_id = :courseId and date = :date",
+                        new MapSqlParameterSource()
+                                .addValue("courseId", courseId)
+                                .addValue("date", date),
+                        Integer.class);
+
+                fail(String.format("Course: %s, Date %s, Event number %s, Result Count: %s", course.name, date, eventNumber, resultCount));
+            });
+        }
     }
 
     @Test

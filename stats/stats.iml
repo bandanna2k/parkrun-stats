@@ -26,5 +26,6 @@
     <orderEntry type="module" module-name="courseEvent" />
     <orderEntry type="module" module-name="webpageProvider" />
     <orderEntry type="library" name="google.code.gson" level="project" />
+    <orderEntry type="module" module-name="courseEventSummary" />
   </component>
 </module>
