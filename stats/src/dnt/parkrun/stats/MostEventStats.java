@@ -24,6 +24,7 @@ import dnt.parkrun.pindex.PIndex;
 import dnt.parkrun.region.RegionChecker;
 import dnt.parkrun.region.RegionCheckerFactory;
 import dnt.parkrun.stats.invariants.CourseEventSummaryChecker;
+import dnt.parkrun.stats.speed.SpeedStats;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
@@ -75,9 +76,14 @@ public class MostEventStats
                 getDataSourceUrl("weekly_stats"), "stats", "statsfractalstats");
 
         MostEventStats stats = MostEventStats.newInstance(dataSource, statsDataSource, date);
-        File file = stats.generateStats();
 
-        new ProcessBuilder("xdg-open", file.getAbsolutePath()).start();
+        {
+            File file = stats.generateStats();
+            File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
+            findAndReplace(file, modified);
+
+            new ProcessBuilder("xdg-open", modified.getAbsolutePath()).start();
+        }
 
         CourseEventSummaryChecker checker = new CourseEventSummaryChecker(dataSource, System.currentTimeMillis());
         List<String> validate = checker.validate();
@@ -160,8 +166,10 @@ public class MostEventStats
 
         downloadAthleteCourseSummaries(differentEventRecords);
 
-        try (HtmlWriter writer = HtmlWriter.newInstance(date, COUNTRY, "stats", "most_events.css"))
+        try (HtmlWriter writer = HtmlWriter.newInstance(date, COUNTRY, "stats"))
         {
+            writer.writer.writeCharacters("{{css}}");
+
             String startDatesJs = "[" +
                     "[" + startDates.stream().map(sd -> String.valueOf(sd.date.getTime() / 1000)).collect(Collectors.joining(",")) + "]," +
                     "[" + startDates.stream().map(sd -> String.valueOf(sd.course.courseId)).collect(Collectors.joining(",")) + "]," +
@@ -230,51 +238,8 @@ public class MostEventStats
             writeTop10Runs(writer);
 
             writeTop10Volunteers(writer);
+            return writer.getFile();
         }
-
-        File htmlFile = new File("stats_" + DateConverter.formatDateForDbTable(date) + ".html");
-        File htmlFileModified = new File("stats_modified_" + DateConverter.formatDateForDbTable(date) + ".html");
-
-        try (FileInputStream fis = new FileInputStream(htmlFile);
-             InputStreamReader isr = new InputStreamReader(fis);
-             BufferedReader reader = new BufferedReader(isr))
-        {
-            try (FileOutputStream fos = new FileOutputStream(htmlFileModified);
-                 OutputStreamWriter osw = new OutputStreamWriter(fos);
-                 BufferedWriter writer = new BufferedWriter(osw))
-            {
-                final Object[][] replacements = new Object[][]{
-                        {"Cornwall parkrun", (Supplier<String>) () -> "Cornwall Park parkrun"},
-                        {"{{dialog}}", (Supplier<String>) () -> {
-                            InputStream inputStream = this.getClass().getResourceAsStream("/dialog.html");
-                            try
-                            {
-                                return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-                            }
-                            catch (IOException e)
-                            {
-                                throw new RuntimeException(e);
-                            }
-                        }}
-                };
-
-                String line;
-                while (null != (line = reader.readLine()))
-                {
-                    String lineModified = line;
-                    for (Object[] replacement : replacements)
-                    {
-                        final String criteria = (String) replacement[0];
-                        if(line.contains(criteria))
-                        {
-                            lineModified = lineModified.replace(criteria, ((Supplier<String>)replacement[1]).get());
-                        }
-                    }
-                    writer.write(lineModified + "\n");
-                }
-            }
-        }
-        return htmlFileModified;
     }
 
     private static String getStopDates()
@@ -1109,4 +1074,65 @@ public class MostEventStats
         }
     }
 
+    public static void findAndReplace(File input, File output) throws IOException
+    {
+        try (FileInputStream fis = new FileInputStream(input);
+             InputStreamReader isr = new InputStreamReader(fis);
+             BufferedReader reader = new BufferedReader(isr))
+        {
+            try (FileOutputStream fos = new FileOutputStream(output);
+                 OutputStreamWriter osw = new OutputStreamWriter(fos);
+                 BufferedWriter writer = new BufferedWriter(osw))
+            {
+                final Object[][] replacements = new Object[][]{
+                        {"Cornwall parkrun", (Supplier<String>) () -> "Cornwall Park parkrun"},
+                        {"{{dialog}}", (Supplier<String>) () -> {
+                            InputStream inputStream = MostEventStats.class.getResourceAsStream("/dialog.html");
+                            try
+                            {
+                                return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+                            }
+                            catch (IOException e)
+                            {
+                                throw new RuntimeException(e);
+                            }
+                        }},
+                        {"{{css}}", (Supplier<String>) () -> {
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("<style>");
+                            try(BufferedReader reader1 = new BufferedReader(new InputStreamReader(
+                                    SpeedStats.class.getResourceAsStream("/css/most_events.css"))))
+                            {
+                                String line1;
+                                while(null != (line1 = reader1.readLine()))
+                                {
+                                    sb.append(line1);
+                                }
+                            }
+                            catch (IOException e)
+                            {
+                                throw new RuntimeException(e);
+                            }
+                            sb.append("</style>");
+                            return sb.toString();
+                        }}
+                };
+
+                String line;
+                while (null != (line = reader.readLine()))
+                {
+                    String lineModified = line;
+                    for (Object[] replacement : replacements)
+                    {
+                        final String criteria = (String) replacement[0];
+                        if(line.contains(criteria))
+                        {
+                            lineModified = lineModified.replace(criteria, ((Supplier<String>)replacement[1]).get());
+                        }
+                    }
+                    writer.write(lineModified + "\n");
+                }
+            }
+        }
+    }
 }

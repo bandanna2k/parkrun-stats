@@ -6,7 +6,10 @@ import dnt.parkrun.datastructures.Country;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
@@ -14,10 +17,9 @@ public class HtmlWriter extends BaseWriter
 {
     private final Date date;
     private final File file;
-    private final String cssFilename;
     private final Country country;
 
-    public static HtmlWriter newInstance(Date date, Country country, String prefix, String cssFile) throws IOException, XMLStreamException
+    public static HtmlWriter newInstance(Date date, Country country, String prefix) throws IOException, XMLStreamException
     {
         File file = new File(prefix + "_" + DateConverter.formatDateForDbTable(date) + ".html");
 
@@ -25,21 +27,20 @@ public class HtmlWriter extends BaseWriter
                 .newInstance()
                 .createXMLStreamWriter(
                         new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
-        return new HtmlWriter(writer, date, country, file, cssFile);
+        return new HtmlWriter(writer, date, country, file);
     }
 
-    private HtmlWriter(XMLStreamWriter writer, Date date, Country country, File file, String cssFilename) throws XMLStreamException, IOException
+    private HtmlWriter(XMLStreamWriter writer, Date date, Country country, File file) throws XMLStreamException, IOException
     {
         super(writer);
         this.date = date;
         this.file = file;
-        this.cssFilename = cssFilename;
         this.country = country;
 
         startHtml();
     }
 
-    private void startHtml() throws XMLStreamException, IOException
+    private void startHtml() throws XMLStreamException
     {
         writer.writeStartDocument();
 
@@ -65,17 +66,7 @@ public class HtmlWriter extends BaseWriter
 
         endElement("head");
 
-        writer.writeStartElement("style\n");
-        try(BufferedReader reader1 = new BufferedReader(new InputStreamReader(
-                this.getClass().getResourceAsStream("/css/" + cssFilename))))
-        {
-            String line1;
-            while(null != (line1 = reader1.readLine()))
-            {
-                writer.writeCharacters(line1 + "\n");
-            }
-        }
-        endElement("style");
+        writer.writeCharacters("{{css}}");
 
         startElement("script", "src", "https://www.kryogenix.org/code/browser/sorttable/sorttable.js");
         endElement("script");

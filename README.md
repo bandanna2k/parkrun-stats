@@ -24,8 +24,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - Meta data needs importing from constructor as speed keywords different to most events keywords.
 
-- Import CSS at the end
-
 - Start date/average attendance to attendance records
 
 - Invariant - Event number must equal date.
@@ -45,6 +43,8 @@ Low priority
 
 
 ## Issues Completed
+
+- 7/5/2024 Import CSS at the end
 
 - 7/5/2024 Invariants need to rewrite volunteer data
 
