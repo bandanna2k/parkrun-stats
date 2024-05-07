@@ -22,10 +22,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Invariants need to rewrite volunteer data
-
-- Invariant failure 1715060469834
-
 - Meta data needs importing from constructor as speed keywords different to most events keywords.
 
 - Import CSS at the end
@@ -49,6 +45,8 @@ Low priority
 
 
 ## Issues Completed
+
+- 7/5/2024 Invariants need to rewrite volunteer data
 
 - 7/5/2024 Quick invariants fail
 

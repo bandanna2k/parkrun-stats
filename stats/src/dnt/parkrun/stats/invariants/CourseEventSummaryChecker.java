@@ -6,6 +6,7 @@ import dnt.parkrun.courseevent.Parser;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.CourseEventSummaryDao;
 import dnt.parkrun.database.ResultDao;
+import dnt.parkrun.database.VolunteerDao;
 import dnt.parkrun.datastructures.*;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -22,8 +23,6 @@ import static dnt.parkrun.datastructures.Country.NZ;
 
 public class CourseEventSummaryChecker
 {
-    public static final int DEFAULT_ITERATION_COUNT = 1;
-
     private final Random random; // SEED
     private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
     private final CourseEventSummaryDao courseEventSummaryDao;
@@ -32,6 +31,7 @@ public class CourseEventSummaryChecker
     private final List<String> errors = new ArrayList<>();
     private final CourseRepository courseRepository;
     private final List<Course> courses;
+    private final VolunteerDao volunteerDao;
 
     public static void main(String[] args) throws SQLException
     {
@@ -58,6 +58,7 @@ public class CourseEventSummaryChecker
         new CourseDao(dataSource, courseRepository);
         courses = courseRepository.getCourses(NZ).stream().filter(course -> course.status == Course.Status.RUNNING).toList();
         resultDao = new ResultDao(dataSource);
+        volunteerDao = new VolunteerDao(dataSource);
         courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
     }
 
@@ -289,6 +290,10 @@ public class CourseEventSummaryChecker
             resultDao.delete(course.courseId, newCourseEventSummary.date);
             System.out.printf("Done%n");
 
+            System.out.print("WARNING Deleting volunteers ... ");
+            volunteerDao.delete(course.courseId, newCourseEventSummary.date);
+            System.out.printf("Done%n");
+
             System.out.print("WARNING Deleting course event summary ... ");
             courseEventSummaryDao.delete(course.courseId, newCourseEventSummary.date);
             System.out.printf("Done%n");
@@ -311,6 +316,10 @@ public class CourseEventSummaryChecker
 
         System.out.print("INFO Re-entering results ... ");
         resultDao.insert(newResults);
+        System.out.printf("Done%n");
+
+        System.out.print("INFO Re-entering volunteers ... ");
+        volunteerDao.insert(newVolunteers);
         System.out.printf("Done%n");
     }
 }

@@ -1,6 +1,7 @@
 package dnt.parkrun.database;
 
 import com.mysql.jdbc.Driver;
+import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Course;
 import org.junit.Before;
@@ -9,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
+import java.util.Date;
 
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
@@ -18,6 +20,11 @@ import static org.junit.Assume.assumeTrue;
 
 public abstract class BaseDaoTest
 {
+    public static final Date EPOCH_PLUS_7 = DateConverter.parseWebsiteDate("01/01/1970");
+    public static final Date EPOCH_PLUS_14 = DateConverter.parseWebsiteDate("08/01/1970");
+    public static final Date EPOCH_PLUS_21 = DateConverter.parseWebsiteDate("15/01/1970");
+    public static final Date EPOCH_PLUS_28 = DateConverter.parseWebsiteDate("22/01/1970");
+
     public static final Course ELLIÐAÁRDALUR =
             new Course(NO_COURSE_ID, "ellidaardalur", UNKNOWN, "Elliðaárdalur", Course.Status.RUNNING);
     public static final Course CORNWALL =

@@ -1,6 +1,5 @@
 package dnt.parkrun.database;
 
-import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.AgeGrade;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Result;
@@ -21,11 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ResultDaoTest extends BaseDaoTest
 {
-    public static final Date EPOCH_PLUS_7 = DateConverter.parseWebsiteDate("01/01/1970");
-    public static final Date EPOCH_PLUS_14 = DateConverter.parseWebsiteDate("08/01/1970");
-    public static final Date EPOCH_PLUS_21 = DateConverter.parseWebsiteDate("15/01/1970");
-    public static final Date EPOCH_PLUS_28 = DateConverter.parseWebsiteDate("22/01/1970");
-
     private ResultDao resultDao;
     private AthleteDao athleteDao;
 
@@ -97,7 +91,6 @@ public class ResultDaoTest extends BaseDaoTest
         {
             resultDao.delete(503, EPOCH_PLUS_21);
             List<Result> results = resultDao.getResults();
-            Thread.sleep(5000);
             assertThat(results.size()).isEqualTo(0);
         }
     }

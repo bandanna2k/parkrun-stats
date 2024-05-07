@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import javax.sql.DataSource;
+import java.util.Date;
 import java.util.List;
 
 public class VolunteerDao extends BaseDao
@@ -91,7 +92,7 @@ public class VolunteerDao extends BaseDao
     List<Volunteer> getVolunteers()
     {
         String sql = "select * from event_volunteer " +
-                "right join athlete using (athlete_id)";
+                "left join athlete using (athlete_id)";
         List<Volunteer> query = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
                 new Volunteer(
                         rs.getInt("course_id"),
@@ -102,5 +103,16 @@ public class VolunteerDao extends BaseDao
                         )
                 ));
         return query;
+    }
+
+    public void delete(int courseId, Date date)
+    {
+        String sql = "delete from event_volunteer " +
+                "where course_id = :courseId " +
+                "  and date = :date ";
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("courseId", courseId)
+                .addValue("date", date);
+        jdbc.update(sql, params);
     }
 }

@@ -51,7 +51,7 @@ public class CourseDao
         assert course.courseId == Course.NO_COURSE_ID;
         assert courseRepository.getCourseFromName(course.name) == null &&
                 courseRepository.getCourseFromLongName(course.longName) == null
-                : "Course already exists";
+                : "Course already exists " + course;
         try
         {
             String sql = "insert ignore into course (" +
