@@ -68,24 +68,28 @@ public class InvariantTest
     @Test
     public void courseEventSummaryFinishersShouldMatchResultCount()
     {
-        String sql = "select ces.course_id, ces.date, ces.finishers, count(r.athlete_id) as result_count\n" +
-                "from course_event_summary ces\n" +
-                "left join result r on \n" +
-                "    ces.course_id = r.course_id and\n" +
-                "    ces.date = r.date\n" +
-                "group by ces.course_id, ces.date, ces.finishers\n" +
-                "having \n" +
-                "    ces.finishers <> result_count\n" +
-                "limit 10;\n";
+        String sql = """
+                select ces.course_id, ces.date, ces.finishers, count(r.athlete_id) as result_count
+                from course_event_summary ces
+                left join result r on
+                    ces.course_id = r.course_id and
+                    ces.date = r.date
+                group by ces.course_id, ces.date, ces.finishers
+                having
+                    ces.finishers <> result_count
+                limit 10;
+                """;
         List<Object[]> query = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             return new Object[]{
                     rs.getInt("course_id"),
-                    rs.getInt("date"),
+                    rs.getDate("date"),
                     rs.getString("result_count")
             };
         });
-        Assertions.assertThat(query.size()).isEqualTo(0);
+        Assertions.assertThat(query.size())
+                .describedAs(query.stream().map(fields -> String.format("Course: %s, %s, Result Count: %s",fields[0], fields[1], fields[2])).toList().toString())
+                .isEqualTo(0);
     }
 
     @Test

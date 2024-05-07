@@ -32,15 +32,15 @@ public class CourseEventSummaryChecker
     private final CourseEventSummaryDao courseEventSummaryDao;
     private final ResultDao resultDao;
 
-    private final Set<String> courseIdToEventNumberToFix = new HashSet<>()
-    {{
-//            add("owairaka158");
-//            add("westernsprings346");
-    }};
     private final List<String> errors = new ArrayList<>();
     private final int iterations;
     private final CourseRepository courseRepository;
     private final List<Course> courses;
+    private final Set<String> courseIdToEventNumberToFix = new HashSet<>()
+    {{
+//            add("hagley462");
+//            add("westernsprings346");
+    }};
 
     public static void main(String[] args) throws SQLException
     {
@@ -50,7 +50,7 @@ public class CourseEventSummaryChecker
 //        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
 //                dataSource, DEFAULT_ITERATION_COUNT, System.currentTimeMillis());
         CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
-                dataSource, DEFAULT_ITERATION_COUNT, 1714999522463L);
+                dataSource, DEFAULT_ITERATION_COUNT, 1715060469834L);
 
         List<String> errors = checker.validate();
         errors.forEach(error -> System.out.println("ERROR: " + error));
@@ -209,6 +209,10 @@ public class CourseEventSummaryChecker
                 System.out.printf("INFO Fixing results for course: %s, date: %s %n", ces.course.name, ces.date);
                 resultDao.delete(ces.course.courseId, ces.date);
                 System.out.printf("WARNING Deleted results for course: %s, date: %s %n", ces.course.name, ces.date);
+                courseEventSummaryDao.delete(ces.course.courseId, ces.date);
+                System.out.printf("WARNING Deleted course event summary for course: %s, date: %s %n", ces.course.name, ces.date);
+                courseEventSummaryDao.insert(ces);
+                System.out.printf("INFO Course Event Summary re-entered%n");
                 resultsFromWeb.forEach(resultDao::insert);
                 System.out.printf("INFO Results re-entered%n");
             }

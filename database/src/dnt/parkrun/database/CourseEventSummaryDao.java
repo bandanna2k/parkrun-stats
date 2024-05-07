@@ -1,14 +1,12 @@
 package dnt.parkrun.database;
 
+import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.*;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class CourseEventSummaryDao extends BaseDao
 {
@@ -107,7 +105,8 @@ public class CourseEventSummaryDao extends BaseDao
                         "from " + courseEventSummaryTable() + " ces\n" +
                         "join course using (course_id)\n" +
                         "group by course_name";
-        jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> {
+        jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
+        {
             courseToCount.put(rs.getString("course_name"), rs.getInt("count"));
             return null;
         });
@@ -163,5 +162,16 @@ public class CourseEventSummaryDao extends BaseDao
                                 courseRepository.getCourse(rs.getInt("course_id")),
                                 rs.getDate("max_date"))
         );
+    }
+
+    public void delete(int courseId, Date date)
+    {
+        String sql = STR."""
+                delete from \{courseEventSummaryTable()}
+                where course_id = :courseId and date = :date
+                """;
+        jdbc.update(sql, new MapSqlParameterSource()
+                .addValue("courseId", courseId)
+                .addValue("date", DateConverter.formatDateForDbTable(date)));
     }
 }
