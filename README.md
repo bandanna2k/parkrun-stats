@@ -26,8 +26,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - Start date/average attendance to attendance records
 
-- Invariant - Event number must equal date.
-
 - Need a loading icon whilst fastest times page is loading
 Low priority
 
@@ -43,6 +41,8 @@ Low priority
 
 
 ## Issues Completed
+
+- 8/5/2024 Invariant - Event number must equal date.
 
 - 7/5/2024 Import CSS at the end
 
@@ -564,4 +564,19 @@ from
 group by athlete_id1, athlete_id2
 order by count
 limit 10;
+```
+
+# Invariant - Event number must equal date.
+```
+select course_id, date, count(event_number) as count
+from course_event_summary
+group by course_id, date
+having count > 1;
+```
+
+```
+select course_id, event_number, count(date) as count
+from course_event_summary
+group by course_id, event_number
+having count > 1;
 ```

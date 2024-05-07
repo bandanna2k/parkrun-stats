@@ -166,7 +166,7 @@ public class MostEventStats
 
         downloadAthleteCourseSummaries(differentEventRecords);
 
-        try (HtmlWriter writer = HtmlWriter.newInstance(date, COUNTRY, "stats"))
+        try (HtmlWriter writer = HtmlWriter.newInstance(date, COUNTRY, "most_event_stats"))
         {
             writer.writer.writeCharacters("{{css}}");
 

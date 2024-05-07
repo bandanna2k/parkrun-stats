@@ -20,6 +20,7 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
@@ -39,6 +40,44 @@ public class InvariantTest
         dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl("parkrun_stats"), "stats", "statsfractalstats");
         jdbc = new NamedParameterJdbcTemplate(dataSource);
+    }
+
+    @Test
+    public void allCourseEventSummariesShouldHaveOnly1DatePerEventNumber()
+    {
+        String sql = """
+select course_id, event_number, count(date) as count
+from course_event_summary
+group by course_id, event_number
+having count > 1;
+                """;
+        AtomicInteger count = new AtomicInteger(0);
+        jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
+        {
+            count.incrementAndGet();
+            System.out.printf("Course: %d, Date: %s%n", rs.getInt("course_id"), rs.getDate("date"));
+            return null;
+        });
+        assertThat(count.get()).isEqualTo(0);
+    }
+
+    @Test
+    public void allCourseEventSummariesShouldHaveOnly1EventNumberPerDate()
+    {
+        String sql = """
+                select course_id, date, count(event_number) as count
+                from course_event_summary
+                group by course_id, date
+                having count > 1
+                """;
+        AtomicInteger count = new AtomicInteger(0);
+        jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
+        {
+            count.incrementAndGet();
+            System.out.printf("Course: %d, Date: %s%n", rs.getInt("course_id"), rs.getDate("date"));
+            return null;
+        });
+        assertThat(count.get()).isEqualTo(0);
     }
 
     @Test
