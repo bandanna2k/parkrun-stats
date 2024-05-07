@@ -41,9 +41,9 @@ public class CourseEventSummaryChecker
         CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
                 dataSource, System.currentTimeMillis());
 //        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
-//                dataSource, DEFAULT_ITERATION_COUNT, 1715060469834L);
+//                dataSource, 1715060469834L);
 
-//        checker.rewriteCourseEvent("flaxmere", 222);
+//        checker.rewriteCourseEvent("araharakeke", 75);
 
         List<String> errors = checker.validate();
         errors.forEach(error -> System.out.println("ERROR: " + error));

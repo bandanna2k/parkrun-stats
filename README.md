@@ -26,15 +26,13 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - Invariant failure 1715060469834
 
-- Quick invariants fail
-
 - Meta data needs importing from constructor as speed keywords different to most events keywords.
 
 - Import CSS at the end
 
 - Start date/average attendance to attendance records
 
-- Invariant - Event number must equal date.  
+- Invariant - Event number must equal date.
 
 - Need a loading icon whilst fastest times page is loading
 Low priority
@@ -51,6 +49,8 @@ Low priority
 
 
 ## Issues Completed
+
+- 7/5/2024 Quick invariants fail
 
 - 5/52024 CourseEventChecker failed - Unknown athlete now filled in (seeds 1714883664994, 1714893450640, 1714904703501)
 need to make seeds work the next week as well DONE
