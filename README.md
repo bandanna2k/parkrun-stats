@@ -22,9 +22,11 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- Run all tests in that package
+
 - Meta data needs importing from constructor as speed keywords different to most events keywords.
 
-- Start date/average attendance to attendance records
+- Average attendance to attendance records
 
 - Need a loading icon whilst fastest times page is loading
 Low priority

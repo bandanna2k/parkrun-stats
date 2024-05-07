@@ -4,7 +4,9 @@ import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.datastructures.AgeCategory;
 import dnt.parkrun.stats.MostEventStats;
-import dnt.parkrun.stats.invariants.*;
+import dnt.parkrun.stats.invariants.InvariantTest;
+import dnt.parkrun.stats.invariants.ParsersTest;
+import dnt.parkrun.stats.invariants.ProvinceTest;
 import dnt.parkrun.stats.speed.AgeCategoryRecord;
 import dnt.parkrun.stats.speed.SpeedStats;
 import dnt.parkrun.webpageprovider.WebpageProviderFactoryImpl;
@@ -26,6 +28,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
@@ -142,11 +145,14 @@ public class Menu
 
     private void runInvariantsFull()
     {
-        runInvariants(HowYouDoingTest.class,
-                InvariantTest.class,
-                ParsersTest.class,
-                PendingCoursesTest.class,
-                ProvinceTest.class);
+        runInvariants("dnt.parkrun.stats.invariants");
+    }
+
+    private void runInvariants(String javaPackage)
+    {
+        Set<Class> classes = new Reflections().findAllClassesUsingClassLoader(javaPackage);
+        classes.removeIf(aClass -> !aClass.getSimpleName().endsWith("Test"));
+        runInvariants(classes.toArray(Class[]::new));
     }
 
     private void runInvariants(Class... classes)
