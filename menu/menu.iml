@@ -21,6 +21,5 @@
     </orderEntry>
     <orderEntry type="library" name="junit.platform.launcher" level="project" />
     <orderEntry type="library" name="junit" level="project" />
-    <orderEntry type="library" name="reflections" level="project" />
   </component>
 </module>

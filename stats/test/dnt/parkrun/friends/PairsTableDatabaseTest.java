@@ -34,20 +34,21 @@ public class PairsTableDatabaseTest
         new CourseDao(dataSource, courseRepository);
 
         athletes = new ArrayList<>();
-        athletes.add(Athlete.from("Julie GORDON", 293223));
-        athletes.add(Athlete.from("Sarah JANTSCHER", 1048005));
-        athletes.add(Athlete.from("Dan JOE", 4225353));
-        athletes.add(Athlete.from("Paul GORDON", 293227));
-        athletes.add(Athlete.from("Alison KING", 2147564));
-        athletes.add(Athlete.from("Andrew CAPEL", 141825));
-        athletes.add(Athlete.from("Andy MEARS", 2225176));
-        athletes.add(Athlete.from("Gene RAND", 391111));
-        athletes.add(Athlete.from("Martin O'SULLIVAN", 291411));
-        athletes.add(Athlete.from("Yvonne TSE", 1590564));
-        athletes.add(Athlete.from("Richard NORTH", 116049));
-        athletes.add(Athlete.from("David NORTH", 414811));
-        athletes.add(Athlete.from("Allan JANES", 547976));
-        athletes.add(Athlete.from("Zoe NORTH", 4072508));
+        athletes.add(athleteDao.getAthlete(1340853)); // Jonathan
+        athletes.add(athleteDao.getAthlete(293223)); // Julie GORDON
+        athletes.add(athleteDao.getAthlete(1048005)); // Sarah JANTSCHER
+        athletes.add(athleteDao.getAthlete(4225353)); // Dan JOE
+        athletes.add(athleteDao.getAthlete(293227)); // Paul GORDON
+        athletes.add(athleteDao.getAthlete(2147564)); // Alison KING
+        athletes.add(athleteDao.getAthlete(141825)); // Andrew CAPEL
+        athletes.add(athleteDao.getAthlete(2225176)); // Andy MEARS
+        athletes.add(athleteDao.getAthlete(391111)); // Gene RAND
+        athletes.add(athleteDao.getAthlete(291411)); // Martin O'SULLIVAN
+        athletes.add(athleteDao.getAthlete(1590564)); // Yvonne TSE
+        athletes.add(athleteDao.getAthlete(116049)); // Richard NORTH
+        athletes.add(athleteDao.getAthlete(414811)); // David NORTH
+        athletes.add(athleteDao.getAthlete(547976)); // Allan JANES
+        athletes.add(athleteDao.getAthlete(4072508)); // Zoe NORTH
         athletes.sort(Comparator.comparingInt(r -> -r.athleteId));
     }
 
