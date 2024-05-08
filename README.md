@@ -22,8 +22,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Run all tests in that package
-
 - Meta data needs importing from constructor as speed keywords different to most events keywords.
 
 - Average attendance to attendance records
@@ -43,6 +41,9 @@ Low priority
 
 
 ## Issues Completed
+
+- 8/7/2024 Run all tests in that package
+  To hard basket for now.
 
 - 8/5/2024 Invariant - Event number must equal date.
 
