@@ -112,7 +112,7 @@ public class ResultDao extends BaseDao
     {
         tableScan(result -> Arrays.stream(processors)
                 .forEach(processor -> processor.visitInOrder(result)), "order by course_id asc, date asc");
-        Arrays.stream(processors).forEach(ResultProcessor::finalise);
+        Arrays.stream(processors).forEach(ResultProcessor::onFinishCourse);
     }
     public void tableScan(Consumer<Result> consumer)
     {
@@ -220,6 +220,6 @@ public class ResultDao extends BaseDao
     public interface ResultProcessor
     {
         void visitInOrder(Result result);
-        void finalise();
+        void onFinishCourse();
     }
 }

@@ -147,10 +147,10 @@ public class MostEventStats
     {
         AverageProcessor averageProcessor = new AverageProcessor();
         MaxAttendanceProcessor maxAttendanceProcessor = new MaxAttendanceProcessor();
-        resultDao.tableScan(maxAttendanceProcessor);
+        resultDao.tableScan(maxAttendanceProcessor, averageProcessor);
 
         Course scarborough = courseRepository.getCourseFromName("lowerhutt");
-//        System.out.println("Average attendance: " + averageProcessor.getAverageAttendanceForAllEvents(scarborough.courseId));
+        System.out.println("Average attendance: " + averageProcessor.getAverageAttendance(scarborough.courseId));
 //        System.out.println("Average time: " + Time.from((int)averageProcessor.getAverageTimeForAllEvents(scarborough.courseId)).toHtmlString());
 //        System.out.println("Moving average attendance: " + averageProcessor.getAverageAttendanceForRecentEvents(scarborough.courseId));
 //        System.out.println("Moving average time: " + Time.from((int)averageProcessor.getAverageTimeForRecentEvents(scarborough.courseId)).toHtmlString());

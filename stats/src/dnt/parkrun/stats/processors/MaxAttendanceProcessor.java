@@ -27,7 +27,7 @@ public class MaxAttendanceProcessor implements ResultDao.ResultProcessor
         else if(prevCourseId != result.courseId || prevDate.getTime() != result.date.getTime())
         {
             // Change of course or date. Maybe add max attendance
-            finalise();
+            onFinishCourse();
 
             currentCourseCount = 0;
         }
@@ -38,7 +38,7 @@ public class MaxAttendanceProcessor implements ResultDao.ResultProcessor
     }
 
     @Override
-    public void finalise()
+    public void onFinishCourse()
     {
         CourseRecord currentCourseRecord = courseIdToCourseRecord.computeIfAbsent(prevCourseId, courseId -> new CourseRecord());
         currentCourseRecord.maybeAddMaxAttendance(new DateCount(prevDate, currentCourseCount));
