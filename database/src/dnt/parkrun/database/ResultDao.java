@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -104,6 +105,14 @@ public class ResultDao extends BaseDao
         );
     }
 
+    /*
+    Table scan by date, then course_id
+     */
+    public void tableScan(ResultProcessor... processors)
+    {
+        tableScan(result -> Arrays.stream(processors)
+                .forEach(processor -> processor.visitInOrder(result)), "order by course_id asc, date asc");
+    }
     public void tableScan(Consumer<Result> consumer)
     {
         tableScan(consumer, "");
@@ -205,5 +214,10 @@ public class ResultDao extends BaseDao
                 .addValue("courseId", courseId)
                 .addValue("date", date);
         jdbc.update(sql, params);
+    }
+
+    public interface ResultProcessor
+    {
+        void visitInOrder(Result result);
     }
 }

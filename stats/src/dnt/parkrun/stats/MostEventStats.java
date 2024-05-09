@@ -24,6 +24,8 @@ import dnt.parkrun.pindex.PIndex;
 import dnt.parkrun.region.RegionChecker;
 import dnt.parkrun.region.RegionCheckerFactory;
 import dnt.parkrun.stats.invariants.CourseEventSummaryChecker;
+import dnt.parkrun.stats.processors.AverageProcessor;
+import dnt.parkrun.stats.processors.MaxAttendanceProcessor;
 import dnt.parkrun.stats.speed.SpeedStats;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
@@ -143,6 +145,22 @@ public class MostEventStats
 
     public File generateStats() throws IOException, XMLStreamException
     {
+        AverageProcessor averageProcessor = new AverageProcessor();
+        MaxAttendanceProcessor maxAttendanceProcessor = new MaxAttendanceProcessor();
+        resultDao.tableScan(maxAttendanceProcessor);
+
+        Course scarborough = courseRepository.getCourseFromName("lowerhutt");
+//        System.out.println("Average attendance: " + averageProcessor.getAverageAttendanceForAllEvents(scarborough.courseId));
+//        System.out.println("Average time: " + Time.from((int)averageProcessor.getAverageTimeForAllEvents(scarborough.courseId)).toHtmlString());
+//        System.out.println("Moving average attendance: " + averageProcessor.getAverageAttendanceForRecentEvents(scarborough.courseId));
+//        System.out.println("Moving average time: " + Time.from((int)averageProcessor.getAverageTimeForRecentEvents(scarborough.courseId)).toHtmlString());
+
+        System.out.println("Record attendance: " + maxAttendanceProcessor.getMaxAttendancesOverAllEvents(scarborough.courseId));
+        //System.out.println("Recent attendance: " + attendanceRecordsProcessor.getRecentAttendance(scarborough.courseId));
+
+        assert false;
+
+
         System.out.print("Getting start dates ");
         startDates.addAll(courseEventSummaryDao.getCourseStartDates());
         System.out.println("Done");
@@ -186,7 +204,6 @@ public class MostEventStats
             writer.writer.writeAttribute("align", "right");
             writer.writer.writeCharacters(new SimpleDateFormat("yyyy MMM dd HH:mm").format(new Date()));
             writer.writer.writeEndElement();
-
 
             List<AttendanceRecord> attendanceRecords = generateAndGetAttendanceRecords();
             attendanceRecords.sort(Comparator.comparing(attendanceRecord ->
