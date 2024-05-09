@@ -37,7 +37,8 @@ public class MaxAttendanceProcessor implements ResultDao.ResultProcessor
         prevDate = result.date;
     }
 
-    private void finalise()
+    @Override
+    public void finalise()
     {
         CourseRecord currentCourseRecord = courseIdToCourseRecord.computeIfAbsent(prevCourseId, courseId -> new CourseRecord());
         currentCourseRecord.maybeAddMaxAttendance(new DateCount(prevDate, currentCourseCount));
@@ -45,7 +46,6 @@ public class MaxAttendanceProcessor implements ResultDao.ResultProcessor
 
     public List<DateCount> getMaxAttendancesOverAllEvents(int courseId)
     {
-        finalise();
         return courseIdToCourseRecord.get(courseId).getMaxAttendances();
     }
 

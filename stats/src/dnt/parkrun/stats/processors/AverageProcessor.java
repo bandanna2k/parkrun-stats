@@ -32,6 +32,12 @@ public class AverageProcessor implements ResultDao.ResultProcessor
         prevResult = result;
     }
 
+    @Override
+    public void finalise()
+    {
+
+    }
+
     public double getAverageAttendanceForAllEvents(int courseId)
     {
         return courseIdToAverageRecord.get(courseId).getAverageAttendanceForAllEvents();
