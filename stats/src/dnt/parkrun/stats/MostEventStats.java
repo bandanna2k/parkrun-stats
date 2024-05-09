@@ -24,8 +24,9 @@ import dnt.parkrun.pindex.PIndex;
 import dnt.parkrun.region.RegionChecker;
 import dnt.parkrun.region.RegionCheckerFactory;
 import dnt.parkrun.stats.invariants.CourseEventSummaryChecker;
+import dnt.parkrun.stats.processors.AttendanceProcessor;
 import dnt.parkrun.stats.processors.AverageProcessor;
-import dnt.parkrun.stats.processors.MaxAttendanceProcessor;
+import dnt.parkrun.stats.processors.AverageTimeProcessor;
 import dnt.parkrun.stats.speed.SpeedStats;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
@@ -146,19 +147,21 @@ public class MostEventStats
     public File generateStats() throws IOException, XMLStreamException
     {
         AverageProcessor averageProcessor = new AverageProcessor();
-        MaxAttendanceProcessor maxAttendanceProcessor = new MaxAttendanceProcessor();
-        resultDao.tableScan(maxAttendanceProcessor, averageProcessor);
+        AttendanceProcessor attendanceProcessor = new AttendanceProcessor();
+        AverageTimeProcessor averageTimeProcessor = new AverageTimeProcessor();
+        resultDao.tableScan(attendanceProcessor, averageProcessor, averageTimeProcessor);
 
-        Course scarborough = courseRepository.getCourseFromName("lowerhutt");
-        System.out.println("Average attendance: " + averageProcessor.getAverageAttendance(scarborough.courseId));
-//        System.out.println("Average time: " + Time.from((int)averageProcessor.getAverageTimeForAllEvents(scarborough.courseId)).toHtmlString());
-//        System.out.println("Moving average attendance: " + averageProcessor.getAverageAttendanceForRecentEvents(scarborough.courseId));
-//        System.out.println("Moving average time: " + Time.from((int)averageProcessor.getAverageTimeForRecentEvents(scarborough.courseId)).toHtmlString());
+        {
+            Course course = courseRepository.getCourseFromName("lowerhutt");
+            System.out.println("Average attendance: " + averageProcessor.getAverageAttendance(course.courseId));
+            System.out.println("Moving average attendance: " + averageProcessor.getRecentAverageAttendance(course.courseId));
+            System.out.println("Average time: " + averageTimeProcessor.getAverageTime(course.courseId).toHtmlString());
+            System.out.println("Moving average time: " + averageTimeProcessor.getRecentAverageTime(course.courseId).toHtmlString());
 
-        System.out.println("Record attendance: " + maxAttendanceProcessor.getMaxAttendancesOverAllEvents(scarborough.courseId));
-        //System.out.println("Recent attendance: " + attendanceRecordsProcessor.getRecentAttendance(scarborough.courseId));
-
-        assert false;
+            System.out.println("Record attendance: " + attendanceProcessor.getMaxAttendance(course.courseId));
+            System.out.println("Recent attendance: " + attendanceProcessor.getLastAttendance(course.courseId));
+            assert false;
+        }
 
 
         System.out.print("Getting start dates ");

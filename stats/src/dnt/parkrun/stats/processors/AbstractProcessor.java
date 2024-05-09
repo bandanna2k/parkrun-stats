@@ -33,7 +33,7 @@ public abstract class AbstractProcessor<T> implements ResultDao.ResultProcessor
             reset();
         }
 
-        increment();
+        increment(result);
         prevCourseId = result.courseId;
         prevDate = result.date;
     }
@@ -42,11 +42,11 @@ public abstract class AbstractProcessor<T> implements ResultDao.ResultProcessor
     public void onFinishCourse()
     {
         T prevRecord = courseIdToCourseRecord.computeIfAbsent(prevCourseId, courseId -> newRecord());
-        onFinishCourse(prevRecord);
+        onFinishCourse(prevDate, prevRecord);
     }
 
-    protected abstract void increment();
+    protected abstract void increment(Result result);
     protected abstract void reset();
     protected abstract T newRecord();
-    protected abstract void onFinishCourse(T prevRecord);
+    protected abstract void onFinishCourse(Date date, T record);
 }

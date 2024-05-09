@@ -1,6 +1,12 @@
 package dnt.parkrun.stats.processors;
 
 
+import dnt.parkrun.datastructures.Result;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 public class AverageProcessor extends AbstractProcessor<AverageProcessor.Record>
 {
     private int currentCount = 0;
@@ -12,7 +18,7 @@ public class AverageProcessor extends AbstractProcessor<AverageProcessor.Record>
     }
 
     @Override
-    protected void increment()
+    protected void increment(Result result)
     {
         currentCount++;
     }
@@ -24,9 +30,9 @@ public class AverageProcessor extends AbstractProcessor<AverageProcessor.Record>
     }
 
     @Override
-    protected void onFinishCourse(Record prevRecord)
+    protected void onFinishCourse(Date date, Record record)
     {
-        prevRecord.onFinishCourseResults(currentCount);
+        record.onFinishCourseResults(currentCount);
         reset();
     }
 
@@ -35,20 +41,39 @@ public class AverageProcessor extends AbstractProcessor<AverageProcessor.Record>
         return courseIdToCourseRecord.get(courseId).getAverageAttendance();
     }
 
+    public double getRecentAverageAttendance(int courseId)
+    {
+        return courseIdToCourseRecord.get(courseId).getRecentAverageAttendance();
+    }
+
     static class Record
     {
         double totalCount;
         double courseCount;
 
+        List<Double> listOfXCounts = new ArrayList<>();
+        double listCount;
+
         public void onFinishCourseResults(int currentCount)
         {
             totalCount += currentCount;
             courseCount++;
+
+            listOfXCounts.add((double)currentCount);
+            if(listOfXCounts.size() > 10)
+            {
+                listOfXCounts.removeFirst();
+            }
         }
 
         public double getAverageAttendance()
         {
             return totalCount / courseCount;
+        }
+
+        public double getRecentAverageAttendance()
+        {
+            return listOfXCounts.stream().mapToDouble(d -> d).average().orElse(0.0);
         }
     }
 }

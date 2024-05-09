@@ -49,44 +49,6 @@ public class MaxAttendanceProcessor implements ResultDao.ResultProcessor
         return courseIdToCourseRecord.get(courseId).getMaxAttendances();
     }
 
-    public static class DateCount
-    {
-        Date date;
-        int count;
-
-        public DateCount(Date date, int count)
-        {
-            this.date = date;
-            this.count = count;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "DateCount{" +
-                    "date=" + date +
-                    ", count=" + count +
-                    '}';
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     private static class CourseRecord
     {
         private final List<DateCount> maxAttendances = new ArrayList<>();
