@@ -1,7 +1,5 @@
 package dnt.parkrun.datastructures.stats;
 
-import dnt.parkrun.datastructures.Time;
-
 import java.sql.Date;
 
 public class AttendanceRecord
@@ -16,7 +14,6 @@ public class AttendanceRecord
     public final int recordEventFinishers;
     public final int recordEventNumber;
     public final Date recordEventDate;
-    public final Time average;
 
     public int recentAttendanceDelta = 0;
     public int maxAttendanceDelta = 0;
@@ -24,8 +21,7 @@ public class AttendanceRecord
 
     public AttendanceRecord(int courseId,
                             int recentEventNumber, Date recentEventDate, int recentEventFinishers,
-                            int recordEventNumber, Date recordEventDate, int recordEventFinishers,
-                            Time average)
+                            int recordEventNumber, Date recordEventDate, int recordEventFinishers)
     {
         this.courseId = courseId;
         this.recentEventNumber = recentEventNumber;
@@ -34,7 +30,6 @@ public class AttendanceRecord
         this.recordEventNumber = recordEventNumber;
         this.recordEventFinishers = recordEventFinishers;
         this.recordEventDate = recordEventDate;
-        this.average = average;
     }
 
     @Override
@@ -49,7 +44,6 @@ public class AttendanceRecord
                 ", recordEventFinishers=" + recordEventFinishers +
                 ", recordEventNumber=" + recordEventNumber +
                 ", recordEventDate=" + recordEventDate +
-                ", average=" + average +
                 ", recentAttendanceDelta=" + recentAttendanceDelta +
                 ", maxAttendanceDelta=" + maxAttendanceDelta +
                 '}';

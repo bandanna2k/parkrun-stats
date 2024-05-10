@@ -2,6 +2,7 @@ package dnt.parkrun.stats.processors;
 
 import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.datastructures.Result;
+import dnt.parkrun.datastructures.stats.EventDateCount;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -41,19 +42,19 @@ public class MaxAttendanceProcessor implements ResultDao.ResultProcessor
     public void onFinishCourse()
     {
         CourseRecord currentCourseRecord = courseIdToCourseRecord.computeIfAbsent(prevCourseId, courseId -> new CourseRecord());
-        currentCourseRecord.maybeAddMaxAttendance(new DateCount(prevDate, currentCourseCount));
+        currentCourseRecord.maybeAddMaxAttendance(new EventDateCount(prevDate, currentCourseCount));
     }
 
-    public List<DateCount> getMaxAttendancesOverAllEvents(int courseId)
+    public List<EventDateCount> getMaxAttendancesOverAllEvents(int courseId)
     {
         return courseIdToCourseRecord.get(courseId).getMaxAttendances();
     }
 
     private static class CourseRecord
     {
-        private final List<DateCount> maxAttendances = new ArrayList<>();
+        private final List<EventDateCount> maxAttendances = new ArrayList<>();
 
-        public boolean maybeAddMaxAttendance(DateCount maybeMaxAttendance)
+        public boolean maybeAddMaxAttendance(EventDateCount maybeMaxAttendance)
         {
             if(maxAttendances.isEmpty())
             {
@@ -77,7 +78,7 @@ public class MaxAttendanceProcessor implements ResultDao.ResultProcessor
             return false;
         }
 
-        public List<DateCount> getMaxAttendances()
+        public List<EventDateCount> getMaxAttendances()
         {
             return maxAttendances;
         }

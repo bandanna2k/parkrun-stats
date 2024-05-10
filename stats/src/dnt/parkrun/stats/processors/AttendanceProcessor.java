@@ -2,6 +2,7 @@ package dnt.parkrun.stats.processors;
 
 
 import dnt.parkrun.datastructures.Result;
+import dnt.parkrun.datastructures.stats.EventDateCount;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,20 +37,20 @@ public class AttendanceProcessor extends AbstractProcessor<AttendanceProcessor.R
         reset();
     }
 
-    public List<DateCount> getMaxAttendance(int courseId)
+    public List<EventDateCount> getMaxAttendance(int courseId)
     {
         return courseIdToCourseRecord.get(courseId).getMaxAttendance();
     }
 
-    public DateCount getLastAttendance(int courseId)
+    public EventDateCount getLastAttendance(int courseId)
     {
         return courseIdToCourseRecord.get(courseId).getLastAttendance();
     }
 
     static class Record
     {
-        private List<DateCount> max = new ArrayList<>();
-        private DateCount last = null;
+        private List<EventDateCount> max = new ArrayList<>();
+        private EventDateCount last = null;
 
         public void onFinishCourse(Date date, int count)
         {
@@ -59,34 +60,34 @@ public class AttendanceProcessor extends AbstractProcessor<AttendanceProcessor.R
 
         private void onFinishCourseProcessLast(Date date, int count)
         {
-            last = new DateCount(date, count);
+            last = new EventDateCount(date, count);
         }
 
         private void onFinishCourseProcessMax(Date date, int count)
         {
             if(max.isEmpty())
             {
-                max.add(new DateCount(date, count));
+                max.add(new EventDateCount(date, count));
                 return;
             }
             if(count == max.getFirst().count)
             {
-                max.add(new DateCount(date, count));
+                max.add(new EventDateCount(date, count));
                 return;
             }
             if(count > max.getFirst().count)
             {
                 max.clear();
-                max.add(new DateCount(date, count));
+                max.add(new EventDateCount(date, count));
             }
         }
 
-        public DateCount getLastAttendance()
+        public EventDateCount getLastAttendance()
         {
             return last;
         }
 
-        public List<DateCount> getMaxAttendance()
+        public List<EventDateCount> getMaxAttendance()
         {
             return max;
         }

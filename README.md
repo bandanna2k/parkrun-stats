@@ -22,9 +22,11 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Meta data needs importing from constructor as speed keywords different to most events keywords.
+- CourseCheckInvariant 
+1715331666003 Moana Point Reserve 1
+1715335259867 Barry Curtis 516
 
-- Average attendance to attendance records
+- Meta data needs importing from constructor as speed keywords different to most events keywords.
 
 - Need a loading icon whilst fastest times page is loading
 Low priority

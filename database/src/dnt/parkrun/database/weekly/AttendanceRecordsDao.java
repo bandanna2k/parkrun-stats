@@ -2,7 +2,6 @@ package dnt.parkrun.database.weekly;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.BaseDao;
-import dnt.parkrun.datastructures.Time;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -97,8 +96,7 @@ public class AttendanceRecordsDao extends BaseDao
         String sql = STR."""
             select c.course_id,
                 recent_ces.event_number as recent_event_number, recent_event_date, recent_event_finishers,
-                record_ces.event_number as record_event_number, record_event_date, record_event_finishers,
-                average
+                record_ces.event_number as record_event_number, record_event_date, record_event_finishers
             from \{attendanceTableName} at
             join \{courseTable()} c using (course_id)
             join \{courseEventSummaryTable()} recent_ces on c.course_id = recent_ces.course_id and recent_ces.date = recent_event_date
@@ -112,7 +110,6 @@ public class AttendanceRecordsDao extends BaseDao
                         rs.getInt("recent_event_finishers"),
                         rs.getInt("record_event_number"),
                         rs.getDate("record_event_date"),
-                        rs.getInt("record_event_finishers"),
-                        Time.from((int)(rs.getDouble("average")))));
+                        rs.getInt("record_event_finishers")));
     }
 }

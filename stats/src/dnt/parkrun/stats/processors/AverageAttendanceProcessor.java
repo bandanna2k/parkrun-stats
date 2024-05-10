@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class AverageProcessor extends AbstractProcessor<AverageProcessor.Record>
+public class AverageAttendanceProcessor extends AbstractProcessor<AverageAttendanceProcessor.Record>
 {
     private int currentCount = 0;
 

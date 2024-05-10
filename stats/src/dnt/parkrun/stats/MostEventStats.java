@@ -25,7 +25,7 @@ import dnt.parkrun.region.RegionChecker;
 import dnt.parkrun.region.RegionCheckerFactory;
 import dnt.parkrun.stats.invariants.CourseEventSummaryChecker;
 import dnt.parkrun.stats.processors.AttendanceProcessor;
-import dnt.parkrun.stats.processors.AverageProcessor;
+import dnt.parkrun.stats.processors.AverageAttendanceProcessor;
 import dnt.parkrun.stats.processors.AverageTimeProcessor;
 import dnt.parkrun.stats.speed.SpeedStats;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -115,6 +115,13 @@ public class MostEventStats
     private final List<CourseDate> stopDates = new ArrayList<>();
     private final UrlGenerator urlGenerator = new UrlGenerator(COUNTRY.baseUrl);
 
+    private final AverageAttendanceProcessor averageAttendanceProcessor = new AverageAttendanceProcessor();
+    private final AttendanceProcessor attendanceProcessor = new AttendanceProcessor();
+    private final AverageTimeProcessor averageTimeProcessor = new AverageTimeProcessor();
+    private final ResultDao.ResultProcessor[] processors = new ResultDao.ResultProcessor[] {
+            averageAttendanceProcessor, attendanceProcessor, averageTimeProcessor
+    };
+
     private MostEventStats(DataSource dataSource,
                            DataSource statsDataSource,
                            Date date)
@@ -146,22 +153,21 @@ public class MostEventStats
 
     public File generateStats() throws IOException, XMLStreamException
     {
-        AverageProcessor averageProcessor = new AverageProcessor();
-        AttendanceProcessor attendanceProcessor = new AttendanceProcessor();
-        AverageTimeProcessor averageTimeProcessor = new AverageTimeProcessor();
-        resultDao.tableScan(attendanceProcessor, averageProcessor, averageTimeProcessor);
+        System.out.print("Start tables scan for processors ... ");
+        resultDao.tableScan(processors);
+        System.out.println("Done");
 
-        {
-            Course course = courseRepository.getCourseFromName("lowerhutt");
-            System.out.println("Average attendance: " + averageProcessor.getAverageAttendance(course.courseId));
-            System.out.println("Moving average attendance: " + averageProcessor.getRecentAverageAttendance(course.courseId));
-            System.out.println("Average time: " + averageTimeProcessor.getAverageTime(course.courseId).toHtmlString());
-            System.out.println("Moving average time: " + averageTimeProcessor.getRecentAverageTime(course.courseId).toHtmlString());
-
-            System.out.println("Record attendance: " + attendanceProcessor.getMaxAttendance(course.courseId));
-            System.out.println("Recent attendance: " + attendanceProcessor.getLastAttendance(course.courseId));
-            assert false;
-        }
+//        {
+//            Course course = courseRepository.getCourseFromName("lowerhutt");
+//            System.out.println("Average attendance: " + averageAttendanceProcessor.getAverageAttendance(course.courseId));
+//            System.out.println("Moving average attendance: " + averageAttendanceProcessor.getRecentAverageAttendance(course.courseId));
+//            System.out.println("Average time: " + averageTimeProcessor.getAverageTime(course.courseId).toHtmlString());
+//            System.out.println("Moving average time: " + averageTimeProcessor.getRecentAverageTime(course.courseId).toHtmlString());
+//
+//            System.out.println("Record attendance: " + attendanceProcessor.getMaxAttendance(course.courseId));
+//            System.out.println("Recent attendance: " + attendanceProcessor.getLastAttendance(course.courseId));
+//            assert false;
+//        }
 
 
         System.out.print("Getting start dates ");
@@ -844,12 +850,18 @@ public class MostEventStats
             {
                 for (AttendanceRecord ar : attendanceRecords)
                 {
-                    Course course = courseRepository.getCourse(ar.courseId);
+                    int courseId = ar.courseId;
+                    Course course = courseRepository.getCourse(courseId);
                     if(course.status == PENDING) ar.courseSmallTest = "not started yet";
                     else if(course.status == STOPPED) ar.courseSmallTest = "no longer takes place";
                     else if(ar.recentEventDate.before(date)) ar.courseSmallTest = "not run this week";
 
-                    tableWriter.writeAttendanceRecord(ar, courseRepository.getCourse(ar.courseId));
+                    tableWriter.writeAttendanceRecord(
+                            ar, courseRepository.getCourse(courseId),
+                            averageAttendanceProcessor.getAverageAttendance(courseId), averageAttendanceProcessor.getRecentAverageAttendance(courseId),
+                            averageTimeProcessor.getAverageTime(courseId),
+                            attendanceProcessor.getMaxAttendance(courseId), attendanceProcessor.getLastAttendance(courseId)
+                    );
                 }
             }
         }
