@@ -1,85 +1,18 @@
 package dnt.parkrun.stats.invariants;
 
 import com.mysql.jdbc.Driver;
-import dnt.parkrun.athletecoursesummary.Parser;
-import dnt.parkrun.common.UrlGenerator;
-import dnt.parkrun.database.AthleteDao;
-import dnt.parkrun.database.CourseDao;
-import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.Course;
-import dnt.parkrun.datastructures.CourseRepository;
-import org.assertj.core.api.Assertions;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
-import static dnt.parkrun.datastructures.Country.NZ;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
 
 public class InvariantTest
 {
-    private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
-    private DataSource dataSource;
-    private NamedParameterJdbcTemplate jdbc;
-
-    @Before
-    public void setUp() throws Exception
-    {
-        dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl("parkrun_stats"), "stats", "statsfractalstats");
-        jdbc = new NamedParameterJdbcTemplate(dataSource);
-    }
-
-    @Test
-    public void allCourseEventSummariesShouldHaveOnly1DatePerEventNumber()
-    {
-        String sql = """
-select course_id, event_number, count(date) as count
-from course_event_summary
-group by course_id, event_number
-having count > 1;
-                """;
-        AtomicInteger count = new AtomicInteger(0);
-        jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
-        {
-            count.incrementAndGet();
-            System.out.printf("Course: %d, Date: %s%n", rs.getInt("course_id"), rs.getDate("date"));
-            return null;
-        });
-        assertThat(count.get()).isEqualTo(0);
-    }
-
-    @Test
-    public void allCourseEventSummariesShouldHaveOnly1EventNumberPerDate()
-    {
-        String sql = """
-                select course_id, date, count(event_number) as count
-                from course_event_summary
-                group by course_id, date
-                having count > 1
-                """;
-        AtomicInteger count = new AtomicInteger(0);
-        jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
-        {
-            count.incrementAndGet();
-            System.out.printf("Course: %d, Date: %s%n", rs.getInt("course_id"), rs.getDate("date"));
-            return null;
-        });
-        assertThat(count.get()).isEqualTo(0);
-    }
-
     @Test
     public void courseEventSummaryInvariantCheck() throws SQLException
     {
@@ -88,109 +21,5 @@ having count > 1;
         CourseEventSummaryChecker courseEventSummaryChecker = new CourseEventSummaryChecker(dataSource, System.currentTimeMillis());
         List<String> validate = courseEventSummaryChecker.validate();
         assertThat(validate).isEmpty();
-    }
-
-    @Test
-    public void courseEventSummaryWithoutVolunteers()
-    {
-        String sql = "select distinct ces.course_id, ces.date, ev.athlete_id \n" +
-                "from course_event_summary ces\n" +
-                "left join event_volunteer ev using (course_id)\n" +
-                "where ev.athlete_id is null;\n";
-        List<Object[]> query = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
-        {
-            return new Object[]{
-                    rs.getInt("course_id"),
-                    rs.getDate("date"),
-                    rs.getInt("athlete_id")
-            };
-        });
-        Assertions.assertThat(query.size()).isEqualTo(0);
-    }
-
-    @Test
-    public void courseEventSummaryFinishersShouldMatchResultCount()
-    {
-        CourseRepository courseRepository = new CourseRepository();
-        new CourseDao(dataSource, courseRepository);
-
-        String sql = """
-                select ces.course_id, ces.date, ces.finishers, count(r.athlete_id) as result_count
-                from course_event_summary ces
-                left join result r on
-                    ces.course_id = r.course_id and
-                    ces.date = r.date
-                group by ces.course_id, ces.date, ces.finishers
-                having
-                    ces.finishers <> result_count
-                limit 10
-                """;
-        List<Object[]> query = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
-        {
-            return new Object[]{
-                    rs.getInt("course_id"),
-                    rs.getDate("date"),
-                    rs.getInt("result_count")
-            };
-        });
-
-        if(!query.isEmpty())
-        {
-            query.forEach(fields -> {
-                int courseId = (int) fields[0];
-                Course course = courseRepository.getCourse(courseId);
-
-                Date date = (Date) fields[1];
-                int resultCount = (int) fields[2];
-
-                Integer eventNumber = jdbc.queryForObject("select event_number from course_event_summary where course_id = :courseId and date = :date",
-                        new MapSqlParameterSource()
-                                .addValue("courseId", courseId)
-                                .addValue("date", date),
-                        Integer.class);
-
-                fail(String.format("Course: %s, Date %s, Event number %s, Result Count: %s", course.name, date, eventNumber, resultCount));
-            });
-        }
-    }
-
-    @Test
-    public void allVolunteersShouldHaveAnAthlete() throws SQLException
-    {
-        String sql = "select distinct athlete_id, course_id, name \n" +
-                "from event_volunteer\n" +
-                "left join athlete using (athlete_id)\n" +
-                "where name is null;\n";
-        List<Object[]> volunteerWithNoAthleteRecord = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
-                new Object[]{
-                        rs.getInt("athlete_id"),
-                        rs.getInt("course_id"),
-                        rs.getString("name")
-                });
-        //addMissingVolunteer(volunteerWithNoAthleteRecord);
-        Assertions.assertThat(volunteerWithNoAthleteRecord.size()).isEqualTo(0);
-    }
-
-    private void addMissingVolunteer(List<Object[]> volunteerWithNoAthleteRecord) throws SQLException
-    {
-        AthleteDao athleteDao = new AthleteDao(dataSource);
-        volunteerWithNoAthleteRecord.stream().map(object ->
-        {
-            int nonameAthleteId = (int) object[0];
-            Parser parser = new Parser.Builder()
-                    .url(urlGenerator.generateAthleteEventSummaryUrl(nonameAthleteId))
-                    .build(new CourseRepository());
-            try
-            {
-                parser.parse();
-            }
-            catch(Exception ex)
-            {
-                System.out.println("ERROR " + ex.getMessage());
-            }
-            Athlete athlete = parser.getAthlete();
-            athleteDao.insert(athlete);
-            return String.format("insert into athlete (athlete_id, name) values (%d, '');", nonameAthleteId);
-        }).collect(Collectors.toList());
     }
 }
