@@ -10,6 +10,8 @@ import java.util.List;
 
 public class AverageTimeProcessor extends AbstractProcessor<AverageTimeProcessor.Record>
 {
+    private static final int MOVING_AVERAGE = 10;
+
     private double currentTime = 0;
     private double currentCount = 0;
 
@@ -65,7 +67,7 @@ public class AverageTimeProcessor extends AbstractProcessor<AverageTimeProcessor
 
             listOfXTimes.add(currentTime);
             listOfXCounts.add(currentCount);
-            if(listOfXTimes.size() > 10)
+            if(listOfXTimes.size() > MOVING_AVERAGE)
             {
                 listOfXTimes.removeFirst();
                 listOfXCounts.removeFirst();

@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/*
+Max and Last attendance
+ */
 public class AttendanceProcessor extends AbstractProcessor<AttendanceProcessor.Record>
 {
     private int count = 0;
