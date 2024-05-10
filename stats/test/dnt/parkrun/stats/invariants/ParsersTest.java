@@ -55,13 +55,25 @@ public class ParsersTest
                 .forEachVolunteer(listOfVolunteers::add)
                 .build();
         parser.parse();
-
-        Assertions.assertThat(listOfVolunteers.size()).isGreaterThan(2);
-        Assertions.assertThat(listOfAthletes.size()).isGreaterThan(20);
-        listOfVolunteers.forEach(v -> {
-            Assertions.assertThat(v.athlete.name).isNotNull();
-            Assertions.assertThat(v.athlete.athleteId).isNotEqualTo(NO_ATHLETE_ID);
-        });
+        {
+            Assertions.assertThat(listOfAthletes.size()).isGreaterThan(20);
+            int noIds = listOfAthletes.stream().filter(a -> a.athleteId == NO_ATHLETE_ID).toList().size();
+            int unknowns = listOfAthletes.stream().filter(a -> a.name == null).toList().size();
+            int knowns = listOfAthletes.stream().filter(a -> a.athleteId != NO_ATHLETE_ID).toList().size();
+            System.out.println("noIds: " + noIds);
+            System.out.println("unknowns: " + unknowns);
+            System.out.println("knowns: " + knowns);
+            assert knowns > noIds : "knowns > noIds";
+            assert knowns > unknowns : "knowns > unknowns";
+        }
+        {
+            Assertions.assertThat(listOfVolunteers.size()).isGreaterThan(2);
+            listOfVolunteers.forEach(v ->
+            {
+                Assertions.assertThat(v.athlete.name).isNotNull();
+                Assertions.assertThat(v.athlete.athleteId).isNotEqualTo(NO_ATHLETE_ID);
+            });
+        }
     }
 
     @Test
