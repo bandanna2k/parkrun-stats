@@ -26,8 +26,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 1715331666003 Moana Point Reserve 1
 1715335259867 Barry Curtis 516
 
-- Meta data needs importing from constructor as speed keywords different to most events keywords.
-
 - Need a loading icon whilst fastest times page is loading
 Low priority
 
@@ -44,7 +42,11 @@ Low priority
 
 ## Issues Completed
 
-- 8/7/2024 Run all tests in that package
+- 10/5/2024 Meta data needs importing from constructor as speed keywords different to most events keywords.
+
+- 10/5/2024 Average attendance to attendance records
+
+- 8/5/2024 Run all tests in that package
   To hard basket for now.
 
 - 8/5/2024 Invariant - Event number must equal date.

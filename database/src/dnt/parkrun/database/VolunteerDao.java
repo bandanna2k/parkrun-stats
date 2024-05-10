@@ -9,6 +9,8 @@ import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
 
+import static dnt.parkrun.datastructures.Athlete.NO_ATHLETE_ID;
+
 public class VolunteerDao extends BaseDao
 {
     public static final int MIN_VOLUNTEER_COUNT = 20;
@@ -35,6 +37,9 @@ public class VolunteerDao extends BaseDao
 
     public void insert(List<Volunteer> volunteers)
     {
+        volunteers.forEach(volunteer -> {
+            assert volunteer.athlete.athleteId != NO_ATHLETE_ID : volunteers.toString();
+        });
         jdbc.batchUpdate(SQL_FOR_INSERT, volunteers.stream().map(volunteer -> new MapSqlParameterSource()
                 .addValue("athleteId", volunteer.athlete.athleteId)
                 .addValue("courseId", volunteer.courseId)

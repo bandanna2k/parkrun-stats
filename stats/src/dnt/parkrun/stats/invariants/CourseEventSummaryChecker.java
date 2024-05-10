@@ -3,10 +3,7 @@ package dnt.parkrun.stats.invariants;
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseevent.Parser;
-import dnt.parkrun.database.CourseDao;
-import dnt.parkrun.database.CourseEventSummaryDao;
-import dnt.parkrun.database.ResultDao;
-import dnt.parkrun.database.VolunteerDao;
+import dnt.parkrun.database.*;
 import dnt.parkrun.datastructures.*;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -32,24 +29,25 @@ public class CourseEventSummaryChecker
     private final CourseRepository courseRepository;
     private final List<Course> courses;
     private final VolunteerDao volunteerDao;
+    private final AthleteDao athleteDao;
 
     public static void main(String[] args) throws SQLException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
 
-        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
-                dataSource, System.currentTimeMillis());
 //        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
-//                dataSource, 1715060469834L);
+//                dataSource, System.currentTimeMillis());
+        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
+                dataSource, 1715331666003L);
 
-//        checker.rewriteCourseEvent("araharakeke", 75);
+        checker.rewriteCourseEvent("moanapointreserve", 1);
 
         List<String> errors = checker.validate();
         errors.forEach(error -> System.out.println("ERROR: " + error));
     }
 
-    public CourseEventSummaryChecker(DataSource dataSource, long seed)
+    public CourseEventSummaryChecker(DataSource dataSource, long seed) throws SQLException
     {
         System.out.printf("Random seed for %s: %d%n", this.getClass().getSimpleName(), seed);
         this.random = new Random(seed);
@@ -58,6 +56,7 @@ public class CourseEventSummaryChecker
         new CourseDao(dataSource, courseRepository);
         courses = courseRepository.getCourses(NZ).stream().filter(course -> course.status == Course.Status.RUNNING).toList();
         resultDao = new ResultDao(dataSource);
+        athleteDao = new AthleteDao(dataSource);
         volunteerDao = new VolunteerDao(dataSource);
         courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
     }
@@ -300,12 +299,22 @@ public class CourseEventSummaryChecker
         }
 
         List<Result> newResults = new ArrayList<>();
+        List<Athlete> newAthletes = new ArrayList<>();
         List<Volunteer> newVolunteers = new ArrayList<>();
         {
             Parser parser = new Parser.Builder(course)
                     .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(course.name, eventNumber)))
                     .forEachResult(newResults::add)
-                    .forEachVolunteer(newVolunteers::add)
+                    .forEachAthlete(e ->
+                    {
+//                      System.out.println("A " + e);
+                        newAthletes.add(e);
+                    })
+                    .forEachVolunteer(e1 ->
+                    {
+//                        System.out.println("V " + e1);
+                        newVolunteers.add(e1);
+                    })
                     .build();
             parser.parse();
         }
@@ -314,12 +323,17 @@ public class CourseEventSummaryChecker
         courseEventSummaryDao.insert(maybeCourseEventSummary.get());
         System.out.printf("Done%n");
 
-        System.out.print("INFO Re-entering results ... ");
-        resultDao.insert(newResults);
+        System.out.print("INFO Re-entering athletes ... ");
+        athleteDao.insert(newAthletes);
         System.out.printf("Done%n");
 
         System.out.print("INFO Re-entering volunteers ... ");
         volunteerDao.insert(newVolunteers);
         System.out.printf("Done%n");
+
+        System.out.print("INFO Re-entering results ... ");
+        resultDao.insert(newResults);
+        System.out.printf("Done%n");
+
     }
 }
