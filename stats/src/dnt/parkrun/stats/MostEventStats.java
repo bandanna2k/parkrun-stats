@@ -27,7 +27,6 @@ import dnt.parkrun.stats.invariants.CourseEventSummaryChecker;
 import dnt.parkrun.stats.processors.AttendanceProcessor;
 import dnt.parkrun.stats.processors.AverageAttendanceProcessor;
 import dnt.parkrun.stats.processors.AverageTimeProcessor;
-import dnt.parkrun.stats.speed.SpeedStats;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
@@ -1129,25 +1128,14 @@ public class MostEventStats
                                 throw new RuntimeException(e);
                             }
                         }},
-                        {"{{css}}", (Supplier<String>) () -> {
-                            StringBuilder sb = new StringBuilder();
-                            sb.append("<style>");
-                            try(BufferedReader reader1 = new BufferedReader(new InputStreamReader(
-                                    SpeedStats.class.getResourceAsStream("/css/most_events.css"))))
-                            {
-                                String line1;
-                                while(null != (line1 = reader1.readLine()))
-                                {
-                                    sb.append(line1);
-                                }
-                            }
-                            catch (IOException e)
-                            {
-                                throw new RuntimeException(e);
-                            }
-                            sb.append("</style>");
-                            return sb.toString();
-                        }}
+                        {"{{css}}", (Supplier<String>) () ->
+                                "<style>" +
+                                getTextFromFile(MostEventStats.class.getResourceAsStream("/css/most_events.css")) +
+                                "</style>"
+                        },
+                        {"{{meta}}", (Supplier<String>) () ->
+                                getTextFromFile(MostEventStats.class.getResourceAsStream("/meta_most_events.xml"))
+                        }
                 };
 
                 String line;
@@ -1166,5 +1154,23 @@ public class MostEventStats
                 }
             }
         }
+    }
+
+    private static String getTextFromFile(InputStream inputStream)
+    {
+        StringBuilder sb = new StringBuilder();
+        try(BufferedReader reader1 = new BufferedReader(new InputStreamReader(inputStream)))
+        {
+            String line1;
+            while(null != (line1 = reader1.readLine()))
+            {
+                sb.append(line1);
+            }
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+        return sb.toString();
     }
 }

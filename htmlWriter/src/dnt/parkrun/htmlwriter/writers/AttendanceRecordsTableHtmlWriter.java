@@ -26,7 +26,7 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         this.extended = extended;
 
         writer.writeStartElement("table");
-        writer.writeAttribute("class", "sortable bold1 left1 define2 define3 define6");
+        writer.writeAttribute("class", "sortable bold1 left1 hl2 hl3 hl6 hl7 right6 left7");
 
         writeHeader(writer);
     }
@@ -56,15 +56,18 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         writer.writeCharacters("Record Event Finishers");
         endElement("th");
 
-        startElement("th");
-        writer.writeCharacters("Avg. Attendance / Last 10 Avg.");
-        endElement("th");
+        if(extended)
+        {
+            startElement("th", "colSpan", "2");
+            writer.writeCharacters("Avg. Attendance / Last 10 Avg.");
+            endElement("th");
 
-        startElement("th", "class", "dt");
-        writer.writeCharacters("Average Time");
-        endElement("th");
+            startElement("th", "class", "dt");
+            writer.writeCharacters("Average Time");
+            endElement("th");
+        }
+
         endElement("tr");
-
         endElement("thead");
     }
 
@@ -182,15 +185,20 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
 //        endElement("td");
 
         // Avg attendance
-        startElement("td");
-        writer.writeCharacters(format0dp(averageAttendance) + " (" + format0dp(recentAverageAttendance) + ")");
-        endElement("td");
+        if(extended)
+        {
+            startElement("td");
+            writer.writeCharacters(format0dp(averageAttendance));
+            endElement("td");
+            startElement("td");
+            writer.writeCharacters("(" + format0dp(recentAverageAttendance) + ")");
+            endElement("td");
 
-        // Avg time (desktop only)
-        startElement("td", "class", "dt");
-        writer.writeCharacters(averageTime.toHtmlString());
-        endElement("td");
-
+            // Avg time (desktop only)
+            startElement("td", "class", "dt");
+            writer.writeCharacters(averageTime.toHtmlString());
+            endElement("td");
+        }
         endElement("tr");
     }
 

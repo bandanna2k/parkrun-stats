@@ -52,21 +52,8 @@ public class HtmlWriter extends BaseWriter
         endElement("title");
 
         startElement("head");
-
-        startElement("meta", "charset", "UTF-8");
-        endElement("meta");
-
-        startElement("meta", "name", "description", "content", title);
-        endElement("meta");
-
-        startElement("meta",
-                "name", "keywords",
-                "content", "Most Events parkrun Attendance Records pIndex Most Volunteer Volunteering 90% Club");
-        endElement("meta");
-
+        writer.writeCharacters("{{meta}}");
         endElement("head");
-
-        writer.writeCharacters("{{css}}");
 
         startElement("script", "src", "https://www.kryogenix.org/code/browser/sorttable/sorttable.js");
         endElement("script");

@@ -237,25 +237,14 @@ public class SpeedStats
             {
                 final Object[][] replacements = new Object[][]{
                         {"Cornwall parkrun", (Supplier<String>) () -> "Cornwall Park parkrun"},
-                        {"{{css}}", (Supplier<String>) () -> {
-                            StringBuilder sb = new StringBuilder();
-                            sb.append("<style>");
-                            try(BufferedReader reader1 = new BufferedReader(new InputStreamReader(
-                                    SpeedStats.class.getResourceAsStream("/css/speed_stats.css"))))
-                            {
-                                String line1;
-                                while(null != (line1 = reader1.readLine()))
-                                {
-                                    sb.append(line1);
-                                }
-                            }
-                            catch (IOException e)
-                            {
-                                throw new RuntimeException(e);
-                            }
-                            sb.append("</style>");
-                            return sb.toString();
-                        }}
+                        {"{{css}}", (Supplier<String>) () ->
+                                "<style>" +
+                                getTextFromFile(SpeedStats.class.getResourceAsStream("/css/speed_stats.css")) +
+                                "</style>"
+                        },
+                        {"{{meta}}", (Supplier<String>) () ->
+                                getTextFromFile(SpeedStats.class.getResourceAsStream("/meta_speed_stats.xml"))
+                        },
                 };
 
                 String line;
@@ -274,5 +263,23 @@ public class SpeedStats
                 }
             }
         }
+    }
+
+    private static String getTextFromFile(InputStream inputStream)
+    {
+        StringBuilder sb = new StringBuilder();
+        try(BufferedReader reader1 = new BufferedReader(new InputStreamReader(inputStream)))
+        {
+            String line1;
+            while(null != (line1 = reader1.readLine()))
+            {
+                sb.append(line1);
+            }
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+        return sb.toString();
     }
 }
