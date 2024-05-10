@@ -36,18 +36,18 @@ public class CourseEventSummaryChecker
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
 
-//        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
-//                dataSource, System.currentTimeMillis());
         CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
-                dataSource, 1715331666003L);
-
-        checker.rewriteCourseEvent("moanapointreserve", 1);
+                dataSource, System.currentTimeMillis());
+//        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
+//                dataSource, 1715335259867L);
+//
+//        checker.rewriteCourseEvent("barrycurtis", 516);
 
         List<String> errors = checker.validate();
         errors.forEach(error -> System.out.println("ERROR: " + error));
     }
 
-    public CourseEventSummaryChecker(DataSource dataSource, long seed) throws SQLException
+    public CourseEventSummaryChecker(DataSource dataSource, long seed)
     {
         System.out.printf("Random seed for %s: %d%n", this.getClass().getSimpleName(), seed);
         this.random = new Random(seed);

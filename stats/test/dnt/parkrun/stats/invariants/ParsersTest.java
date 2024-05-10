@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
+import static dnt.parkrun.datastructures.Athlete.NO_ATHLETE_ID;
 import static dnt.parkrun.datastructures.Country.NZ;
 
 public class ParsersTest
@@ -57,6 +58,10 @@ public class ParsersTest
 
         Assertions.assertThat(listOfVolunteers.size()).isGreaterThan(2);
         Assertions.assertThat(listOfAthletes.size()).isGreaterThan(20);
+        listOfVolunteers.forEach(v -> {
+            Assertions.assertThat(v.athlete.name).isNotNull();
+            Assertions.assertThat(v.athlete.athleteId).isNotEqualTo(NO_ATHLETE_ID);
+        });
     }
 
     @Test

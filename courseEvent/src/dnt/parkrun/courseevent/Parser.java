@@ -142,7 +142,8 @@ public class Parser
             Node volunteerAthleteNode = volunteerNode.firstChild();
             if(volunteerAthleteNode != null)
             {
-                Athlete athlete = Athlete.fromAthleteHistoryAtEventLink(volunteerAthleteNode.toString(), volunteerNode.attr("href"));
+//                Athlete athlete = Athlete.fromAthleteHistoryAtEventLink(volunteerAthleteNode.toString(), volunteerNode.attr("href"));
+                Athlete athlete = Athlete.fromAthleteHistoryAtEventLink2(volunteerAthleteNode.toString(), volunteerNode.attr("href"));
                 athleteConsumer.accept(athlete);
                 volunteerConsumer.accept(new Volunteer(course.courseId, date, athlete));
             }

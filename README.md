@@ -22,9 +22,7 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- CourseCheckInvariant 
-1715331666003 Moana Point Reserve 1
-1715335259867 Barry Curtis 516
+- Invariant for null volunteer at event
 
 - Need a loading icon whilst fastest times page is loading
 Low priority
@@ -41,6 +39,10 @@ Low priority
 
 
 ## Issues Completed
+
+- 10/5/2024 - CourseCheckInvariant
+  1715331666003 Moana Point Reserve 1
+  1715335259867 Barry Curtis 516
 
 - 10/5/2024 Meta data needs importing from constructor as speed keywords different to most events keywords.
 

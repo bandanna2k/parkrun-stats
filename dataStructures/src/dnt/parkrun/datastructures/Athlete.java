@@ -47,6 +47,13 @@ public class Athlete
         return new Athlete(name, extractIdFromAthleteHistoryAtEventLink(link));
     }
     /*
+        <a href="/cornwallpark/parkrunner/211164">John DOE</a>
+     */
+    public static Athlete fromAthleteHistoryAtEventLink2(String name, String link)
+    {
+        return new Athlete(name, Integer.parseInt(link.substring(1 + link.lastIndexOf("/"))));
+    }
+    /*
         https://www.parkrun.us/colermountainbikepreserve/parkrunner/9265263
      */
     public static Athlete fromAthleteAtCourseLink(String name, String link)

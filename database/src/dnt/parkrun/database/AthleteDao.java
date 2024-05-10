@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,7 @@ public class AthleteDao
             "name = :name";
     private final NamedParameterJdbcOperations jdbc;
 
-    public AthleteDao(DataSource dataSource) throws SQLException
+    public AthleteDao(DataSource dataSource)
     {
         jdbc = new NamedParameterJdbcTemplate(dataSource);
     }
