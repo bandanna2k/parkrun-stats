@@ -94,6 +94,8 @@ public class SpeedStats
     {
         try (HtmlWriter writer = HtmlWriter.newInstance(mostRecentDate, COUNTRY, "stats_for_speed"))
         {
+            writer.writer.writeCharacters("{{css}}");
+
             writer.writer.writeStartElement("p");
             writer.writer.writeAttribute("align", "right");
             writer.writer.writeCharacters(new SimpleDateFormat("yyyy MMM dd HH:mm").format(new Date()));
