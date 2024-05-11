@@ -60,9 +60,9 @@ public class ParsersTest
             int noIds = listOfAthletes.stream().filter(a -> a.athleteId == NO_ATHLETE_ID).toList().size();
             int unknowns = listOfAthletes.stream().filter(a -> a.name == null).toList().size();
             int knowns = listOfAthletes.stream().filter(a -> a.athleteId != NO_ATHLETE_ID).toList().size();
-            System.out.println("noIds: " + noIds);
-            System.out.println("unknowns: " + unknowns);
-            System.out.println("knowns: " + knowns);
+//            System.out.println("noIds: " + noIds);
+//            System.out.println("unknowns: " + unknowns);
+//            System.out.println("knowns: " + knowns);
             assert knowns > noIds : "knowns > noIds";
             assert knowns > unknowns : "knowns > unknowns";
         }

@@ -4,7 +4,6 @@ import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.datastructures.AgeCategory;
 import dnt.parkrun.stats.MostEventStats;
-import dnt.parkrun.stats.MostEventStatsTest;
 import dnt.parkrun.stats.invariants.*;
 import dnt.parkrun.stats.speed.AgeCategoryRecord;
 import dnt.parkrun.stats.speed.SpeedStats;
@@ -137,7 +136,9 @@ public class Menu
 
     private void runInvariantsQuick()
     {
-        runInvariants(InvariantTest.class,
+        runInvariants(
+                DatabaseInvariantTest.class,
+                InvariantTest.class,
                 ParsersTest.class,
                 ProvinceTest.class);
     }
@@ -146,7 +147,6 @@ public class Menu
     {
         runInvariantsQuick();
         runInvariants(
-                MostEventStatsTest.class,
                 HowYouDoingTest.class,
                 PendingCoursesTest.class
         );

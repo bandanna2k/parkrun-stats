@@ -34,14 +34,15 @@ public class Athlete
     /*
         https://www.parkrun.co.nz/parkrunner/414811/all/
      */
+
     public static Athlete fromAthleteSummaryLink(String name, String link)
     {
         return new Athlete(name, extractIdFromSummaryLink(link));
     }
-
     /*
         https://www.parkrun.co.nz/cornwall/results/athletehistory/?athleteNumber=320896
      */
+
     public static Athlete fromAthleteHistoryAtEventLink(String name, String link)
     {
         return new Athlete(name, extractIdFromAthleteHistoryAtEventLink(link));
@@ -56,6 +57,30 @@ public class Athlete
     /*
         https://www.parkrun.us/colermountainbikepreserve/parkrunner/9265263
      */
+
+    /*
+    /cornwallpark/parkrunner/211164
+        https://www.parkrun.us/colermountainbikepreserve/parkrunner/9265263
+    <a href="./athletehistory/?athleteNumber=2180649">Ron CROWHURST</a>
+        <a href="/cornwallpark/parkrunner/211164">John DOE</a>
+     */
+    public static Athlete fromAthleteHistoryAtEventLink3(String name, String link)
+    {
+        if(link == null) return NO_ATHLETE;
+
+        String substring1 = link.substring(link.lastIndexOf("/"));
+        String substring2 = substring1.replaceAll("[^0-9.]", "");
+        try
+        {
+            return new Athlete(name, Integer.parseInt(substring2));
+        }
+        catch (Exception ex)
+        {
+            System.out.printf("ERROR: Failed to parse link: '%s'%n", link);
+            return NO_ATHLETE;
+        }
+    }
+
     public static Athlete fromAthleteAtCourseLink(String name, String link)
     {
         return new Athlete(name, extractIdFromAthleteAtCourseLink(link));

@@ -40,6 +40,38 @@ public class AthleteTest
     }
 
     @Test
+    public void testExtractIdFromAthleteHistoryAtEventLink3()
+    {
+        assertThat(Athlete.fromAthleteHistoryAtEventLink3("test",
+                "https://www.parkrun.co.nz/cornwall/results/athletehistory/?athleteNumber=320896").athleteId)
+                .isEqualTo(320896);
+        assertThat(Athlete.fromAthleteHistoryAtEventLink3("test",
+                "https://www.parkrun.co.nz/cornwall/results/athletehistory/?athleteNumber=").athleteId)
+                .isEqualTo(NO_ATHLETE_ID);
+        assertThat(Athlete.fromAthleteHistoryAtEventLink3("test",
+                "https://www.parkrun.co.nz/cornwall/results/athletehistory/?athleteNumber").athleteId)
+                .isEqualTo(NO_ATHLETE_ID);
+        assertThat(Athlete.fromAthleteHistoryAtEventLink3("test",
+                null).athleteId)
+                .isEqualTo(NO_ATHLETE_ID);
+        assertThat(Athlete.fromAthleteHistoryAtEventLink3("test",
+                "https://www.parkrun.us/colermountainbikepreserve/results/73/athletehistory/?athleteNumber=243802").athleteId)
+                .isEqualTo(243802);
+
+        /*
+         */
+        assertThat(Athlete.fromAthleteHistoryAtEventLink3("test",
+                "/cornwallpark/parkrunner/211164").athleteId)
+                .isEqualTo(211164);
+        assertThat(Athlete.fromAthleteHistoryAtEventLink3("test",
+                "https://www.parkrun.us/colermountainbikepreserve/parkrunner/9265263").athleteId)
+                .isEqualTo(9265263);
+        assertThat(Athlete.fromAthleteHistoryAtEventLink3("test",
+                "./athletehistory/?athleteNumber=2180649").athleteId)
+                .isEqualTo(2180649);
+    }
+
+    @Test
     public void testExtractIdFromAthleteAtCourseLink()
     {
         assertThat(Athlete.fromAthleteAtCourseLink("test", "https://www.parkrun.us/colermountainbikepreserve/parkrunner/9265263").athleteId)
