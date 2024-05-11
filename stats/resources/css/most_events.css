@@ -78,6 +78,8 @@ td,th {
 .hl3 td:nth-child(3) { background-color:#f7f7f7; }
 .hl6 td:nth-child(6) { background-color:#f7f7f7; }
 .hl7 td:nth-child(7) { background-color:#f7f7f7; }
+.tinypadding6 td:nth-child(6) { padding:1; }
+.tinypadding7 td:nth-child(7) { padding:1; }
 
 
 

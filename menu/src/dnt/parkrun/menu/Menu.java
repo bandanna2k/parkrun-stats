@@ -89,8 +89,10 @@ public class Menu
 
             MostEventStats stats = MostEventStats.newInstance(dataSource, statsDataSource, getParkrunDay(new Date()));
             File file = stats.generateStats();
+            File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
+            MostEventStats.findAndReplace(file, modified);
 
-            new ProcessBuilder("xdg-open", file.getAbsolutePath()).start();
+            new ProcessBuilder("xdg-open", modified.getAbsolutePath()).start();
         }
         catch (SQLException | IOException | XMLStreamException e)
         {
@@ -125,8 +127,12 @@ public class Menu
 
             Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord =
                     stats.collectCourseToAgeGroupToAgeGradeRecord();
+
             File file = stats.generateFastTimeStats(courseToAgeGroupToAgeGradeRecord);
-            new ProcessBuilder("xdg-open", file.getAbsolutePath()).start();
+            File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
+            SpeedStats.findAndReplace(file, modified);
+
+            new ProcessBuilder("xdg-open", modified.getAbsolutePath()).start();
         }
         catch (SQLException | IOException | XMLStreamException e)
         {

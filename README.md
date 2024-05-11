@@ -22,6 +22,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- Why does Populating top 10 run table for Ōrākei Bay parkrun take so long.
+
 - Need a loading icon whilst fastest times page is loading
 Low priority
 
@@ -38,7 +40,7 @@ Low priority
 
 ## Issues Completed
 
-- 10/5/2024 - Invariant for null volunteer at event
+- 11/5/2024 DB Invariant for null volunteer at event
 
 - 10/5/2024 - CourseCheckInvariant
   1715331666003 Moana Point Reserve 1
