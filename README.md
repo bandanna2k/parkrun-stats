@@ -30,15 +30,15 @@ Low priority
 - Friends table including at what venues
   - 'Most runs with other athletes' table
 
-- Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables. ???
-Low priority
-
 ## Ideas
 
 - Unique runners at course / Add unique runs for runners / Add unique runs to Most Events???
 
 
 ## Issues Completed
+
+- 12/5/2024 Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables. ???
+  Low priority
 
 - 11/5/2024 DB Invariant for null volunteer at event
 

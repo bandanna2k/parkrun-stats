@@ -14,6 +14,7 @@ import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 public abstract class AbstractDatabaseInvariantTest
 {
     protected SimpleDriverDataSource dataSource;
+    protected SimpleDriverDataSource weeklyDataSource;
     protected NamedParameterJdbcTemplate jdbc;
 
     @Before
@@ -21,6 +22,8 @@ public abstract class AbstractDatabaseInvariantTest
     {
         dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl("parkrun_stats"), "stats", "statsfractalstats");
+        weeklyDataSource = new SimpleDriverDataSource(new Driver(),
+                getDataSourceUrl("weekly_stats"), "stats", "statsfractalstats");
         jdbc = new NamedParameterJdbcTemplate(dataSource);
     }
 

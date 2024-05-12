@@ -17,7 +17,7 @@ public class PIndexDao extends BaseDao
 {
     private final Date date;
 
-    private PIndexDao(DataSource statsDataSource, Date date)
+    public PIndexDao(DataSource statsDataSource, Date date)
     {
         super(statsDataSource);
         this.date = date;
@@ -75,13 +75,25 @@ public class PIndexDao extends BaseDao
                         rs.getDouble("home_ratio")));
     }
 
+    public List<PIndexRecord> getPIndexRecords()
+    {
+        return getPIndexRecords(new Date());
+    }
     public List<PIndexRecord> getPIndexRecordsLastWeek()
+    {
+        Date lastWeek = new Date();
+        lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
+        return getPIndexRecords(lastWeek);
+    }
+    public List<PIndexRecord> getPIndexRecords(Date date)
     {
         try
         {
-            Date lastWeek = new Date();
-            lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
-            String sql = "select * from " + getTableName(lastWeek);
+            String sql = STR."""
+            select *
+            from \{getTableName(date)}
+            order by p_index desc, runs_needed_to_next desc, athlete_id asc
+            """;
             return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) -> new PIndexRecord(
                     rs.getInt("athlete_id"),
                     rs.getInt("p_index"),

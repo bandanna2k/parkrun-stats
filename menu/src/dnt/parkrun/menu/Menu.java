@@ -144,6 +144,7 @@ public class Menu
     {
         runInvariants(
                 DatabaseInvariantTest.class,
+                DatabaseWeeklyResultsInvariantTest.class,
                 InvariantTest.class,
                 ParsersTest.class,
                 ProvinceTest.class);

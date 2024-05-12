@@ -59,7 +59,7 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         if(extended)
         {
             startElement("th", "colSpan", "2");
-            writer.writeCharacters("Avg. Attendance / Last 10 Avg.");
+            writer.writeCharacters("Avg. Attendance (Last 10 Avg.)");
             endElement("th");
 
             startElement("th", "class", "dt");
