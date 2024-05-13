@@ -10,17 +10,21 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class AthleteDao
 {
-
-    public static final String SQL_FOR_INSERT = "insert into athlete (" +
+    private static final String SQL_FOR_INSERT = "insert into athlete (" +
             "athlete_id, name" +
             ") values ( " +
             ":athleteId, :name" +
             ") on duplicate key " +
             "update " +
             "name = :name";
+    private static final String SQL_FOR_SELECT = "select * from athlete where athlete_id = :athleteId";
+    private static final String SQL_FOR_MULTI_SELECT = "select athlete_id, name from athlete where athlete_id in (:athleteIds)";
+
     private final NamedParameterJdbcOperations jdbc;
 
     public AthleteDao(DataSource dataSource)
@@ -46,7 +50,7 @@ public class AthleteDao
 
     public Athlete getAthlete(int athleteId)
     {
-        return jdbc.queryForObject("select * from athlete where athlete_id = :athleteId",
+        return jdbc.queryForObject(SQL_FOR_SELECT,
                 new MapSqlParameterSource("athleteId", athleteId),
                 (rs, rowNum) ->
                         Athlete.from(
@@ -56,11 +60,25 @@ public class AthleteDao
     }
 
     // TODO: Write a test for me please.
+    // TODO: Testing only surely.
     public Map<Integer, Athlete> getAllAthletes()
     {
         Map<Integer, Athlete> result = new HashMap<>();
         jdbc.query("select * from athlete",
                 EmptySqlParameterSource.INSTANCE,
+                (rs, rowNum) ->
+                {
+                    int athleteId = rs.getInt("athlete_id");
+                    return result.put(athleteId, Athlete.from(rs.getString("name"), athleteId));
+                });
+        return result;
+    }
+
+    public Map<Integer, Athlete> getAthletes(List<Integer> athleteIds)
+    {
+        Map<Integer, Athlete> result = new TreeMap<>();
+        jdbc.query(SQL_FOR_MULTI_SELECT,
+                new MapSqlParameterSource("athleteIds", athleteIds.stream().map(String::valueOf).collect(Collectors.toList())),
                 (rs, rowNum) ->
                 {
                     int athleteId = rs.getInt("athlete_id");

@@ -22,18 +22,23 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Why does Populating top 10 run table for Ōrākei Bay parkrun take so long.
+- Refactor findAndReplace
 
-- Need a loading icon whilst fastest times page is loading
-Low priority
+- Refactor getTextFromFile
 
 - Friends table including at what venues
-  - 'Most runs with other athletes' table
+    - 'Most runs with other athletes' table
+      Low priority
+Create a demo table.
+
+- Why does 'Populating top 10 run table for Ōrākei Bay parkrun' take so long.
+
+- Need a loading icon whilst fastest times page is loading
+
 
 ## Ideas
 
 - Unique runners at course / Add unique runs for runners / Add unique runs to Most Events???
-
 
 ## Issues Completed
 
