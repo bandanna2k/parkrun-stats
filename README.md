@@ -596,3 +596,51 @@ from course_event_summary
 group by course_id, event_number
 having count > 1;
 ```
+
+# The Story
+
+## Background and Motivation 
+
+I had a goal of completing all parkruns in New Zealand. I have a family to look after, and don't have 
+to much money to spend on treats, so I cannot just leave the house and go to all parkruns as soon as they
+materialise, I need to plan ahead, get cheap flights, earn brownie points. Any after my run in Christchurch,
+only do tourism in summer as that was a cold, cold parkrun.
+
+Anyhow, its taken me 10 years to get 1 run away from becoming a Regionnaire, the title given to someone that
+has completed all parkruns in NZ. 2 weeks before running my last parkrun to become regionnaire, parkrun HQ 
+decided to remove all stats from their website. Not cool.
+
+In idol conversation with my neighbour Alan, I mentioned that we should not worry, and that all the information
+out there is public (as of May 2024) and someone will bring the stats back. The database is small in comparison
+to what I have to deal with on a daily basis at work. The database I deal with in 1 day, is much larger than
+the global parkrun database. It is a small database.
+Turns out that person to bring the stats back to New Zealand would be me. I am a software developer by trade, 
+so I have all the tools to do this. During I couple of days of sick leave, 
+I had nothing better to do than prove that it was possible. And after a few lines of code, I had downloaded 
+data and stored it in a database.
+
+## Technical Stuff
+
+First there is 'events.json' from the URL link given 'https://images.parkrun.com/events.json'. 
+Why parkrun make this link available I don't know? If they remove this, some of this code would have to 
+change. This file gives a complete parkrun course table.
+
+With the above table of courses, we can now go to each course and download the event history from URLs
+of the format https://www.parkrun.co.nz/cornwallpark/results/eventhistory/, in this example 'cornwallparkr' 
+came from events.json
+The event history gives us a start event number, and a last event number.
+
+With the above event history table, we can now download each events results from URLs of the following
+format https://www.parkrun.co.nz/cornwallpark/results/571/ where 571 is the event number in this case.
+Also, from this URL, we download the volunteer data at the bottom.
+
+All of this data I have download for New Zealand which is on the small side. parkrun rate limit the data
+you can download. I have found out that you can download around 1 webpage every 5 seconds without getting
+temporarily banned.
+
+For the most events table, particular the global parkrun count for an athlete we need an extra page 
+downloaded that contains an athletes individual statistics. This URL comes in the format of
+https://www.parkrun.co.nz/parkrunner/6297704/. 
+This URL I envision parkrun will soon hide behind authentication, so we this code will lose the ability to
+download global athlete data. Hopefully not.
+

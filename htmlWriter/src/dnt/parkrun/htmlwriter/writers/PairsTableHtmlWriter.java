@@ -82,10 +82,26 @@ public class PairsTableHtmlWriter extends BaseWriter implements Closeable
 
     public void writeHeaderRecord(Athlete rowAthlete, List<Athlete> colAthletes) throws XMLStreamException
     {
-        writer.writeStartElement("tr");
+        startElement("colgroup");
+        for (int i = 0; i < colAthletes.size(); i++)
+        {
+            if((i % 2) == 0)
+            {
+                startElement("colgroup");
+                endElement("colgroup");
+            }
+            else
+            {
+                startElement("colgroup", "class", "colHighlight");
+                endElement("colgroup");
+            }
+        }
+        endElement("colgroup");
 
-        startElement("td");
-        endElement("td");
+        writer.writeStartElement("thead");
+
+        startElement("th");
+        endElement("th");
 
         // Athlete
 //        startElement("td");
@@ -98,15 +114,15 @@ public class PairsTableHtmlWriter extends BaseWriter implements Closeable
 
         for (Athlete colAthlete : colAthletes)
         {
-            startElement("td", "style", "writing-mode: vertical-rl; transform:scale(-1);");
+            startElement("th", "style", "writing-mode: vertical-rl; transform:scale(-1);");
             writer.writeStartElement("a");
             writer.writeAttribute("href", urlGenerator.generateAthleteUrl(colAthlete.athleteId).toString());
             writer.writeAttribute("target", String.valueOf(colAthlete.athleteId));
             writer.writeCharacters(colAthlete.name);
             endElement("a");
-            endElement("td");
+            endElement("th");
         }
 
-        endElement("tr");
+        endElement("thead");
     }
 }

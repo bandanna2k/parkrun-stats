@@ -190,9 +190,10 @@ public class PairsStats
                                         getTextFromFile(MostEventStats.class.getResourceAsStream("/css/pairs.css")) +
                                         "</style>"
                         },
-//                        {"{{meta}}", (Supplier<String>) () ->
+                        {"{{meta}}", (Supplier<String>) () ->
 //                                getTextFromFile(MostEventStats.class.getResourceAsStream("/meta_most_events.xml"))
-//                        }
+                                ""
+                        }
                 };
 
                 String line;
@@ -221,7 +222,7 @@ public class PairsStats
             String line1;
             while(null != (line1 = reader1.readLine()))
             {
-                sb.append(line1);
+                sb.append(line1).append("\n");
             }
         }
         catch (IOException e)
