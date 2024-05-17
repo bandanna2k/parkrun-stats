@@ -50,7 +50,7 @@ public class Parser
 //                System.out.print("\t");
                 Date date = DateConverter.parseWebsiteDate(dateNode.toString());
 
-                Node finishers = row.childNode(2).childNode(0);
+                Node finishers = row.childNode(2).childNode(0).childNode(0);
 //                System.out.print(date);
 //                System.out.print("\t");
 

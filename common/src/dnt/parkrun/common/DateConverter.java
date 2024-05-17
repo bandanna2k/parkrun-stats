@@ -10,6 +10,7 @@ public abstract class DateConverter
     public static final int SEVEN_DAYS_IN_MILLIS = (7 * ONE_DAY_IN_MILLIS);
 
     private static final SimpleDateFormat WEBSITE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+    private static final SimpleDateFormat WEBSITE_FORMATTER_POST_MAY24 = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat DATABASE_NAME_DATE_FORMATTER = new SimpleDateFormat("yyyy_MM_dd");
 
     /**
@@ -21,9 +22,21 @@ public abstract class DateConverter
         {
             return null;
         }
+        if(date.contains("/"))
+        {
+            return parseWebsiteDate(date, WEBSITE_FORMATTER);
+        }
+        if(date.contains("-"))
+        {
+            return parseWebsiteDate(date, WEBSITE_FORMATTER_POST_MAY24);
+        }
+        throw new UnsupportedOperationException("No date parser found.");
+    }
+    private static Date parseWebsiteDate(String date, SimpleDateFormat websiteFormatter)
+    {
         try
         {
-            return WEBSITE_FORMATTER.parse(date);
+            return websiteFormatter.parse(date);
         }
         catch (ParseException e)
         {

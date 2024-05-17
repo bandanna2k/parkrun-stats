@@ -22,6 +22,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- Remove sql from readme 
+
 - Refactor findAndReplace
 
 - Refactor getTextFromFile
@@ -626,7 +628,7 @@ Why parkrun make this link available I don't know? If they remove this, some of 
 change. This file gives a complete parkrun course table.
 
 With the above table of courses, we can now go to each course and download the event history from URLs
-of the format https://www.parkrun.co.nz/cornwallpark/results/eventhistory/, in this example 'cornwallparkr' 
+of the format https://www.parkrun.co.nz/cornwallpark/results/eventhistory/, in this example 'cornwallpark' 
 came from events.json
 The event history gives us a start event number, and a last event number.
 
