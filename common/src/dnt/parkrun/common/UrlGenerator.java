@@ -1,6 +1,7 @@
 package dnt.parkrun.common;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 public class UrlGenerator
@@ -16,7 +17,7 @@ public class UrlGenerator
     {
         try
         {
-            return new URL("https://" + countryBaseUrl + "/" + courseName + "/results/eventhistory/");
+            return URI.create("https://" + countryBaseUrl + "/" + courseName + "/results/eventhistory/").toURL();
         }
         catch (MalformedURLException e)
         {
@@ -28,7 +29,7 @@ public class UrlGenerator
     {
         try
         {
-            return new URL("https://" + countryBaseUrl + "/" + courseName + "/results/" + eventNumber + "/");
+            return URI.create("https://" + countryBaseUrl + "/" + courseName + "/results/" + eventNumber + "/").toURL();
         }
         catch (MalformedURLException e)
         {
@@ -40,7 +41,7 @@ public class UrlGenerator
     {
         try
         {
-            return new URL("https://" + countryBaseUrl + "/" + "/parkrunner/" + athleteId + "/");
+            return URI.create("https://" + countryBaseUrl + "/" + "/parkrunner/" + athleteId + "/").toURL();
         }
         catch (MalformedURLException e)
         {
@@ -52,7 +53,7 @@ public class UrlGenerator
     {
         try
         {
-            return new URL("https://" + countryBaseUrl + "/" + countryUrl + "/parkrunner/" + athleteId + "/");
+            return URI.create("https://" + countryBaseUrl + "/" + countryUrl + "/parkrunner/" + athleteId + "/").toURL();
         }
         catch (MalformedURLException e)
         {
@@ -67,7 +68,7 @@ public class UrlGenerator
     {
         try
         {
-            return new URL("https://" + countryBaseUrl + "/" + courseName + "/results/latestresults/");
+            return URI.create("https://" + countryBaseUrl + "/" + courseName + "/results/latestresults/").toURL();
         }
         catch (MalformedURLException e)
         {
@@ -80,7 +81,7 @@ public class UrlGenerator
     {
         try
         {
-            return new URL("https://" + countryBaseUrl + "/" + courseName + "/");
+            return URI.create("https://" + countryBaseUrl + "/" + courseName + "/").toURL();
         }
         catch (MalformedURLException e)
         {
@@ -95,7 +96,7 @@ public class UrlGenerator
     {
         try
         {
-            return new URL("https://" + countryBaseUrl + "/parkrunner/" + athleteId + "/all/");
+            return URI.create("https://" + countryBaseUrl + "/parkrunner/" + athleteId + "/all/").toURL();
         }
         catch (MalformedURLException e)
         {
