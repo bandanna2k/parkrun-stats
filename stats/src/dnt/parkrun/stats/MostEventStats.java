@@ -42,7 +42,6 @@ import java.util.stream.Collectors;
 import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
 import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
-import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.*;
 import static java.util.Collections.emptyList;
 
@@ -76,7 +75,7 @@ public class MostEventStats
         DataSource statsDataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl("weekly_stats"), "stats", "statsfractalstats");
 
-        MostEventStats stats = MostEventStats.newInstance(NZ, dataSource, statsDataSource, date);
+        MostEventStats stats = MostEventStats.newInstance(Country.valueOf(args[0]), dataSource, statsDataSource, date);
 
         {
             File file = stats.generateStats();
@@ -406,7 +405,7 @@ public class MostEventStats
 //                        AthleteCourseSummary maxAthleteCourseSummary = getMaxAthleteCourseSummary(summariesForAthlete);
 //                        Course globalHomeParkrun = maxAthleteCourseSummary.course;
 //                        assert globalHomeParkrun != null : "Home parkrun is null, how?";
-//                        if (globalHomeParkrun.country != NZ)
+//                        if (globalHomeParkrun.country != country)
 //                        {
 //                            continue;
 //                        }
