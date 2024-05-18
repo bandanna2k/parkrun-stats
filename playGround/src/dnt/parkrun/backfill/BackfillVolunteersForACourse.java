@@ -7,6 +7,7 @@ import dnt.parkrun.database.AthleteDao;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.CourseEventSummaryDao;
 import dnt.parkrun.database.VolunteerDao;
+import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.CourseRepository;
@@ -15,31 +16,34 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static dnt.parkrun.datastructures.Country.NZ;
-
-@Deprecated
+@Deprecated(since = "Deprecated to discourage use")
 public class BackfillVolunteersForACourse
 {
-    private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
+    private final UrlGenerator urlGenerator;
+    private final Country country;
 
-    private NamedParameterJdbcTemplate jdbc;
-
-    public static void main(String[] args) throws IOException, SQLException
+    public BackfillVolunteersForACourse(Country country)
     {
-        new BackfillVolunteersForACourse().backfill();
+        this.country = country;
+        this.urlGenerator = new UrlGenerator(country.baseUrl);
     }
-    public void backfill() throws SQLException, IOException
+
+    public static void main(String[] args) throws SQLException
     {
-        Course backfillCourse = new Course(44, "porirua", NZ, "Porirua parkrun", Course.Status.STOPPED);
+        new BackfillVolunteersForACourse(Country.valueOf(args[0])).backfill();
+    }
+    public void backfill() throws SQLException
+    {
+        assert country.countryCode == 65;
+        Course backfillCourse = new Course(44, "porirua", country, "Porirua parkrun", Course.Status.STOPPED);
 
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
-        jdbc = new NamedParameterJdbcTemplate(dataSource);
+        NamedParameterJdbcTemplate jdbc = new NamedParameterJdbcTemplate(dataSource);
 
         AthleteDao athleteDao = new AthleteDao(dataSource);
         VolunteerDao volunteerDao = new VolunteerDao(dataSource);
