@@ -3,6 +3,7 @@ package dnt.parkrun.menu;
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.datastructures.AgeCategory;
+import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.stats.MostEventStats;
 import dnt.parkrun.stats.invariants.*;
 import dnt.parkrun.stats.speed.AgeCategoryRecord;
@@ -29,19 +30,39 @@ import java.util.Map;
 
 import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
-import static dnt.parkrun.datastructures.Country.NZ;
 
 public class Menu
 {
-    public static void main(String[] args) throws IOException
+    private final BufferedReader reader;
+    private final Country country;
+
+    public Menu(BufferedReader reader, Country country)
     {
-        new Menu().go();
+        this.reader = reader;
+        this.country = country;
     }
 
+    public static void main(String[] args) throws IOException
+    {
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)))
+        {
+            String countryProperty = System.getProperty("parkrun_stats.country");
+            final Country country;
+            if (countryProperty == null)
+            {
+                System.out.println("Please entry a country.");
+                country = Country.valueOf(reader.readLine());
+            }
+            else
+            {
+                country = Country.valueOf(countryProperty);
+            }
+
+            new Menu(reader, country).go();
+        }
+    }
     private void go() throws IOException
     {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
         String choice = "";
         while(!choice.equals("X"))
         {
@@ -108,12 +129,12 @@ public class Menu
                     getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
             WeekendResults weekendResults = WeekendResults.newInstance(
                     dataSource,
-                    new WebpageProviderFactoryImpl(new UrlGenerator(NZ.baseUrl)));
+                    new WebpageProviderFactoryImpl(new UrlGenerator(country.baseUrl)));
             weekendResults.fetchWeekendResults();
         }
         catch (SQLException | IOException e)
         {
-            System.out.println("ERROR: " + e.getMessage());
+            System.err.println("ERROR: " + e.getMessage());
         }
     }
 
@@ -175,7 +196,7 @@ public class Menu
             @Override
             public void testFailure(Failure failure) throws Exception
             {
-                System.out.printf("FAILED: Test: %s, Failure: %s%n", methodName, failure.getMessage());
+                System.err.printf("FAILED: Test: %s, Failure: %s%n", methodName, failure.getMessage());
                 super.testFailure(failure);
             }
             @Override
@@ -195,12 +216,14 @@ public class Menu
         System.out.println("Passed: " + passCount);
         System.out.println("Failed: " + result.getFailureCount());
         result.getFailures().forEach(failure -> {
-            System.out.println(failure.getTestHeader() + "\t" + failure.getMessage());
+            System.err.println(failure.getTestHeader() + "\t" + failure.getMessage());
         });
     }
 
     private void displayOptions()
     {
+        System.out.println("----------------------");
+        System.out.printf("Country: %s (%s) %n", country.name(), country.countryName);
         System.out.println("----------------------");
         System.out.println("Quick          - Quick run invariants                                 (re-runnable, takes 1 minute");
         System.out.println("Invariant      - Run Invariants                                       (re-runnable, takes 5 minutes)");

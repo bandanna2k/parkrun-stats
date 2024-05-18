@@ -22,6 +22,10 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- Get rid of NZ from codebase. Should use the parameter.
+
+- Change databases to country specific
+
 - Remove sql from readme 
 
 - Refactor findAndReplace
@@ -43,6 +47,8 @@ Create a demo table.
 - Unique runners at course / Add unique runs for runners / Add unique runs to Most Events???
 
 ## Issues Completed
+
+- 18/5/2024 Make menu country non-specific
 
 - 12/5/2024 Invariants - 10 incrementing numbers, 1 number stays the same for all weekly tables. ???
   Low priority
