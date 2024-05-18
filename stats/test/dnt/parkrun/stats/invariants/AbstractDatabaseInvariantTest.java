@@ -26,9 +26,9 @@ public abstract class AbstractDatabaseInvariantTest
     {
         Country country = NZ;
         dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
+                getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
         weeklyDataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl(WEEKLY_STATS, country), "stats", "statsfractalstats");
+                getDataSourceUrl(WEEKLY_STATS, country), "stats", "4b0e7ff1");
         jdbc = new NamedParameterJdbcTemplate(dataSource);
     }
 

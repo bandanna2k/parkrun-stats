@@ -19,16 +19,13 @@ public abstract class DataSourceUrlBuilder
 
     public static String getDataSourceUrl(Type type, Country country)
     {
-        switch (type)
+        return switch (type)
         {
-            case PARKRUN_STATS:
-            case WEEKLY_STATS:
-                return String.format("jdbc:mysql://%s/%s", //_%s
-                        System.getProperty("parkrun_stats.mysql.host","localhost"),
-                        type.databaseName,
-                        country.name());
-        }
-        throw new IllegalArgumentException("Type not supported. " + type);
+            case PARKRUN_STATS, WEEKLY_STATS -> String.format("jdbc:mysql://%s/%s_%s",
+                    System.getProperty("parkrun_stats.mysql.host", "localhost"),
+                    type.databaseName,
+                    country.name());
+        };
     }
 
     public static String getTestDataSourceUrl()
