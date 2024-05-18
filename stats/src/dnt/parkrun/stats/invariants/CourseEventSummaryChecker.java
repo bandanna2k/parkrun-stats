@@ -11,7 +11,6 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
@@ -32,6 +31,9 @@ public class CourseEventSummaryChecker
     private final VolunteerDao volunteerDao;
     private final AthleteDao athleteDao;
 
+    /*
+    On failure, run 'RewriteEvent'
+     */
     public static void main(String[] args) throws SQLException
     {
         Country country = Country.valueOf(args[0]);
@@ -43,7 +45,6 @@ public class CourseEventSummaryChecker
 //        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
 //                dataSource, 1715335259867L);
 //
-//        checker.rewriteCourseEvent("barrycurtis", 516);
 
         List<String> errors = checker.validate();
         errors.forEach(error -> System.out.println("ERROR: " + error));
@@ -261,81 +262,5 @@ public class CourseEventSummaryChecker
 //                    .describedAs("Age grade too small. " + comparison.get() + item1)
 //                    .matches(item -> item.equals(BigDecimal.ZERO) || item.doubleValue() < 2.0);
         }
-    }
-
-    private void rewriteCourseEvent(String courseName, int eventNumber)
-    {
-        Course course = courseRepository.getCourseFromName(courseName);
-
-        // Get course event summary from web
-        AtomicReference<CourseEventSummary> maybeCourseEventSummary = new AtomicReference<>();
-        {
-            dnt.parkrun.courseeventsummary.Parser parser = new dnt.parkrun.courseeventsummary.Parser.Builder()
-                    .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventSummaryUrl(course.name)))
-                    .course(course)
-                    .forEachCourseEvent(ces ->
-                    {
-                        if(eventNumber == ces.eventNumber) maybeCourseEventSummary.set(ces);
-                    })
-                    .build();
-            parser.parse();
-        }
-        assert maybeCourseEventSummary.get() != null;
-        CourseEventSummary newCourseEventSummary = maybeCourseEventSummary.get();
-
-        {
-            System.out.printf("INFO Fixing results for course: %s, date: %s, event number: %d %n",
-                    course.name, newCourseEventSummary.date, eventNumber);
-
-            System.out.print("WARNING Deleting results ... ");
-            resultDao.delete(course.courseId, newCourseEventSummary.date);
-            System.out.printf("Done%n");
-
-            System.out.print("WARNING Deleting volunteers ... ");
-            volunteerDao.delete(course.courseId, newCourseEventSummary.date);
-            System.out.printf("Done%n");
-
-            System.out.print("WARNING Deleting course event summary ... ");
-            courseEventSummaryDao.delete(course.courseId, newCourseEventSummary.date);
-            System.out.printf("Done%n");
-        }
-
-        List<Result> newResults = new ArrayList<>();
-        List<Athlete> newAthletes = new ArrayList<>();
-        List<Volunteer> newVolunteers = new ArrayList<>();
-        {
-            Parser parser = new Parser.Builder(course)
-                    .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(course.name, eventNumber)))
-                    .forEachResult(newResults::add)
-                    .forEachAthlete(e ->
-                    {
-//                      System.out.println("A " + e);
-                        newAthletes.add(e);
-                    })
-                    .forEachVolunteer(e1 ->
-                    {
-//                        System.out.println("V " + e1);
-                        newVolunteers.add(e1);
-                    })
-                    .build();
-            parser.parse();
-        }
-
-        System.out.print("INFO Re-entering course event summary ... ");
-        courseEventSummaryDao.insert(maybeCourseEventSummary.get());
-        System.out.printf("Done%n");
-
-        System.out.print("INFO Re-entering athletes ... ");
-        athleteDao.insert(newAthletes);
-        System.out.printf("Done%n");
-
-        System.out.print("INFO Re-entering volunteers ... ");
-        volunteerDao.insert(newVolunteers);
-        System.out.printf("Done%n");
-
-        System.out.print("INFO Re-entering results ... ");
-        resultDao.insert(newResults);
-        System.out.printf("Done%n");
-
     }
 }
