@@ -26,7 +26,7 @@ public class ProvinceTest
     {
         RegionChecker regionChecker = new NewZealandRegionChecker();
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
+                getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
         CourseRepository courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
 

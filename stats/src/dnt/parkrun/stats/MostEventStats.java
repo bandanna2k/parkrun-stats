@@ -123,7 +123,8 @@ public class MostEventStats
             averageAttendanceProcessor, attendanceProcessor, averageTimeProcessor
     };
 
-    private MostEventStats(Country country, DataSource dataSource,
+    private MostEventStats(Country country,
+                           DataSource dataSource,
                            DataSource statsDataSource,
                            Date date)
     {

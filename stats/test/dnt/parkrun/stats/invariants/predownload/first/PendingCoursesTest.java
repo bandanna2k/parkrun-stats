@@ -32,7 +32,7 @@ public class PendingCoursesTest
     public void showPendingCoursesWithResults() throws SQLException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
+                getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
         CourseRepository courseRepository = new CourseRepository();
         CourseDao courseDao = new CourseDao(dataSource, courseRepository);
 

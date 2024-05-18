@@ -49,7 +49,7 @@ public class HowYouDoingTest
         {
             final Country country = NZ;
             DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl(PARKRUN_STATS, country), "dao", "daoFractaldao");
+                    getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
             CourseRepository courseRepository = new CourseRepository();
             CourseDao courseDao = new CourseDao(dataSource, courseRepository);
 
@@ -95,7 +95,7 @@ public class HowYouDoingTest
         public void areCoursesUpToDate() throws IOException, SQLException
         {
             DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl(PARKRUN_STATS, country), "dao", "daoFractaldao");
+                    getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
             CourseRepository courseRepository = new CourseRepository();
             CourseDao courseDao = new CourseDao(dataSource, courseRepository);
 

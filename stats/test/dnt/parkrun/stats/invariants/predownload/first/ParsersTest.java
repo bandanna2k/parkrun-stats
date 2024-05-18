@@ -49,14 +49,9 @@ public class ParsersTest
     @Test
     public void testCourseEvent() throws SQLException
     {
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl(PARKRUN_STATS, country), "dao", "daoFractaldao");
-        CourseRepository courseRepository = new CourseRepository();
-        new CourseDao(dataSource, courseRepository);
-
         List<Volunteer> listOfVolunteers = new ArrayList<>();
         List<Athlete> listOfAthletes = new ArrayList<>();
-        dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(courseRepository.getCourse(LOWER_HUTT.courseId))
+        dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(LOWER_HUTT)
                 .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(LOWER_HUTT.name, 1)))
                 .forEachAthlete(listOfAthletes::add)
                 .forEachVolunteer(listOfVolunteers::add)
@@ -87,7 +82,7 @@ public class ParsersTest
     public void testAthleteCourseSummary() throws SQLException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
+                getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
         CourseRepository courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
 
