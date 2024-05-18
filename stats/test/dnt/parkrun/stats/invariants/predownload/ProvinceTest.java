@@ -1,4 +1,4 @@
-package dnt.parkrun.stats.invariants;
+package dnt.parkrun.stats.invariants.predownload;
 
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.database.CourseDao;

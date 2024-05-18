@@ -1,4 +1,4 @@
-package dnt.parkrun.stats.invariants;
+package dnt.parkrun.stats.invariants.postdownload;
 
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.UrlGenerator;
@@ -7,6 +7,7 @@ import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
+import dnt.parkrun.stats.invariants.AbstractDatabaseInvariantTest;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

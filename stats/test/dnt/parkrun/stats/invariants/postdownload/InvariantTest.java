@@ -1,6 +1,7 @@
-package dnt.parkrun.stats.invariants;
+package dnt.parkrun.stats.invariants.postdownload;
 
 import com.mysql.jdbc.Driver;
+import dnt.parkrun.stats.invariants.CourseEventSummaryChecker;
 import org.junit.Test;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 

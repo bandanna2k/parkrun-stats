@@ -1,7 +1,8 @@
-package dnt.parkrun.stats.invariants;
+package dnt.parkrun.stats.invariants.postdownload;
 
 import dnt.parkrun.database.stats.MostEventsDao;
 import dnt.parkrun.database.weekly.PIndexDao;
+import dnt.parkrun.stats.invariants.AbstractDatabaseInvariantTest;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
