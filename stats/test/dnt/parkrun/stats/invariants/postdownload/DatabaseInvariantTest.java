@@ -74,6 +74,9 @@ public class DatabaseInvariantTest extends AbstractDatabaseInvariantTest
                 "course_id", "date", "athlete_id");
     }
 
+    /*
+    On failure, run 'RewriteEvent'
+     */
     @Test
     public void courseEventSummaryFinishersShouldMatchResultCount()
     {

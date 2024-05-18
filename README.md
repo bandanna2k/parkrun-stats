@@ -22,6 +22,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- Bring out rewrite event into its own class 
+
 - Speed stats for the year 
 
 - Change databases to country specific

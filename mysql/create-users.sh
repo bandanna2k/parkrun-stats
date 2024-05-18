@@ -1,4 +1,7 @@
 # SELECT User, Host FROM mysql.user;
+# SELECT * FROM mysql.db WHERE Db = 'parkrun_stats'\G;
+
+echo "Expected error dropping old users."
 
 # dao
 docker exec mysql-parkrun-stats mysql -h127.0.0.1 -uroot -pfractal -e \
