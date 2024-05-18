@@ -130,7 +130,7 @@ public class MostEventStats
         lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
 
         this.statsDataSource = statsDataSource;
-        this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(statsDataSource, this.date);
+        this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(COUNTRY, statsDataSource, this.date);
         this.acsDao = AthleteCourseSummaryDao.getInstance(statsDataSource, this.date);
         this.top10Dao = Top10AtCourseDao.getInstance(statsDataSource, this.date);
         this.top10VolunteerDao = Top10VolunteersAtCourseDao.getInstance(statsDataSource, this.date);

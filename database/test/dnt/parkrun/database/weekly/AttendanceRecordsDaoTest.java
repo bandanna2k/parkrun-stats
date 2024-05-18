@@ -58,7 +58,7 @@ public class AttendanceRecordsDaoTest extends BaseDaoTest
         courseEventSummaryDao.insert(new CourseEventSummary(
                 course, 1, Date.from(Instant.EPOCH), 2, Optional.of(firstMan), Optional.of(firstWoman)));
 
-        AttendanceRecordsDao attendanceRecordsDao = AttendanceRecordsDao.getInstance(dataSource, date);
+        AttendanceRecordsDao attendanceRecordsDao = AttendanceRecordsDao.getInstance(course.country, dataSource, date);
         List<AttendanceRecord> attendanceRecords = attendanceRecordsDao.getAttendanceRecords(Date.from(Instant.EPOCH));
         Assertions.assertThat(attendanceRecords).isNotEmpty();
     }
@@ -87,7 +87,7 @@ public class AttendanceRecordsDaoTest extends BaseDaoTest
         courseEventSummaryDao.insert(new CourseEventSummary(
                 course, 1, run2, 2, Optional.of(firstMan), Optional.of(firstWoman)));
 
-        AttendanceRecordsDao attendanceRecordsDao = AttendanceRecordsDao.getInstance(dataSource, date);
+        AttendanceRecordsDao attendanceRecordsDao = AttendanceRecordsDao.getInstance(course.country, dataSource, date);
         List<AttendanceRecord> attendanceRecords = attendanceRecordsDao.getAttendanceRecords(Date.from(Instant.EPOCH));
         Assertions.assertThat(attendanceRecords.size()).isEqualTo(2);
         attendanceRecords.forEach(System.out::println);

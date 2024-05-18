@@ -2,6 +2,7 @@ package dnt.parkrun.database.weekly;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.BaseDao;
+import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -10,21 +11,21 @@ import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
 
-import static dnt.parkrun.datastructures.Country.NZ;
-
 public class AttendanceRecordsDao extends BaseDao
 {
+    private final Country country;
     private final Date date;
 
-    private AttendanceRecordsDao(DataSource dataSource, Date date)
+    private AttendanceRecordsDao(Country country, DataSource dataSource, Date date)
     {
         super(dataSource);
+        this.country = country;
         this.date = date;
     }
 
-    public static AttendanceRecordsDao getInstance(DataSource dataSource, Date date)
+    public static AttendanceRecordsDao getInstance(Country country, DataSource dataSource, Date date)
     {
-        AttendanceRecordsDao attendanceRecordsDao = new AttendanceRecordsDao(dataSource, date);
+        AttendanceRecordsDao attendanceRecordsDao = new AttendanceRecordsDao(country, dataSource, date);
         attendanceRecordsDao.generateAttendanceRecordTable();
         return attendanceRecordsDao;
     }
@@ -87,7 +88,7 @@ public class AttendanceRecordsDao extends BaseDao
                         where c.country_code = :countryCode;
                 """;
 
-        jdbc.update(sql, new MapSqlParameterSource("countryCode", NZ.getCountryCode()));
+        jdbc.update(sql, new MapSqlParameterSource("countryCode", country.getCountryCode()));
     }
 
     public List<AttendanceRecord> getAttendanceRecords(Date date)
