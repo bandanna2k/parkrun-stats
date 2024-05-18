@@ -20,9 +20,9 @@ public class ResultDao extends BaseDao
             ":athleteId, :courseId, :date, :position, :time_seconds, :ageCategory, :ageGrade" +
             ")";
 
-    public ResultDao(DataSource dataSource)
+    public ResultDao(Country country, DataSource dataSource)
     {
-        super(dataSource);
+        super(country, dataSource);
     }
 
     @Deprecated // Testing only. Do not use. Results too large

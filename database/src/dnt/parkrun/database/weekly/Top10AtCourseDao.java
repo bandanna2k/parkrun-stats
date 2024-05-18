@@ -18,16 +18,16 @@ public class Top10AtCourseDao extends BaseDao
 {
     private final Date date;
 
-    private Top10AtCourseDao(DataSource dataSource, Date date)
+    private Top10AtCourseDao(Country country, DataSource dataSource, Date date)
     {
-        super(dataSource);
+        super(country, dataSource);
         this.date = date;
         createTable();
     }
 
-    public static Top10AtCourseDao getInstance(DataSource dataSource, Date date)
+    public static Top10AtCourseDao getInstance(Country country, DataSource dataSource, Date date)
     {
-        Top10AtCourseDao top10AtCourseDao = new Top10AtCourseDao(dataSource, date);
+        Top10AtCourseDao top10AtCourseDao = new Top10AtCourseDao(country, dataSource, date);
         top10AtCourseDao.createTable();
         return top10AtCourseDao;
     }

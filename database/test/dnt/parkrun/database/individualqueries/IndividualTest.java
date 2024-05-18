@@ -4,6 +4,7 @@ import com.mysql.jdbc.Driver;
 import dnt.parkrun.database.AthleteDao;
 import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.Country;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -14,8 +15,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static dnt.parkrun.datastructures.Country.NZ;
+
 public class IndividualTest
 {
+    private Country country = NZ;
     private AthleteDao athleteDao;
     private ResultDao resultDao;
     private Map<Integer, Athlete> athleteToName;
@@ -26,7 +30,7 @@ public class IndividualTest
         final DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
         athleteDao = new AthleteDao(dataSource);
-        resultDao = new ResultDao(dataSource);
+        resultDao = new ResultDao(country, dataSource);
 
         athleteToName = athleteDao.getAllAthletes();
     }

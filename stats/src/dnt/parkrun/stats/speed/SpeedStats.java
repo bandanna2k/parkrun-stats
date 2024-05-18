@@ -44,7 +44,7 @@ public class SpeedStats
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
 
-        SpeedStats stats = SpeedStats.newInstance(dataSource);
+        SpeedStats stats = SpeedStats.newInstance(country, dataSource);
         Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord =
                 stats.collectCourseToAgeGroupToAgeGradeRecord();
         {
@@ -61,16 +61,16 @@ public class SpeedStats
 
     private final UrlGenerator urlGenerator = new UrlGenerator(COUNTRY.baseUrl);
 
-    private SpeedStats(DataSource dataSource)
+    private SpeedStats(Country country, DataSource dataSource)
     {
-        this.resultDao = new ResultDao(dataSource);
+        this.resultDao = new ResultDao(country, dataSource);
         this.courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
     }
 
-    public static SpeedStats newInstance(DataSource dataSource)
+    public static SpeedStats newInstance(Country country, DataSource dataSource)
     {
-        return new SpeedStats(dataSource);
+        return new SpeedStats(country, dataSource);
     }
 
     public Map<Integer, Map<AgeCategory, AgeCategoryRecord>> collectCourseToAgeGroupToAgeGradeRecord()

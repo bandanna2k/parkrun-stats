@@ -17,6 +17,7 @@ import java.util.Optional;
 
 import static dnt.parkrun.database.DataSourceUrlBuilder.getTestDataSourceUrl;
 import static dnt.parkrun.datastructures.AgeCategory.*;
+import static dnt.parkrun.datastructures.Country.NZ;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CourseEventSummaryInvariantTest extends BaseDaoTest
@@ -42,8 +43,8 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
 
         CourseRepository courseRepository = new CourseRepository();
         CourseDao courseDao = new CourseDao(dataSource, courseRepository);
-        courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
-        resultDao = new ResultDao(dataSource);
+        courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
+        resultDao = new ResultDao(country, dataSource);
         AthleteDao athleteDao = new AthleteDao(dataSource);
 
         course = courseDao.insert(CORNWALL);
@@ -171,7 +172,7 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
 
         public Stub(DataSource dataSource, List<Result> stubResults)
         {
-            super(dataSource, 1L);
+            super(NZ, dataSource, 1L);
             this.stubResults = stubResults;
         }
 

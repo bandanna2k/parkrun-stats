@@ -8,6 +8,7 @@ import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.stats.invariants.AbstractDatabaseInvariantTest;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -18,7 +19,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static dnt.parkrun.datastructures.Country.NZ;
-import static org.junit.Assert.fail;
 
 public class DatabaseInvariantTest extends AbstractDatabaseInvariantTest
 {
@@ -103,6 +103,7 @@ public class DatabaseInvariantTest extends AbstractDatabaseInvariantTest
             };
         });
 
+        SoftAssertions softly = new SoftAssertions();
         if(!query.isEmpty())
         {
             query.forEach(fields -> {
@@ -118,8 +119,9 @@ public class DatabaseInvariantTest extends AbstractDatabaseInvariantTest
                                 .addValue("date", date),
                         Integer.class);
 
-                fail(String.format("Course: %s, Date %s, Event number %s, Result Count: %s", course.name, date, eventNumber, resultCount));
+                softly.fail(String.format("Course: %s, Date %s, Event number %s, Result Count: %s", course.name, date, eventNumber, resultCount));
             });
+            softly.assertAll();
         }
     }
 

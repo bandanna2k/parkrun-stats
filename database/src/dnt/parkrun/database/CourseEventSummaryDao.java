@@ -12,9 +12,9 @@ public class CourseEventSummaryDao extends BaseDao
 {
     private final CourseRepository courseRepository;
 
-    public CourseEventSummaryDao(DataSource dataSource, CourseRepository courseRepository)
+    public CourseEventSummaryDao(Country country, DataSource dataSource, CourseRepository courseRepository)
     {
-        super(dataSource);
+        super(country, dataSource);
         this.courseRepository = courseRepository;
     }
 

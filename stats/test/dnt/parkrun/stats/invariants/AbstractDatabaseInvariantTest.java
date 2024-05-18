@@ -20,11 +20,11 @@ public abstract class AbstractDatabaseInvariantTest
     protected SimpleDriverDataSource dataSource;
     protected SimpleDriverDataSource weeklyDataSource;
     protected NamedParameterJdbcTemplate jdbc;
+    protected Country country = NZ;
 
     @Before
     public void setUp() throws Exception
     {
-        Country country = NZ;
         dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
         weeklyDataSource = new SimpleDriverDataSource(new Driver(),

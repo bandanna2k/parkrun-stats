@@ -26,7 +26,7 @@ public class ResultDaoTest extends BaseDaoTest
     @Before
     public void setUp() throws Exception
     {
-        resultDao = new ResultDao(dataSource);
+        resultDao = new ResultDao(country, dataSource);
         athleteDao = new AthleteDao(dataSource);
 
         jdbc.update("delete from result", EmptySqlParameterSource.INSTANCE);

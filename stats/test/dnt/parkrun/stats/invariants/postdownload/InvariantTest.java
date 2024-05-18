@@ -23,7 +23,7 @@ public class InvariantTest
         Country country = NZ;
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
-        CourseEventSummaryChecker courseEventSummaryChecker = new CourseEventSummaryChecker(dataSource, System.currentTimeMillis());
+        CourseEventSummaryChecker courseEventSummaryChecker = new CourseEventSummaryChecker(country, dataSource, System.currentTimeMillis());
         List<String> validate = courseEventSummaryChecker.validate();
         assertThat(validate).isEmpty();
     }

@@ -39,8 +39,8 @@ public class AttendanceRecordsDaoTest extends BaseDaoTest
         athleteDao = new AthleteDao(dataSource);
         courseRepository = new CourseRepository();
         courseDao = new CourseDao(dataSource, courseRepository);
-        resultDao = new ResultDao(dataSource);
-        courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
+        resultDao = new ResultDao(country, dataSource);
+        courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
     }
 
     @Test

@@ -3,6 +3,7 @@ package dnt.parkrun.database;
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -20,6 +21,8 @@ import static org.junit.Assume.assumeTrue;
 
 public abstract class BaseDaoTest
 {
+    protected Country country = NZ;
+
     public static final Date EPOCH_PLUS_7 = DateConverter.parseWebsiteDate("01/01/1970");
     public static final Date EPOCH_PLUS_14 = DateConverter.parseWebsiteDate("08/01/1970");
     public static final Date EPOCH_PLUS_21 = DateConverter.parseWebsiteDate("15/01/1970");

@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static dnt.parkrun.datastructures.Country.NZ;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CourseEventSummaryDaoTest extends BaseDaoTest
@@ -37,7 +38,7 @@ public class CourseEventSummaryDaoTest extends BaseDaoTest
         jdbc.update("delete from course_event_summary", EmptySqlParameterSource.INSTANCE);
 
         courseRepository = new CourseRepository();
-        dao = new CourseEventSummaryDao(dataSource, courseRepository);
+        dao = new CourseEventSummaryDao(country, dataSource, courseRepository);
         courseDao = new CourseDao(dataSource, courseRepository);
         athleteDao = new AthleteDao(dataSource);
     }
@@ -50,7 +51,7 @@ public class CourseEventSummaryDaoTest extends BaseDaoTest
         athleteDao.insert(firstWoman);
         athleteDao.insert(firstMan);
 
-        Course course = courseDao.insert(new Course(9999, "cornwall", Country.NZ, null, Status.RUNNING));
+        Course course = courseDao.insert(new Course(9999, "cornwall", NZ, null, Status.RUNNING));
         CourseEventSummary ces = new CourseEventSummary(
                 course, 1, Date.from(Instant.now()), 1234, Optional.of(firstMan), Optional.of(firstWoman));
         dao.insert(ces);
@@ -66,7 +67,7 @@ public class CourseEventSummaryDaoTest extends BaseDaoTest
         athleteDao.insert(firstWoman);
         athleteDao.insert(firstMan);
 
-        Course course = courseDao.insert(new Course(9999, "cornwall", Country.NZ, null, Status.RUNNING));
+        Course course = courseDao.insert(new Course(9999, "cornwall", NZ, null, Status.RUNNING));
 
         CourseEventSummary ces = new CourseEventSummary(
                 course, 1, DateConverter.parseWebsiteDate("25/12/2023"), 1234, Optional.of(firstMan), Optional.of(firstWoman));

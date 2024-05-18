@@ -30,6 +30,7 @@ public class CourseEventSummaryChecker
     private final List<Course> courses;
     private final VolunteerDao volunteerDao;
     private final AthleteDao athleteDao;
+    private final Country country;
 
     /*
     On failure, run 'RewriteEvent'
@@ -40,7 +41,7 @@ public class CourseEventSummaryChecker
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl(PARKRUN_STATS, country), "dao", "daoFractaldao");
 
-        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
+        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(country,
                 dataSource, System.currentTimeMillis());
 //        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
 //                dataSource, 1715335259867L);
@@ -50,18 +51,19 @@ public class CourseEventSummaryChecker
         errors.forEach(error -> System.out.println("ERROR: " + error));
     }
 
-    public CourseEventSummaryChecker(DataSource dataSource, long seed)
+    public CourseEventSummaryChecker(Country country, DataSource dataSource, long seed)
     {
+        this.country = country;
         System.out.printf("Random seed for %s: %d%n", this.getClass().getSimpleName(), seed);
         this.random = new Random(seed);
 
         courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
-        courses = courseRepository.getCourses(NZ).stream().filter(course -> course.status == Course.Status.RUNNING).toList();
-        resultDao = new ResultDao(dataSource);
+        courses = courseRepository.getCourses(country).stream().filter(course -> course.status == Course.Status.RUNNING).toList();
+        resultDao = new ResultDao(country, dataSource);
         athleteDao = new AthleteDao(dataSource);
-        volunteerDao = new VolunteerDao(dataSource);
-        courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
+        volunteerDao = new VolunteerDao(country, dataSource);
+        courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
     }
 
     public List<String> validate()

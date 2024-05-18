@@ -47,8 +47,8 @@ public class MostEventsDaoTest extends BaseDaoTest
         CourseRepository courseRepository = new CourseRepository();
         courseDao = new CourseDao(dataSource, courseRepository);
         athleteDao = new AthleteDao(dataSource);
-        resultDao = new ResultDao(dataSource);
-        courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
+        resultDao = new ResultDao(country, dataSource);
+        courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class MostEventsDaoTest extends BaseDaoTest
                     2, boy, Time.from("22:23"), SM30_34, AgeGrade.newInstance(70.89 + i)));
         }
 
-        MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(dataSource, epoch);
+        MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(country, dataSource, epoch);
         mostEventsDao.populateMostEventsTable();
 
         List<MostEventsDao.MostEventsRecord> mostEvents = mostEventsDao.getMostEvents();

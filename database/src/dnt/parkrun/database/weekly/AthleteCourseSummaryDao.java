@@ -3,6 +3,7 @@ package dnt.parkrun.database.weekly;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.BaseDao;
 import dnt.parkrun.datastructures.AthleteCourseSummary;
+import dnt.parkrun.datastructures.Country;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -14,15 +15,15 @@ public class AthleteCourseSummaryDao extends BaseDao
 {
     private final Date date;
 
-    private AthleteCourseSummaryDao(DataSource statsDataSource, Date date)
+    private AthleteCourseSummaryDao(Country country, DataSource statsDataSource, Date date)
     {
-        super(statsDataSource);
+        super(country, statsDataSource);
         this.date = date;
     }
 
-    public static AthleteCourseSummaryDao getInstance(DataSource statsDataSource, Date date)
+    public static AthleteCourseSummaryDao getInstance(Country country, DataSource statsDataSource, Date date)
     {
-        AthleteCourseSummaryDao athleteCourseSummaryDao = new AthleteCourseSummaryDao(statsDataSource, date);
+        AthleteCourseSummaryDao athleteCourseSummaryDao = new AthleteCourseSummaryDao(country, statsDataSource, date);
         athleteCourseSummaryDao.createTable();
         return athleteCourseSummaryDao;
     }

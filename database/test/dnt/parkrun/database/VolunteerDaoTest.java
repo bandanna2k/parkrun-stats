@@ -29,7 +29,7 @@ public class VolunteerDaoTest extends BaseDaoTest
         @Before
         public void setUp() throws Exception
         {
-            volunteerDao = new VolunteerDao(dataSource);
+            volunteerDao = new VolunteerDao(country, dataSource);
             athleteDao = new AthleteDao(dataSource);
 
             jdbc.update("delete from course", EmptySqlParameterSource.INSTANCE);
@@ -61,7 +61,7 @@ public class VolunteerDaoTest extends BaseDaoTest
         @Before
         public void setUp() throws Exception
         {
-            volunteerDao = new VolunteerDao(dataSource);
+            volunteerDao = new VolunteerDao(country, dataSource);
             athleteDao = new AthleteDao(dataSource);
             CourseRepository courseRepository = new CourseRepository();
             courseDao = new CourseDao(dataSource, courseRepository);
@@ -139,7 +139,7 @@ public class VolunteerDaoTest extends BaseDaoTest
         @Before
         public void setUp() throws Exception
         {
-            volunteerDao = new VolunteerDao(dataSource);
+            volunteerDao = new VolunteerDao(country, dataSource);
             athleteDao = new AthleteDao(dataSource);
 
             jdbc.update("delete from event_volunteer", EmptySqlParameterSource.INSTANCE);

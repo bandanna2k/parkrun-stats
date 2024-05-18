@@ -30,7 +30,7 @@ public class AthleteCourseSummaryDaoTest extends BaseDaoTest
                 "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
 
         this.athleteDao = new AthleteDao(dataSource);
-        this.acsDao = AthleteCourseSummaryDao.getInstance(dataSource, new Date());
+        this.acsDao = AthleteCourseSummaryDao.getInstance(country, dataSource, new Date());
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);
         jdbc.update("delete from " + acsDao.tableName(), EmptySqlParameterSource.INSTANCE);

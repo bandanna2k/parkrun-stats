@@ -88,7 +88,7 @@ public class MostEventStats
             new ProcessBuilder("xdg-open", modified.getAbsolutePath()).start();
         }
 
-        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(dataSource, System.currentTimeMillis());
+        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(country, dataSource, System.currentTimeMillis());
         List<String> validate = checker.validate();
         if(!validate.isEmpty())
         {
@@ -136,18 +136,18 @@ public class MostEventStats
 
         this.statsDataSource = statsDataSource;
         this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(country, statsDataSource, this.date);
-        this.acsDao = AthleteCourseSummaryDao.getInstance(statsDataSource, this.date);
-        this.top10Dao = Top10AtCourseDao.getInstance(statsDataSource, this.date);
-        this.top10VolunteerDao = Top10VolunteersAtCourseDao.getInstance(statsDataSource, this.date);
-        this.pIndexDao = PIndexDao.getInstance(statsDataSource, date);
-        this.volunteerCountDao = VolunteerCountDao.getInstance(statsDataSource, this.date);
+        this.acsDao = AthleteCourseSummaryDao.getInstance(country, statsDataSource, this.date);
+        this.top10Dao = Top10AtCourseDao.getInstance(country, statsDataSource, this.date);
+        this.top10VolunteerDao = Top10VolunteersAtCourseDao.getInstance(country, statsDataSource, this.date);
+        this.pIndexDao = PIndexDao.getInstance(country, statsDataSource, date);
+        this.volunteerCountDao = VolunteerCountDao.getInstance(country, statsDataSource, this.date);
 
-        this.resultDao = new ResultDao(dataSource);
-        this.volunteerDao = new VolunteerDao(statsDataSource);
+        this.resultDao = new ResultDao(country, dataSource);
+        this.volunteerDao = new VolunteerDao(country, statsDataSource);
 
         this.courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
-        this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
+        this.courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
     }
 
     public static MostEventStats newInstance(Country country, DataSource dataSource, DataSource statsDataSource, Date date) throws SQLException
@@ -183,7 +183,7 @@ public class MostEventStats
         System.out.println("Done");
 
         System.out.println("* Generating most events table *");
-        MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(statsDataSource, date);
+        MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(country, statsDataSource, date);
         mostEventsDao.populateMostEventsTable();
 
         System.out.println("* Get most events *");
@@ -483,7 +483,7 @@ public class MostEventStats
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Runs at Courses").build())
         {
             // Populate top 10 runs at courses
-            Top10RunsDao top10RunsDao = new Top10RunsDao(statsDataSource);
+            Top10RunsDao top10RunsDao = new Top10RunsDao(country, statsDataSource);
             List<Course> courses = courseRepository.getCourses(country).stream()
                     .filter(c -> c.status == RUNNING).toList();
             for (Course course : courses)
@@ -563,7 +563,7 @@ public class MostEventStats
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Volunteers at Courses")
                 .open().build())
         {
-            Top10VolunteersDao top10VolunteersDao = new Top10VolunteersDao(statsDataSource);
+            Top10VolunteersDao top10VolunteersDao = new Top10VolunteersDao(country, statsDataSource);
             List<Course> courses = courseRepository.getCourses(country).stream()
                     .filter(c -> c.status == RUNNING).toList();
             for (Course course : courses)

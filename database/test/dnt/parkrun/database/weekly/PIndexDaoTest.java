@@ -21,7 +21,7 @@ public class PIndexDaoTest extends BaseDaoTest
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
-        pIndexDao = PIndexDao.getInstance(dataSource, Date.from(Instant.EPOCH));
+        pIndexDao = PIndexDao.getInstance(country, dataSource, Date.from(Instant.EPOCH));
     }
 
     @Test

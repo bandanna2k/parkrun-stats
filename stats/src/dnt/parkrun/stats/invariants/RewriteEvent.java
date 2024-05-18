@@ -19,7 +19,6 @@ import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 
 public class RewriteEvent
 {
-
     private final ResultDao resultDao;
     private final CourseRepository courseRepository;
     private final VolunteerDao volunteerDao;
@@ -45,9 +44,9 @@ public class RewriteEvent
         new CourseDao(dataSource, courseRepository);
 
         athleteDao = new AthleteDao(dataSource);
-        courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
-        resultDao = new ResultDao(dataSource);
-        volunteerDao = new VolunteerDao(dataSource);
+        courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
+        resultDao = new ResultDao(country, dataSource);
+        volunteerDao = new VolunteerDao(country, dataSource);
     }
 
     private void rewriteCourseEvent(String courseName, int eventNumber)

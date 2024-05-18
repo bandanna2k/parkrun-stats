@@ -2,6 +2,7 @@ package dnt.parkrun.database.weekly;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.BaseDao;
+import dnt.parkrun.datastructures.Country;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -17,15 +18,15 @@ public class PIndexDao extends BaseDao
 {
     private final Date date;
 
-    public PIndexDao(DataSource statsDataSource, Date date)
+    public PIndexDao(Country country, DataSource statsDataSource, Date date)
     {
-        super(statsDataSource);
+        super(country, statsDataSource);
         this.date = date;
     }
 
-    public static PIndexDao getInstance(DataSource statsDataSource, Date date)
+    public static PIndexDao getInstance(Country country, DataSource statsDataSource, Date date)
     {
-        PIndexDao pIndexDao = new PIndexDao(statsDataSource, date);
+        PIndexDao pIndexDao = new PIndexDao(country, statsDataSource, date);
         pIndexDao.createTable();
         return pIndexDao;
     }

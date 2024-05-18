@@ -18,7 +18,7 @@ public class AttendanceRecordsDao extends BaseDao
 
     private AttendanceRecordsDao(Country country, DataSource dataSource, Date date)
     {
-        super(dataSource);
+        super(country, dataSource);
         this.country = country;
         this.date = date;
     }

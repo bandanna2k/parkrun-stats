@@ -6,6 +6,7 @@ import dnt.parkrun.database.AthleteDao;
 import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.database.weekly.Top10AtCourseDao;
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.stats.AtEvent;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,8 +15,11 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import java.util.*;
 
+import static dnt.parkrun.datastructures.Country.NZ;
+
 public class BestFriendsTest
 {
+    private Country country = NZ;
     private AthleteDao athleteDao;
     private ResultDao resultDao;
     private Map<Integer, Athlete> athleteToName;
@@ -31,11 +35,11 @@ public class BestFriendsTest
         final DataSource weeklyDataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/weekly_stats", "stats", "statsfractalstats");
         athleteDao = new AthleteDao(dataSource);
-        resultDao = new ResultDao(dataSource);
+        resultDao = new ResultDao(country, dataSource);
 
         athleteToName = athleteDao.getAllAthletes();
 
-        top10AtCourseDao = Top10AtCourseDao.getInstance(weeklyDataSource, DateConverter.parseWebsiteDate("13/04/2024"));
+        top10AtCourseDao = Top10AtCourseDao.getInstance(country, weeklyDataSource, DateConverter.parseWebsiteDate("13/04/2024"));
     }
 
     @Test

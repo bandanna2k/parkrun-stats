@@ -12,9 +12,9 @@ import java.util.List;
 
 public class Top10VolunteersDao extends BaseDao
 {
-    public Top10VolunteersDao(DataSource dataSource)
+    public Top10VolunteersDao(Country country, DataSource dataSource)
     {
-        super(dataSource);
+        super(country, dataSource);
     }
 
     public List<VolunteersAtEvent> getTop10VolunteersAtEvent(int courseId)

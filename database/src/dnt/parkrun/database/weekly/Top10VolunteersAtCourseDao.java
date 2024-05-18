@@ -18,15 +18,15 @@ public class Top10VolunteersAtCourseDao extends BaseDao
 {
     private final Date date;
 
-    private Top10VolunteersAtCourseDao(DataSource dataSource, Date date)
+    private Top10VolunteersAtCourseDao(Country country, DataSource dataSource, Date date)
     {
-        super(dataSource);
+        super(country, dataSource);
         this.date = date;
     }
 
-    public static Top10VolunteersAtCourseDao getInstance(DataSource dataSource, Date date)
+    public static Top10VolunteersAtCourseDao getInstance(Country country, DataSource dataSource, Date date)
     {
-        Top10VolunteersAtCourseDao top10VolunteersAtCourseDao = new Top10VolunteersAtCourseDao(dataSource, date);
+        Top10VolunteersAtCourseDao top10VolunteersAtCourseDao = new Top10VolunteersAtCourseDao(country, dataSource, date);
         top10VolunteersAtCourseDao.createTable();
         return top10VolunteersAtCourseDao;
     }

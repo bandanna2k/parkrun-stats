@@ -35,7 +35,7 @@ public class PairsStats
         final Country country = Country.valueOf(args[0]);
         final DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
-        PairsStats pairsStats = new PairsStats(dataSource);
+        PairsStats pairsStats = new PairsStats(country, dataSource);
         File file = pairsStats.generateStats(
                 1340853, // Jonathan
                 293223, // Julie GORDON
@@ -60,9 +60,9 @@ public class PairsStats
         new ProcessBuilder("xdg-open", modified.getAbsolutePath()).start();
     }
 
-    public PairsStats(DataSource dataSource)
+    public PairsStats(Country country, DataSource dataSource)
     {
-        resultDao = new ResultDao(dataSource);
+        resultDao = new ResultDao(country, dataSource);
         athleteDao = new AthleteDao(dataSource);
         courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);

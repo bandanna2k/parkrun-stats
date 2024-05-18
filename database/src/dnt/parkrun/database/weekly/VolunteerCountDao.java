@@ -3,6 +3,7 @@ package dnt.parkrun.database.weekly;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.BaseDao;
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.Country;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -17,15 +18,15 @@ public class VolunteerCountDao extends BaseDao
 {
     private final Date date;
 
-    public static VolunteerCountDao getInstance(DataSource dataSource, Date date)
+    public static VolunteerCountDao getInstance(Country country, DataSource dataSource, Date date)
     {
-        VolunteerCountDao mostVolunteersDao = new VolunteerCountDao(dataSource, date);
+        VolunteerCountDao mostVolunteersDao = new VolunteerCountDao(country, dataSource, date);
         mostVolunteersDao.init();
         return mostVolunteersDao;
     }
-    private VolunteerCountDao(DataSource dataSource, Date date)
+    private VolunteerCountDao(Country country, DataSource dataSource, Date date)
     {
-        super(dataSource);
+        super(country, dataSource);
         this.date = date;
         init();
     }
