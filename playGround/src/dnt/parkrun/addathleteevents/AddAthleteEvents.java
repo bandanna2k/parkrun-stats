@@ -1,14 +1,11 @@
 package dnt.parkrun.addathleteevents;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecourseevents.AthleteCourseEvent;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
 import dnt.parkrun.datastructures.*;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -17,33 +14,31 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static dnt.parkrun.datastructures.Country.NZ;
 import static java.util.Optional.empty;
 
 @Deprecated // Wrong solution
 public class AddAthleteEvents
 {
-    private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
+    private final UrlGenerator urlGenerator;
 
     private final CourseRepository courseRepository;
 
 
     public static void main(String[] args) throws IOException, SQLException
     {
-        AddAthleteEvents addAthleteEvents = AddAthleteEvents.newInstance();
+        AddAthleteEvents addAthleteEvents = AddAthleteEvents.newInstance(Country.valueOf(args[0]));
         addAthleteEvents.go(Arrays.stream(args).map(Integer::parseInt).collect(Collectors.toList()));
     }
 
-    private AddAthleteEvents(DataSource dataSource) throws SQLException
+    private AddAthleteEvents(Country country) throws SQLException
     {
         this.courseRepository = new CourseRepository();
+        this.urlGenerator = new UrlGenerator(country.baseUrl);
     }
 
-    public static AddAthleteEvents newInstance() throws SQLException
+    public static AddAthleteEvents newInstance(Country country) throws SQLException
     {
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost", "dao", "daoFractaldao");
-        return new AddAthleteEvents(dataSource);
+        return new AddAthleteEvents(country);
     }
 
     private void go(List<Integer> athletes) throws IOException
@@ -87,7 +82,7 @@ public class AddAthleteEvents
             {
                 // Still process
             }
-            else if(course.country.countryEnum == CountryEnum.NZ)
+            else if(course.country.countryEnum == country)
             {
                 continue;
             }
