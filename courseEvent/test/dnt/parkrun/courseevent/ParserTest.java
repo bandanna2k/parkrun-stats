@@ -11,7 +11,6 @@ import org.junit.runners.Parameterized;
 
 import java.io.File;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,16 +23,17 @@ public class ParserTest
     public String resource;
 
     @Parameterized.Parameters(name = "{0}")
-    public static Object[] data() throws SQLException
+    public static Object[] data()
     {
         return new Object[] {
                 ("/example.event.with.unknowns.html"),
-                ("/test/bushynewzealand/example.event.large.html"),
+                ("/example.event.with.largest.run,count.ever.html"),
                 ("/example.event.with.hour.plus.times.html"),
                 ("/example.event.with.no.gender.html"),
                 ("/example.event.with.assist.athlete.html"),
                 ("/example.event.with.triple.dash.athlete.html"),
                 ("/example.event.with.santa.claus.html"),
+                ("/example.event.with.weird.results.html"),
                 ("/example.event.with.blank.details.html"),
         };
     }

@@ -22,7 +22,7 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Get rid of NZ from codebase. Should use the parameter.
+- Speed stats for the year 
 
 - Change databases to country specific
 
@@ -47,6 +47,8 @@ Create a demo table.
 - Unique runners at course / Add unique runs for runners / Add unique runs to Most Events???
 
 ## Issues Completed
+
+- 18/5/24 Get rid of NZ from codebase. Should use the parameter.
 
 - 18/5/2024 Make menu country non-specific
 

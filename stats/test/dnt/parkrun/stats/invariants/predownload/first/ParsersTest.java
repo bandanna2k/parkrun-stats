@@ -1,4 +1,4 @@
-package dnt.parkrun.stats.invariants.predownload;
+package dnt.parkrun.stats.invariants.predownload.first;
 
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
@@ -22,7 +22,10 @@ import static dnt.parkrun.datastructures.Country.NZ;
 
 public class ParsersTest
 {
-    private static final Course CORNWALL = new Course(2, "cornwall", NZ, "Cornwall parkrun", Course.Status.RUNNING);
+    private static final Course CORNWALL = new Course(
+            2, "cornwallpark", NZ, "Cornwall Park parkrun", Course.Status.RUNNING);
+    private static final Course LOWER_HUTT = new Course(
+            1, "lowerhutt", NZ, "Lower Hutt parkrun", Course.Status.RUNNING);
 
     private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
 
@@ -41,7 +44,7 @@ public class ParsersTest
     }
 
     @Test
-    public void testCourseEvent() throws IOException, SQLException
+    public void testCourseEvent() throws SQLException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
@@ -50,8 +53,8 @@ public class ParsersTest
 
         List<Volunteer> listOfVolunteers = new ArrayList<>();
         List<Athlete> listOfAthletes = new ArrayList<>();
-        dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(courseRepository.getCourse(CORNWALL.courseId))
-                .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(CORNWALL.name, 1)))
+        dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(courseRepository.getCourse(LOWER_HUTT.courseId))
+                .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(LOWER_HUTT.name, 1)))
                 .forEachAthlete(listOfAthletes::add)
                 .forEachVolunteer(listOfVolunteers::add)
                 .build();

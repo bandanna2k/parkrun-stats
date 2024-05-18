@@ -1,4 +1,4 @@
-package dnt.parkrun.stats.invariants.predownload;
+package dnt.parkrun.stats.invariants.predownload.last;
 
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.DateConverter;
