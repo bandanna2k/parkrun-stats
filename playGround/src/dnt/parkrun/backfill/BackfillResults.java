@@ -7,10 +7,7 @@ import dnt.parkrun.courseevent.Parser;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.CourseEventSummaryDao;
 import dnt.parkrun.database.ResultDao;
-import dnt.parkrun.datastructures.Course;
-import dnt.parkrun.datastructures.CourseEventSummary;
-import dnt.parkrun.datastructures.CourseRepository;
-import dnt.parkrun.datastructures.Result;
+import dnt.parkrun.datastructures.*;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
@@ -18,18 +15,22 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static dnt.parkrun.datastructures.Country.NZ;
-
-@Deprecated
+@Deprecated(since = "Deprecated to discourage use.")
 public class BackfillResults
 {
-    private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
+    private final UrlGenerator urlGenerator;
+    private final Country country;
+
+    public BackfillResults(Country country)
+    {
+        this.country = country;
+        this.urlGenerator = new UrlGenerator(country.baseUrl);
+    }
 
     public static void main(String[] args) throws IOException, SQLException
     {
-        new BackfillResults().backfill1();
+        new BackfillResults(Country.valueOf(args[0])).backfill1();
     }
 
     private void backfill2() throws SQLException
@@ -90,10 +91,10 @@ public class BackfillResults
 
         ResultDao resultDao = new ResultDao(dataSource);
 
-        for (Course backfillCourse : courseRepository.getCourses(NZ))
+        for (Course backfillCourse : courseRepository.getCourses(country))
         {
             List<CourseEventSummary> courseEventSummaries = new CourseEventSummaryDao(dataSource, courseRepository).getCourseEventSummaries()
-                    .stream().filter(ces -> ces.course.courseId == backfillCourse.courseId).collect(Collectors.toList());
+                    .stream().filter(ces -> ces.course.courseId == backfillCourse.courseId).toList();
 
             if (backfillCourse.name.startsWith("a")) continue;
             if (backfillCourse.name.startsWith("b")) continue;

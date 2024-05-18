@@ -308,7 +308,8 @@ public class MostEventStats
 
             // p-Index
             Set<Integer> regionalPIndexAthletes = new HashSet<>();
-            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, urlGenerator, country.countryName + " p-Index"))
+            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(
+                    country, writer.writer, urlGenerator, country.countryName + " p-Index"))
             {
                 List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
                 for (Map.Entry<Integer, List<AthleteCourseSummary>> entry : athleteIdToAthleteCourseSummaries.entrySet())
@@ -378,7 +379,8 @@ public class MostEventStats
             }
 
             // Legacy p-Index
-            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, urlGenerator, "Legacy p-Index"))
+            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(
+                    country, writer.writer, urlGenerator, "Legacy p-Index"))
             {
                 List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
                 for (Map.Entry<Integer, List<AthleteCourseSummary>> entry : athleteIdToAthleteCourseSummaries.entrySet())

@@ -128,7 +128,7 @@ public class Menu
             DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                     getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
             WeekendResults weekendResults = WeekendResults.newInstance(
-                    dataSource,
+                    country, dataSource,
                     new WebpageProviderFactoryImpl(new UrlGenerator(country.baseUrl)));
             weekendResults.fetchWeekendResults();
         }

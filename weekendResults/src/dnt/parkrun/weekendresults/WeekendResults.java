@@ -17,23 +17,24 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dnt.parkrun.datastructures.Country.NZ;
-
 public class WeekendResults
 {
     public static void main(String[] args) throws SQLException, IOException
     {
+        Country country = Country.valueOf(args[0]);
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
         WeekendResults weekendResults = WeekendResults.newInstance(
+                country,
                 dataSource,
-                new WebpageProviderFactoryImpl(new UrlGenerator(NZ.baseUrl)));
+                new WebpageProviderFactoryImpl(new UrlGenerator(country.baseUrl)));
 
         weekendResults.fetchWeekendResults();
     }
 
 
 
+    private final Country country;
     private final CourseRepository courseRepository;
 
     private final AthleteDao athleteDao;
@@ -43,9 +44,10 @@ public class WeekendResults
     private final VolunteerDao volunteerDao;
     private final WebpageProviderFactory webpageProviderFactory;
 
-    private WeekendResults(DataSource dataSource,
+    private WeekendResults(Country country, DataSource dataSource,
                            WebpageProviderFactory webpageProviderFactory) throws SQLException
     {
+        this.country = country;
         this.courseRepository = new CourseRepository();
         this.courseDao = new CourseDao(dataSource, courseRepository);
         this.athleteDao = new AthleteDao(dataSource);
@@ -55,15 +57,16 @@ public class WeekendResults
         this.webpageProviderFactory = webpageProviderFactory;
     }
 
-    public static WeekendResults newInstance(DataSource dataSource,
+    public static WeekendResults newInstance(Country country,
+                                             DataSource dataSource,
                                              WebpageProviderFactory webpageProviderFactory) throws SQLException
     {
-        return new WeekendResults(dataSource, webpageProviderFactory);
+        return new WeekendResults(country, dataSource, webpageProviderFactory);
     }
 
     public void fetchWeekendResults() throws IOException
     {
-        courseRepository.getCourses(NZ).forEach(course ->
+        courseRepository.getCourses(country).forEach(course ->
         {
             if(course.status != Course.Status.RUNNING) return;
 

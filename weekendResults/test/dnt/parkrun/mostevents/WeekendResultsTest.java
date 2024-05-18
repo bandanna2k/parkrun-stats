@@ -40,7 +40,7 @@ public class WeekendResultsTest extends BaseDaoTest
         courseEventSummaryDao.insert(new CourseEventSummary(bushy, 1, Date.from(Instant.EPOCH), 2545,
                 Optional.of(johnDoe), Optional.of(janeDoe)));
 
-        weekendResults = WeekendResults.newInstance(dataSource, new TestWebpageProviderFactory());
+        weekendResults = WeekendResults.newInstance(bushy.country, dataSource, new TestWebpageProviderFactory());
 
         NamedParameterJdbcTemplate jdbc = new NamedParameterJdbcTemplate(dataSource);
         jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);
