@@ -33,7 +33,7 @@ public class RewriteEvent
                 getDataSourceUrl(PARKRUN_STATS, country), "dao", "0b851094");
 
         RewriteEvent rewriteEvent = new RewriteEvent(country, dataSource);
-        rewriteEvent.rewriteCourseEvent("hamiltonlake", 514);
+        rewriteEvent.rewriteCourseEvent("hamiltonpark", 118);
     }
 
     public RewriteEvent(Country country, DataSource dataSource)

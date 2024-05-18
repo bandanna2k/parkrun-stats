@@ -4,8 +4,8 @@ BACKUP_DIR=mysql/backup/$DATE_DIR/
 
 mkdir -p $BACKUP_DIR/
 
-docker exec mysql-parkrun-stats mysqldump -h127.0.0.1 -uroot -pfractal --databases parkrun_stats > $BACKUP_DIR/mysqldump.parkrun_stats.sql
-docker exec mysql-parkrun-stats mysqldump -h127.0.0.1 -uroot -pfractal --databases weekly_stats > $BACKUP_DIR/mysqldump.weekly_stats.sql
+docker exec mysql-parkrun-stats mysqldump -h127.0.0.1 -uroot -pfractal --databases parkrun_stats_NZ > $BACKUP_DIR/mysqldump.parkrun_stats_NZ.sql
+docker exec mysql-parkrun-stats mysqldump -h127.0.0.1 -uroot -pfractal --databases weekly_stats_NZ > $BACKUP_DIR/mysqldump.weekly_stats_NZ.sql
 
 (cd $BACKUP_DIR; ls -alR; pwd)
 
