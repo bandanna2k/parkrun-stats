@@ -39,6 +39,7 @@ public class ParsersTest
 
         Assertions.assertThat(listOfCourseEvents.size()).isGreaterThan(500);
     }
+
     @Test
     public void testCourseEvent() throws IOException, SQLException
     {

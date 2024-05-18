@@ -50,7 +50,7 @@ public class Parser
 //                System.out.print("\t");
                 Date date = DateConverter.parseWebsiteDate(dateNode.toString());
 
-                Node finishers = row.childNode(2).childNode(0).childNode(0);
+                String finishers = getValueFromNode(row.childNode(2));
 //                System.out.print(date);
 //                System.out.print("\t");
 
@@ -108,12 +108,24 @@ public class Parser
                         course,
                         Integer.parseInt(eventNumber.toString()),
                         date,
-                        Integer.parseInt(finishers.toString()),
+                        Integer.parseInt(finishers),
                         Optional.ofNullable(maleFirstFinisher),
                         Optional.ofNullable(femaleFirstFinisher));
                 consumer.accept(eventSummary);
             }
         }
+    }
+
+    private static String getValueFromNode(Node node)
+    {
+        String result;
+        Node searchNode = node;
+        do
+        {
+            result = searchNode.toString();
+        }
+        while(result.contains("<") && (null != (searchNode = searchNode.childNode(0))));
+        return result;
     }
 
     public static class Builder
