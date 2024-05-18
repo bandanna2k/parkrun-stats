@@ -111,9 +111,9 @@ public class Menu
         try
         {
             DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
+                    getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
             DataSource statsDataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
+                    getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
 
             MostEventStats stats = MostEventStats.newInstance(country, dataSource, statsDataSource, getParkrunDay(new Date()));
             File file = stats.generateStats();
@@ -133,7 +133,7 @@ public class Menu
         try
         {
             DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl(PARKRUN_STATS, country), "dao", "daoFractaldao");
+                    getDataSourceUrl(PARKRUN_STATS, country), "dao", "0b851094");
             WeekendResults weekendResults = WeekendResults.newInstance(
                     country, dataSource,
                     new WebpageProviderFactoryImpl(new UrlGenerator(country.baseUrl)));
@@ -150,8 +150,8 @@ public class Menu
         try
         {
             DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
-            SpeedStats stats = SpeedStats.newInstance(dataSource);
+                    getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
+            SpeedStats stats = SpeedStats.newInstance(country, dataSource);
 
             Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord =
                     stats.collectCourseToAgeGroupToAgeGradeRecord();

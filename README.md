@@ -22,11 +22,7 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Bring out rewrite event into its own class 
-
 - Speed stats for the year 
-
-- Change databases to country specific
 
 - Remove sql from readme 
 
@@ -49,6 +45,10 @@ Create a demo table.
 - Unique runners at course / Add unique runs for runners / Add unique runs to Most Events???
 
 ## Issues Completed
+
+- 19/5/2024 Bring out rewrite event into its own class
+
+- 19/5/2024 Change databases to country specific
 
 - 18/5/24 Get rid of NZ from codebase. Should use the parameter.
 

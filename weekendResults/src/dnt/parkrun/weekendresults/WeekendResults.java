@@ -51,9 +51,9 @@ public class WeekendResults
         this.courseRepository = new CourseRepository();
         this.courseDao = new CourseDao(dataSource, courseRepository);
         this.athleteDao = new AthleteDao(dataSource);
-        this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
-        this.resultDao = new ResultDao(dataSource);
-        this.volunteerDao = new VolunteerDao(dataSource);
+        this.courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
+        this.resultDao = new ResultDao(country, dataSource);
+        this.volunteerDao = new VolunteerDao(country, dataSource);
         this.webpageProviderFactory = webpageProviderFactory;
     }
 
