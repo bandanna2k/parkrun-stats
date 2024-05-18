@@ -108,7 +108,7 @@ public class Menu
             DataSource statsDataSource = new SimpleDriverDataSource(new Driver(),
                     getDataSourceUrl("weekly_stats"), "stats", "statsfractalstats");
 
-            MostEventStats stats = MostEventStats.newInstance(dataSource, statsDataSource, getParkrunDay(new Date()));
+            MostEventStats stats = MostEventStats.newInstance(country, dataSource, statsDataSource, getParkrunDay(new Date()));
             File file = stats.generateStats();
             File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
             MostEventStats.findAndReplace(file, modified);

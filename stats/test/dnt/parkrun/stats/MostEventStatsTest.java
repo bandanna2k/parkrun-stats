@@ -15,6 +15,7 @@ import java.time.Instant;
 import java.util.Date;
 
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
+import static dnt.parkrun.datastructures.Country.NZ;
 
 public class MostEventStatsTest
 {
@@ -29,7 +30,7 @@ public class MostEventStatsTest
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl("parkrun_stats_test"), "test", "qa");
 
-        stats = MostEventStats.newInstance(dataSource, dataSource, Date.from(Instant.EPOCH));
+        stats = MostEventStats.newInstance(NZ, dataSource, dataSource, Date.from(Instant.EPOCH));
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);
         jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);

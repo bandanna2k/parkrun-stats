@@ -48,8 +48,6 @@ import static java.util.Collections.emptyList;
 
 public class MostEventStats
 {
-    private static final Country COUNTRY = NZ;
-
     public static final int MIN_P_INDEX = 5;
     public static final Comparator<PIndexTableHtmlWriter.Record> PINDEX_RECORD_COMPARATOR = (pIndexRecord1, pIndexRecord2) ->
     {
@@ -68,6 +66,7 @@ public class MostEventStats
     /*
             02/03/2024
      */
+    @Deprecated(since = "Use menu from now on.")
     public static void main(String[] args) throws SQLException, IOException, XMLStreamException
     {
         Date date = args.length == 0 ? getParkrunDay(new Date()) : DateConverter.parseWebsiteDate(args[0]);
@@ -77,7 +76,7 @@ public class MostEventStats
         DataSource statsDataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl("weekly_stats"), "stats", "statsfractalstats");
 
-        MostEventStats stats = MostEventStats.newInstance(dataSource, statsDataSource, date);
+        MostEventStats stats = MostEventStats.newInstance(NZ, dataSource, statsDataSource, date);
 
         {
             File file = stats.generateStats();
@@ -95,6 +94,7 @@ public class MostEventStats
         }
     }
 
+    private final Country country;
     private final Date date;
     private final Date lastWeek;
     private final DataSource statsDataSource;
@@ -112,7 +112,7 @@ public class MostEventStats
     private final Map<Integer, List<AthleteCourseSummary>> athleteIdToAthleteCourseSummaries = new HashMap<>();
     private final List<CourseDate> startDates = new ArrayList<>();
     private final List<CourseDate> stopDates = new ArrayList<>();
-    private final UrlGenerator urlGenerator = new UrlGenerator(COUNTRY.baseUrl);
+    private final UrlGenerator urlGenerator;
 
     private final AverageAttendanceProcessor averageAttendanceProcessor = new AverageAttendanceProcessor();
     private final AttendanceProcessor attendanceProcessor = new AttendanceProcessor();
@@ -121,16 +121,19 @@ public class MostEventStats
             averageAttendanceProcessor, attendanceProcessor, averageTimeProcessor
     };
 
-    private MostEventStats(DataSource dataSource,
+    private MostEventStats(Country country, DataSource dataSource,
                            DataSource statsDataSource,
                            Date date)
     {
+        this.country = country;
+        this.urlGenerator = new UrlGenerator(country.baseUrl);
+
         this.date = date;
         lastWeek = new Date();
         lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
 
         this.statsDataSource = statsDataSource;
-        this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(COUNTRY, statsDataSource, this.date);
+        this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(country, statsDataSource, this.date);
         this.acsDao = AthleteCourseSummaryDao.getInstance(statsDataSource, this.date);
         this.top10Dao = Top10AtCourseDao.getInstance(statsDataSource, this.date);
         this.top10VolunteerDao = Top10VolunteersAtCourseDao.getInstance(statsDataSource, this.date);
@@ -145,9 +148,9 @@ public class MostEventStats
         this.courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
     }
 
-    public static MostEventStats newInstance(DataSource dataSource, DataSource statsDataSource, Date date) throws SQLException
+    public static MostEventStats newInstance(Country country, DataSource dataSource, DataSource statsDataSource, Date date) throws SQLException
     {
-        return new MostEventStats(dataSource, statsDataSource, date);
+        return new MostEventStats(country, dataSource, statsDataSource, date);
     }
 
     public File generateStats() throws IOException, XMLStreamException
@@ -174,7 +177,7 @@ public class MostEventStats
         System.out.println("Done");
 
         System.out.print("Getting stop dates ");
-        stopDates.addAll(courseEventSummaryDao.getCourseStopDates(COUNTRY));
+        stopDates.addAll(courseEventSummaryDao.getCourseStopDates(country));
         System.out.println("Done");
 
         System.out.println("* Generating most events table *");
@@ -192,7 +195,7 @@ public class MostEventStats
 
         downloadAthleteCourseSummaries(differentEventRecords);
 
-        try (HtmlWriter writer = HtmlWriter.newInstance(date, COUNTRY, "most_event_stats"))
+        try (HtmlWriter writer = HtmlWriter.newInstance(date, country, "most_event_stats"))
         {
             writer.writer.writeCharacters("{{css}}");
 
@@ -291,7 +294,7 @@ public class MostEventStats
 
     private void writePIndex(HtmlWriter writer) throws XMLStreamException
     {
-        RegionChecker regionChecker = new RegionCheckerFactory().getRegionChecker(COUNTRY);
+        RegionChecker regionChecker = new RegionCheckerFactory().getRegionChecker(country); // TODO Check this out regarding country
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter.Builder(writer.writer, "p-Index Tables").build())
         {
             writer.writer.writeStartElement("p");
@@ -305,7 +308,7 @@ public class MostEventStats
 
             // p-Index
             Set<Integer> regionalPIndexAthletes = new HashSet<>();
-            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, urlGenerator, COUNTRY.countryName + " p-Index"))
+            try (PIndexTableHtmlWriter tableWriter = new PIndexTableHtmlWriter(writer.writer, urlGenerator, country.countryName + " p-Index"))
             {
                 List<PIndexTableHtmlWriter.Record> records = new ArrayList<>();
                 for (Map.Entry<Integer, List<AthleteCourseSummary>> entry : athleteIdToAthleteCourseSummaries.entrySet())
@@ -328,7 +331,7 @@ public class MostEventStats
                     }
 
                     PIndex.Result regionPIndex = PIndex.pIndexAndNeeded(summariesForAthlete.stream()
-                            .filter(acs -> acs.course.country == COUNTRY).collect(Collectors.toList()));
+                            .filter(acs -> acs.course.country == country).collect(Collectors.toList()));
                     if (regionPIndex.pIndex <= MIN_P_INDEX)
                     {
                         continue;
@@ -338,14 +341,14 @@ public class MostEventStats
                         AthleteCourseSummary maxAthleteCourseSummary = getMaxAthleteCourseSummary(summariesForAthlete);
                         Course globalHomeParkrun = maxAthleteCourseSummary.course;
                         assert globalHomeParkrun != null : "Home parkrun is null, how?";
-                        if (globalHomeParkrun.country != COUNTRY)
+                        if (globalHomeParkrun.country != country)
                         {
                             continue;
                         }
                         regionalPIndexAthletes.add(athleteId);
                     }
 
-                    AthleteCourseSummary maxAthleteCourseSummaryInRegion = getMaxAthleteCourseSummaryInRegion(summariesForAthlete, COUNTRY);
+                    AthleteCourseSummary maxAthleteCourseSummaryInRegion = getMaxAthleteCourseSummaryInRegion(summariesForAthlete, country);
                     double provinceRunCount = regionChecker.getRegionRunCount(maxAthleteCourseSummaryInRegion.course, summariesForAthlete);
                     double totalRuns = getTotalRuns(summariesForAthlete);
                     double homeRatio = provinceRunCount / totalRuns;
@@ -391,7 +394,7 @@ public class MostEventStats
                     }
 
                     PIndex.Result regionPIndex = PIndex.pIndexAndNeeded(summariesForAthlete.stream()
-                            .filter(acs -> acs.course.country == COUNTRY).collect(Collectors.toList()));
+                            .filter(acs -> acs.course.country == country).collect(Collectors.toList()));
                     if (regionPIndex.pIndex <= MIN_P_INDEX)
                     {
                         continue;
@@ -408,7 +411,7 @@ public class MostEventStats
 //                        regionalPIndexAthletes.add(athleteId);
 //                    }
 
-                    AthleteCourseSummary maxAthleteCourseSummaryInRegion = getMaxAthleteCourseSummaryInRegion(summariesForAthlete, COUNTRY);
+                    AthleteCourseSummary maxAthleteCourseSummaryInRegion = getMaxAthleteCourseSummaryInRegion(summariesForAthlete, country);
                     double provinceRunCount = regionChecker.getRegionRunCount(maxAthleteCourseSummaryInRegion.course, summariesForAthlete);
                     double totalRuns = getTotalRuns(summariesForAthlete);
                     double homeRatio = provinceRunCount / totalRuns;
@@ -477,7 +480,7 @@ public class MostEventStats
         {
             // Populate top 10 runs at courses
             Top10RunsDao top10RunsDao = new Top10RunsDao(statsDataSource);
-            List<Course> courses = courseRepository.getCourses(COUNTRY).stream()
+            List<Course> courses = courseRepository.getCourses(country).stream()
                     .filter(c -> c.status == RUNNING).toList();
             for (Course course : courses)
             {
@@ -491,7 +494,7 @@ public class MostEventStats
             }
 
             try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(
-                    writer.writer, urlGenerator,  COUNTRY.countryName, "Run"))
+                    writer.writer, urlGenerator,  country.countryName, "Run"))
             {
                 List<AtEvent> top10InRegion = top10Dao.getTop10InRegion();
 
@@ -557,7 +560,7 @@ public class MostEventStats
                 .open().build())
         {
             Top10VolunteersDao top10VolunteersDao = new Top10VolunteersDao(statsDataSource);
-            List<Course> courses = courseRepository.getCourses(COUNTRY).stream()
+            List<Course> courses = courseRepository.getCourses(country).stream()
                     .filter(c -> c.status == RUNNING).toList();
             for (Course course : courses)
             {
@@ -571,7 +574,7 @@ public class MostEventStats
             }
 
             try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(
-                    writer.writer, urlGenerator,COUNTRY.countryName, "Volunteer"))
+                    writer.writer, urlGenerator, country.countryName, "Volunteer"))
             {
                 List<Object[]> top10VolunteersInRegion = top10VolunteerDao.getTop10VolunteersInRegion();
                 assert !top10VolunteersInRegion.isEmpty() : "WARNING: Top 10 runs in region list is empty";
@@ -640,7 +643,7 @@ public class MostEventStats
     {
         try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Events (Extended)").build())
         {
-            try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, COUNTRY, true))
+            try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, country, true))
             {
                 for (MostEventsDao.MostEventsRecord der : differentEventRecords)
                 {
@@ -691,7 +694,7 @@ public class MostEventStats
     {
         try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Events").build())
         {
-            try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, COUNTRY, false))
+            try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, country, false))
             {
                 for (MostEventsDao.MostEventsRecord der : differentEventRecords)
                 {
