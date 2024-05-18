@@ -5,6 +5,7 @@ import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
 import dnt.parkrun.database.CourseEventSummaryDao;
+import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
@@ -18,18 +19,23 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Date;
 
-import static dnt.parkrun.datastructures.Country.NZ;
-
-@Deprecated
+@Deprecated(since = "Deprecated to discourage use.")
 public class BackfillCourseEventSummary
 {
-    private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
+    private final UrlGenerator urlGenerator;
+    private final Country country;
 
     private NamedParameterJdbcTemplate jdbc;
 
+    public BackfillCourseEventSummary(Country country)
+    {
+        this.country = country;
+        this.urlGenerator = new UrlGenerator(country.baseUrl);
+    }
+
     public static void main(String[] args) throws IOException, SQLException
     {
-        new BackfillCourseEventSummary().backfill();
+        new BackfillCourseEventSummary(Country.valueOf(args[0])).backfill();
     }
     public void backfill() throws SQLException, IOException
     {
@@ -44,7 +50,7 @@ public class BackfillCourseEventSummary
         dnt.parkrun.courses.reader.EventsJsonFileReader reader = new EventsJsonFileReader.Builder(() -> inputStream)
                 .forEachCourse(course ->
                 {
-                    if(course.country == NZ)
+                    if(course.country == country)
                     {
                         courseRepository.addCourse(course);
                     }
@@ -55,7 +61,7 @@ public class BackfillCourseEventSummary
 
         CourseEventSummaryDao courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
 
-        for (Course course : courseRepository.getCourses(NZ))
+        for (Course course : courseRepository.getCourses(country))
         {
             System.out.println("* Collecting summary for " + course + " *");
             Parser parser = new Parser.Builder()

@@ -2,6 +2,7 @@ package dnt.parkrun.htmlwriter.writers;
 
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.htmlwriter.BaseWriter;
 import dnt.parkrun.pindex.PIndex;
 
@@ -11,11 +12,16 @@ import java.io.Closeable;
 
 public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
 {
+    private final Country country;
     private final UrlGenerator urlGenerator;
 
-    public PIndexTableHtmlWriter(XMLStreamWriter writer, UrlGenerator urlGenerator, String title) throws XMLStreamException
+    public PIndexTableHtmlWriter(Country country,
+                                 XMLStreamWriter writer,
+                                 UrlGenerator urlGenerator,
+                                 String title) throws XMLStreamException
     {
         super(writer);
+        this.country = country;
         this.urlGenerator = urlGenerator;
 
         startSubDetails();
@@ -51,10 +57,10 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
 
         startElement("th");
         information("Home Ratio",
-                "The ratio of runs ran in a persons home parkrun NZ province. " +
+                "The ratio of runs ran in a persons home parkrun " + country.countryName + " province. " +
                         "Home parkrun is the parkrun a person has attended the most. " +
-                        "Must be in NZ, otherwise they are in the legacy table. " +
-                        "E.g. For Bob who has run 11 runs, 10 in Invercargill and 1 in Wellington, " +
+                        "Must be in " + country.countryName + ", otherwise they are in the legacy table. " +
+                        "E.g. For Bob who has run 11 runs, 10 in Invercargill, New Zealand and 1 in Wellington, New Zealand, " +
                         "Bob's home ratio will be 0.909");
         endElement("th");
 
@@ -71,7 +77,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
 
             startElement("center");
             startElement("p");
-            writer.writeCharacters("* parkrunners with pIndex of 5 or more within NZ parkruns.");
+            writer.writeCharacters("* parkrunners with pIndex of 5 or more within " + country.countryName + " parkruns.");
             endElement("p");
             endElement("center");
 
@@ -100,7 +106,7 @@ public class PIndexTableHtmlWriter extends BaseWriter implements Closeable
 
         // p-Index
         startElement("td");
-        startElement("abbr", "title", "NZ p-Index " + record.regionPIndex.pIndex);
+        startElement("abbr", "title", country.countryName + " p-Index " + record.regionPIndex.pIndex);
         writer.writeCharacters(String.valueOf(record.globalPIndex.pIndex));
         endElement("abbr");
         endElement("td");
