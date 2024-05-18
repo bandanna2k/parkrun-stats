@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.util.Date;
 
-import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
+import static dnt.parkrun.database.DataSourceUrlBuilder.getTestDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 
 public class MostEventStatsTest
@@ -28,7 +28,7 @@ public class MostEventStatsTest
         MostEventStats.class.getClassLoader().setClassAssertionStatus(MostEventStats.class.getName(), false);
 
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl("parkrun_stats_test"), "test", "qa");
+                getTestDataSourceUrl(), "test", "qa");
 
         stats = MostEventStats.newInstance(NZ, dataSource, dataSource, Date.from(Instant.EPOCH));
 

@@ -5,7 +5,13 @@ import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.datastructures.AgeCategory;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.stats.MostEventStats;
-import dnt.parkrun.stats.invariants.*;
+import dnt.parkrun.stats.invariants.postdownload.DatabaseInvariantTest;
+import dnt.parkrun.stats.invariants.postdownload.DatabaseWeeklyResultsInvariantTest;
+import dnt.parkrun.stats.invariants.postdownload.InvariantTest;
+import dnt.parkrun.stats.invariants.predownload.first.ParsersTest;
+import dnt.parkrun.stats.invariants.predownload.first.PendingCoursesTest;
+import dnt.parkrun.stats.invariants.predownload.first.ProvinceTest;
+import dnt.parkrun.stats.invariants.predownload.last.HowYouDoingTest;
 import dnt.parkrun.stats.speed.AgeCategoryRecord;
 import dnt.parkrun.stats.speed.SpeedStats;
 import dnt.parkrun.webpageprovider.WebpageProviderFactoryImpl;
@@ -29,6 +35,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
+import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 
 public class Menu
@@ -104,9 +111,9 @@ public class Menu
         try
         {
             DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl("parkrun_stats"), "stats", "statsfractalstats");
+                    getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
             DataSource statsDataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl("weekly_stats"), "stats", "statsfractalstats");
+                    getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
 
             MostEventStats stats = MostEventStats.newInstance(country, dataSource, statsDataSource, getParkrunDay(new Date()));
             File file = stats.generateStats();
@@ -126,7 +133,7 @@ public class Menu
         try
         {
             DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
+                    getDataSourceUrl(PARKRUN_STATS, country), "dao", "daoFractaldao");
             WeekendResults weekendResults = WeekendResults.newInstance(
                     country, dataSource,
                     new WebpageProviderFactoryImpl(new UrlGenerator(country.baseUrl)));
@@ -143,7 +150,7 @@ public class Menu
         try
         {
             DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl("parkrun_stats"), "stats", "statsfractalstats");
+                    getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
             SpeedStats stats = SpeedStats.newInstance(dataSource);
 
             Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord =
@@ -164,10 +171,10 @@ public class Menu
     private void runInvariantsQuick()
     {
         runInvariants(
+                ParsersTest.class,
                 DatabaseInvariantTest.class,
                 DatabaseWeeklyResultsInvariantTest.class,
                 InvariantTest.class,
-                ParsersTest.class,
                 ProvinceTest.class);
     }
 
@@ -200,7 +207,7 @@ public class Menu
                 super.testFailure(failure);
             }
             @Override
-            public void testFinished(Description description) throws Exception
+            public void testFinished(Description description)
             {
             }
         });

@@ -6,6 +6,7 @@ import dnt.parkrun.database.AthleteDao;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.htmlwriter.HtmlWriter;
 import dnt.parkrun.htmlwriter.writers.PairsTableHtmlWriter;
@@ -19,6 +20,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Supplier;
 
+import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 
@@ -30,8 +32,9 @@ public class PairsStats
 
     public static void main(String[] args) throws SQLException, XMLStreamException, IOException
     {
+        final Country country = Country.valueOf(args[0]);
         final DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl("parkrun_stats"), "stats", "statsfractalstats");
+                getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
         PairsStats pairsStats = new PairsStats(dataSource);
         File file = pairsStats.generateStats(
                 1340853, // Jonathan

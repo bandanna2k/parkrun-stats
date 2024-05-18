@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
+import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 
@@ -33,8 +34,9 @@ public class CourseEventSummaryChecker
 
     public static void main(String[] args) throws SQLException
     {
+        Country country = Country.valueOf(args[0]);
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
+                getDataSourceUrl(PARKRUN_STATS, country), "dao", "daoFractaldao");
 
         CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
                 dataSource, System.currentTimeMillis());

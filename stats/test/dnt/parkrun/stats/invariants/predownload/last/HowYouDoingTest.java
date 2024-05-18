@@ -22,13 +22,14 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
 
 import static dnt.parkrun.common.DateConverter.ONE_DAY_IN_MILLIS;
+import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,8 +47,9 @@ public class HowYouDoingTest
         @Parameterized.Parameters(name = "{0}")
         public static Object[] data() throws SQLException
         {
+            final Country country = NZ;
             DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
+                    getDataSourceUrl(PARKRUN_STATS, country), "dao", "daoFractaldao");
             CourseRepository courseRepository = new CourseRepository();
             CourseDao courseDao = new CourseDao(dataSource, courseRepository);
 
@@ -87,11 +89,13 @@ public class HowYouDoingTest
 
     public static class NewCourseTest
     {
+        private final Country country = NZ;
+
         @Test
         public void areCoursesUpToDate() throws IOException, SQLException
         {
             DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
+                    getDataSourceUrl(PARKRUN_STATS, country), "dao", "daoFractaldao");
             CourseRepository courseRepository = new CourseRepository();
             CourseDao courseDao = new CourseDao(dataSource, courseRepository);
 
@@ -101,7 +105,7 @@ public class HowYouDoingTest
             {
                 try
                 {
-                    return new URL("https://images.parkrun.com/events.json").openStream();
+                    return URI.create("https://images.parkrun.com/events.json").toURL().openStream();
                 }
                 catch (IOException e)
                 {

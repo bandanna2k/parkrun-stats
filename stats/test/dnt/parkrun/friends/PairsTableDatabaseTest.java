@@ -5,6 +5,7 @@ import dnt.parkrun.database.AthleteDao;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
 import org.junit.Before;
@@ -14,7 +15,9 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import java.util.*;
 
+import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
+import static dnt.parkrun.datastructures.Country.NZ;
 
 public class PairsTableDatabaseTest
 {
@@ -26,8 +29,9 @@ public class PairsTableDatabaseTest
     @Before
     public void setUp() throws Exception
     {
+        final Country country = NZ;
         final DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl("parkrun_stats"), "stats", "statsfractalstats");
+                getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
         resultDao = new ResultDao(dataSource);
         athleteDao = new AthleteDao(dataSource);
         courseRepository = new CourseRepository();

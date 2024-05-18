@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Athlete.NO_ATHLETE_ID;
 import static dnt.parkrun.datastructures.Country.NZ;
@@ -26,6 +27,8 @@ public class ParsersTest
             2, "cornwallpark", NZ, "Cornwall Park parkrun", Course.Status.RUNNING);
     private static final Course LOWER_HUTT = new Course(
             1, "lowerhutt", NZ, "Lower Hutt parkrun", Course.Status.RUNNING);
+
+    private final Country country = NZ;
 
     private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
 
@@ -47,7 +50,7 @@ public class ParsersTest
     public void testCourseEvent() throws SQLException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
+                getDataSourceUrl(PARKRUN_STATS, country), "dao", "daoFractaldao");
         CourseRepository courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
 
@@ -84,7 +87,7 @@ public class ParsersTest
     public void testAthleteCourseSummary() throws SQLException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl("parkrun_stats"), "dao", "daoFractaldao");
+                getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
         CourseRepository courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
 

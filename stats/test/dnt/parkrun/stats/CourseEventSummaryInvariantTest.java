@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
+import static dnt.parkrun.database.DataSourceUrlBuilder.getTestDataSourceUrl;
 import static dnt.parkrun.datastructures.AgeCategory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,7 +33,7 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
     public void setUp() throws Exception
     {
         dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl("parkrun_stats_test"), "test", "qa");
+                getTestDataSourceUrl(), "test", "qa");
 
         jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);
         jdbc.update("delete from course", EmptySqlParameterSource.INSTANCE);

@@ -1,6 +1,7 @@
 package dnt.parkrun.stats.invariants;
 
 import com.mysql.jdbc.Driver;
+import dnt.parkrun.datastructures.Country;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
@@ -9,7 +10,10 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import java.util.List;
 
+import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
+import static dnt.parkrun.database.DataSourceUrlBuilder.Type.WEEKLY_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
+import static dnt.parkrun.datastructures.Country.NZ;
 
 public abstract class AbstractDatabaseInvariantTest
 {
@@ -20,10 +24,11 @@ public abstract class AbstractDatabaseInvariantTest
     @Before
     public void setUp() throws Exception
     {
+        Country country = NZ;
         dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl("parkrun_stats"), "stats", "statsfractalstats");
+                getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
         weeklyDataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl("weekly_stats"), "stats", "statsfractalstats");
+                getDataSourceUrl(WEEKLY_STATS, country), "stats", "statsfractalstats");
         jdbc = new NamedParameterJdbcTemplate(dataSource);
     }
 

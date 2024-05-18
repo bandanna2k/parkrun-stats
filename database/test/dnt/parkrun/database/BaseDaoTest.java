@@ -12,7 +12,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import java.util.Date;
 
-import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
+import static dnt.parkrun.database.DataSourceUrlBuilder.getTestDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Country.UNKNOWN;
 import static dnt.parkrun.datastructures.Course.NO_COURSE_ID;
@@ -59,7 +59,7 @@ public abstract class BaseDaoTest
     public void baseClassSetUp() throws Exception
     {
         dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl("parkrun_stats_test"), "test", "qa");
+                getTestDataSourceUrl(), "test", "qa");
         jdbc = new NamedParameterJdbcTemplate(dataSource);
     }
 }

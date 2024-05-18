@@ -23,6 +23,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Supplier;
 
+import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.stats.speed.AgeCategoryRecordsHtmlWriter.Type.AGE_CATEGORY_BY_TIME;
@@ -37,10 +38,11 @@ public class SpeedStats
     /*
             02/03/2024
      */
-    public static void main() throws SQLException, IOException, XMLStreamException
+    public static void main(String... args) throws SQLException, IOException, XMLStreamException
     {
+        Country country = Country.valueOf(args[0]);
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl("parkrun_stats"), "stats", "statsfractalstats");
+                getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
 
         SpeedStats stats = SpeedStats.newInstance(dataSource);
         Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord =

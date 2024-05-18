@@ -70,6 +70,14 @@ public class WeekendResults
         {
             if(course.status != Course.Status.RUNNING) return;
 
+            if(course.name.startsWith("a")) return;
+            if(course.name.startsWith("b")) return;
+            if(course.name.startsWith("c")) return;
+            if(course.name.startsWith("d")) return;
+            if(course.name.startsWith("e")) return;
+            if(course.name.startsWith("f")) return;
+            if(course.name.startsWith("g")) return;
+
             System.out.printf("* [%s] Get course summaries from database... ", course.longName);
             List<CourseEventSummary> courseEventSummariesFromDao = courseEventSummaryDao.getCourseEventSummaries(course);
             System.out.printf("Count: %d *%n", courseEventSummariesFromDao.size());
