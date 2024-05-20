@@ -22,10 +22,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Refactor findAndReplace
-
-- Refactor getTextFromFile
-
 - Move course/athlete table to global DB
 
 - Top 10 at course surely can be done with 1 processor
@@ -48,6 +44,10 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 - Unique runners at course / Add unique runs for runners / Add unique runs to Most Events???
 
 ## Issues Completed
+
+- 20/5/2024 Refactor findAndReplace
+
+- 20/5/2024 Refactor getTextFromFile
 
 - 19/5/2024 Bring out rewrite event into its own class
 
