@@ -36,7 +36,7 @@ public class AttendanceRecordsDaoTest extends BaseDaoTest
         jdbc.update("delete from course", EmptySqlParameterSource.INSTANCE);
         // TODO jdbc.update("drop table if exists " + AttendanceRecordsDao.tableName(date), EmptySqlParameterSource.INSTANCE);
 
-        athleteDao = new AthleteDao(dataSource);
+        athleteDao = new AthleteDao(country, dataSource);
         courseRepository = new CourseRepository();
         courseDao = new CourseDao(country, dataSource, courseRepository);
         resultDao = new ResultDao(country, dataSource);

@@ -31,7 +31,8 @@ public class RewriteEvent
         DataSource dataSource = new SimpleDriverDataSource(new Driver(), getDataSourceUrl(), "dao", "0b851094");
 
         RewriteEvent rewriteEvent = new RewriteEvent(country, dataSource);
-        rewriteEvent.rewriteCourseEvent("waitangi", 59);
+//        rewriteEvent.rewriteCourseEvent("blenheim", 368);
+        rewriteEvent.rewriteCourseEvent("owairaka", 160);
     }
 
     public RewriteEvent(Country country, DataSource dataSource)

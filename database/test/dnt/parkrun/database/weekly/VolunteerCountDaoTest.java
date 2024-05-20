@@ -31,7 +31,7 @@ public class VolunteerCountDaoTest extends BaseDaoTest
         public void setUp() throws Exception
         {
             volunteerDao = new VolunteerDao(country, dataSource);
-            athleteDao = new AthleteDao(dataSource);
+            athleteDao = new AthleteDao(country, dataSource);
             volunteerCountDao = VolunteerCountDao.getInstance(country, dataSource, Date.from(Instant.EPOCH));
 
             jdbc.update("delete from event_volunteer", EmptySqlParameterSource.INSTANCE);

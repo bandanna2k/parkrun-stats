@@ -32,7 +32,7 @@ public class BestFriendsTest
 
         final DataSource weeklyDataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/", "stats", "4b0e7ff1");
-        athleteDao = new AthleteDao(weeklyDataSource);
+        athleteDao = new AthleteDao(country, weeklyDataSource);
         resultDao = new ResultDao(country, weeklyDataSource);
 
         athleteToName = athleteDao.getAllAthletes();

@@ -29,7 +29,7 @@ public class AthleteCourseSummaryDaoTest extends BaseDaoTest
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
 
-        this.athleteDao = new AthleteDao(dataSource);
+        this.athleteDao = new AthleteDao(country, dataSource);
         this.acsDao = AthleteCourseSummaryDao.getInstance(country, dataSource, new Date());
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);

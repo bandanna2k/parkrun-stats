@@ -29,7 +29,7 @@ public class IndividualTest
     {
         final DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats", "dao", "0b851094");
-        athleteDao = new AthleteDao(dataSource);
+        athleteDao = new AthleteDao(country, dataSource);
         resultDao = new ResultDao(country, dataSource);
 
         athleteToName = athleteDao.getAllAthletes();

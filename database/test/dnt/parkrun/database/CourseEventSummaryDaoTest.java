@@ -32,7 +32,7 @@ public class CourseEventSummaryDaoTest extends BaseDaoTest
         courseRepository = new CourseRepository();
         dao = new CourseEventSummaryDao(country, dataSource, courseRepository);
         courseDao = new CourseDao(country, dataSource, courseRepository);
-        athleteDao = new AthleteDao(dataSource);
+        athleteDao = new AthleteDao(country, dataSource);
     }
 
     @Test

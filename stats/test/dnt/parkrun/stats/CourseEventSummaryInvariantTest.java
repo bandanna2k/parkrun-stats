@@ -45,7 +45,7 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
         CourseDao courseDao = new CourseDao(country, dataSource, courseRepository);
         courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
         resultDao = new ResultDao(country, dataSource);
-        AthleteDao athleteDao = new AthleteDao(dataSource);
+        AthleteDao athleteDao = new AthleteDao(country, dataSource);
 
         course = courseDao.insert(CORNWALL);
         girl = athleteDao.insert(Athlete.from("Camilia CROW", 10001));

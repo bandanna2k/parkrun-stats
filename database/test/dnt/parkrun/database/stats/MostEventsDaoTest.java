@@ -46,7 +46,7 @@ public class MostEventsDaoTest extends BaseDaoTest
 
         CourseRepository courseRepository = new CourseRepository();
         courseDao = new CourseDao(country, dataSource, courseRepository);
-        athleteDao = new AthleteDao(dataSource);
+        athleteDao = new AthleteDao(country, dataSource);
         resultDao = new ResultDao(country, dataSource);
         courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
     }

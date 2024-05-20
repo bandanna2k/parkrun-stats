@@ -33,7 +33,7 @@ public class PairsTableDatabaseTest
         final DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
         resultDao = new ResultDao(country, dataSource);
-        athleteDao = new AthleteDao(dataSource);
+        athleteDao = new AthleteDao(country, dataSource);
         courseRepository = new CourseRepository();
         new CourseDao(country, dataSource, courseRepository);
 

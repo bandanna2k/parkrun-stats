@@ -41,10 +41,10 @@ public class CourseEventSummaryChecker
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl(PARKRUN_STATS, country), "dao", "0b851094");
 
-//        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(country,
-//                dataSource, System.currentTimeMillis());
-        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
-                country, dataSource, 1716207650946L);
+        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(country,
+                dataSource, System.currentTimeMillis());
+//        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
+//                country, dataSource, 1716207650946L);
 
         List<String> errors = checker.validate();
         errors.forEach(error -> System.out.println("ERROR: " + error));
