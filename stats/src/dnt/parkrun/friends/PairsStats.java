@@ -37,7 +37,7 @@ public class PairsStats
     {
         final Country country = Country.valueOf(args[0]);
         final DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
+                getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
         PairsStats pairsStats = new PairsStats(country, dataSource);
         File file = pairsStats.generateStats(
                 1340853, // Jonathan

@@ -29,7 +29,7 @@ public class DatabaseInvariantTest extends AbstractDatabaseInvariantTest
     {
         assertNoRowsMatch("""
                 select athlete_id, course_id, date 
-                from event_volunteer
+                from parkrun_stats_NZ.event_volunteer
                 where athlete_id <= 0
                 limit 10
                 """,
@@ -41,7 +41,7 @@ public class DatabaseInvariantTest extends AbstractDatabaseInvariantTest
     {
         assertNoRowsMatch("""
             select course_id, event_number, count(date) as count
-            from course_event_summary
+            from parkrun_stats_NZ.course_event_summary
             group by course_id, event_number
             having count > 1
             limit 10
@@ -54,7 +54,7 @@ public class DatabaseInvariantTest extends AbstractDatabaseInvariantTest
     {
         assertNoRowsMatch("""
                 select course_id, date, count(event_number) as count
-                from course_event_summary
+                from parkrun_stats_NZ.course_event_summary
                 group by course_id, date
                 having count > 1
                 limit 10
@@ -66,8 +66,8 @@ public class DatabaseInvariantTest extends AbstractDatabaseInvariantTest
     {
         assertNoRowsMatch("""
                 select distinct ces.course_id, ces.date, ev.athlete_id
-                from course_event_summary ces
-                left join event_volunteer ev using (course_id)
+                from parkrun_stats_NZ.course_event_summary ces
+                left join parkrun_stats_NZ.event_volunteer ev using (course_id)
                 where ev.athlete_id is null
                 limit 10
                 """,
@@ -80,13 +80,15 @@ public class DatabaseInvariantTest extends AbstractDatabaseInvariantTest
     @Test
     public void courseEventSummaryFinishersShouldMatchResultCount()
     {
+        System.setProperty("TEST", "false");
+
         CourseRepository courseRepository = new CourseRepository();
         new CourseDao(country, dataSource, courseRepository);
 
         String sql = """
                 select ces.course_id, ces.date, ces.finishers, count(r.athlete_id) as result_count
-                from course_event_summary ces
-                left join result r on
+                from parkrun_stats_NZ.course_event_summary ces
+                left join parkrun_stats_NZ.result r on
                     ces.course_id = r.course_id and
                     ces.date = r.date
                 group by ces.course_id, ces.date, ces.finishers
@@ -130,8 +132,8 @@ public class DatabaseInvariantTest extends AbstractDatabaseInvariantTest
     {
         assertNoRowsMatch("""
                 select distinct athlete_id, course_id, name
-                from event_volunteer
-                left join athlete using (athlete_id)
+                from parkrun_stats_NZ.event_volunteer
+                left join parkrun_stats.athlete using (athlete_id)
                 where name is null
                 limit 10
                 """,

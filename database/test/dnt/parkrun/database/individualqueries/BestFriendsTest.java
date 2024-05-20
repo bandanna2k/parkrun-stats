@@ -30,12 +30,10 @@ public class BestFriendsTest
     {
         System.setProperty("TEST", "false");
 
-        final DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
         final DataSource weeklyDataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/weekly_stats", "stats", "statsfractalstats");
-        athleteDao = new AthleteDao(dataSource);
-        resultDao = new ResultDao(country, dataSource);
+                "jdbc:mysql://localhost/", "stats", "4b0e7ff1");
+        athleteDao = new AthleteDao(weeklyDataSource);
+        resultDao = new ResultDao(country, weeklyDataSource);
 
         athleteToName = athleteDao.getAllAthletes();
 

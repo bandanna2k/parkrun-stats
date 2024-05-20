@@ -42,7 +42,7 @@ public class BackfillCourseEventSummary
         CourseRepository courseRepository = new CourseRepository();
 
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats", "dao", "0b851094");
         jdbc = new NamedParameterJdbcTemplate(dataSource);
 
         System.out.println("* Adding courses *");

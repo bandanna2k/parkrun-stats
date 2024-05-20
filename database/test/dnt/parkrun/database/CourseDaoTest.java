@@ -42,7 +42,7 @@ public class CourseDaoTest extends BaseDaoTest
     public void shouldInsertIntoRealDatabase() throws SQLException
     {
         DataSource realDataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats", "dao", "0b851094");
 
         NamedParameterJdbcTemplate realJdbc = new NamedParameterJdbcTemplate(realDataSource);
         String sql = STR."""

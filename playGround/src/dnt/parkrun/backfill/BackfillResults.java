@@ -36,7 +36,7 @@ public class BackfillResults
     private void backfill2() throws SQLException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats", "dao", "0b851094");
 
         CourseRepository courseRepository = new CourseRepository();
         new CourseDao(country, dataSource, courseRepository);
@@ -84,7 +84,7 @@ public class BackfillResults
     public void backfill1() throws SQLException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats", "dao", "0b851094");
 
         CourseRepository courseRepository = new CourseRepository();
         new CourseDao(country, dataSource, courseRepository);

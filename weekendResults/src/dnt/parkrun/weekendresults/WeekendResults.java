@@ -23,7 +23,7 @@ public class WeekendResults
     {
         Country country = Country.valueOf(args[0]);
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
+                "jdbc:mysql://localhost/parkrun_stats", "dao", "0b851094");
         WeekendResults weekendResults = WeekendResults.newInstance(
                 country,
                 dataSource,

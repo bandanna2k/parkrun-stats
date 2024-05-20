@@ -24,7 +24,7 @@ public class DatabaseWeeklyResultsInvariantTest extends AbstractDatabaseInvarian
         List<MostEventsDao.MostEventsRecord> recordsToCheck = new ArrayList<>();
         {
             Date lastWeek = Date.from(parkrunDay.toInstant().minus(7, ChronoUnit.DAYS));
-            MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(country, weeklyDataSource, lastWeek);
+            MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(country, dataSource, lastWeek);
             List<MostEventsDao.MostEventsRecord> mostEvents = mostEventsDao.getMostEvents();
 
             Assertions.assertThat(mostEvents.size()).isGreaterThan(11);
@@ -39,7 +39,7 @@ public class DatabaseWeeklyResultsInvariantTest extends AbstractDatabaseInvarian
         recordsToCheck.forEach(System.out::println);
 
         {
-            MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(country, weeklyDataSource, parkrunDay);
+            MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(country, dataSource, parkrunDay);
             List<MostEventsDao.MostEventsRecord> mostEventsForThisWeek = mostEventsDao.getMostEvents();
 
             recordsToCheck.forEach(recordToCheckFromLastWeek -> {
@@ -57,12 +57,12 @@ public class DatabaseWeeklyResultsInvariantTest extends AbstractDatabaseInvarian
     public void weeklyPIndexShouldBeTheSameOrEqual()
     {
         System.out.println(dataSource.getUrl());
-        System.out.println(weeklyDataSource.getUrl());
+        System.out.println(dataSource.getUrl());
         Date parkrunDay = getParkrunDay(new Date());
         List<PIndexDao.PIndexRecord> recordsToCheck = new ArrayList<>();
         {
             Date lastWeek = Date.from(parkrunDay.toInstant().minus(7, ChronoUnit.DAYS));
-            PIndexDao pIndexDao = new PIndexDao(country, weeklyDataSource, lastWeek);
+            PIndexDao pIndexDao = new PIndexDao(country, dataSource, lastWeek);
             List<PIndexDao.PIndexRecord> pIndexRecords = pIndexDao.getPIndexRecords(lastWeek);
 
             Assertions.assertThat(pIndexRecords.size()).isGreaterThan(11);
@@ -77,7 +77,7 @@ public class DatabaseWeeklyResultsInvariantTest extends AbstractDatabaseInvarian
 //        recordsToCheck.forEach(System.out::println);
 
         {
-            PIndexDao pIndexDao = new PIndexDao(country, weeklyDataSource, parkrunDay);
+            PIndexDao pIndexDao = new PIndexDao(country, dataSource, parkrunDay);
             recordsToCheck.forEach(recordToCheckFromLastWeek -> {
                 PIndexDao.PIndexRecord recordToCheckThisWeek = pIndexDao.getPIndexForAthlete(recordToCheckFromLastWeek.athleteId);
                 Assertions.assertThat(recordToCheckThisWeek.pIndex).isGreaterThanOrEqualTo(recordToCheckFromLastWeek.pIndex);
