@@ -59,7 +59,7 @@ public class BackfillCourseEventSummary
                 .build();
         reader.read();
 
-        CourseEventSummaryDao courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
+        CourseEventSummaryDao courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
 
         for (Course course : courseRepository.getCourses(country))
         {

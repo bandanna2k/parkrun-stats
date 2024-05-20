@@ -41,8 +41,8 @@ public class BackfillResults
         CourseRepository courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
 
-        ResultDao resultDao = new ResultDao(dataSource);
-        CourseEventSummaryDao courseEventSummaryDao = new CourseEventSummaryDao(dataSource, courseRepository);
+        ResultDao resultDao = new ResultDao(country, dataSource);
+        CourseEventSummaryDao courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
 
         Set<String> courseIdAndDateSet = new HashSet<>();
         resultDao.tableScan(r ->
@@ -81,7 +81,7 @@ public class BackfillResults
         });
     }
 
-    public void backfill1() throws SQLException, IOException
+    public void backfill1() throws SQLException
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
@@ -89,11 +89,11 @@ public class BackfillResults
         CourseRepository courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
 
-        ResultDao resultDao = new ResultDao(dataSource);
+        ResultDao resultDao = new ResultDao(country, dataSource);
 
         for (Course backfillCourse : courseRepository.getCourses(country))
         {
-            List<CourseEventSummary> courseEventSummaries = new CourseEventSummaryDao(dataSource, courseRepository).getCourseEventSummaries()
+            List<CourseEventSummary> courseEventSummaries = new CourseEventSummaryDao(country, dataSource, courseRepository).getCourseEventSummaries()
                     .stream().filter(ces -> ces.course.courseId == backfillCourse.courseId).toList();
 
             if (backfillCourse.name.startsWith("a")) continue;

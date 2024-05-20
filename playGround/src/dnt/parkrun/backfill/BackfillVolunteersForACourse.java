@@ -18,7 +18,6 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Deprecated(since = "Deprecated to discourage use")
 public class BackfillVolunteersForACourse
@@ -46,13 +45,15 @@ public class BackfillVolunteersForACourse
         NamedParameterJdbcTemplate jdbc = new NamedParameterJdbcTemplate(dataSource);
 
         AthleteDao athleteDao = new AthleteDao(dataSource);
-        VolunteerDao volunteerDao = new VolunteerDao(dataSource);
+        VolunteerDao volunteerDao = new VolunteerDao(country, dataSource);
 
         CourseRepository courseRepository = new CourseRepository();
         new CourseDao(dataSource, courseRepository);
 
-        List<CourseEventSummary> courseEventSummaries = new CourseEventSummaryDao(dataSource, courseRepository).getCourseEventSummaries()
-                .stream().filter(ces -> ces.course.courseId == backfillCourse.courseId).collect(Collectors.toList());
+        List<CourseEventSummary> courseEventSummaries = new CourseEventSummaryDao(country, dataSource, courseRepository)
+                .getCourseEventSummaries().stream()
+                .filter(ces -> ces.course.courseId == backfillCourse.courseId)
+                .toList();
 
         int counter = 1;
         int size = courseEventSummaries.size();
