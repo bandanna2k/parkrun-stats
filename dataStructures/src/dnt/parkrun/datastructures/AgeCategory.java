@@ -111,9 +111,8 @@ public enum AgeCategory
         return ageCategory;
     }
 
-    public static AgeCategory from(Integer dbCode)
+    public static AgeCategory from(int dbCode)
     {
-        if(dbCode == null) return null;
         AgeCategory ageCategory = dbCodeToAgeCategory.get(dbCode);
         assert ageCategory != null : "Age group not found: " + dbCode;
         return ageCategory;

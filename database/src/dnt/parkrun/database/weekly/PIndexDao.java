@@ -31,9 +31,9 @@ public class PIndexDao extends BaseDao
         return pIndexDao;
     }
 
-    private static String getTableName(Date date)
+    private String getTableName(Date date)
     {
-        return "p_index_" + DateConverter.formatDateForDbTable(date);
+        return weeklyDatabaseName + ".p_index_" + DateConverter.formatDateForDbTable(date);
     }
 
     public void createTable()

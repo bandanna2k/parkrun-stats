@@ -39,7 +39,7 @@ public class BackfillResults
                 "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
 
         CourseRepository courseRepository = new CourseRepository();
-        new CourseDao(dataSource, courseRepository);
+        new CourseDao(country, dataSource, courseRepository);
 
         ResultDao resultDao = new ResultDao(country, dataSource);
         CourseEventSummaryDao courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
@@ -87,7 +87,7 @@ public class BackfillResults
                 "jdbc:mysql://localhost/parkrun_stats", "dao", "daoFractaldao");
 
         CourseRepository courseRepository = new CourseRepository();
-        new CourseDao(dataSource, courseRepository);
+        new CourseDao(country, dataSource, courseRepository);
 
         ResultDao resultDao = new ResultDao(country, dataSource);
 

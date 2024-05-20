@@ -34,7 +34,7 @@ public class CourseDaoTest extends BaseDaoTest
         jdbc.update("delete from course", EmptySqlParameterSource.INSTANCE);
 
         courseRepository = new CourseRepository();
-        courseDao = new CourseDao(dataSource, courseRepository);
+        courseDao = new CourseDao(country, dataSource, courseRepository);
     }
 
     @Test

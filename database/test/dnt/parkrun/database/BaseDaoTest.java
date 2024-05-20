@@ -5,7 +5,6 @@ import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -21,7 +20,7 @@ import static org.junit.Assume.assumeTrue;
 
 public abstract class BaseDaoTest
 {
-    protected Country country = NZ;
+    private static Driver DRIVER = dnt.parkrun.database.Driver.getDriver();
 
     public static final Date EPOCH_PLUS_7 = DateConverter.parseWebsiteDate("01/01/1970");
     public static final Date EPOCH_PLUS_14 = DateConverter.parseWebsiteDate("08/01/1970");
@@ -53,16 +52,13 @@ public abstract class BaseDaoTest
         return null != System.getProperty("TEST") && Boolean.parseBoolean(System.getProperty("TEST"));
     }
 
-
-
     protected DataSource dataSource;
     protected NamedParameterJdbcTemplate jdbc;
+    protected Country country = NZ;
 
-    @Before
-    public void baseClassSetUp() throws Exception
+    public BaseDaoTest()
     {
-        dataSource = new SimpleDriverDataSource(new Driver(),
-                getTestDataSourceUrl(), "test", "qa");
+        dataSource = new SimpleDriverDataSource(DRIVER, getTestDataSourceUrl(), "test", "qa");
         jdbc = new NamedParameterJdbcTemplate(dataSource);
     }
 }

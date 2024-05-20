@@ -49,7 +49,7 @@ public class WeekendResults
     {
         this.country = country;
         this.courseRepository = new CourseRepository();
-        this.courseDao = new CourseDao(dataSource, courseRepository);
+        this.courseDao = new CourseDao(country, dataSource, courseRepository);
         this.athleteDao = new AthleteDao(dataSource);
         this.courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
         this.resultDao = new ResultDao(country, dataSource);

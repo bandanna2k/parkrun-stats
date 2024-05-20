@@ -30,7 +30,7 @@ public class AthleteCourseSummaryDao extends BaseDao
 
     String tableName()
     {
-        return "athlete_course_summary_" + DateConverter.formatDateForDbTable(date);
+        return weeklyDatabaseName + ".athlete_course_summary_" + DateConverter.formatDateForDbTable(date);
     }
 
 

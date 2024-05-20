@@ -35,7 +35,7 @@ public class PairsTableDatabaseTest
         resultDao = new ResultDao(country, dataSource);
         athleteDao = new AthleteDao(dataSource);
         courseRepository = new CourseRepository();
-        new CourseDao(dataSource, courseRepository);
+        new CourseDao(country, dataSource, courseRepository);
 
         athletes = new ArrayList<>();
         athletes.add(athleteDao.getAthlete(1340853)); // Jonathan

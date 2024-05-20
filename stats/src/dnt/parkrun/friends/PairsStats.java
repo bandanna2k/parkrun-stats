@@ -79,7 +79,7 @@ public class PairsStats
         resultDao = new ResultDao(country, dataSource);
         athleteDao = new AthleteDao(dataSource);
         courseRepository = new CourseRepository();
-        new CourseDao(dataSource, courseRepository);
+        new CourseDao(country, dataSource, courseRepository);
     }
 
     private File generateStats(int... athleteIds) throws IOException, XMLStreamException

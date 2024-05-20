@@ -58,7 +58,7 @@ public class CourseEventSummaryChecker
         this.random = new Random(seed);
 
         courseRepository = new CourseRepository();
-        new CourseDao(dataSource, courseRepository);
+        new CourseDao(country, dataSource, courseRepository);
         courses = courseRepository.getCourses(country).stream().filter(course -> course.status == Course.Status.RUNNING).toList();
         resultDao = new ResultDao(country, dataSource);
         athleteDao = new AthleteDao(dataSource);

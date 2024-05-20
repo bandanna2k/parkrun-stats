@@ -81,7 +81,7 @@ public class DatabaseInvariantTest extends AbstractDatabaseInvariantTest
     public void courseEventSummaryFinishersShouldMatchResultCount()
     {
         CourseRepository courseRepository = new CourseRepository();
-        new CourseDao(dataSource, courseRepository);
+        new CourseDao(country, dataSource, courseRepository);
 
         String sql = """
                 select ces.course_id, ces.date, ces.finishers, count(r.athlete_id) as result_count

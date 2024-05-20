@@ -42,10 +42,10 @@ public class MostEventsDaoTest extends BaseDaoTest
         jdbc.update("delete from result", EmptySqlParameterSource.INSTANCE);
         jdbc.update("delete from course_event_summary", EmptySqlParameterSource.INSTANCE);
         jdbc.update("delete from course", EmptySqlParameterSource.INSTANCE);
-        jdbc.update("drop table if exists " + MostEventsDao.getTableName(epoch), EmptySqlParameterSource.INSTANCE);
+        // TODO jdbc.update("drop table if exists " + MostEventsDao.getTableName(epoch), EmptySqlParameterSource.INSTANCE);
 
         CourseRepository courseRepository = new CourseRepository();
-        courseDao = new CourseDao(dataSource, courseRepository);
+        courseDao = new CourseDao(country, dataSource, courseRepository);
         athleteDao = new AthleteDao(dataSource);
         resultDao = new ResultDao(country, dataSource);
         courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);

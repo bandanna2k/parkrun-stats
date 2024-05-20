@@ -41,7 +41,7 @@ public class RewriteEvent
         urlGenerator = new UrlGenerator(country.baseUrl);
 
         courseRepository = new CourseRepository();
-        new CourseDao(dataSource, courseRepository);
+        new CourseDao(country, dataSource, courseRepository);
 
         athleteDao = new AthleteDao(dataSource);
         courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);

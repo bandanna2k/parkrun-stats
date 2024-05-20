@@ -1,6 +1,6 @@
 package dnt.parkrun.stats.speed;
 
-import com.mysql.jdbc.Driver;
+import com.mysql.cj.jdbc.Driver;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.ResultDao;
@@ -17,7 +17,6 @@ import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -26,7 +25,6 @@ import java.util.function.Supplier;
 
 import static dnt.parkrun.common.FindAndReplace.findAndReplace;
 import static dnt.parkrun.common.FindAndReplace.getTextFromFile;
-import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.stats.speed.AgeCategoryRecordsHtmlWriter.Type.AGE_CATEGORY_BY_TIME;
@@ -34,6 +32,7 @@ import static dnt.parkrun.stats.speed.AgeCategoryRecordsHtmlWriter.Type.AGE_GRAD
 
 public class SpeedStats
 {
+    private static Driver DRIVER = dnt.parkrun.database.Driver.getDriver();
     private static final Country COUNTRY = NZ;
 
     private final CourseRepository courseRepository;
@@ -41,11 +40,10 @@ public class SpeedStats
     /*
             02/03/2024
      */
-    public static void main(String... args) throws SQLException, IOException, XMLStreamException
+    public static void main(String... args) throws IOException, XMLStreamException
     {
         Country country = Country.valueOf(args[0]);
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
+        DataSource dataSource = new SimpleDriverDataSource(DRIVER, getDataSourceUrl(), "stats", "4b0e7ff1");
 
         SpeedStats stats = SpeedStats.newInstance(country, dataSource);
         Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord =
@@ -84,7 +82,7 @@ public class SpeedStats
     {
         this.resultDao = new ResultDao(country, dataSource);
         this.courseRepository = new CourseRepository();
-        new CourseDao(dataSource, courseRepository);
+        new CourseDao(country, dataSource, courseRepository);
     }
 
     public static SpeedStats newInstance(Country country, DataSource dataSource)

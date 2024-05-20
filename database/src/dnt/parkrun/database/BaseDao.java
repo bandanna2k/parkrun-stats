@@ -8,12 +8,16 @@ import javax.sql.DataSource;
 public abstract class BaseDao
 {
     protected final NamedParameterJdbcTemplate jdbc;
-    protected final String databaseName;
+    private final String globalDatabaseName;
+    private final String countryDatabaseName;
+    protected final String weeklyDatabaseName;
 
     public BaseDao(Country country, DataSource statsDataSource)
     {
         jdbc = new NamedParameterJdbcTemplate(statsDataSource);
-        this.databaseName = "parkrun_stats_" + country.name();
+        this.globalDatabaseName = "parkrun_stats";
+        this.countryDatabaseName = "parkrun_stats_" + country.name();
+        this.weeklyDatabaseName = "weekly_stats_" + country.name();
     }
 
     private static boolean test()
@@ -23,22 +27,22 @@ public abstract class BaseDao
 
     protected String courseEventSummaryTable()
     {
-        return test() ? "parkrun_stats_test.course_event_summary" : databaseName + ".course_event_summary";
+        return test() ? "parkrun_stats_test.course_event_summary" : countryDatabaseName + ".course_event_summary";
     }
     protected String courseTable()
     {
-        return test() ? "parkrun_stats_test.course" : databaseName + ".course";
+        return test() ? "parkrun_stats_test.course" : globalDatabaseName + ".course";
     }
     protected String athleteTable()
     {
-        return test() ? "parkrun_stats_test.athlete" : databaseName + ".athlete";
+        return test() ? "parkrun_stats_test.athlete" : globalDatabaseName + ".athlete";
     }
     protected String resultTable()
     {
-        return test() ? "parkrun_stats_test.result" : databaseName + ".result";
+        return test() ? "parkrun_stats_test.result" : countryDatabaseName + ".result";
     }
     protected String volunteerTable()
     {
-        return test() ? "parkrun_stats_test.event_volunteer" : databaseName + ".event_volunteer";
+        return test() ? "parkrun_stats_test.event_volunteer" : countryDatabaseName + ".event_volunteer";
     }
 }

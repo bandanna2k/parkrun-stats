@@ -56,7 +56,7 @@ public class VolunteerCountDao extends BaseDao
 
     private String getTableName()
     {
-        return "volunteer_count_" + DateConverter.formatDateForDbTable(date);
+        return weeklyDatabaseName + ".volunteer_count_" + DateConverter.formatDateForDbTable(date);
     }
 
     public List<Object[]> getMostVolunteers()

@@ -30,7 +30,7 @@ public class MostEventStatsTest
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getTestDataSourceUrl(), "test", "qa");
 
-        stats = MostEventStats.newInstance(NZ, dataSource, dataSource, Date.from(Instant.EPOCH));
+        stats = MostEventStats.newInstance(NZ, dataSource, Date.from(Instant.EPOCH));
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);
         jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);

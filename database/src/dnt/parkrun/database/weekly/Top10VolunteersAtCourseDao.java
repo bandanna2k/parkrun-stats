@@ -33,7 +33,7 @@ public class Top10VolunteersAtCourseDao extends BaseDao
 
     String tableName()
     {
-        return "top_10_volunteers_at_course_" + DateConverter.formatDateForDbTable(date);
+        return weeklyDatabaseName + ".top_10_volunteers_at_course_" + DateConverter.formatDateForDbTable(date);
     }
 
     public void createTable()

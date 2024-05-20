@@ -50,13 +50,15 @@ public class CourseEventSummaryDao extends BaseDao
 
     public List<CourseEventSummary> getCourseEventSummaries()
     {
-        String sql = "select course_id, event_number, date, finishers," +
-                "fma.name as first_male_name, first_male_athlete_id, " +
-                "ffa.name as first_female_name, first_female_athlete_id " +
-                "from course_event_summary " +
-                "left join athlete fma on first_male_athlete_id = fma.athlete_id " +
-                "left join athlete ffa on first_female_athlete_id = ffa.athlete_id " +
-                "order by date asc, course_id asc";
+        String sql = STR."""
+                select course_id, event_number, date, finishers,
+                    fma.name as first_male_name, first_male_athlete_id,
+                    ffa.name as first_female_name, first_female_athlete_id
+                from \{courseEventSummaryTable()}
+                left join \{athleteTable()} fma on first_male_athlete_id = fma.athlete_id
+                left join \{athleteTable()} ffa on first_female_athlete_id = ffa.athlete_id
+                order by date asc, course_id asc
+                """;
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             int courseId = rs.getInt("course_id");
@@ -100,11 +102,12 @@ public class CourseEventSummaryDao extends BaseDao
     public Map<String, Integer> getCourseCount()
     {
         Map<String, Integer> courseToCount = new HashMap<>();
-        String sql =
-                "select course_name, max(event_number) as count\n" +
-                        "from " + courseEventSummaryTable() + " ces\n" +
-                        "join course using (course_id)\n" +
-                        "group by course_name";
+        String sql = STR."""
+                select course_name, max(event_number) as count
+                from \{courseEventSummaryTable()} ces
+                join \{courseTable()} using (course_id)
+                group by course_name
+                """;
         jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             courseToCount.put(rs.getString("course_name"), rs.getInt("count"));
@@ -133,11 +136,13 @@ public class CourseEventSummaryDao extends BaseDao
      */
     public List<CourseDate> getCourseStartDates()
     {
-        String sql = "select course_id, date \n" +
-                "from course " +
-                "join course_event_summary using (course_id)  \n" +
-                "where event_number = 1 \n" +
-                "order by date asc;\n";
+        String sql = STR."""
+                select course_id, date
+                from \{courseTable()}
+                join \{courseEventSummaryTable()} using (course_id)
+                where event_number = 1
+                order by date asc
+                """;
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE,
                 (rs, rowNum) ->
                         new CourseDate(

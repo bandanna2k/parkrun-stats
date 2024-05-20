@@ -45,14 +45,14 @@ import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
 import static dnt.parkrun.common.FindAndReplace.findAndReplace;
 import static dnt.parkrun.common.FindAndReplace.getTextFromFile;
 import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
-import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
-import static dnt.parkrun.database.DataSourceUrlBuilder.Type.WEEKLY_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Course.Status.*;
 import static java.util.Collections.emptyList;
 
 public class MostEventStats
 {
+    private static final Driver DRIVER = dnt.parkrun.database.Driver.getDriver();
+
     public static final int MIN_P_INDEX = 5;
     public static final Comparator<PIndexTableHtmlWriter.Record> PINDEX_RECORD_COMPARATOR = (pIndexRecord1, pIndexRecord2) ->
     {
@@ -74,15 +74,12 @@ public class MostEventStats
     @Deprecated(since = "Use menu from now on.")
     public static void main(String[] args) throws SQLException, IOException, XMLStreamException
     {
-        Date date = args.length == 0 ? getParkrunDay(new Date()) : DateConverter.parseWebsiteDate(args[0]);
-        Country country = Country.valueOf(args[1]);
+        Country country = Country.valueOf(args[0]);
+        Date date = args.length > 1 ? DateConverter.parseWebsiteDate(args[1]) : getParkrunDay(new Date());
 
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl(PARKRUN_STATS, country), "stats", "statsfractalstats");
-        DataSource statsDataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl(WEEKLY_STATS, country), "stats", "statsfractalstats");
+        DataSource dataSource = new SimpleDriverDataSource(DRIVER, getDataSourceUrl(), "stats", "4b0e7ff1");
 
-        MostEventStats stats = MostEventStats.newInstance(country, dataSource, statsDataSource, date);
+        MostEventStats stats = MostEventStats.newInstance(country, dataSource, date);
 
         {
             File file = stats.generateStats();
@@ -131,7 +128,7 @@ public class MostEventStats
     private final Country country;
     private final Date date;
     private final Date lastWeek;
-    private final DataSource statsDataSource;
+    private final DataSource dataSource;
     final AttendanceRecordsDao attendanceRecordsDao;
     private final ResultDao resultDao;
     private final AthleteCourseSummaryDao acsDao;
@@ -157,9 +154,9 @@ public class MostEventStats
 
     private MostEventStats(Country country,
                            DataSource dataSource,
-                           DataSource statsDataSource,
                            Date date)
     {
+        this.dataSource = dataSource;
         this.country = country;
         this.urlGenerator = new UrlGenerator(country.baseUrl);
 
@@ -167,25 +164,24 @@ public class MostEventStats
         lastWeek = new Date();
         lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
 
-        this.statsDataSource = statsDataSource;
-        this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(country, statsDataSource, this.date);
-        this.acsDao = AthleteCourseSummaryDao.getInstance(country, statsDataSource, this.date);
-        this.top10Dao = Top10AtCourseDao.getInstance(country, statsDataSource, this.date);
-        this.top10VolunteerDao = Top10VolunteersAtCourseDao.getInstance(country, statsDataSource, this.date);
-        this.pIndexDao = PIndexDao.getInstance(country, statsDataSource, date);
-        this.volunteerCountDao = VolunteerCountDao.getInstance(country, statsDataSource, this.date);
+        this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(country, dataSource, this.date);
+        this.acsDao = AthleteCourseSummaryDao.getInstance(country, dataSource, this.date);
+        this.top10Dao = Top10AtCourseDao.getInstance(country, dataSource, this.date);
+        this.top10VolunteerDao = Top10VolunteersAtCourseDao.getInstance(country, dataSource, this.date);
+        this.pIndexDao = PIndexDao.getInstance(country, dataSource, date);
+        this.volunteerCountDao = VolunteerCountDao.getInstance(country, dataSource, this.date);
 
         this.resultDao = new ResultDao(country, dataSource);
-        this.volunteerDao = new VolunteerDao(country, statsDataSource);
+        this.volunteerDao = new VolunteerDao(country, dataSource);
 
         this.courseRepository = new CourseRepository();
-        new CourseDao(dataSource, courseRepository);
+        new CourseDao(country, dataSource, courseRepository);
         this.courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
     }
 
-    public static MostEventStats newInstance(Country country, DataSource dataSource, DataSource statsDataSource, Date date) throws SQLException
+    public static MostEventStats newInstance(Country country, DataSource dataSource, Date date) throws SQLException
     {
-        return new MostEventStats(country, dataSource, statsDataSource, date);
+        return new MostEventStats(country, dataSource, date);
     }
 
     public File generateStats() throws IOException, XMLStreamException
@@ -216,7 +212,7 @@ public class MostEventStats
         System.out.println("Done");
 
         System.out.println("* Generating most events table *");
-        MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(country, statsDataSource, date);
+        MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(country, dataSource, date);
         mostEventsDao.populateMostEventsTable();
 
         System.out.println("* Get most events *");
@@ -516,7 +512,7 @@ public class MostEventStats
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Runs at Courses").build())
         {
             // Populate top 10 runs at courses
-            Top10RunsDao top10RunsDao = new Top10RunsDao(country, statsDataSource);
+            Top10RunsDao top10RunsDao = new Top10RunsDao(country, dataSource);
             List<Course> courses = courseRepository.getCourses(country).stream()
                     .filter(c -> c.status == RUNNING).toList();
             for (Course course : courses)
@@ -596,7 +592,7 @@ public class MostEventStats
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Volunteers at Courses")
                 .open().build())
         {
-            Top10VolunteersDao top10VolunteersDao = new Top10VolunteersDao(country, statsDataSource);
+            Top10VolunteersDao top10VolunteersDao = new Top10VolunteersDao(country, dataSource);
             List<Course> courses = courseRepository.getCourses(country).stream()
                     .filter(c -> c.status == RUNNING).toList();
             for (Course course : courses)

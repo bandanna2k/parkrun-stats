@@ -52,18 +52,20 @@ public class ResultDao extends BaseDao
 
     public List<Result> getResults(int courseId, Date date)
     {
-        String sql = "select * from result " +
-                "left join athlete using (athlete_id) " +
-                "where course_id = :courseId " +
-                "  and date = :date " +
-                "order by course_id asc, date desc, position asc, athlete_id asc";
+        String sql = STR."""
+                select * from \{resultTable()}
+                left join \{athleteTable()} using (athlete_id)
+                where course_id = :courseId
+                and date = :date
+                order by course_id asc, date desc, position asc, athlete_id asc
+                """;
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("courseId", courseId)
                 .addValue("date", date);
         return jdbc.query(sql, params, (rs, rowNum) ->
         {
-            Integer ageCategory = rs.getInt("age_group");
-            Integer ageGrade = rs.getInt("age_grade");
+            int ageCategory = rs.getInt("age_group");
+            int ageGrade = rs.getInt("age_grade");
             return new Result(
                     rs.getInt("course_id"),
                     rs.getDate("date"),
@@ -120,9 +122,12 @@ public class ResultDao extends BaseDao
     }
     public void tableScan(Consumer<Result> consumer, String orderBy)
     {
-        String sql = "select * from result " +
-                "join athlete using (athlete_id) " +
-                orderBy;
+        String sql = STR."""
+                select * 
+                from \{resultTable()}
+                join \{athleteTable()} using (athlete_id)
+                \{orderBy}
+                """;
         jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             Result result = new Result(
@@ -147,7 +152,7 @@ public class ResultDao extends BaseDao
                     r.course_id, r.date, r.position, r.time_seconds, r.age_group, r.age_grade,
                     a.name, a.athlete_id,
                     ces.event_number
-                from result r
+                from \{resultTable()} r
                 join \{athleteTable()} a using (athlete_id)
                 join \{courseEventSummaryTable()} ces on r.date = ces.date and r.course_id = ces.course_id
                 """;

@@ -37,9 +37,9 @@ public class MostEventsDao extends BaseDao
     {
         return getTableName(date);
     }
-    static String getTableName(Date date)
+    String getTableName(Date date)
     {
-        return "most_events_for_region_" + DateConverter.formatDateForDbTable(date);
+        return weeklyDatabaseName + ".most_events_for_region_" + DateConverter.formatDateForDbTable(date);
     }
 
     private void init()
@@ -140,7 +140,7 @@ public class MostEventsDao extends BaseDao
     }
     private List<MostEventsRecord> getMostEvents(Date date)
     {
-        String mostEventsTable = "most_events_for_region_" + DateConverter.formatDateForDbTable(date);
+        String mostEventsTable = weeklyDatabaseName + ".most_events_for_region_" + DateConverter.formatDateForDbTable(date);
         String sql = STR."""
         select a.name, a.athlete_id,
             different_region_course_count, total_region_runs,

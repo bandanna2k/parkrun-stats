@@ -32,7 +32,7 @@ public class WeekendResultsTest extends BaseDaoTest
     public void setUp() throws Exception
     {
         CourseRepository courseRepository = new CourseRepository();
-        CourseDao courseDao = new CourseDao(dataSource, courseRepository);
+        CourseDao courseDao = new CourseDao(country, dataSource, courseRepository);
 
         Course bushy = courseDao.insert(new Course(Course.NO_COURSE_ID, "bushynewzealand", NZ, "Fake Bushy parkrun", Course.Status.RUNNING));
 

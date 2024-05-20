@@ -42,7 +42,7 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
         jdbc.update("delete from result", EmptySqlParameterSource.INSTANCE);
 
         CourseRepository courseRepository = new CourseRepository();
-        CourseDao courseDao = new CourseDao(dataSource, courseRepository);
+        CourseDao courseDao = new CourseDao(country, dataSource, courseRepository);
         courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
         resultDao = new ResultDao(country, dataSource);
         AthleteDao athleteDao = new AthleteDao(dataSource);

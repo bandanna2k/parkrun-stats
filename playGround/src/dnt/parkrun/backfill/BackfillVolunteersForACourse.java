@@ -48,7 +48,7 @@ public class BackfillVolunteersForACourse
         VolunteerDao volunteerDao = new VolunteerDao(country, dataSource);
 
         CourseRepository courseRepository = new CourseRepository();
-        new CourseDao(dataSource, courseRepository);
+        new CourseDao(country, dataSource, courseRepository);
 
         List<CourseEventSummary> courseEventSummaries = new CourseEventSummaryDao(country, dataSource, courseRepository)
                 .getCourseEventSummaries().stream()

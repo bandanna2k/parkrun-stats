@@ -34,7 +34,7 @@ public class PendingCoursesTest
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
         CourseRepository courseRepository = new CourseRepository();
-        CourseDao courseDao = new CourseDao(dataSource, courseRepository);
+        CourseDao courseDao = new CourseDao(country, dataSource, courseRepository);
 
         List<Course> pendingCourses = courseDao.getCourses(NZ).stream()
                 .filter(c -> c.status == Course.Status.PENDING)

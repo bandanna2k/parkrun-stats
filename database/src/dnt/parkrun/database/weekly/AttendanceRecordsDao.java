@@ -33,9 +33,9 @@ public class AttendanceRecordsDao extends BaseDao
     {
         return tableName(date);
     }
-    public static String tableName(Date date)
+    public String tableName(Date date)
     {
-        return "attendance_records_for_region_" + DateConverter.formatDateForDbTable(date);
+        return weeklyDatabaseName + ".attendance_records_for_region_" + DateConverter.formatDateForDbTable(date);
     }
 
     private void generateAttendanceRecordTable()
@@ -93,7 +93,7 @@ public class AttendanceRecordsDao extends BaseDao
 
     public List<AttendanceRecord> getAttendanceRecords(Date date)
     {
-        String attendanceTableName = "attendance_records_for_region_" + DateConverter.formatDateForDbTable(date);
+        String attendanceTableName = weeklyDatabaseName + ".attendance_records_for_region_" + DateConverter.formatDateForDbTable(date);
         String sql = STR."""
             select c.course_id,
                 recent_ces.event_number as recent_event_number, recent_event_date, recent_event_finishers,

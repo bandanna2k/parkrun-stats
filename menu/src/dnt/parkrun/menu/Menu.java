@@ -37,7 +37,6 @@ import java.util.Map;
 import static dnt.parkrun.common.FindAndReplace.findAndReplace;
 import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
 import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
-import static dnt.parkrun.database.DataSourceUrlBuilder.Type.WEEKLY_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 
 public class Menu
@@ -113,11 +112,9 @@ public class Menu
         try
         {
             DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
-            DataSource statsDataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl(WEEKLY_STATS, country), "stats", "4b0e7ff1");
+                    getDataSourceUrl(), "stats", "4b0e7ff1");
 
-            MostEventStats stats = MostEventStats.newInstance(country, dataSource, statsDataSource, getParkrunDay(new Date()));
+            MostEventStats stats = MostEventStats.newInstance(country, dataSource, getParkrunDay(new Date()));
             File file = stats.generateStats();
             File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
             findAndReplace(file, modified, MostEventStats.fileReplacements());

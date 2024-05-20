@@ -28,7 +28,7 @@ public class ProvinceTest
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
         CourseRepository courseRepository = new CourseRepository();
-        new CourseDao(dataSource, courseRepository);
+        new CourseDao(country, dataSource, courseRepository);
 
         courseRepository.getCourses(country).stream().filter(c -> c.country == country).forEach(c -> {
             System.out.println(c);

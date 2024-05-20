@@ -64,7 +64,7 @@ public class VolunteerDaoTest extends BaseDaoTest
             volunteerDao = new VolunteerDao(country, dataSource);
             athleteDao = new AthleteDao(dataSource);
             CourseRepository courseRepository = new CourseRepository();
-            courseDao = new CourseDao(dataSource, courseRepository);
+            courseDao = new CourseDao(country, dataSource, courseRepository);
 
             jdbc.update("delete from event_volunteer", EmptySqlParameterSource.INSTANCE);
             jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);
