@@ -13,12 +13,12 @@ import java.util.function.Consumer;
 
 public class ResultDao extends BaseDao
 {
-
-    public static final String SQL_FOR_INSERT = "insert into result (" +
-            "athlete_id, course_id, date, position, time_seconds, age_group, age_grade" +
-            ") values ( " +
-            ":athleteId, :courseId, :date, :position, :time_seconds, :ageCategory, :ageGrade" +
-            ")";
+    private final String SQL_FOR_INSERT = STR."""
+            insert into \{resultTable()}
+            (athlete_id, course_id, date, position, time_seconds, age_group, age_grade)
+            values
+            (:athleteId, :courseId, :date, :position, :time_seconds, :ageCategory, :ageGrade)
+            """;
 
     public ResultDao(Country country, DataSource dataSource)
     {
@@ -213,9 +213,11 @@ public class ResultDao extends BaseDao
 
     public void delete(int courseId, Date date)
     {
-        String sql = "delete from result " +
-                "where course_id = :courseId " +
-                "  and date = :date ";
+        String sql = STR."""
+                delete from \{resultTable()}
+                where course_id = :courseId
+                and date = :date
+                """;
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("courseId", courseId)
                 .addValue("date", date);

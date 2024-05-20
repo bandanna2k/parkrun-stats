@@ -60,7 +60,7 @@ public class CourseEventSummaryChecker
         new CourseDao(country, dataSource, courseRepository);
         courses = courseRepository.getCourses(country).stream().filter(course -> course.status == Course.Status.RUNNING).toList();
         resultDao = new ResultDao(country, dataSource);
-        athleteDao = new AthleteDao(dataSource);
+        athleteDao = new AthleteDao(country, dataSource);
         volunteerDao = new VolunteerDao(country, dataSource);
         courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
     }

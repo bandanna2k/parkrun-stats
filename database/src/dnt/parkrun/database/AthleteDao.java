@@ -1,10 +1,9 @@
 package dnt.parkrun.database;
 
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.Country;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -13,23 +12,23 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-public class AthleteDao
+public class AthleteDao extends BaseDao
 {
-    private static final String SQL_FOR_INSERT = "insert into athlete (" +
-            "athlete_id, name" +
-            ") values ( " +
-            ":athleteId, :name" +
-            ") on duplicate key " +
-            "update " +
-            "name = :name";
+    private final String SQL_FOR_INSERT = STR."""
+            insert into \{athleteTable()}
+            (athlete_id, name)
+            values
+            (:athleteId, :name)
+            on duplicate key
+            update
+                name = :name
+            """;
     private static final String SQL_FOR_SELECT = "select * from athlete where athlete_id = :athleteId";
     private static final String SQL_FOR_MULTI_SELECT = "select athlete_id, name from athlete where athlete_id in (:athleteIds)";
 
-    private final NamedParameterJdbcOperations jdbc;
-
-    public AthleteDao(DataSource dataSource)
+    public AthleteDao(Country country, DataSource dataSource)
     {
-        jdbc = new NamedParameterJdbcTemplate(dataSource);
+        super(country, dataSource);
     }
 
     public Athlete insert(Athlete athlete)

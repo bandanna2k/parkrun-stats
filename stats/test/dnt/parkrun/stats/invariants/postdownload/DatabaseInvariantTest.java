@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -140,9 +139,9 @@ public class DatabaseInvariantTest extends AbstractDatabaseInvariantTest
                 "athlete_id", "course_id", "name");
     }
 
-    private void addMissingVolunteer(List<Object[]> volunteerWithNoAthleteRecord) throws SQLException
+    private void addMissingVolunteer(List<Object[]> volunteerWithNoAthleteRecord)
     {
-        AthleteDao athleteDao = new AthleteDao(dataSource);
+        AthleteDao athleteDao = new AthleteDao(country, dataSource);
         volunteerWithNoAthleteRecord.stream().map(object ->
         {
             int nonameAthleteId = (int) object[0];

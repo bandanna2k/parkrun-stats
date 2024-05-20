@@ -84,11 +84,12 @@ public class CourseEventSummaryDao extends BaseDao
 
     public void insert(CourseEventSummary courseEventSummary)
     {
-        String sql = "insert into course_event_summary (" +
-                "course_id, event_number, date, finishers, first_male_athlete_id, first_female_athlete_id" +
-                ") values ( " +
-                ":courseId, :eventNumber, :date, :finishers, :firstMaleAthleteId, :firstFemaleAthleteId" +
-                ")";
+        String sql = STR."""
+                insert into \{courseEventSummaryTable()}
+                (course_id, event_number, date, finishers, first_male_athlete_id, first_female_athlete_id)
+                values
+                (:courseId, :eventNumber, :date, :finishers, :firstMaleAthleteId, :firstFemaleAthleteId)
+                """;
         jdbc.update(sql, new MapSqlParameterSource()
                 .addValue("courseId", courseEventSummary.course.courseId)
                 .addValue("eventNumber", courseEventSummary.eventNumber)

@@ -15,14 +15,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AthleteDaoTest extends BaseDaoTest
 {
     private AthleteDao athleteDao;
-    private NamedParameterJdbcTemplate jdbc;
 
     @Before
     public void setUp() throws Exception
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
-        athleteDao = new AthleteDao(dataSource);
+        athleteDao = new AthleteDao(country, dataSource);
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);
         jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);

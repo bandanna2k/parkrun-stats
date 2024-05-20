@@ -16,11 +16,12 @@ public class VolunteerDao extends BaseDao
 {
     public static final int MIN_VOLUNTEER_COUNT = 20;
 
-    private static String SQL_FOR_INSERT = "insert into event_volunteer (" +
-            "athlete_id, course_id, date" +
-            ") values ( " +
-            ":athleteId, :courseId, :date" +
-            ")";
+    private final String SQL_FOR_INSERT = STR."""
+            insert into \{volunteerTable()}
+            (athlete_id, course_id, date)
+            values
+            (:athleteId, :courseId, :date)
+            """;
 
     public VolunteerDao(Country country, DataSource dataSource)
     {
@@ -97,8 +98,11 @@ public class VolunteerDao extends BaseDao
     public // Testing only. Do not use. Results too large
     List<Volunteer> getVolunteers()
     {
-        String sql = "select * from event_volunteer " +
-                "left join athlete using (athlete_id)";
+        String sql = STR."""
+                select *
+                from \{volunteerTable()}
+                left join \{athleteTable()} using (athlete_id)
+                """;
         List<Volunteer> query = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
                 new Volunteer(
                         rs.getInt("course_id"),
@@ -113,9 +117,11 @@ public class VolunteerDao extends BaseDao
 
     public void delete(int courseId, Date date)
     {
-        String sql = "delete from event_volunteer " +
-                "where course_id = :courseId " +
-                "  and date = :date ";
+        String sql = STR."""
+                delete from \{volunteerTable()}
+                where course_id = :courseId
+                and date = :date
+                """;
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("courseId", courseId)
                 .addValue("date", date);

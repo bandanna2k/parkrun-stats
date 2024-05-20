@@ -77,7 +77,7 @@ public class PairsStats
     public PairsStats(Country country, DataSource dataSource)
     {
         resultDao = new ResultDao(country, dataSource);
-        athleteDao = new AthleteDao(dataSource);
+        athleteDao = new AthleteDao(country, dataSource);
         courseRepository = new CourseRepository();
         new CourseDao(country, dataSource, courseRepository);
     }

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 
 public class RewriteEvent
@@ -29,11 +28,10 @@ public class RewriteEvent
     public static void main(String[] args) throws SQLException
     {
         Country country = Country.valueOf(args[0]);
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl(PARKRUN_STATS, country), "dao", "0b851094");
+        DataSource dataSource = new SimpleDriverDataSource(new Driver(), getDataSourceUrl(), "dao", "0b851094");
 
         RewriteEvent rewriteEvent = new RewriteEvent(country, dataSource);
-        rewriteEvent.rewriteCourseEvent("hamiltonpark", 118);
+        rewriteEvent.rewriteCourseEvent("waitangi", 59);
     }
 
     public RewriteEvent(Country country, DataSource dataSource)
@@ -43,7 +41,7 @@ public class RewriteEvent
         courseRepository = new CourseRepository();
         new CourseDao(country, dataSource, courseRepository);
 
-        athleteDao = new AthleteDao(dataSource);
+        athleteDao = new AthleteDao(country, dataSource);
         courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
         resultDao = new ResultDao(country, dataSource);
         volunteerDao = new VolunteerDao(country, dataSource);
