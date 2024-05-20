@@ -31,7 +31,9 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -40,6 +42,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static dnt.parkrun.common.DateConverter.SEVEN_DAYS_IN_MILLIS;
+import static dnt.parkrun.common.FindAndReplace.findAndReplace;
+import static dnt.parkrun.common.FindAndReplace.getTextFromFile;
 import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
 import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.Type.WEEKLY_STATS;
@@ -83,7 +87,8 @@ public class MostEventStats
         {
             File file = stats.generateStats();
             File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
-            findAndReplace(file, modified);
+
+            findAndReplace(file, modified, fileReplacements());
 
             new ProcessBuilder("xdg-open", modified.getAbsolutePath()).start();
         }
@@ -94,6 +99,33 @@ public class MostEventStats
         {
             throw new RuntimeException(String.join("\n", validate));
         }
+    }
+
+    public static Object[][] fileReplacements()
+    {
+        return new Object[][]{
+                {"Cornwall parkrun", (Supplier<String>) () -> "Cornwall Park parkrun"},
+                {"{{dialog}}", (Supplier<String>) () ->
+                {
+                    InputStream inputStream = MostEventStats.class.getResourceAsStream("/dialog.html");
+                    try
+                    {
+                        return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+                    }
+                    catch (IOException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+                }},
+                {"{{css}}", (Supplier<String>) () ->
+                        "<style>" +
+                                getTextFromFile(MostEventStats.class.getResourceAsStream("/css/most_events.css")) +
+                                "</style>"
+                },
+                {"{{meta}}", (Supplier<String>) () ->
+                        getTextFromFile(MostEventStats.class.getResourceAsStream("/meta_most_events.xml"))
+                }
+        };
     }
 
     private final Country country;
@@ -489,19 +521,19 @@ public class MostEventStats
                     .filter(c -> c.status == RUNNING).toList();
             for (Course course : courses)
             {
-                List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);
+                List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);       // ***** DB Access
                 if (top10.isEmpty())
                 {
                     System.out.println("* Populating top 10 run table for " + course.longName);
                     top10.addAll(top10RunsDao.getTop10AtEvent(course.courseId));
-                    top10Dao.writeRunsAtEvents(top10);
+                    top10Dao.writeRunsAtEvents(top10);       // ***** DB Access
                 }
             }
 
             try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(
                     writer.writer, urlGenerator,  country.countryName, "Run"))
             {
-                List<AtEvent> top10InRegion = top10Dao.getTop10InRegion();
+                List<AtEvent> top10InRegion = top10Dao.getTop10InRegion();       // ***** DB Access
 
                 assert !top10InRegion.isEmpty() : "WARNING: Top 10 runs in region list is empty";
                 for (AtEvent r : top10InRegion)
@@ -514,7 +546,7 @@ public class MostEventStats
             List<StatsRecord> clubDe90Percent = new ArrayList<>();
             for (Course course : courses)
             {
-                List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);
+                List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);       // ***** DB Access
                 for (AtEvent rae : top10)
                 {
                     double courseCount = courseToCount.get(course.name);
@@ -544,7 +576,7 @@ public class MostEventStats
             {
                 try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, urlGenerator, course.longName, "Run"))
                 {
-                    List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);
+                    List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);       // ***** DB Access
                     for (AtEvent rae : top10)
                     {
                         double courseCount = courseToCount.get(course.name);
@@ -569,19 +601,19 @@ public class MostEventStats
                     .filter(c -> c.status == RUNNING).toList();
             for (Course course : courses)
             {
-                List<AtEvent> top10 = top10VolunteerDao.getTop10VolunteersAtCourse(course.name);
+                List<AtEvent> top10 = top10VolunteerDao.getTop10VolunteersAtCourse(course.name);       // ***** DB Access
                 if (top10.isEmpty())
                 {
                     System.out.println("* Populating top 10 volunteer table for " + course.longName);
                     top10.addAll(top10VolunteersDao.getTop10VolunteersAtEvent(course.courseId));
-                    top10VolunteerDao.writeVolunteersAtEvents(top10);
+                    top10VolunteerDao.writeVolunteersAtEvents(top10);       // ***** DB Access
                 }
             }
 
             try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(
                     writer.writer, urlGenerator, country.countryName, "Volunteer"))
             {
-                List<Object[]> top10VolunteersInRegion = top10VolunteerDao.getTop10VolunteersInRegion();
+                List<Object[]> top10VolunteersInRegion = top10VolunteerDao.getTop10VolunteersInRegion();       // ***** DB Access
                 assert !top10VolunteersInRegion.isEmpty() : "WARNING: Top 10 runs in region list is empty";
 
                 for (Object[] record : top10VolunteersInRegion)
@@ -597,7 +629,7 @@ public class MostEventStats
             List<StatsRecord> clubDe90Percent = new ArrayList<>();
             for (Course course : courses)
             {
-                List<VolunteersAtEvent> top10 = top10VolunteersDao.getTop10VolunteersAtEvent(course.courseId);
+                List<VolunteersAtEvent> top10 = top10VolunteersDao.getTop10VolunteersAtEvent(course.courseId);       // ***** DB Access
                 for (AtEvent rae : top10)
                 {
                     double courseCount = courseToCount.get(course.name);
@@ -628,7 +660,7 @@ public class MostEventStats
                 try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(
                         writer.writer, urlGenerator, course.longName, "Volunteer"))
                 {
-                    List<AtEvent> top10 = top10VolunteerDao.getTop10VolunteersAtCourse(course.name);
+                    List<AtEvent> top10 = top10VolunteerDao.getTop10VolunteersAtCourse(course.name);       // ***** DB Access
                     for (AtEvent rae : top10)
                     {
                         double courseCount = courseToCount.get(course.name);
@@ -1111,74 +1143,5 @@ public class MostEventStats
             }
             if(!found) thisWeek.isNewEntry = true;
         }
-    }
-
-    public static void findAndReplace(File input, File output) throws IOException
-    {
-        try (FileInputStream fis = new FileInputStream(input);
-             InputStreamReader isr = new InputStreamReader(fis);
-             BufferedReader reader = new BufferedReader(isr))
-        {
-            try (FileOutputStream fos = new FileOutputStream(output);
-                 OutputStreamWriter osw = new OutputStreamWriter(fos);
-                 BufferedWriter writer = new BufferedWriter(osw))
-            {
-                final Object[][] replacements = new Object[][]{
-                        {"Cornwall parkrun", (Supplier<String>) () -> "Cornwall Park parkrun"},
-                        {"{{dialog}}", (Supplier<String>) () -> {
-                            InputStream inputStream = MostEventStats.class.getResourceAsStream("/dialog.html");
-                            try
-                            {
-                                return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-                            }
-                            catch (IOException e)
-                            {
-                                throw new RuntimeException(e);
-                            }
-                        }},
-                        {"{{css}}", (Supplier<String>) () ->
-                                "<style>" +
-                                getTextFromFile(MostEventStats.class.getResourceAsStream("/css/most_events.css")) +
-                                "</style>"
-                        },
-                        {"{{meta}}", (Supplier<String>) () ->
-                                getTextFromFile(MostEventStats.class.getResourceAsStream("/meta_most_events.xml"))
-                        }
-                };
-
-                String line;
-                while (null != (line = reader.readLine()))
-                {
-                    String lineModified = line;
-                    for (Object[] replacement : replacements)
-                    {
-                        final String criteria = (String) replacement[0];
-                        if(line.contains(criteria))
-                        {
-                            lineModified = lineModified.replace(criteria, ((Supplier<String>)replacement[1]).get());
-                        }
-                    }
-                    writer.write(lineModified + "\n");
-                }
-            }
-        }
-    }
-
-    private static String getTextFromFile(InputStream inputStream)
-    {
-        StringBuilder sb = new StringBuilder();
-        try(BufferedReader reader1 = new BufferedReader(new InputStreamReader(inputStream)))
-        {
-            String line1;
-            while(null != (line1 = reader1.readLine()))
-            {
-                sb.append(line1);
-            }
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
-        return sb.toString();
     }
 }

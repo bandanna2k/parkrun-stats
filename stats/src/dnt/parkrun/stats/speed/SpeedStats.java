@@ -15,7 +15,8 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -23,6 +24,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Supplier;
 
+import static dnt.parkrun.common.FindAndReplace.findAndReplace;
+import static dnt.parkrun.common.FindAndReplace.getTextFromFile;
 import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
@@ -50,10 +53,26 @@ public class SpeedStats
         {
             File file = stats.generateFastTimeStats(courseToAgeGroupToAgeGradeRecord);
             File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
-            findAndReplace(file, modified);
+
+            findAndReplace(file, modified, fileReplacements());
 
             new ProcessBuilder("xdg-open", modified.getAbsolutePath()).start();
         }
+    }
+
+    public static Object[][] fileReplacements()
+    {
+        return new Object[][]{
+            {"Cornwall parkrun", (Supplier<String>) () -> "Cornwall Park parkrun"},
+            {"{{css}}", (Supplier<String>) () ->
+                    "<style>" +
+                            getTextFromFile(SpeedStats.class.getResourceAsStream("/css/speed_stats.css")) +
+                            "</style>"
+            },
+            {"{{meta}}", (Supplier<String>) () ->
+                    getTextFromFile(SpeedStats.class.getResourceAsStream("/meta_speed_stats.xml"))
+            },
+        };
     }
 
     private Date mostRecentDate = new Date(Long.MIN_VALUE);
@@ -227,63 +246,5 @@ public class SpeedStats
     {
         Instant isRecent = mostRecentDate.toInstant().minus(35, ChronoUnit.DAYS);
         return date.after(Date.from(isRecent));
-    }
-
-    public static void findAndReplace(File input, File output) throws IOException
-    {
-        try (FileInputStream fis = new FileInputStream(input);
-             InputStreamReader isr = new InputStreamReader(fis);
-             BufferedReader reader = new BufferedReader(isr))
-        {
-            try (FileOutputStream fos = new FileOutputStream(output);
-                 OutputStreamWriter osw = new OutputStreamWriter(fos);
-                 BufferedWriter writer = new BufferedWriter(osw))
-            {
-                final Object[][] replacements = new Object[][]{
-                        {"Cornwall parkrun", (Supplier<String>) () -> "Cornwall Park parkrun"},
-                        {"{{css}}", (Supplier<String>) () ->
-                                "<style>" +
-                                getTextFromFile(SpeedStats.class.getResourceAsStream("/css/speed_stats.css")) +
-                                "</style>"
-                        },
-                        {"{{meta}}", (Supplier<String>) () ->
-                                getTextFromFile(SpeedStats.class.getResourceAsStream("/meta_speed_stats.xml"))
-                        },
-                };
-
-                String line;
-                while (null != (line = reader.readLine()))
-                {
-                    String lineModified = line;
-                    for (Object[] replacement : replacements)
-                    {
-                        final String criteria = (String) replacement[0];
-                        if(line.contains(criteria))
-                        {
-                            lineModified = lineModified.replace(criteria, ((Supplier<String>)replacement[1]).get());
-                        }
-                    }
-                    writer.write(lineModified + "\n");
-                }
-            }
-        }
-    }
-
-    private static String getTextFromFile(InputStream inputStream)
-    {
-        StringBuilder sb = new StringBuilder();
-        try(BufferedReader reader1 = new BufferedReader(new InputStreamReader(inputStream)))
-        {
-            String line1;
-            while(null != (line1 = reader1.readLine()))
-            {
-                sb.append(line1);
-            }
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
-        return sb.toString();
     }
 }

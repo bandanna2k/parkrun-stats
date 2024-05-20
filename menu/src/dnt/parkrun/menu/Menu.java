@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
+import static dnt.parkrun.common.FindAndReplace.findAndReplace;
 import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
 import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.Type.WEEKLY_STATS;
@@ -119,7 +120,7 @@ public class Menu
             MostEventStats stats = MostEventStats.newInstance(country, dataSource, statsDataSource, getParkrunDay(new Date()));
             File file = stats.generateStats();
             File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
-            MostEventStats.findAndReplace(file, modified);
+            findAndReplace(file, modified, MostEventStats.fileReplacements());
 
             new ProcessBuilder("xdg-open", modified.getAbsolutePath()).start();
         }
@@ -159,7 +160,7 @@ public class Menu
 
             File file = stats.generateFastTimeStats(courseToAgeGroupToAgeGradeRecord);
             File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
-            SpeedStats.findAndReplace(file, modified);
+            findAndReplace(file, modified, SpeedStats.fileReplacements());
 
             new ProcessBuilder("xdg-open", modified.getAbsolutePath()).start();
         }

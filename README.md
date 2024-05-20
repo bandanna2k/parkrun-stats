@@ -22,20 +22,23 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Speed stats for the year 
-
-- Remove sql from readme 
-
 - Refactor findAndReplace
 
 - Refactor getTextFromFile
 
-- Friends table including at what venues
-    - 'Most runs with other athletes' table
-      Low priority
-Create a demo table.
+- Move course/athlete table to global DB
 
-- Why does 'Populating top 10 run table for Ōrākei Bay parkrun' take so long.
+- Top 10 at course surely can be done with 1 processor
+  Related: Why does 'Populating top 10 run table for Ōrākei Bay parkrun' take so long.
+
+- Speed stats for the year 
+
+- Remove sql from readme
+
+- Friends table including at what venues
+      - 'Most runs with other athletes' table
+  Low priority
+  Create a demo table.
 
 - Need a loading icon whilst fastest times page is loading
 
