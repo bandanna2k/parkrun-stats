@@ -20,17 +20,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CourseDaoTest extends BaseDaoTest
 {
-    private NamedParameterJdbcTemplate jdbc;
     private CourseDao courseDao;
     private CourseRepository courseRepository;
 
     @Before
     public void setUp() throws Exception
     {
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
-
-        jdbc = new NamedParameterJdbcTemplate(dataSource);
         jdbc.update("delete from course", EmptySqlParameterSource.INSTANCE);
 
         courseRepository = new CourseRepository();
@@ -58,7 +53,7 @@ public class CourseDaoTest extends BaseDaoTest
     @Test
     public void shouldInsertUtf8Course()
     {
-        Course course = courseDao.insert(new Course(9999, "otakiriver", NZ, "\u014ctaki River parkrun", RUNNING));
+        Course course = courseDao.insert(new Course(Course.NO_COURSE_ID, "otakiriver", NZ, "\u014ctaki River parkrun", RUNNING));
         System.out.println(course);
         assertThat(course.courseId).isGreaterThan(0);
         assertThat(course.name).isEqualTo("otakiriver");
@@ -67,12 +62,11 @@ public class CourseDaoTest extends BaseDaoTest
     @Test
     public void shouldGetCourseByName()
     {
-        Course course = courseDao.insert(new Course(9999, "otakiriver", NZ, "\u014ctaki River parkrun", RUNNING));
+        Course course = courseDao.insert(new Course(Course.NO_COURSE_ID, "otakiriver", NZ, "\u014ctaki River parkrun", RUNNING));
 
         assertThat(courseDao.getCourse("otaki")).isNull();
         assertThat(courseDao.getCourse("otakiriver")).isNotNull();
     }
-
 
     @Test
     public void shouldGetCoursesForCountry()
