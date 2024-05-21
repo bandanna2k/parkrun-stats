@@ -36,7 +36,6 @@ import java.util.Map;
 
 import static dnt.parkrun.common.FindAndReplace.findAndReplace;
 import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
-import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 
 public class Menu
@@ -131,8 +130,7 @@ public class Menu
     {
         try
         {
-            DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl(PARKRUN_STATS, country), "dao", "0b851094");
+            DataSource dataSource = new SimpleDriverDataSource(new Driver(), getDataSourceUrl(), "dao", "0b851094");
             WeekendResults weekendResults = WeekendResults.newInstance(
                     country, dataSource,
                     new WebpageProviderFactoryImpl(new UrlGenerator(country.baseUrl)));
@@ -148,8 +146,7 @@ public class Menu
     {
         try
         {
-            DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
+            DataSource dataSource = new SimpleDriverDataSource(new Driver(), getDataSourceUrl(), "stats", "4b0e7ff1");
             SpeedStats stats = SpeedStats.newInstance(country, dataSource);
 
             Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord =

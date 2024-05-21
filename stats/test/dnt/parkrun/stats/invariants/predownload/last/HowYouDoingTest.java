@@ -1,11 +1,11 @@
 package dnt.parkrun.stats.invariants.predownload.last;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
 import dnt.parkrun.database.CourseDao;
+import dnt.parkrun.database.Driver;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
@@ -29,7 +29,6 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import static dnt.parkrun.common.DateConverter.ONE_DAY_IN_MILLIS;
-import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,18 +47,17 @@ public class HowYouDoingTest
         public static Object[] data() throws SQLException
         {
             final Country country = NZ;
-            DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
+            DataSource dataSource = new SimpleDriverDataSource(Driver.getDriver(), getDataSourceUrl(), "stats", "4b0e7ff1");
             CourseRepository courseRepository = new CourseRepository();
             CourseDao courseDao = new CourseDao(country, dataSource, courseRepository);
 
-            return courseDao.getCourses(NZ).stream()
+            return courseDao.getCourses(country).stream()
                     .filter(c -> c.status == Course.Status.RUNNING)
                     .toArray();
         }
 
         @Test
-        public void howManyResultsAreInTest() throws IOException
+        public void howManyResultsAreInTest()
         {
             UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
 
@@ -77,7 +75,7 @@ public class HowYouDoingTest
             }
             else
             {
-                CourseEventSummary ces = courseEventSummaries.get(0);
+                CourseEventSummary ces = courseEventSummaries.getFirst();
                 assertTrue(ces.finishers > 0);
                 assertThat(ces.date).isAfter(Date.from(Instant.now().minusSeconds(60 * 60 * 24 * 5)));
                 assertThat(ces.firstMale).isNotEmpty();
@@ -92,10 +90,9 @@ public class HowYouDoingTest
         private final Country country = NZ;
 
         @Test
-        public void areCoursesUpToDate() throws IOException, SQLException
+        public void areCoursesUpToDate() throws IOException
         {
-            DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
+            DataSource dataSource = new SimpleDriverDataSource(dnt.parkrun.database.Driver.getDriver(), getDataSourceUrl(), "stats", "4b0e7ff1");
             CourseRepository courseRepository = new CourseRepository();
             CourseDao courseDao = new CourseDao(country, dataSource, courseRepository);
 

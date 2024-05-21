@@ -12,12 +12,13 @@ import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
+
+import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 
 @Deprecated(since = "Deprecated to discourage use")
 public class BackfillVolunteersForACourse
@@ -40,11 +41,9 @@ public class BackfillVolunteersForACourse
         assert country.countryCode == 65;
         Course backfillCourse = new Course(44, "porirua", country, "Porirua parkrun", Course.Status.STOPPED);
 
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "0b851094");
-        NamedParameterJdbcTemplate jdbc = new NamedParameterJdbcTemplate(dataSource);
+        DataSource dataSource = new SimpleDriverDataSource(new Driver(), getDataSourceUrl(), "dao", "0b851094");
 
-        AthleteDao athleteDao = new AthleteDao(dataSource);
+        AthleteDao athleteDao = new AthleteDao(country, dataSource);
         VolunteerDao volunteerDao = new VolunteerDao(country, dataSource);
 
         CourseRepository courseRepository = new CourseRepository();

@@ -15,7 +15,6 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import java.util.*;
 
-import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 
@@ -30,8 +29,7 @@ public class PairsTableDatabaseTest
     public void setUp() throws Exception
     {
         final Country country = NZ;
-        final DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
+        final DataSource dataSource = new SimpleDriverDataSource(new Driver(), getDataSourceUrl(), "stats", "4b0e7ff1");
         resultDao = new ResultDao(country, dataSource);
         athleteDao = new AthleteDao(country, dataSource);
         courseRepository = new CourseRepository();

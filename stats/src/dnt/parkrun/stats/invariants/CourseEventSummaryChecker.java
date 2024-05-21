@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
-import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 
@@ -38,8 +37,7 @@ public class CourseEventSummaryChecker
     public static void main(String[] args) throws SQLException
     {
         Country country = Country.valueOf(args[0]);
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl(PARKRUN_STATS, country), "dao", "0b851094");
+        DataSource dataSource = new SimpleDriverDataSource(new Driver(), getDataSourceUrl(), "dao", "0b851094");
 
         CourseEventSummaryChecker checker = new CourseEventSummaryChecker(country,
                 dataSource, System.currentTimeMillis());

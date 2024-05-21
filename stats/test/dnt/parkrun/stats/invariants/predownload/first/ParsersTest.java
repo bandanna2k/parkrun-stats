@@ -1,9 +1,9 @@
 package dnt.parkrun.stats.invariants.predownload.first;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.CourseDao;
+import dnt.parkrun.database.Driver;
 import dnt.parkrun.datastructures.*;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 import org.assertj.core.api.Assertions;
@@ -16,7 +16,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Athlete.NO_ATHLETE_ID;
 import static dnt.parkrun.datastructures.Country.NZ;
@@ -81,8 +80,7 @@ public class ParsersTest
     @Test
     public void testAthleteCourseSummary() throws SQLException
     {
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
+        DataSource dataSource = new SimpleDriverDataSource(Driver.getDriver(), getDataSourceUrl(), "stats", "4b0e7ff1");
         CourseRepository courseRepository = new CourseRepository();
         new CourseDao(country, dataSource, courseRepository);
 

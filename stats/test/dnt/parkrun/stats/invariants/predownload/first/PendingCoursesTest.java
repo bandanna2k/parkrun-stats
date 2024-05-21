@@ -1,9 +1,9 @@
 package dnt.parkrun.stats.invariants.predownload.first;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseevent.Parser;
 import dnt.parkrun.database.CourseDao;
+import dnt.parkrun.database.Driver;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
@@ -13,13 +13,11 @@ import org.junit.Test;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static dnt.parkrun.database.DataSourceUrlBuilder.Type.PARKRUN_STATS;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Course.Status.RUNNING;
@@ -29,10 +27,9 @@ public class PendingCoursesTest
     private final Country country = NZ;
 
     @Test
-    public void showPendingCoursesWithResults() throws SQLException
+    public void showPendingCoursesWithResults()
     {
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                getDataSourceUrl(PARKRUN_STATS, country), "stats", "4b0e7ff1");
+        DataSource dataSource = new SimpleDriverDataSource(Driver.getDriver(), getDataSourceUrl(), "stats", "4b0e7ff1");
         CourseRepository courseRepository = new CourseRepository();
         CourseDao courseDao = new CourseDao(country, dataSource, courseRepository);
 
