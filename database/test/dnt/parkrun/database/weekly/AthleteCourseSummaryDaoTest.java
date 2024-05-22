@@ -1,6 +1,5 @@
 package dnt.parkrun.database.weekly;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.database.AthleteDao;
 import dnt.parkrun.database.BaseDaoTest;
 import dnt.parkrun.datastructures.Athlete;
@@ -9,9 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
 
@@ -19,16 +16,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class AthleteCourseSummaryDaoTest extends BaseDaoTest
 {
-    private NamedParameterJdbcTemplate jdbc;
     private AthleteCourseSummaryDao acsDao;
     private AthleteDao athleteDao;
 
     @Before
     public void setUp() throws Exception
     {
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
-
         this.athleteDao = new AthleteDao(country, dataSource);
         this.acsDao = AthleteCourseSummaryDao.getInstance(country, dataSource, new Date());
 
