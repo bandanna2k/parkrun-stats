@@ -24,13 +24,12 @@ public class Parser
 {
     private final Document doc;
     private final Consumer<AthleteCourseEvent> consumer;
-    private final Consumer<AgeCategory> consumerOfAgeCategory;
+    private AgeCategory ageCategory;
 
-    private Parser(Document doc, Consumer<AthleteCourseEvent> consumer, Consumer<AgeCategory> consumerAgeCategory)
+    private Parser(Document doc, Consumer<AthleteCourseEvent> consumer)
     {
         this.doc = doc;
         this.consumer = consumer;
-        this.consumerOfAgeCategory = consumerAgeCategory;
     }
 
     public void parse()
@@ -39,7 +38,7 @@ public class Parser
         String name = extractName(nameElements.text());
         int athleteId = extractAthleteId(nameElements.text());
 
-        consumerOfAgeCategory.accept(getAgeCategory());
+        setAgeCategory();
 
         Elements tableElements = doc.getElementsByTag("table");
         Element table = tableElements.get(2);
@@ -92,7 +91,7 @@ public class Parser
         }
     }
 
-    private AgeCategory getAgeCategory()
+    private void setAgeCategory()
     {
         Elements ageCategoryElement = this.doc.select("p:contains(Most recent age category was)");
         try
@@ -100,12 +99,11 @@ public class Parser
             String text = ageCategoryElement.text();
             int lastIndex = text.lastIndexOf(" ");
             String ageCategoryString = text.substring(lastIndex + 1);
-            return AgeCategory.from(ageCategoryString);
+            this.ageCategory = AgeCategory.from(ageCategoryString);
         }
         catch (Exception ex)
         {
             System.out.printf("WARNING: Failed to get age category from text '%s'%n", ageCategoryElement);
-            return null;
         }
     }
 
@@ -124,17 +122,20 @@ public class Parser
         return Integer.parseInt(athleteId);
     }
 
+    public AgeCategory getAgeCategory()
+    {
+        return ageCategory;
+    }
 
     public static class Builder
     {
         private final JsoupWrapper jsoupWrapper = new JsoupWrapper.Builder().build();
         private Document doc;
         private Consumer<AthleteCourseEvent> consumer = ace -> {};
-        private Consumer<AgeCategory> consumerAgeCategory = ac -> {};
 
         public Parser build() throws IOException
         {
-            return new Parser(doc, consumer, consumerAgeCategory);
+            return new Parser(doc, consumer);
         }
 
         public Builder url(URL url) throws IOException
@@ -146,12 +147,6 @@ public class Parser
         public Builder file(File file) throws IOException
         {
             this.doc = jsoupWrapper.newDocument(file);
-            return this;
-        }
-
-        public Builder onAgeCategory(Consumer<AgeCategory> consumerAgeCategory)
-        {
-            this.consumerAgeCategory = consumerAgeCategory;
             return this;
         }
 
