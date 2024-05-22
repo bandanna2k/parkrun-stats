@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 import static dnt.parkrun.common.FindAndReplace.getTextFromFile;
@@ -118,9 +119,9 @@ public class PairsStats
             processors.values().forEach(processor -> processor.visitInOrder(result));
         }, "order by course_id desc, date desc");
 
+        AtomicInteger max = new AtomicInteger(Integer.MIN_VALUE);
         pairsTable.forEach((rowAthlete, colAthletes) ->
         {
-
             String name10Characters = String.format("%1$10s", rowAthlete.name).substring(0, 10); // Row names
             System.out.printf(name10Characters + "\t");
 //            System.out.printf("%d\t", rowAthlete.athleteId);
@@ -129,11 +130,14 @@ public class PairsStats
             {
                 String key = rowAthlete.athleteId + " " + colAthlete.athleteId;
                 HowManyRunsWithFriend processor = processors.get(key);
-                System.out.printf("%d\t", processors.get(key).runs.size());
+                int runs = processors.get(key).runs.size();
+                System.out.printf("%d\t", runs);
                 //System.out.printf("%d\t", colAthlete.athleteId);
+                max.getAndUpdate(i -> Math.max(runs, i));
             });
             System.out.println();
         });
+        System.out.println("Max: " + max.get());
 
         try (HtmlWriter htmlWriter = HtmlWriter.newInstance(new Date(), NZ, "pairs_stat"))
         {
@@ -163,7 +167,7 @@ public class PairsStats
                             return processor.runs.size();
                         }).toList();
 
-                        tableWriter.writeRecord(rowAthlete, list);
+                        tableWriter.writeRecord(rowAthlete, max.get(), list);
                     }
                     catch (XMLStreamException e)
                     {

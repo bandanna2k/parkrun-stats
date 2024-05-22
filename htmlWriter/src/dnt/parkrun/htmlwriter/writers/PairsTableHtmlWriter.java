@@ -57,7 +57,7 @@ public class PairsTableHtmlWriter extends BaseWriter implements Closeable
         }
     }
 
-    public void writeRecord(Athlete rowAthlete, List<Integer> colAthletes) throws XMLStreamException
+    public void writeRecord(Athlete rowAthlete, int max, List<Integer> colAthletes) throws XMLStreamException
     {
         writer.writeStartElement("tr");
 
@@ -72,7 +72,19 @@ public class PairsTableHtmlWriter extends BaseWriter implements Closeable
 
         for (Integer colAthlete : colAthletes)
         {
-            startElement("td");
+            double percentage = (double)100 * ((double)colAthlete / (double)max);
+            if(percentage == 0) startElement("td", "class", "td_zero");
+            else if(percentage < 1) startElement("td", "class", "td0");
+            else if(percentage < 2) startElement("td", "class", "td1");
+            else if(percentage < 4) startElement("td", "class", "td2");
+            else if(percentage < 6) startElement("td", "class", "td3");
+            else if(percentage < 9) startElement("td", "class", "td4");
+            else if(percentage < 13) startElement("td", "class", "td5");
+            else if(percentage < 25) startElement("td", "class", "td6");
+            else if(percentage < 50) startElement("td", "class", "td7");
+            else if(percentage < 75) startElement("td", "class", "td8");
+            else                     startElement("td", "class", "td9");
+
             writer.writeCharacters(String.valueOf(colAthlete));
             endElement("td");
         }
@@ -82,22 +94,22 @@ public class PairsTableHtmlWriter extends BaseWriter implements Closeable
 
     public void writeHeaderRecord(Athlete rowAthlete, List<Athlete> colAthletes) throws XMLStreamException
     {
-        startElement("colgroup");
-        for (int i = 0; i < colAthletes.size(); i++)
-        {
-            if((i % 2) == 0)
-            {
-                startElement("colgroup");
-                endElement("colgroup");
-            }
-            else
-            {
-                startElement("colgroup", "class", "colHighlight");
-                endElement("colgroup");
-            }
-        }
-        endElement("colgroup");
-
+//        startElement("colgroup");
+//        for (int i = 0; i < colAthletes.size(); i++)
+//        {
+//            if((i % 2) == 0)
+//            {
+//                startElement("colgroup");
+//                endElement("colgroup");
+//            }
+//            else
+//            {
+//                startElement("colgroup", "class", "colHighlight");
+//                endElement("colgroup");
+//            }
+//        }
+//        endElement("colgroup");
+//
         writer.writeStartElement("thead");
 
         startElement("th");

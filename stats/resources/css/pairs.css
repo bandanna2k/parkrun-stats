@@ -7,7 +7,9 @@ body
 table
 {
     border-spacing:0px;
-    margin:0px
+    margin:0px;
+    margin-left:auto;
+    margin-right:auto;
 }
 table a
 {
@@ -21,25 +23,29 @@ th
     background-color:#f0f7f7;
     color:black;
 }
-th:nth-child(1) {
-    all:unset;
-}
-tr:nth-child(even)
-{
-    background-color:#f0f7f7;
-}
 td
 {
     border:0px;
     padding:8px;
     text-align:center;
 }
+
+.td_zero { background-color:#fff; }
+.td0 { background-color:#e5e5e5; }
+.td1 { background-color:#ccc; }
+.td2 { background-color:#b2b2b2; }
+.td3 { background-color:#999; }
+.td4 { background-color:#7f7f7f; }
+
+.td5 { background-color:#666; color:white; }
+.td6 { background-color:#4c4c4c; color:white; }
+.td7 { background-color:#333; color:white; }
+.td8 { background-color:#191919; color:white; }
+.td9 { background-color:#000; color:white; }
+
 td:nth-child(1) {
     font-weight:700;
     text-align:right;
     color:black;
     background-color:#f0f7f7
-}
-.colHighlight {
-    background-color:white;
 }

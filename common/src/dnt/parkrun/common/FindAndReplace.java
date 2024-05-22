@@ -41,7 +41,7 @@ public abstract class FindAndReplace
             String line1;
             while(null != (line1 = reader1.readLine()))
             {
-                sb.append(line1);
+                sb.append(line1).append("\n");
             }
         }
         catch (IOException e)
