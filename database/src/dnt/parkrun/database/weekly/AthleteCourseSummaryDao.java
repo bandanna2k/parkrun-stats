@@ -2,35 +2,36 @@ package dnt.parkrun.database.weekly;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.BaseDao;
+import dnt.parkrun.database.Database;
 import dnt.parkrun.datastructures.AthleteCourseSummary;
-import dnt.parkrun.datastructures.Country;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
 
 public class AthleteCourseSummaryDao extends BaseDao
 {
     private final Date date;
+    private final Database database;
 
-    private AthleteCourseSummaryDao(Country country, DataSource dataSource, Date date)
+    private AthleteCourseSummaryDao(Database database, Date date)
     {
-        super(country, dataSource);
+        super(database.country, database.dataSource);
+        this.database = database;
         this.date = date;
     }
 
-    public static AthleteCourseSummaryDao getInstance(Country country, DataSource dataSource, Date date)
+    public static AthleteCourseSummaryDao getInstance(Database database, Date date)
     {
-        AthleteCourseSummaryDao athleteCourseSummaryDao = new AthleteCourseSummaryDao(country, dataSource, date);
+        AthleteCourseSummaryDao athleteCourseSummaryDao = new AthleteCourseSummaryDao(database, date);
         athleteCourseSummaryDao.createTable();
         return athleteCourseSummaryDao;
     }
 
     String tableName()
     {
-        return weeklyDatabaseName + ".athlete_course_summary_" + DateConverter.formatDateForDbTable(date);
+        return database.getWeeklyDatabaseName() + ".athlete_course_summary_" + DateConverter.formatDateForDbTable(date);
     }
 
 

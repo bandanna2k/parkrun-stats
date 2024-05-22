@@ -2,12 +2,14 @@ package dnt.parkrun.database.weekly;
 
 import dnt.parkrun.database.AthleteDao;
 import dnt.parkrun.database.BaseDaoTest;
+import dnt.parkrun.database.CourseTestBuilder;
+import dnt.parkrun.database.Database;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.AthleteCourseSummary;
+import dnt.parkrun.datastructures.Course;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.util.Date;
 import java.util.List;
@@ -22,10 +24,30 @@ public class AthleteCourseSummaryDaoTest extends BaseDaoTest
     @Before
     public void setUp() throws Exception
     {
-        this.athleteDao = new AthleteDao(country, dataSource);
-        this.acsDao = AthleteCourseSummaryDao.getInstance(country, dataSource, new Date());
+        Database database = new Database(country, dataSource)
+        {
+            public static final String testDatabaseName = "parkrun_stats_test";
 
-        jdbc = new NamedParameterJdbcTemplate(dataSource);
+            @Override
+            public String getGlobalDatabaseName()
+            {
+                return testDatabaseName;
+            }
+
+            @Override
+            public String getCountryDatabaseName()
+            {
+                return testDatabaseName;
+            }
+
+            @Override
+            public String getWeeklyDatabaseName()
+            {
+                return testDatabaseName;
+            }
+        };
+        this.athleteDao = new AthleteDao(database);
+        this.acsDao = AthleteCourseSummaryDao.getInstance(database, new Date());
         jdbc.update("delete from " + acsDao.tableName(), EmptySqlParameterSource.INSTANCE);
     }
 
@@ -51,14 +73,18 @@ public class AthleteCourseSummaryDaoTest extends BaseDaoTest
         athleteDao.insert(athlete);
         athleteDao.insert(athlete2);
 
+        Course course1 = new CourseTestBuilder().courseId(9001).build();
+        Course course2 = new CourseTestBuilder().courseId(9002).build();
+        Course course3 = new CourseTestBuilder().courseId(9003).build();
+
         acsDao.writeAthleteCourseSummary(
-                new AthleteCourseSummary(athlete, ELLIÐAÁRDALUR, 20)
+                new AthleteCourseSummary(athlete, course1, 20)
         );
         acsDao.writeAthleteCourseSummary(
-                new AthleteCourseSummary(athlete, CORNWALL, 2)
+                new AthleteCourseSummary(athlete, course2, 2)
         );
         acsDao.writeAthleteCourseSummary(
-                new AthleteCourseSummary(athlete2, ELLIÐAÁRDALUR, 1)
+                new AthleteCourseSummary(athlete2, course3, 1)
         );
 
         List<Object[]> actualSummaries = acsDao.getAthleteCourseSummaries();
@@ -67,7 +93,7 @@ public class AthleteCourseSummaryDaoTest extends BaseDaoTest
         Object[] cornwallAcs = actualSummaries.get(1);
         assertThat(cornwallAcs[0]).isEqualTo("Bob Te WILLIGA");
         assertThat(cornwallAcs[1]).isEqualTo(12345);
-        assertThat(cornwallAcs[2]).isEqualTo(9999);
-        assertThat(cornwallAcs[3]).isEqualTo(20);
+        assertThat(cornwallAcs[2]).isEqualTo(9002);
+        assertThat(cornwallAcs[3]).isEqualTo(2);
     }
 }

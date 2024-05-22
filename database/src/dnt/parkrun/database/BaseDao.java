@@ -20,6 +20,14 @@ public abstract class BaseDao
         this.weeklyDatabaseName = "weekly_stats_" + country.name();
     }
 
+    public BaseDao(Database database)
+    {
+        jdbc = new NamedParameterJdbcTemplate(database.dataSource);
+        this.globalDatabaseName = database.getGlobalDatabaseName();
+        this.weeklyDatabaseName = database.getWeeklyDatabaseName();
+        this.countryDatabaseName = database.getCountryDatabaseName();
+    }
+
     private static boolean test()
     {
         return null != System.getProperty("TEST") && Boolean.parseBoolean(System.getProperty("TEST"));

@@ -23,12 +23,23 @@ public class AthleteDao extends BaseDao
             update
                 name = :name
             """;
-    private static final String SQL_FOR_SELECT = "select * from parkrun_stats.athlete where athlete_id = :athleteId";
-    private static final String SQL_FOR_MULTI_SELECT = "select athlete_id, name from parkrun_stats.athlete where athlete_id in (:athleteIds)";
+    private final String SQL_FOR_SELECT = STR."""
+        select * from \{athleteTable()} where athlete_id = :athleteId
+    """;
+    private final String SQL_FOR_MULTI_SELECT = STR."""
+        select athlete_id, name from \{athleteTable()} where athlete_id in (:athleteIds)
+    """;
 
+    public AthleteDao(Database database)
+    {
+        super(database);
+    }
+
+    @Deprecated
     public AthleteDao(Country country, DataSource dataSource)
     {
-        super(country, dataSource);
+        super(null, null);
+        throw new UnsupportedOperationException();
     }
 
     public Athlete insert(Athlete athlete)

@@ -4,10 +4,7 @@ import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
-import dnt.parkrun.database.CourseDao;
-import dnt.parkrun.database.CourseEventSummaryDao;
-import dnt.parkrun.database.ResultDao;
-import dnt.parkrun.database.VolunteerDao;
+import dnt.parkrun.database.*;
 import dnt.parkrun.database.stats.MostEventsDao;
 import dnt.parkrun.database.stats.Top10RunsDao;
 import dnt.parkrun.database.stats.Top10VolunteersDao;
@@ -129,6 +126,7 @@ public class MostEventStats
     private final Date date;
     private final Date lastWeek;
     private final DataSource dataSource;
+    private final Database database;
     final AttendanceRecordsDao attendanceRecordsDao;
     private final ResultDao resultDao;
     private final AthleteCourseSummaryDao acsDao;
@@ -164,8 +162,9 @@ public class MostEventStats
         lastWeek = new Date();
         lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
 
+        this.database = new StatsDatabase(country, dataSource);
         this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(country, dataSource, this.date);
-        this.acsDao = AthleteCourseSummaryDao.getInstance(country, dataSource, this.date);
+        this.acsDao = AthleteCourseSummaryDao.getInstance(database, this.date);
         this.top10Dao = Top10AtCourseDao.getInstance(country, dataSource, this.date);
         this.top10VolunteerDao = Top10VolunteersAtCourseDao.getInstance(country, dataSource, this.date);
         this.pIndexDao = PIndexDao.getInstance(country, dataSource, date);
