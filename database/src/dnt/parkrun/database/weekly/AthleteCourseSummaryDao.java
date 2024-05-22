@@ -15,15 +15,15 @@ public class AthleteCourseSummaryDao extends BaseDao
 {
     private final Date date;
 
-    private AthleteCourseSummaryDao(Country country, DataSource statsDataSource, Date date)
+    private AthleteCourseSummaryDao(Country country, DataSource dataSource, Date date)
     {
-        super(country, statsDataSource);
+        super(country, dataSource);
         this.date = date;
     }
 
-    public static AthleteCourseSummaryDao getInstance(Country country, DataSource statsDataSource, Date date)
+    public static AthleteCourseSummaryDao getInstance(Country country, DataSource dataSource, Date date)
     {
-        AthleteCourseSummaryDao athleteCourseSummaryDao = new AthleteCourseSummaryDao(country, statsDataSource, date);
+        AthleteCourseSummaryDao athleteCourseSummaryDao = new AthleteCourseSummaryDao(country, dataSource, date);
         athleteCourseSummaryDao.createTable();
         return athleteCourseSummaryDao;
     }

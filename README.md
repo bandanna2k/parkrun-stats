@@ -24,8 +24,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - Athlete Course Summary file/website code needs updating.
 
-- Download age category from Athlete Course Summary
-
 - Top 10 at course surely can be done with 1 processor
   Related: Why does 'Populating top 10 run table for Ōrākei Bay parkrun' take so long.
 
@@ -46,6 +44,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 - Unique runners at course / Add unique runs for runners / Add unique runs to Most Events???
 
 ## Issues Completed
+
+- 22/5/2024 Download age category from Athlete Course Summary
 
 - 21/5/2024 Move course/athlete table to global DB
 
