@@ -22,6 +22,10 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- Athlete Course Summary file/website code needs updating.
+
+- Download age category from Athlete Course Summary
+
 - Top 10 at course surely can be done with 1 processor
   Related: Why does 'Populating top 10 run table for Ōrākei Bay parkrun' take so long.
 
