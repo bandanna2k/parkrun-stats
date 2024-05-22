@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static dnt.parkrun.datastructures.AgeCategory.VM45_49;
+
 public class ParserTest
 {
     @Test
@@ -22,18 +24,20 @@ public class ParserTest
         Map<String, Integer> volunteerTypeToCount = new HashMap<>();
         CourseRepository courseRepository = new CourseRepository();
         URL resource = this.getClass().getResource("/example.athlete.course.summary.html");
-        new dnt.parkrun.athletecoursesummary.Parser.Builder()
+        Parser parser = new Parser.Builder()
                 .file(new File(resource.getFile()))
-                .forEachVolunteerRecord(record -> volunteerTypeToCount.put((String)record[1], (int)record[2]))
+                .forEachVolunteerRecord(record -> volunteerTypeToCount.put((String) record[1], (int) record[2]))
                 .forEachAthleteCourseSummary(x ->
                 {
                     counter.addAndGet(x.countOfRuns);
                     System.out.println(x);
                 })
-                .build(courseRepository)
-                .parse();
+                .build(courseRepository);
+        parser.parse();
         System.out.println("Total:" + counter.get());
         Assertions.assertThat(volunteerTypeToCount.get("Marshal")).isEqualTo(9);
         Assertions.assertThat(volunteerTypeToCount.get("Total Credits")).isEqualTo(21);
+        Assertions.assertThat(parser.getAthlete().name).isEqualTo("David NORTH");
+        Assertions.assertThat(parser.getAgeCategory()).isEqualTo(VM45_49);
     }
 }

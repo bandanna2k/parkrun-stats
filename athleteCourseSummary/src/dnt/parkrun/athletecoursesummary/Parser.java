@@ -23,6 +23,7 @@ public class Parser
     private final Consumer<Course> courseNotFoundConsumer;
     private final Consumer<Object[]> volunteerConsumer;
     private Athlete athlete;
+    private AgeCategory ageCategory;
 
     private Parser(Document doc,
                    CourseRepository courseRepository,
@@ -43,6 +44,7 @@ public class Parser
         String name = extractName(nameElements.text());
         int athleteId = extractAthleteId(nameElements.text());
         athlete = Athlete.from(name, athleteId);
+        setAgeCategory();
 
         parseEventSummary(name, athleteId);
         parseEventVolunteerSummary(athleteId);
@@ -179,6 +181,27 @@ public class Parser
     public Athlete getAthlete()
     {
         return athlete;
+    }
+
+    public AgeCategory getAgeCategory()
+    {
+        return ageCategory;
+    }
+
+    private void setAgeCategory()
+    {
+        Elements ageCategoryElement = this.doc.select("p:contains(Most recent age category was)");
+        try
+        {
+            String text = ageCategoryElement.text();
+            int lastIndex = text.lastIndexOf(" ");
+            String ageCategoryString = text.substring(lastIndex + 1);
+            ageCategory = AgeCategory.from(ageCategoryString);
+        }
+        catch (Exception ex)
+        {
+            System.out.printf("WARNING: Failed to get age category from text '%s'%n", ageCategoryElement);
+        }
     }
 
     public static class Builder
