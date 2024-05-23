@@ -50,11 +50,12 @@ public class CourseDao extends BaseDao
                 : "Course already exists " + course;
         try
         {
-            String sql = "insert ignore into course (" +
-                    "course_name, course_long_name, country_code, country, status " +
-                    ") values ( " +
-                    ":courseName, :courseLongName, :countryCode, :country, :status" +
-                    ")";
+            String sql = STR."""
+                    insert ignore into \{courseTable()}
+                    (course_name, course_long_name, country_code, country, status) 
+                    values 
+                    (:courseName, :courseLongName, :countryCode, :country, :status)
+                    """;
             jdbc.update(sql, new MapSqlParameterSource()
                     .addValue("courseName", course.name)
                     .addValue("courseLongName", course.longName)
@@ -77,7 +78,11 @@ public class CourseDao extends BaseDao
     {
         try
         {
-            return jdbc.queryForObject("select * from course where course_name = :courseName",
+            return jdbc.queryForObject(STR."""
+                            select *
+                            from \{courseTable()}
+                            where course_name = :courseName
+                            """,
                     new MapSqlParameterSource("courseName", courseName),
                     (rs, rowNum) ->
                             new Course(

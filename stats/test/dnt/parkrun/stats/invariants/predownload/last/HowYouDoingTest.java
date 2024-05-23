@@ -22,7 +22,6 @@ import org.junit.runners.Parameterized;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.sql.SQLException;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
@@ -43,10 +42,11 @@ public class HowYouDoingTest
         public Course course;
 
         @Parameterized.Parameters(name = "{0}")
-        public static Object[] data() throws SQLException
+        public static Object[] data()
         {
             final Country country = NZ;
-            Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
+            String needsToGetCoursesFromDatabase = "sudo";
+            Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1", needsToGetCoursesFromDatabase);
 
             CourseRepository courseRepository = new CourseRepository();
             CourseDao courseDao = new CourseDao(database, courseRepository);
@@ -92,7 +92,8 @@ public class HowYouDoingTest
         @Test
         public void areCoursesUpToDate() throws IOException
         {
-            Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
+            String permissionToInsertRecords = "sudo";
+            Database database = new LiveDatabase(country, getDataSourceUrl(), "dao", "0b851094", permissionToInsertRecords);
             CourseRepository courseRepository = new CourseRepository();
             CourseDao courseDao = new CourseDao(database, courseRepository);
 
@@ -180,7 +181,7 @@ public class HowYouDoingTest
                     .isEqualTo(true);
             softly.assertAll();
         }
-        public boolean areResultsIn(Course course) throws IOException
+        public boolean areResultsIn(Course course)
         {
             UrlGenerator urlGenerator = new UrlGenerator(Country.CANADA.baseUrl);
             dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(course)
