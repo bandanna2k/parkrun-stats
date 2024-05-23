@@ -32,7 +32,7 @@ public class LiveDatabase extends Database
     @Override
     public String getGlobalDatabaseName()
     {
-        return "parkrun_stats" + country.name();
+        return "parkrun_stats";
     }
 
     @Override

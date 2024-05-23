@@ -23,7 +23,7 @@ public class ProvinceTest
     public void allNzCoursesShouldHaveAProvince() throws SQLException
     {
         RegionChecker regionChecker = new NewZealandRegionChecker();
-        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1", "sudo");
         CourseRepository courseRepository = new CourseRepository();
         new CourseDao(database, courseRepository);
 

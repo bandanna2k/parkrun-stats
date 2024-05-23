@@ -96,11 +96,12 @@ public class CourseDao extends BaseDao
 
     public List<Course> getCourses(Country country)
     {
-        return jdbc.query(
-                "select course_id, course_name, course_long_name, country_code, status " +
-                    "from course " +
-                    "where country_code = :countryCode " +
-                    "order by course_name",
+        return jdbc.query(STR."""
+                        select course_id, course_name, course_long_name, country_code, status
+                        from \{courseTable()}
+                        where country_code = :countryCode
+                        order by course_name
+                        """,
                 new MapSqlParameterSource("countryCode", country.getCountryCode()),
                 (rs, rowNum) ->
                         new Course(

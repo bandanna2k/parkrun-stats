@@ -3,19 +3,15 @@ package dnt.parkrun.stats.invariants.predownload.first;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.CourseDao;
-import dnt.parkrun.database.Database;
-import dnt.parkrun.database.LiveDatabase;
 import dnt.parkrun.datastructures.*;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
+import static dnt.parkrun.database.BaseDaoTest.TEST_DATABASE;
 import static dnt.parkrun.datastructures.Athlete.NO_ATHLETE_ID;
 import static dnt.parkrun.datastructures.Country.NZ;
 
@@ -31,7 +27,7 @@ public class ParsersTest
     private final UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
 
     @Test
-    public void testCourseSummary() throws IOException
+    public void testCourseSummaryParser()
     {
         List<CourseEventSummary> listOfCourseEvents = new ArrayList<>();
         dnt.parkrun.courseeventsummary.Parser parser = new dnt.parkrun.courseeventsummary.Parser.Builder()
@@ -45,7 +41,7 @@ public class ParsersTest
     }
 
     @Test
-    public void testCourseEvent() throws SQLException
+    public void testCourseEventParser()
     {
         List<Volunteer> listOfVolunteers = new ArrayList<>();
         List<Athlete> listOfAthletes = new ArrayList<>();
@@ -77,11 +73,10 @@ public class ParsersTest
     }
 
     @Test
-    public void testAthleteCourseSummary() throws SQLException
+    public void testAthleteCourseSummaryParser()
     {
-        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
         CourseRepository courseRepository = new CourseRepository();
-        new CourseDao(database, courseRepository);
+        new CourseDao(TEST_DATABASE, courseRepository);
 
         List<AthleteCourseSummary> list = new ArrayList<>();
         Parser parser = new Parser.Builder()

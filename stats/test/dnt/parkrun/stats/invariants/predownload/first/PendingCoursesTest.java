@@ -28,7 +28,7 @@ public class PendingCoursesTest
     @Test
     public void showPendingCoursesWithResults()
     {
-        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1", "sudo");
         CourseRepository courseRepository = new CourseRepository();
         CourseDao courseDao = new CourseDao(database, courseRepository);
 
