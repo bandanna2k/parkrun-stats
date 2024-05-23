@@ -83,7 +83,7 @@ public class DatabaseInvariantTest extends AbstractDatabaseInvariantTest
         System.setProperty("TEST", "false");
 
         CourseRepository courseRepository = new CourseRepository();
-        new CourseDao(country, dataSource, courseRepository);
+        new CourseDao(TEST_DATABASE, courseRepository);
 
         String sql = """
                 select ces.course_id, ces.date, ces.finishers, count(r.athlete_id) as result_count

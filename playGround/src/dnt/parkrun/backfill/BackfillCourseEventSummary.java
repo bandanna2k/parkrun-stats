@@ -1,23 +1,24 @@
 package dnt.parkrun.backfill;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
 import dnt.parkrun.database.CourseEventSummaryDao;
+import dnt.parkrun.database.Database;
+import dnt.parkrun.database.LiveDatabase;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Date;
+
+import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 
 @Deprecated(since = "Deprecated to discourage use.")
 public class BackfillCourseEventSummary
@@ -41,9 +42,8 @@ public class BackfillCourseEventSummary
     {
         CourseRepository courseRepository = new CourseRepository();
 
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "0b851094");
-        jdbc = new NamedParameterJdbcTemplate(dataSource);
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "dao", "0b851094");
+        jdbc = new NamedParameterJdbcTemplate(database.dataSource);
 
         System.out.println("* Adding courses *");
         InputStream inputStream = Course.class.getResourceAsStream("/events.json");
@@ -59,7 +59,7 @@ public class BackfillCourseEventSummary
                 .build();
         reader.read();
 
-        CourseEventSummaryDao courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
+        CourseEventSummaryDao courseEventSummaryDao = new CourseEventSummaryDao(database, courseRepository);
 
         for (Course course : courseRepository.getCourses(country))
         {

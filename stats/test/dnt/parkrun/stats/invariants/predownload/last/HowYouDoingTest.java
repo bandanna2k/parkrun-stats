@@ -5,7 +5,8 @@ import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
 import dnt.parkrun.database.CourseDao;
-import dnt.parkrun.database.Driver;
+import dnt.parkrun.database.Database;
+import dnt.parkrun.database.LiveDatabase;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
@@ -17,9 +18,7 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -47,9 +46,10 @@ public class HowYouDoingTest
         public static Object[] data() throws SQLException
         {
             final Country country = NZ;
-            DataSource dataSource = new SimpleDriverDataSource(Driver.getDriver(), getDataSourceUrl(), "stats", "4b0e7ff1");
+            Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
+
             CourseRepository courseRepository = new CourseRepository();
-            CourseDao courseDao = new CourseDao(country, dataSource, courseRepository);
+            CourseDao courseDao = new CourseDao(database, courseRepository);
 
             return courseDao.getCourses(country).stream()
                     .filter(c -> c.status == Course.Status.RUNNING)
@@ -92,9 +92,9 @@ public class HowYouDoingTest
         @Test
         public void areCoursesUpToDate() throws IOException
         {
-            DataSource dataSource = new SimpleDriverDataSource(dnt.parkrun.database.Driver.getDriver(), getDataSourceUrl(), "stats", "4b0e7ff1");
+            Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
             CourseRepository courseRepository = new CourseRepository();
-            CourseDao courseDao = new CourseDao(country, dataSource, courseRepository);
+            CourseDao courseDao = new CourseDao(database, courseRepository);
 
             boolean disableDatabaseRuns = false;
             boolean addNewCourses = false;

@@ -3,16 +3,15 @@ package dnt.parkrun.stats.invariants.predownload.first;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseevent.Parser;
 import dnt.parkrun.database.CourseDao;
-import dnt.parkrun.database.Driver;
+import dnt.parkrun.database.Database;
+import dnt.parkrun.database.LiveDatabase;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,9 +28,9 @@ public class PendingCoursesTest
     @Test
     public void showPendingCoursesWithResults()
     {
-        DataSource dataSource = new SimpleDriverDataSource(Driver.getDriver(), getDataSourceUrl(), "stats", "4b0e7ff1");
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
         CourseRepository courseRepository = new CourseRepository();
-        CourseDao courseDao = new CourseDao(country, dataSource, courseRepository);
+        CourseDao courseDao = new CourseDao(database, courseRepository);
 
         List<Course> pendingCourses = courseDao.getCourses(NZ).stream()
                 .filter(c -> c.status == Course.Status.PENDING)

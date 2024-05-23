@@ -5,23 +5,16 @@ import dnt.parkrun.datastructures.*;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import javax.sql.DataSource;
 import java.util.*;
 
 public class CourseEventSummaryDao extends BaseDao
 {
     private final CourseRepository courseRepository;
 
-    @Deprecated
-    public CourseEventSummaryDao(Country country, DataSource dataSource, CourseRepository courseRepository)
-    {
-        super(country, dataSource);
-        this.courseRepository = courseRepository;
-    }
-
     public CourseEventSummaryDao(Database database, CourseRepository courseRepository)
     {
-        this(database.country, database.dataSource, courseRepository);
+        super(database);
+        this.courseRepository = courseRepository;
     }
 
     public List<CourseEventSummary> getCourseEventSummaries(Course course)

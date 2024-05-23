@@ -1,12 +1,10 @@
 package dnt.parkrun.database;
 
 import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Volunteer;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
 
@@ -23,15 +21,9 @@ public class VolunteerDao extends BaseDao
             (:athleteId, :courseId, :date)
             """;
 
-    @Deprecated
-    public VolunteerDao(Country country, DataSource dataSource)
-    {
-        super(country, dataSource);
-    }
-
     public VolunteerDao(Database database)
     {
-        this(database.country, database.dataSource);
+        super(database);
     }
 
     public void insert(Volunteer volunteer)

@@ -8,7 +8,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import javax.sql.DataSource;
 import java.util.List;
 
 public class CourseDao extends BaseDao
@@ -18,10 +17,9 @@ public class CourseDao extends BaseDao
     /*
         Adds course to DB and populates CourseRepository
      */
-    @Deprecated
-    public CourseDao(Country country, DataSource dataSource, CourseRepository courseRepository)
+    public CourseDao(Database database, CourseRepository courseRepository)
     {
-        super(country, dataSource);
+        super(database);
         this.courseRepository = courseRepository;
 
         jdbc.query(STR."""
@@ -42,11 +40,6 @@ public class CourseDao extends BaseDao
                     courseRepository.addCourse(course);
                     return null;
                 });
-    }
-
-    public CourseDao(Database database, CourseRepository courseRepository)
-    {
-        this(database.country, database.dataSource, courseRepository);
     }
 
     public Course insert(Course course)
