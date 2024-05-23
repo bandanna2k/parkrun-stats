@@ -1,15 +1,13 @@
 package dnt.parkrun.athletecoursesummary;
 
 
-import dnt.jsoupwrapper.JsoupWrapper;
 import dnt.parkrun.datastructures.*;
+import dnt.parkrun.webpageprovider.WebpageProvider;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
-import java.io.File;
-import java.net.URL;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -62,7 +60,7 @@ public class Parser
         Elements summaries = eventSummary.parents();
         Elements tableElements = summaries.select("table");
 
-        Element firstTable = tableElements.get(0);
+        Element firstTable = tableElements.getFirst();
 
         List<Node> firstTableRows = firstTable.childNodes().get(1).childNodes();
         int numRows = firstTableRows.size();
@@ -206,26 +204,19 @@ public class Parser
 
     public static class Builder
     {
-        private final JsoupWrapper jsoupWrapper = new JsoupWrapper.Builder().build();
-        private Document doc;
         private Consumer<AthleteCourseSummary> consumer = es -> {};
         private Consumer<Course> courseNotFoundConsumer = s -> System.out.println("WARNING Course not found: " + s);
         private Consumer<Object[]> volunteerConsumer = record -> {};
+        private WebpageProvider webpageProvider;
 
         public Parser build(CourseRepository courseRepository)
         {
-            return new Parser(doc, courseRepository, consumer, courseNotFoundConsumer, volunteerConsumer);
+            return new Parser(webpageProvider.getDocument(), courseRepository, consumer, courseNotFoundConsumer, volunteerConsumer);
         }
 
-        public Builder url(URL url)
+        public Builder webpageProvider(WebpageProvider webpageProvider)
         {
-            this.doc = jsoupWrapper.newDocument(url);
-            return this;
-        }
-
-        public Builder file(File file)
-        {
-            this.doc = jsoupWrapper.newDocument(file);
+            this.webpageProvider = webpageProvider;
             return this;
         }
 

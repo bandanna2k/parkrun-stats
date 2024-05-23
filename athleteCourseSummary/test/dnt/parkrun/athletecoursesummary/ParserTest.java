@@ -2,6 +2,7 @@ package dnt.parkrun.athletecoursesummary;
 
 
 import dnt.parkrun.datastructures.CourseRepository;
+import dnt.parkrun.filewebpageprovider.FileWebpageProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
@@ -25,7 +26,7 @@ public class ParserTest
         CourseRepository courseRepository = new CourseRepository();
         URL resource = this.getClass().getResource("/example.athlete.course.summary.html");
         Parser parser = new Parser.Builder()
-                .file(new File(resource.getFile()))
+                .webpageProvider(new FileWebpageProvider(new File(resource.getFile())))
                 .forEachVolunteerRecord(record -> volunteerTypeToCount.put((String) record[1], (int) record[2]))
                 .forEachAthleteCourseSummary(x ->
                 {

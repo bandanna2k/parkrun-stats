@@ -24,6 +24,7 @@ import dnt.parkrun.stats.invariants.CourseEventSummaryChecker;
 import dnt.parkrun.stats.processors.AttendanceProcessor;
 import dnt.parkrun.stats.processors.AverageAttendanceProcessor;
 import dnt.parkrun.stats.processors.AverageTimeProcessor;
+import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
@@ -990,7 +991,7 @@ public class MostEventStats
 
             System.out.printf("Downloading %d of %d ", i, countOfAthletesToDownload);
             Parser parser = new Parser.Builder()
-                    .url(urlGenerator.generateAthleteEventSummaryUrl(athleteId))
+                    .webpageProvider(new WebpageProviderImpl(urlGenerator.generateAthleteEventSummaryUrl(athleteId)))
                     .courseNotFound(courseNotFound -> {
                         throw new RuntimeException("Course not found. " + courseNotFound);
                     })

@@ -77,7 +77,7 @@ public class WalkerTest
         CourseRepository courseRepository = new CourseRepository();
         URL athleteCourseSummaryUrl = new URL("https://" + course.country.baseUrl + "/parkrunner/" + result.athlete.athleteId + "/");
         dnt.parkrun.athletecoursesummary.Parser athleteCourseSummaryParser = new dnt.parkrun.athletecoursesummary.Parser.Builder()
-                .url(athleteCourseSummaryUrl)
+                .webpageProvider(new WebpageProviderImpl(athleteCourseSummaryUrl))
                 .forEachAthleteCourseSummary(System.out::println)
                 .build(courseRepository);
         athleteCourseSummaryParser.parse();

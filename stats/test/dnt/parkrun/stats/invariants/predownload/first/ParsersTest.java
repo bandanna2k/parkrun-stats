@@ -80,7 +80,7 @@ public class ParsersTest
 
         List<AthleteCourseSummary> list = new ArrayList<>();
         Parser parser = new Parser.Builder()
-                .url(urlGenerator.generateAthleteEventSummaryUrl(414811))
+                .webpageProvider(new WebpageProviderImpl(urlGenerator.generateAthleteEventSummaryUrl(414811)))
                 .forEachAthleteCourseSummary(list::add)
                 .build(courseRepository);
         parser.parse();

@@ -5,6 +5,7 @@ import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
 import dnt.parkrun.datastructures.*;
+import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,7 +68,7 @@ public class AddAthleteEvents
         for (Integer athleteId : athletes)
         {
             Parser parser = new Parser.Builder()
-                    .url(urlGenerator.generateAthleteEventSummaryUrl(athleteId))
+                    .webpageProvider(new WebpageProviderImpl(urlGenerator.generateAthleteEventSummaryUrl(athleteId)))
                     .forEachAthleteCourseSummary(courseSummaries::add)
                     .build(courseRepository);
             parser.parse();

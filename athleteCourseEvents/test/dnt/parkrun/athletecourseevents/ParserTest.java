@@ -2,6 +2,7 @@ package dnt.parkrun.athletecourseevents;
 
 
 import dnt.parkrun.datastructures.AgeCategory;
+import dnt.parkrun.filewebpageprovider.FileWebpageProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
@@ -19,7 +20,7 @@ public class ParserTest
 
         URL resource = this.getClass().getResource("/example.athlete.event.html");
         Parser parser = new Parser.Builder()
-                .file(new File(resource.getFile()))
+                .webpageProvider(new FileWebpageProvider(new File(resource.getFile())))
                 .forEachAthleteCourseEvent(x ->
                 {
                     counter.incrementAndGet();

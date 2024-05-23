@@ -31,7 +31,7 @@ public class Parser
     public void parse()
     {
         Elements tableElements = doc.getElementsByClass("Results-table");
-        Element firstTable = tableElements.get(0);
+        Element firstTable = tableElements.getFirst();
 
         List<Node> firstTableRows = firstTable.childNodes().get(1).childNodes();
         int numRows = firstTableRows.size();
@@ -130,7 +130,6 @@ public class Parser
 
     public static class Builder
     {
-        private Document doc;
         private Consumer<CourseEventSummary> consumer = ehr -> {};
         private Course course;
         private WebpageProvider webpageProvider;

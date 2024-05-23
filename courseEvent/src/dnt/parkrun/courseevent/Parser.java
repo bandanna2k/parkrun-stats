@@ -44,13 +44,13 @@ public class Parser
 
         Elements resultsHeader = doc.getElementsByClass("Results-header");
 
-        Node eventNumberNode = resultsHeader.get(0)
+        Node eventNumberNode = resultsHeader.getFirst()
                 .childNode(1)   // h3
                 .childNode(2)   // span
                 .childNode(0);
         int eventNumber = Integer.parseInt(eventNumberNode.toString().replace("#", ""));
 
-        Node dateNode = resultsHeader.get(0)
+        Node dateNode = resultsHeader.getFirst()
                 .childNode(1)   // h3
                 .childNode(0)   // span
                 .childNode(0);

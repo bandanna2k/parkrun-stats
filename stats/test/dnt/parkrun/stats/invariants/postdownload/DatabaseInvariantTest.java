@@ -8,6 +8,7 @@ import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.stats.invariants.AbstractDatabaseInvariantTest;
+import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
@@ -147,7 +148,7 @@ public class DatabaseInvariantTest extends AbstractDatabaseInvariantTest
         {
             int nonameAthleteId = (int) object[0];
             Parser parser = new Parser.Builder()
-                    .url(urlGenerator.generateAthleteEventSummaryUrl(nonameAthleteId))
+                    .webpageProvider(new WebpageProviderImpl(urlGenerator.generateAthleteEventSummaryUrl(nonameAthleteId)))
                     .build(new CourseRepository());
             try
             {

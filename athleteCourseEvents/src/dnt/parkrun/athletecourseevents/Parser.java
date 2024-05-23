@@ -6,14 +6,13 @@ import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.AgeCategory;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Time;
+import dnt.parkrun.webpageprovider.WebpageProvider;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
@@ -130,23 +129,17 @@ public class Parser
     public static class Builder
     {
         private final JsoupWrapper jsoupWrapper = new JsoupWrapper.Builder().build();
-        private Document doc;
         private Consumer<AthleteCourseEvent> consumer = ace -> {};
+        private WebpageProvider webpageProvider;
 
         public Parser build() throws IOException
         {
-            return new Parser(doc, consumer);
+            return new Parser(webpageProvider.getDocument(), consumer);
         }
 
-        public Builder url(URL url) throws IOException
+        public Builder webpageProvider(WebpageProvider webpageProvider)
         {
-            this.doc = jsoupWrapper.newDocument(url);
-            return this;
-        }
-
-        public Builder file(File file) throws IOException
-        {
-            this.doc = jsoupWrapper.newDocument(file);
+            this.webpageProvider = webpageProvider;
             return this;
         }
 
