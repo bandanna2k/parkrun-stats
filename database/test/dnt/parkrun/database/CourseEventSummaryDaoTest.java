@@ -30,9 +30,9 @@ public class CourseEventSummaryDaoTest extends BaseDaoTest
         jdbc.update("delete from parkrun_stats_test.course_event_summary", EmptySqlParameterSource.INSTANCE);
 
         courseRepository = new CourseRepository();
-        dao = new CourseEventSummaryDao(country, dataSource, courseRepository);
-        courseDao = new CourseDao(country, dataSource, courseRepository);
-        athleteDao = new AthleteDao(country, dataSource);
+        dao = new CourseEventSummaryDao(TEST_DATABASE, courseRepository);
+        courseDao = new CourseDao(TEST_DATABASE, courseRepository);
+        athleteDao = new AthleteDao(TEST_DATABASE);
     }
 
     @Test

@@ -1,11 +1,9 @@
 package dnt.parkrun.database;
 
 import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.Country;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,13 +31,6 @@ public class AthleteDao extends BaseDao
     public AthleteDao(Database database)
     {
         super(database);
-    }
-
-    @Deprecated
-    public AthleteDao(Country country, DataSource dataSource)
-    {
-        super(null, null);
-        throw new UnsupportedOperationException();
     }
 
     public Athlete insert(Athlete athlete)

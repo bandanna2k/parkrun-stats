@@ -2,6 +2,8 @@ package dnt.parkrun.menu;
 
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.UrlGenerator;
+import dnt.parkrun.database.Database;
+import dnt.parkrun.database.LiveDatabase;
 import dnt.parkrun.datastructures.AgeCategory;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.stats.MostEventStats;
@@ -110,10 +112,8 @@ public class Menu
     {
         try
         {
-            DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                    getDataSourceUrl(), "stats", "4b0e7ff1");
-
-            MostEventStats stats = MostEventStats.newInstance(country, dataSource, getParkrunDay(new Date()));
+            Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
+            MostEventStats stats = MostEventStats.newInstance(database, getParkrunDay(new Date()));
             File file = stats.generateStats();
             File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
             findAndReplace(file, modified, MostEventStats.fileReplacements());
@@ -130,9 +130,9 @@ public class Menu
     {
         try
         {
-            DataSource dataSource = new SimpleDriverDataSource(new Driver(), getDataSourceUrl(), "dao", "0b851094");
+            Database database = new LiveDatabase(country, getDataSourceUrl(), "dao", "0b851094");
             WeekendResults weekendResults = WeekendResults.newInstance(
-                    country, dataSource,
+                    database,
                     new WebpageProviderFactoryImpl(new UrlGenerator(country.baseUrl)));
             weekendResults.fetchWeekendResults();
         }

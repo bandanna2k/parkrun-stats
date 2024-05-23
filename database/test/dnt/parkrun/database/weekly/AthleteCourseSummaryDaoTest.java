@@ -3,7 +3,6 @@ package dnt.parkrun.database.weekly;
 import dnt.parkrun.database.AthleteDao;
 import dnt.parkrun.database.BaseDaoTest;
 import dnt.parkrun.database.CourseTestBuilder;
-import dnt.parkrun.database.Database;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.AthleteCourseSummary;
 import dnt.parkrun.datastructures.Course;
@@ -24,30 +23,8 @@ public class AthleteCourseSummaryDaoTest extends BaseDaoTest
     @Before
     public void setUp() throws Exception
     {
-        Database database = new Database(country, dataSource)
-        {
-            public static final String testDatabaseName = "parkrun_stats_test";
-
-            @Override
-            public String getGlobalDatabaseName()
-            {
-                return testDatabaseName;
-            }
-
-            @Override
-            public String getCountryDatabaseName()
-            {
-                return testDatabaseName;
-            }
-
-            @Override
-            public String getWeeklyDatabaseName()
-            {
-                return testDatabaseName;
-            }
-        };
-        this.athleteDao = new AthleteDao(database);
-        this.acsDao = AthleteCourseSummaryDao.getInstance(database, new Date());
+        this.athleteDao = new AthleteDao(TEST_DATABASE);
+        this.acsDao = AthleteCourseSummaryDao.getInstance(TEST_DATABASE, new Date());
         jdbc.update("delete from " + acsDao.tableName(), EmptySqlParameterSource.INSTANCE);
     }
 

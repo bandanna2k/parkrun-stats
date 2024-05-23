@@ -3,13 +3,11 @@ package dnt.parkrun.database;
 import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import org.junit.BeforeClass;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.util.Date;
 
 import static dnt.parkrun.database.DataSourceUrlBuilder.getTestDataSourceUrl;
@@ -52,13 +50,36 @@ public abstract class BaseDaoTest
         return null != System.getProperty("TEST") && Boolean.parseBoolean(System.getProperty("TEST"));
     }
 
-    protected DataSource dataSource;
     protected NamedParameterJdbcTemplate jdbc;
-    protected Country country = NZ;
 
     public BaseDaoTest()
     {
-        dataSource = new SimpleDriverDataSource(DRIVER, getTestDataSourceUrl(), "test", "qa");
-        jdbc = new NamedParameterJdbcTemplate(dataSource);
+        jdbc = new NamedParameterJdbcTemplate(TEST_DATABASE.dataSource);
     }
+
+    public static final Database TEST_DATABASE = new Database(
+            NZ,
+            new SimpleDriverDataSource(DRIVER, getTestDataSourceUrl(), "test", "qa"))
+    {
+        public static final String testDatabaseName = "parkrun_stats_test";
+
+        @Override
+        public String getGlobalDatabaseName()
+        {
+            return testDatabaseName;
+        }
+
+        @Override
+        public String getCountryDatabaseName()
+        {
+            return testDatabaseName;
+        }
+
+        @Override
+        public String getWeeklyDatabaseName()
+        {
+            return testDatabaseName;
+        }
+    };
+
 }

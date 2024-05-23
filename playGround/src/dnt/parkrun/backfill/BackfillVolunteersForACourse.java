@@ -1,20 +1,14 @@
 package dnt.parkrun.backfill;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseevent.Parser;
-import dnt.parkrun.database.AthleteDao;
-import dnt.parkrun.database.CourseDao;
-import dnt.parkrun.database.CourseEventSummaryDao;
-import dnt.parkrun.database.VolunteerDao;
+import dnt.parkrun.database.*;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -41,15 +35,15 @@ public class BackfillVolunteersForACourse
         assert country.countryCode == 65;
         Course backfillCourse = new Course(44, "porirua", country, "Porirua parkrun", Course.Status.STOPPED);
 
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(), getDataSourceUrl(), "dao", "0b851094");
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "dao", "0b851094");
 
-        AthleteDao athleteDao = new AthleteDao(country, dataSource);
-        VolunteerDao volunteerDao = new VolunteerDao(country, dataSource);
+        AthleteDao athleteDao = new AthleteDao(database);
+        VolunteerDao volunteerDao = new VolunteerDao(database);
 
         CourseRepository courseRepository = new CourseRepository();
-        new CourseDao(country, dataSource, courseRepository);
+        new CourseDao(database, courseRepository);
 
-        List<CourseEventSummary> courseEventSummaries = new CourseEventSummaryDao(country, dataSource, courseRepository)
+        List<CourseEventSummary> courseEventSummaries = new CourseEventSummaryDao(database, courseRepository)
                 .getCourseEventSummaries().stream()
                 .filter(ces -> ces.course.courseId == backfillCourse.courseId)
                 .toList();

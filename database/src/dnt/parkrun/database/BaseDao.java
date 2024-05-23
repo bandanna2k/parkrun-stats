@@ -12,6 +12,7 @@ public abstract class BaseDao
     private final String countryDatabaseName;
     protected final String weeklyDatabaseName;
 
+    @Deprecated
     public BaseDao(Country country, DataSource statsDataSource)
     {
         jdbc = new NamedParameterJdbcTemplate(statsDataSource);

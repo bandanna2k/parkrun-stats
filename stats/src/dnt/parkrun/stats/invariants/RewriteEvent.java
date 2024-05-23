@@ -1,14 +1,11 @@
 package dnt.parkrun.stats.invariants;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseevent.Parser;
 import dnt.parkrun.database.*;
 import dnt.parkrun.datastructures.*;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,24 +25,24 @@ public class RewriteEvent
     public static void main(String[] args) throws SQLException
     {
         Country country = Country.valueOf(args[0]);
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(), getDataSourceUrl(), "dao", "0b851094");
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "dao", "0b851094");
 
-        RewriteEvent rewriteEvent = new RewriteEvent(country, dataSource);
+        RewriteEvent rewriteEvent = new RewriteEvent(database);
 //        rewriteEvent.rewriteCourseEvent("blenheim", 368);
         rewriteEvent.rewriteCourseEvent("owairaka", 160);
     }
 
-    public RewriteEvent(Country country, DataSource dataSource)
+    public RewriteEvent(Database database)
     {
-        urlGenerator = new UrlGenerator(country.baseUrl);
+        urlGenerator = new UrlGenerator(database.country.baseUrl);
 
         courseRepository = new CourseRepository();
-        new CourseDao(country, dataSource, courseRepository);
+        new CourseDao(database, courseRepository);
 
-        athleteDao = new AthleteDao(country, dataSource);
-        courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
-        resultDao = new ResultDao(country, dataSource);
-        volunteerDao = new VolunteerDao(country, dataSource);
+        athleteDao = new AthleteDao(database);
+        courseEventSummaryDao = new CourseEventSummaryDao(database, courseRepository);
+        resultDao = new ResultDao(database);
+        volunteerDao = new VolunteerDao(database);
     }
 
     private void rewriteCourseEvent(String courseName, int eventNumber)

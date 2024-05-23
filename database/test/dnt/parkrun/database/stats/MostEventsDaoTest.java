@@ -1,15 +1,12 @@
 package dnt.parkrun.database.stats;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.database.*;
 import dnt.parkrun.database.weekly.AttendanceRecordsDao;
 import dnt.parkrun.datastructures.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -35,9 +32,6 @@ public class MostEventsDaoTest extends BaseDaoTest
     @Before
     public void setUp() throws Exception
     {
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
-
         jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);
         jdbc.update("delete from result", EmptySqlParameterSource.INSTANCE);
         jdbc.update("delete from course_event_summary", EmptySqlParameterSource.INSTANCE);
@@ -45,10 +39,10 @@ public class MostEventsDaoTest extends BaseDaoTest
         // TODO jdbc.update("drop table if exists " + MostEventsDao.getTableName(epoch), EmptySqlParameterSource.INSTANCE);
 
         CourseRepository courseRepository = new CourseRepository();
-        courseDao = new CourseDao(country, dataSource, courseRepository);
-        athleteDao = new AthleteDao(country, dataSource);
-        resultDao = new ResultDao(country, dataSource);
-        courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
+        courseDao = new CourseDao(TEST_DATABASE, courseRepository);
+        athleteDao = new AthleteDao(TEST_DATABASE);
+        resultDao = new ResultDao(TEST_DATABASE);
+        courseEventSummaryDao = new CourseEventSummaryDao(TEST_DATABASE, courseRepository);
     }
 
     @Test
@@ -79,7 +73,7 @@ public class MostEventsDaoTest extends BaseDaoTest
                     2, boy, Time.from("22:23"), SM30_34, AgeGrade.newInstance(70.89 + i)));
         }
 
-        MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(country, dataSource, epoch);
+        MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(TEST_DATABASE, epoch);
         mostEventsDao.populateMostEventsTable();
 
         List<MostEventsDao.MostEventsRecord> mostEvents = mostEventsDao.getMostEvents();

@@ -12,10 +12,16 @@ public class CourseEventSummaryDao extends BaseDao
 {
     private final CourseRepository courseRepository;
 
+    @Deprecated
     public CourseEventSummaryDao(Country country, DataSource dataSource, CourseRepository courseRepository)
     {
         super(country, dataSource);
         this.courseRepository = courseRepository;
+    }
+
+    public CourseEventSummaryDao(Database database, CourseRepository courseRepository)
+    {
+        this(database.country, database.dataSource, courseRepository);
     }
 
     public List<CourseEventSummary> getCourseEventSummaries(Course course)

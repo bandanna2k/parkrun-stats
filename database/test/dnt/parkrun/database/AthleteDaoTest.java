@@ -21,7 +21,7 @@ public class AthleteDaoTest extends BaseDaoTest
     {
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
-        athleteDao = new AthleteDao(country, dataSource);
+        athleteDao = new AthleteDao(TEST_DATABASE);
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);
         jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);

@@ -2,6 +2,7 @@ package dnt.parkrun.database.stats;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.BaseDao;
+import dnt.parkrun.database.Database;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Country;
 import org.springframework.dao.DuplicateKeyException;
@@ -21,6 +22,11 @@ public class MostEventsDao extends BaseDao
 
     private final Date date;
 
+    public static MostEventsDao getOrCreate(Database database, Date date)
+    {
+        return getOrCreate(database.country, database.dataSource, date);
+    }
+    @Deprecated
     public static MostEventsDao getOrCreate(Country country, DataSource dataSource, Date date)
     {
         MostEventsDao mostVolunteersDao = new MostEventsDao(country, dataSource, date);

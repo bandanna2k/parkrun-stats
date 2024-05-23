@@ -24,9 +24,7 @@ import dnt.parkrun.stats.invariants.CourseEventSummaryChecker;
 import dnt.parkrun.stats.processors.AttendanceProcessor;
 import dnt.parkrun.stats.processors.AverageAttendanceProcessor;
 import dnt.parkrun.stats.processors.AverageTimeProcessor;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.IOException;
@@ -63,7 +61,6 @@ public class MostEventStats
         if (pIndexRecord1.athlete.athleteId < pIndexRecord2.athlete.athleteId) return -1;
         return 0;
     };
-    private final CourseRepository courseRepository;
 
     /*
             02/03/2024
@@ -74,9 +71,9 @@ public class MostEventStats
         Country country = Country.valueOf(args[0]);
         Date date = args.length > 1 ? DateConverter.parseWebsiteDate(args[1]) : getParkrunDay(new Date());
 
-        DataSource dataSource = new SimpleDriverDataSource(DRIVER, getDataSourceUrl(), "stats", "4b0e7ff1");
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
 
-        MostEventStats stats = MostEventStats.newInstance(country, dataSource, date);
+        MostEventStats stats = MostEventStats.newInstance(database, date);
 
         {
             File file = stats.generateStats();
@@ -87,7 +84,7 @@ public class MostEventStats
             new ProcessBuilder("xdg-open", modified.getAbsolutePath()).start();
         }
 
-        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(country, dataSource, System.currentTimeMillis());
+        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(database, System.currentTimeMillis());
         List<String> validate = checker.validate();
         if(!validate.isEmpty())
         {
@@ -122,10 +119,10 @@ public class MostEventStats
         };
     }
 
+    private final CourseRepository courseRepository;
     private final Country country;
     private final Date date;
     private final Date lastWeek;
-    private final DataSource dataSource;
     private final Database database;
     final AttendanceRecordsDao attendanceRecordsDao;
     private final ResultDao resultDao;
@@ -150,37 +147,34 @@ public class MostEventStats
             averageAttendanceProcessor, attendanceProcessor, averageTimeProcessor
     };
 
-    private MostEventStats(Country country,
-                           DataSource dataSource,
-                           Date date)
+    private MostEventStats(Database database, Date date)
     {
-        this.dataSource = dataSource;
-        this.country = country;
-        this.urlGenerator = new UrlGenerator(country.baseUrl);
+        this.database = database;
+        this.country = database.country;
+        this.urlGenerator = new UrlGenerator(database.country.baseUrl);
 
         this.date = date;
         lastWeek = new Date();
         lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
 
-        this.database = new StatsDatabase(country, dataSource);
-        this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(country, dataSource, this.date);
+        this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(database, this.date);
         this.acsDao = AthleteCourseSummaryDao.getInstance(database, this.date);
-        this.top10Dao = Top10AtCourseDao.getInstance(country, dataSource, this.date);
-        this.top10VolunteerDao = Top10VolunteersAtCourseDao.getInstance(country, dataSource, this.date);
-        this.pIndexDao = PIndexDao.getInstance(country, dataSource, date);
-        this.volunteerCountDao = VolunteerCountDao.getInstance(country, dataSource, this.date);
+        this.top10Dao = Top10AtCourseDao.getInstance(database, this.date);
+        this.top10VolunteerDao = Top10VolunteersAtCourseDao.getInstance(database, this.date);
+        this.pIndexDao = PIndexDao.getInstance(database, date);
+        this.volunteerCountDao = VolunteerCountDao.getInstance(database, this.date);
 
-        this.resultDao = new ResultDao(country, dataSource);
-        this.volunteerDao = new VolunteerDao(country, dataSource);
+        this.resultDao = new ResultDao(database);
+        this.volunteerDao = new VolunteerDao(database);
 
         this.courseRepository = new CourseRepository();
-        new CourseDao(country, dataSource, courseRepository);
-        this.courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
+        new CourseDao(database, courseRepository);
+        this.courseEventSummaryDao = new CourseEventSummaryDao(database, courseRepository);
     }
 
-    public static MostEventStats newInstance(Country country, DataSource dataSource, Date date) throws SQLException
+    public static MostEventStats newInstance(Database database, Date date) throws SQLException
     {
-        return new MostEventStats(country, dataSource, date);
+        return new MostEventStats(database, date);
     }
 
     public File generateStats() throws IOException, XMLStreamException
@@ -211,7 +205,7 @@ public class MostEventStats
         System.out.println("Done");
 
         System.out.println("* Generating most events table *");
-        MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(country, dataSource, date);
+        MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(database, date);
         mostEventsDao.populateMostEventsTable();
 
         System.out.println("* Get most events *");
@@ -511,7 +505,7 @@ public class MostEventStats
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Runs at Courses").build())
         {
             // Populate top 10 runs at courses
-            Top10RunsDao top10RunsDao = new Top10RunsDao(country, dataSource);
+            Top10RunsDao top10RunsDao = new Top10RunsDao(database);
             List<Course> courses = courseRepository.getCourses(country).stream()
                     .filter(c -> c.status == RUNNING).toList();
             for (Course course : courses)
@@ -591,7 +585,7 @@ public class MostEventStats
         try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Volunteers at Courses")
                 .open().build())
         {
-            Top10VolunteersDao top10VolunteersDao = new Top10VolunteersDao(country, dataSource);
+            Top10VolunteersDao top10VolunteersDao = new Top10VolunteersDao(database);
             List<Course> courses = courseRepository.getCourses(country).stream()
                     .filter(c -> c.status == RUNNING).toList();
             for (Course course : courses)

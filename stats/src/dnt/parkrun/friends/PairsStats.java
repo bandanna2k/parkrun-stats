@@ -1,20 +1,15 @@
 package dnt.parkrun.friends;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.FindAndReplace;
 import dnt.parkrun.common.UrlGenerator;
-import dnt.parkrun.database.AthleteDao;
-import dnt.parkrun.database.CourseDao;
-import dnt.parkrun.database.ResultDao;
+import dnt.parkrun.database.*;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.htmlwriter.HtmlWriter;
 import dnt.parkrun.htmlwriter.writers.PairsTableHtmlWriter;
 import dnt.parkrun.stats.MostEventStats;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.IOException;
@@ -36,8 +31,9 @@ public class PairsStats
     public static void main(String[] args) throws SQLException, XMLStreamException, IOException
     {
         final Country country = Country.valueOf(args[0]);
-        final DataSource dataSource = new SimpleDriverDataSource(new Driver(), getDataSourceUrl(), "stats", "4b0e7ff1");
-        PairsStats pairsStats = new PairsStats(country, dataSource);
+        LiveDatabase database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
+
+        PairsStats pairsStats = new PairsStats(database);
         File file = pairsStats.generateStats(
                 1340853, // Jonathan
                 293223, // Julie GORDON
@@ -73,12 +69,12 @@ public class PairsStats
         new ProcessBuilder("xdg-open", modified.getAbsolutePath()).start();
     }
 
-    public PairsStats(Country country, DataSource dataSource)
+    public PairsStats(Database database)
     {
-        resultDao = new ResultDao(country, dataSource);
-        athleteDao = new AthleteDao(country, dataSource);
+        resultDao = new ResultDao(database);
+        athleteDao = new AthleteDao(database);
         courseRepository = new CourseRepository();
-        new CourseDao(country, dataSource, courseRepository);
+        new CourseDao(database, courseRepository);
     }
 
     private File generateStats(int... athleteIds) throws IOException, XMLStreamException

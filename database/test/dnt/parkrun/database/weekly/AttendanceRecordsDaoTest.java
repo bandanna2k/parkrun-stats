@@ -36,11 +36,11 @@ public class AttendanceRecordsDaoTest extends BaseDaoTest
         jdbc.update("delete from course", EmptySqlParameterSource.INSTANCE);
         // TODO jdbc.update("drop table if exists " + AttendanceRecordsDao.tableName(date), EmptySqlParameterSource.INSTANCE);
 
-        athleteDao = new AthleteDao(country, dataSource);
+        athleteDao = new AthleteDao(TEST_DATABASE);
         courseRepository = new CourseRepository();
-        courseDao = new CourseDao(country, dataSource, courseRepository);
-        resultDao = new ResultDao(country, dataSource);
-        courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
+        courseDao = new CourseDao(TEST_DATABASE, courseRepository);
+        resultDao = new ResultDao(TEST_DATABASE);
+        courseEventSummaryDao = new CourseEventSummaryDao(TEST_DATABASE, courseRepository);
     }
 
     @Test
@@ -58,7 +58,7 @@ public class AttendanceRecordsDaoTest extends BaseDaoTest
         courseEventSummaryDao.insert(new CourseEventSummary(
                 course, 1, Date.from(Instant.EPOCH), 2, Optional.of(firstMan), Optional.of(firstWoman)));
 
-        AttendanceRecordsDao attendanceRecordsDao = AttendanceRecordsDao.getInstance(course.country, dataSource, date);
+        AttendanceRecordsDao attendanceRecordsDao = AttendanceRecordsDao.getInstance(TEST_DATABASE, date);
         List<AttendanceRecord> attendanceRecords = attendanceRecordsDao.getAttendanceRecords(Date.from(Instant.EPOCH));
         Assertions.assertThat(attendanceRecords).isNotEmpty();
     }
@@ -87,7 +87,7 @@ public class AttendanceRecordsDaoTest extends BaseDaoTest
         courseEventSummaryDao.insert(new CourseEventSummary(
                 course, 1, run2, 2, Optional.of(firstMan), Optional.of(firstWoman)));
 
-        AttendanceRecordsDao attendanceRecordsDao = AttendanceRecordsDao.getInstance(course.country, dataSource, date);
+        AttendanceRecordsDao attendanceRecordsDao = AttendanceRecordsDao.getInstance(TEST_DATABASE, date);
         List<AttendanceRecord> attendanceRecords = attendanceRecordsDao.getAttendanceRecords(Date.from(Instant.EPOCH));
         Assertions.assertThat(attendanceRecords.size()).isEqualTo(2);
         attendanceRecords.forEach(System.out::println);

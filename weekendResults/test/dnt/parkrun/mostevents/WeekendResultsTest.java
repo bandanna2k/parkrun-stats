@@ -32,17 +32,17 @@ public class WeekendResultsTest extends BaseDaoTest
     public void setUp() throws Exception
     {
         CourseRepository courseRepository = new CourseRepository();
-        CourseDao courseDao = new CourseDao(country, dataSource, courseRepository);
+        CourseDao courseDao = new CourseDao(TEST_DATABASE, courseRepository);
 
         Course bushy = courseDao.insert(new Course(Course.NO_COURSE_ID, "bushynewzealand", NZ, "Fake Bushy parkrun", Course.Status.RUNNING));
 
-        CourseEventSummaryDao courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
+        CourseEventSummaryDao courseEventSummaryDao = new CourseEventSummaryDao(TEST_DATABASE, courseRepository);
         courseEventSummaryDao.insert(new CourseEventSummary(bushy, 1, Date.from(Instant.EPOCH), 2545,
                 Optional.of(johnDoe), Optional.of(janeDoe)));
 
-        weekendResults = WeekendResults.newInstance(bushy.country, dataSource, new TestWebpageProviderFactory());
+        weekendResults = WeekendResults.newInstance(TEST_DATABASE, new TestWebpageProviderFactory());
 
-        NamedParameterJdbcTemplate jdbc = new NamedParameterJdbcTemplate(dataSource);
+        NamedParameterJdbcTemplate jdbc = new NamedParameterJdbcTemplate(TEST_DATABASE.dataSource);
         jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);
         jdbc.update("delete from result", EmptySqlParameterSource.INSTANCE);
         jdbc.update("delete from event_volunteer", EmptySqlParameterSource.INSTANCE);

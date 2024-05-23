@@ -1,14 +1,11 @@
 package dnt.parkrun.database.weekly;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.database.BaseDaoTest;
 import dnt.parkrun.datastructures.Athlete;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.time.Instant;
 import java.util.Date;
 
@@ -19,9 +16,7 @@ public class PIndexDaoTest extends BaseDaoTest
     @Before
     public void setUp() throws Exception
     {
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats_test", "test", "qa");
-        pIndexDao = PIndexDao.getInstance(country, dataSource, Date.from(Instant.EPOCH));
+        pIndexDao = PIndexDao.getInstance(TEST_DATABASE, Date.from(Instant.EPOCH));
     }
 
     @Test

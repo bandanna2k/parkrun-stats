@@ -23,9 +23,15 @@ public class VolunteerDao extends BaseDao
             (:athleteId, :courseId, :date)
             """;
 
+    @Deprecated
     public VolunteerDao(Country country, DataSource dataSource)
     {
         super(country, dataSource);
+    }
+
+    public VolunteerDao(Database database)
+    {
+        this(database.country, database.dataSource);
     }
 
     public void insert(Volunteer volunteer)

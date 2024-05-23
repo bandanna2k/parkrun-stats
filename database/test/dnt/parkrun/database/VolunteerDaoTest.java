@@ -29,8 +29,8 @@ public class VolunteerDaoTest extends BaseDaoTest
         @Before
         public void setUp() throws Exception
         {
-            volunteerDao = new VolunteerDao(country, dataSource);
-            athleteDao = new AthleteDao(country, dataSource);
+            volunteerDao = new VolunteerDao(TEST_DATABASE);
+            athleteDao = new AthleteDao(TEST_DATABASE);
 
             jdbc.update("delete from course", EmptySqlParameterSource.INSTANCE);
             jdbc.update("delete from event_volunteer", EmptySqlParameterSource.INSTANCE);
@@ -61,10 +61,10 @@ public class VolunteerDaoTest extends BaseDaoTest
         @Before
         public void setUp() throws Exception
         {
-            volunteerDao = new VolunteerDao(country, dataSource);
-            athleteDao = new AthleteDao(country, dataSource);
+            volunteerDao = new VolunteerDao(TEST_DATABASE);
+            athleteDao = new AthleteDao(TEST_DATABASE);
             CourseRepository courseRepository = new CourseRepository();
-            courseDao = new CourseDao(country, dataSource, courseRepository);
+            courseDao = new CourseDao(TEST_DATABASE, courseRepository);
 
             jdbc.update("delete from event_volunteer", EmptySqlParameterSource.INSTANCE);
             jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);
@@ -139,8 +139,8 @@ public class VolunteerDaoTest extends BaseDaoTest
         @Before
         public void setUp() throws Exception
         {
-            volunteerDao = new VolunteerDao(country, dataSource);
-            athleteDao = new AthleteDao(country, dataSource);
+            volunteerDao = new VolunteerDao(TEST_DATABASE);
+            athleteDao = new AthleteDao(TEST_DATABASE);
 
             jdbc.update("delete from event_volunteer", EmptySqlParameterSource.INSTANCE);
             jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);

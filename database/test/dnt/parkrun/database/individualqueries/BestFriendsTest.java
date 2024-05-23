@@ -15,6 +15,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import java.util.*;
 
+import static dnt.parkrun.database.BaseDaoTest.TEST_DATABASE;
 import static dnt.parkrun.datastructures.Country.NZ;
 
 public class BestFriendsTest
@@ -32,7 +33,7 @@ public class BestFriendsTest
 
         final DataSource weeklyDataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/", "stats", "4b0e7ff1");
-        athleteDao = new AthleteDao(country, weeklyDataSource);
+        athleteDao = new AthleteDao(TEST_DATABASE);
         resultDao = new ResultDao(country, weeklyDataSource);
 
         athleteToName = athleteDao.getAllAthletes();

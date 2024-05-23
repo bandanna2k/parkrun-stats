@@ -1,6 +1,7 @@
 package dnt.parkrun.database.stats;
 
 import dnt.parkrun.database.BaseDao;
+import dnt.parkrun.database.Database;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
@@ -12,6 +13,10 @@ import java.util.List;
 
 public class Top10RunsDao extends BaseDao
 {
+    public Top10RunsDao(Database database)
+    {
+        this(database.country, database.dataSource);
+    }
     public Top10RunsDao(Country country, DataSource dataSource)
     {
         super(country, dataSource);

@@ -14,8 +14,8 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.util.Date;
 
+import static dnt.parkrun.database.BaseDaoTest.TEST_DATABASE;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getTestDataSourceUrl;
-import static dnt.parkrun.datastructures.Country.NZ;
 
 public class MostEventStatsTest
 {
@@ -30,7 +30,7 @@ public class MostEventStatsTest
         DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 getTestDataSourceUrl(), "test", "qa");
 
-        stats = MostEventStats.newInstance(NZ, dataSource, Date.from(Instant.EPOCH));
+        stats = MostEventStats.newInstance(TEST_DATABASE, Date.from(Instant.EPOCH));
 
         jdbc = new NamedParameterJdbcTemplate(dataSource);
         jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);

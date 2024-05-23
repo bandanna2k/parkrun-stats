@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static dnt.parkrun.database.BaseDaoTest.TEST_DATABASE;
 import static dnt.parkrun.datastructures.Country.NZ;
 
 public class IndividualTest
@@ -29,7 +30,7 @@ public class IndividualTest
     {
         final DataSource dataSource = new SimpleDriverDataSource(new Driver(),
                 "jdbc:mysql://localhost/parkrun_stats", "dao", "0b851094");
-        athleteDao = new AthleteDao(country, dataSource);
+        athleteDao = new AthleteDao(TEST_DATABASE);
         resultDao = new ResultDao(country, dataSource);
 
         athleteToName = athleteDao.getAllAthletes();

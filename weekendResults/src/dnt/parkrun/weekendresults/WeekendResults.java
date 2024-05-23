@@ -1,6 +1,5 @@
 package dnt.parkrun.weekendresults;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
@@ -8,32 +7,29 @@ import dnt.parkrun.database.*;
 import dnt.parkrun.datastructures.*;
 import dnt.parkrun.webpageprovider.WebpageProviderFactory;
 import dnt.parkrun.webpageprovider.WebpageProviderFactoryImpl;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
+
 public class WeekendResults
 {
     public static void main(String[] args) throws SQLException, IOException
     {
         Country country = Country.valueOf(args[0]);
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "0b851094");
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "dao", "0b851094");
         WeekendResults weekendResults = WeekendResults.newInstance(
-                country,
-                dataSource,
+                database,
                 new WebpageProviderFactoryImpl(new UrlGenerator(country.baseUrl)));
 
         weekendResults.fetchWeekendResults();
     }
 
-
-
+    private final Database database;
     private final Country country;
     private final CourseRepository courseRepository;
 
@@ -44,24 +40,24 @@ public class WeekendResults
     private final VolunteerDao volunteerDao;
     private final WebpageProviderFactory webpageProviderFactory;
 
-    private WeekendResults(Country country, DataSource dataSource,
+    private WeekendResults(Database database,
                            WebpageProviderFactory webpageProviderFactory) throws SQLException
     {
-        this.country = country;
+        this.database = database;
+        this.country = database.country;
         this.courseRepository = new CourseRepository();
-        this.courseDao = new CourseDao(country, dataSource, courseRepository);
-        this.athleteDao = new AthleteDao(country, dataSource);
-        this.courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
-        this.resultDao = new ResultDao(country, dataSource);
-        this.volunteerDao = new VolunteerDao(country, dataSource);
+        this.courseDao = new CourseDao(database, courseRepository);
+        this.athleteDao = new AthleteDao(database);
+        this.courseEventSummaryDao = new CourseEventSummaryDao(database, courseRepository);
+        this.resultDao = new ResultDao(database);
+        this.volunteerDao = new VolunteerDao(database);
         this.webpageProviderFactory = webpageProviderFactory;
     }
 
-    public static WeekendResults newInstance(Country country,
-                                             DataSource dataSource,
+    public static WeekendResults newInstance(Database database,
                                              WebpageProviderFactory webpageProviderFactory) throws SQLException
     {
-        return new WeekendResults(country, dataSource, webpageProviderFactory);
+        return new WeekendResults(database, webpageProviderFactory);
     }
 
     public void fetchWeekendResults() throws IOException

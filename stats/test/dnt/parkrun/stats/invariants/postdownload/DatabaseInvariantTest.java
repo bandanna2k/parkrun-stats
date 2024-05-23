@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static dnt.parkrun.database.BaseDaoTest.TEST_DATABASE;
 import static dnt.parkrun.datastructures.Country.NZ;
 
 public class DatabaseInvariantTest extends AbstractDatabaseInvariantTest
@@ -141,7 +142,7 @@ public class DatabaseInvariantTest extends AbstractDatabaseInvariantTest
 
     private void addMissingVolunteer(List<Object[]> volunteerWithNoAthleteRecord)
     {
-        AthleteDao athleteDao = new AthleteDao(country, dataSource);
+        AthleteDao athleteDao = new AthleteDao(TEST_DATABASE);
         volunteerWithNoAthleteRecord.stream().map(object ->
         {
             int nonameAthleteId = (int) object[0];

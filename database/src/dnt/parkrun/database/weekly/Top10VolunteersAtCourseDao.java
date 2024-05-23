@@ -2,6 +2,7 @@ package dnt.parkrun.database.weekly;
 
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.BaseDao;
+import dnt.parkrun.database.Database;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
@@ -24,6 +25,11 @@ public class Top10VolunteersAtCourseDao extends BaseDao
         this.date = date;
     }
 
+    public static Top10VolunteersAtCourseDao getInstance(Database database, Date date)
+    {
+        return getInstance(database, date);
+    }
+    @Deprecated
     public static Top10VolunteersAtCourseDao getInstance(Country country, DataSource dataSource, Date date)
     {
         Top10VolunteersAtCourseDao top10VolunteersAtCourseDao = new Top10VolunteersAtCourseDao(country, dataSource, date);

@@ -18,6 +18,7 @@ public class CourseDao extends BaseDao
     /*
         Adds course to DB and populates CourseRepository
      */
+    @Deprecated
     public CourseDao(Country country, DataSource dataSource, CourseRepository courseRepository)
     {
         super(country, dataSource);
@@ -41,6 +42,11 @@ public class CourseDao extends BaseDao
                     courseRepository.addCourse(course);
                     return null;
                 });
+    }
+
+    public CourseDao(Database database, CourseRepository courseRepository)
+    {
+        this(database.country, database.dataSource, courseRepository);
     }
 
     public Course insert(Course course)

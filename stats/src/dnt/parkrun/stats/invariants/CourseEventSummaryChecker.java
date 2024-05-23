@@ -1,14 +1,11 @@
 package dnt.parkrun.stats.invariants;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseevent.Parser;
 import dnt.parkrun.database.*;
 import dnt.parkrun.datastructures.*;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Supplier;
@@ -37,10 +34,10 @@ public class CourseEventSummaryChecker
     public static void main(String[] args) throws SQLException
     {
         Country country = Country.valueOf(args[0]);
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(), getDataSourceUrl(), "dao", "0b851094");
+        LiveDatabase database = new LiveDatabase(
+                country, getDataSourceUrl(), "dao", "0b851094");
 
-        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(country,
-                dataSource, System.currentTimeMillis());
+        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(database, System.currentTimeMillis());
 //        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(
 //                country, dataSource, 1716207650946L);
 
@@ -48,19 +45,19 @@ public class CourseEventSummaryChecker
         errors.forEach(error -> System.out.println("ERROR: " + error));
     }
 
-    public CourseEventSummaryChecker(Country country, DataSource dataSource, long seed)
+    public CourseEventSummaryChecker(Database database, long seed)
     {
-        this.country = country;
+        this.country = database.country;
         System.out.printf("Random seed for %s: %d%n", this.getClass().getSimpleName(), seed);
         this.random = new Random(seed);
 
         courseRepository = new CourseRepository();
-        new CourseDao(country, dataSource, courseRepository);
+        new CourseDao(database, courseRepository);
         courses = courseRepository.getCourses(country).stream().filter(course -> course.status == Course.Status.RUNNING).toList();
-        resultDao = new ResultDao(country, dataSource);
-        athleteDao = new AthleteDao(country, dataSource);
-        volunteerDao = new VolunteerDao(country, dataSource);
-        courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
+        resultDao = new ResultDao(database);
+        athleteDao = new AthleteDao(database);
+        volunteerDao = new VolunteerDao(database);
+        courseEventSummaryDao = new CourseEventSummaryDao(database, courseRepository);
     }
 
     public List<String> validate()

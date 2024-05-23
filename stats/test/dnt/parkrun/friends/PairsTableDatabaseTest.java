@@ -1,18 +1,15 @@
 package dnt.parkrun.friends;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.database.AthleteDao;
 import dnt.parkrun.database.CourseDao;
+import dnt.parkrun.database.LiveDatabase;
 import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.util.*;
 
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
@@ -28,12 +25,11 @@ public class PairsTableDatabaseTest
     @Before
     public void setUp() throws Exception
     {
-        final Country country = NZ;
-        final DataSource dataSource = new SimpleDriverDataSource(new Driver(), getDataSourceUrl(), "stats", "4b0e7ff1");
-        resultDao = new ResultDao(country, dataSource);
-        athleteDao = new AthleteDao(country, dataSource);
+        LiveDatabase database = new LiveDatabase(NZ, getDataSourceUrl(), "stats", "4b0e7ff1");
+        resultDao = new ResultDao(database);
+        athleteDao = new AthleteDao(database);
         courseRepository = new CourseRepository();
-        new CourseDao(country, dataSource, courseRepository);
+        new CourseDao(database, courseRepository);
 
         athletes = new ArrayList<>();
         athletes.add(athleteDao.getAthlete(1340853)); // Jonathan
