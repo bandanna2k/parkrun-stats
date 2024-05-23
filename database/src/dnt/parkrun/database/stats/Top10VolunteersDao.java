@@ -8,16 +8,10 @@ import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.stats.VolunteersAtEvent;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import javax.sql.DataSource;
 import java.util.List;
 
 public class Top10VolunteersDao extends BaseDao
 {
-    @Deprecated
-    public Top10VolunteersDao(Country country, DataSource dataSource)
-    {
-        super(country, dataSource);
-    }
     public Top10VolunteersDao(Database database)
     {
         super(database);

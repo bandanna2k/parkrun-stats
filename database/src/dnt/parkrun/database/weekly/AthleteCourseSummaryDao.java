@@ -13,12 +13,10 @@ import java.util.List;
 public class AthleteCourseSummaryDao extends BaseDao
 {
     private final Date date;
-    private final Database database;
 
     private AthleteCourseSummaryDao(Database database, Date date)
     {
-        super(database.country, database.dataSource);
-        this.database = database;
+        super(database);
         this.date = date;
     }
 
@@ -31,7 +29,7 @@ public class AthleteCourseSummaryDao extends BaseDao
 
     String tableName()
     {
-        return database.getWeeklyDatabaseName() + ".athlete_course_summary_" + DateConverter.formatDateForDbTable(date);
+        return weeklyDatabaseName + ".athlete_course_summary_" + DateConverter.formatDateForDbTable(date);
     }
 
 

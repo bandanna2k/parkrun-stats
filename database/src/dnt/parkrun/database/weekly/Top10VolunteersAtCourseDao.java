@@ -11,7 +11,6 @@ import dnt.parkrun.datastructures.stats.VolunteersAtEvent;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
 
@@ -19,20 +18,15 @@ public class Top10VolunteersAtCourseDao extends BaseDao
 {
     private final Date date;
 
-    private Top10VolunteersAtCourseDao(Country country, DataSource dataSource, Date date)
+    private Top10VolunteersAtCourseDao(Database database, Date date)
     {
-        super(country, dataSource);
+        super(database);
         this.date = date;
     }
 
     public static Top10VolunteersAtCourseDao getInstance(Database database, Date date)
     {
-        return getInstance(database, date);
-    }
-    @Deprecated
-    public static Top10VolunteersAtCourseDao getInstance(Country country, DataSource dataSource, Date date)
-    {
-        Top10VolunteersAtCourseDao top10VolunteersAtCourseDao = new Top10VolunteersAtCourseDao(country, dataSource, date);
+        Top10VolunteersAtCourseDao top10VolunteersAtCourseDao = new Top10VolunteersAtCourseDao(database, date);
         top10VolunteersAtCourseDao.createTable();
         return top10VolunteersAtCourseDao;
     }

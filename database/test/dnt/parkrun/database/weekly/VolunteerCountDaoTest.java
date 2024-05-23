@@ -32,7 +32,7 @@ public class VolunteerCountDaoTest extends BaseDaoTest
         {
             volunteerDao = new VolunteerDao(TEST_DATABASE);
             athleteDao = new AthleteDao(TEST_DATABASE);
-            volunteerCountDao = VolunteerCountDao.getInstance(TEST_DATABASE.country, TEST_DATABASE.dataSource, Date.from(Instant.EPOCH));
+            volunteerCountDao = VolunteerCountDao.getInstance(TEST_DATABASE, Date.from(Instant.EPOCH));
 
             jdbc.update("delete from event_volunteer", EmptySqlParameterSource.INSTANCE);
             jdbc.update("delete from athlete", EmptySqlParameterSource.INSTANCE);

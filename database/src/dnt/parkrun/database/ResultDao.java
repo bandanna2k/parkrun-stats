@@ -21,7 +21,7 @@ public class ResultDao extends BaseDao
 
     public ResultDao(Database database)
     {
-        super(database.country, database.dataSource);
+        super(database);
     }
 
     @Deprecated // Testing only. Do not use. Results too large
@@ -187,7 +187,7 @@ public class ResultDao extends BaseDao
                 String.format("[%s,%s]", rs.getString("json_courses"), rs.getString("json_first_runs")));
     }
 
-    @Deprecated
+    @Deprecated(since = "Backfill method")
     public void backfillUpdateResultWithAgeCategory(Result result)
     {
         String sql = "update result " +

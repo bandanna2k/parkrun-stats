@@ -8,18 +8,13 @@ import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.stats.RunsAtEvent;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import javax.sql.DataSource;
 import java.util.List;
 
 public class Top10RunsDao extends BaseDao
 {
     public Top10RunsDao(Database database)
     {
-        this(database.country, database.dataSource);
-    }
-    public Top10RunsDao(Country country, DataSource dataSource)
-    {
-        super(country, dataSource);
+        super(database);
     }
 
     public List<RunsAtEvent> getTop10AtEvent(int courseId)

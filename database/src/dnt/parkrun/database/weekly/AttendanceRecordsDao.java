@@ -8,7 +8,6 @@ import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
 
@@ -17,21 +16,16 @@ public class AttendanceRecordsDao extends BaseDao
     private final Country country;
     private final Date date;
 
-    private AttendanceRecordsDao(Country country, DataSource dataSource, Date date)
+    private AttendanceRecordsDao(Database database, Date date)
     {
-        super(country, dataSource);
-        this.country = country;
+        super(database);
+        this.country = database.country;
         this.date = date;
     }
 
     public static AttendanceRecordsDao getInstance(Database database, Date date)
     {
-        return getInstance(database.country, database.dataSource, date);
-    }
-    @Deprecated
-    public static AttendanceRecordsDao getInstance(Country country, DataSource dataSource, Date date)
-    {
-        AttendanceRecordsDao attendanceRecordsDao = new AttendanceRecordsDao(country, dataSource, date);
+        AttendanceRecordsDao attendanceRecordsDao = new AttendanceRecordsDao(database, date);
         attendanceRecordsDao.generateAttendanceRecordTable();
         return attendanceRecordsDao;
     }

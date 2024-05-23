@@ -4,12 +4,10 @@ import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.BaseDao;
 import dnt.parkrun.database.Database;
 import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.Country;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
 
@@ -24,18 +22,13 @@ public class MostEventsDao extends BaseDao
 
     public static MostEventsDao getOrCreate(Database database, Date date)
     {
-        return getOrCreate(database.country, database.dataSource, date);
-    }
-    @Deprecated
-    public static MostEventsDao getOrCreate(Country country, DataSource dataSource, Date date)
-    {
-        MostEventsDao mostVolunteersDao = new MostEventsDao(country, dataSource, date);
+        MostEventsDao mostVolunteersDao = MostEventsDao.getOrCreate(database, date);
         mostVolunteersDao.init();
         return mostVolunteersDao;
     }
-    private MostEventsDao(Country country, DataSource dataSource, Date date)
+    private MostEventsDao(Database database, Date date)
     {
-        super(country, dataSource);
+        super(database);
         this.date = date;
         init();
     }

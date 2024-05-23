@@ -92,9 +92,8 @@ public class VolunteerDao extends BaseDao
         return results;
     }
 
-    @Deprecated
-    public // Testing only. Do not use. Results too large
-    List<Volunteer> getVolunteers()
+    @Deprecated(since = "Testing only. Do not use. Results too large")
+    public List<Volunteer> getVolunteers()
     {
         String sql = STR."""
                 select *

@@ -1,9 +1,6 @@
 package dnt.parkrun.database;
 
-import dnt.parkrun.datastructures.Country;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-
-import javax.sql.DataSource;
 
 public abstract class BaseDao
 {
@@ -12,14 +9,14 @@ public abstract class BaseDao
     private final String countryDatabaseName;
     protected final String weeklyDatabaseName;
 
-    @Deprecated
-    public BaseDao(Country country, DataSource statsDataSource)
-    {
-        jdbc = new NamedParameterJdbcTemplate(statsDataSource);
-        this.globalDatabaseName = "parkrun_stats";
-        this.countryDatabaseName = "parkrun_stats_" + country.name();
-        this.weeklyDatabaseName = "weekly_stats_" + country.name();
-    }
+//    @Deprecated
+//    public BaseDao(Country country, DataSource statsDataSource)
+//    {
+//        jdbc = new NamedParameterJdbcTemplate(statsDataSource);
+//        this.globalDatabaseName = "parkrun_stats";
+//        this.countryDatabaseName = "parkrun_stats_" + country.name();
+//        this.weeklyDatabaseName = "weekly_stats_" + country.name();
+//    }
 
     public BaseDao(Database database)
     {

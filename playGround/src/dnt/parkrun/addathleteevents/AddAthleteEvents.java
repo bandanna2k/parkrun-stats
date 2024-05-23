@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Optional.empty;
 
-@Deprecated // Wrong solution
+@Deprecated(since = "Wrong solution")
 public class AddAthleteEvents
 {
     private final UrlGenerator urlGenerator;
