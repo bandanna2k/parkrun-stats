@@ -1,8 +1,9 @@
 package dnt.parkrun.database.individualqueries;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.AthleteDao;
+import dnt.parkrun.database.Database;
+import dnt.parkrun.database.LiveDatabase;
 import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.database.weekly.Top10AtCourseDao;
 import dnt.parkrun.datastructures.Athlete;
@@ -10,12 +11,10 @@ import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.stats.AtEvent;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.util.*;
 
-import static dnt.parkrun.database.BaseDaoTest.TEST_DATABASE;
+import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 
 public class BestFriendsTest
@@ -29,16 +28,13 @@ public class BestFriendsTest
     @Before
     public void setUp() throws Exception
     {
-        System.setProperty("TEST", "false");
-
-        final DataSource weeklyDataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/", "stats", "4b0e7ff1");
-        athleteDao = new AthleteDao(TEST_DATABASE);
-        resultDao = new ResultDao(country, weeklyDataSource);
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
+        athleteDao = new AthleteDao(database);
+        resultDao = new ResultDao(database);
 
         athleteToName = athleteDao.getAllAthletes();
 
-        top10AtCourseDao = Top10AtCourseDao.getInstance(country, weeklyDataSource, DateConverter.parseWebsiteDate("13/04/2024"));
+        top10AtCourseDao = Top10AtCourseDao.getInstance(database, DateConverter.parseWebsiteDate("13/04/2024"));
     }
 
     @Test

@@ -4,7 +4,6 @@ import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Course;
-import org.junit.BeforeClass;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
@@ -14,7 +13,6 @@ import static dnt.parkrun.database.DataSourceUrlBuilder.getTestDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 import static dnt.parkrun.datastructures.Country.UNKNOWN;
 import static dnt.parkrun.datastructures.Course.NO_COURSE_ID;
-import static org.junit.Assume.assumeTrue;
 
 public abstract class BaseDaoTest
 {
@@ -37,18 +35,6 @@ public abstract class BaseDaoTest
     public static Athlete juniorDoeAdere = Athlete.fromAthleteSummaryLink(
             "Junior DOE-ADERE", "https://www.parkrun.co.nz/parkrunner/902395/");
 
-
-
-    @BeforeClass
-    public static void beforeClass()
-    {
-        assumeTrue("Env TEST not on: " + System.getProperty("TEST"), BaseDaoTest.isTesting());
-    }
-
-    static boolean isTesting()
-    {
-        return null != System.getProperty("TEST") && Boolean.parseBoolean(System.getProperty("TEST"));
-    }
 
     protected NamedParameterJdbcTemplate jdbc;
 

@@ -1,20 +1,17 @@
 package dnt.parkrun.backfill;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseevent.Parser;
-import dnt.parkrun.database.CourseDao;
-import dnt.parkrun.database.CourseEventSummaryDao;
-import dnt.parkrun.database.ResultDao;
+import dnt.parkrun.database.*;
 import dnt.parkrun.datastructures.*;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
+
+import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 
 @Deprecated(since = "Deprecated to discourage use.")
 public class BackfillResults
@@ -35,14 +32,13 @@ public class BackfillResults
 
     private void backfill2() throws SQLException
     {
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "0b851094");
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "dao", "0b851094");
 
         CourseRepository courseRepository = new CourseRepository();
-        new CourseDao(country, dataSource, courseRepository);
+        new CourseDao(database, courseRepository);
 
-        ResultDao resultDao = new ResultDao(country, dataSource);
-        CourseEventSummaryDao courseEventSummaryDao = new CourseEventSummaryDao(country, dataSource, courseRepository);
+        ResultDao resultDao = new ResultDao(database);
+        CourseEventSummaryDao courseEventSummaryDao = new CourseEventSummaryDao(database, courseRepository);
 
         Set<String> courseIdAndDateSet = new HashSet<>();
         resultDao.tableScan(r ->
@@ -83,17 +79,16 @@ public class BackfillResults
 
     public void backfill1() throws SQLException
     {
-        DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "0b851094");
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "dao", "0b851094");
 
         CourseRepository courseRepository = new CourseRepository();
-        new CourseDao(country, dataSource, courseRepository);
+        new CourseDao(database, courseRepository);
 
-        ResultDao resultDao = new ResultDao(country, dataSource);
+        ResultDao resultDao = new ResultDao(database);
 
         for (Course backfillCourse : courseRepository.getCourses(country))
         {
-            List<CourseEventSummary> courseEventSummaries = new CourseEventSummaryDao(country, dataSource, courseRepository).getCourseEventSummaries()
+            List<CourseEventSummary> courseEventSummaries = new CourseEventSummaryDao(database, courseRepository).getCourseEventSummaries()
                     .stream().filter(ces -> ces.course.courseId == backfillCourse.courseId).toList();
 
             if (backfillCourse.name.startsWith("a")) continue;

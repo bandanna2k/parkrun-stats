@@ -3,6 +3,8 @@ package dnt.parkrun.stats.speed;
 import com.mysql.cj.jdbc.Driver;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.CourseDao;
+import dnt.parkrun.database.Database;
+import dnt.parkrun.database.LiveDatabase;
 import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.datastructures.AgeCategory;
 import dnt.parkrun.datastructures.Country;
@@ -11,9 +13,7 @@ import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.htmlwriter.HtmlWriter;
 import dnt.parkrun.htmlwriter.StatsRecord;
 import dnt.parkrun.htmlwriter.writers.CollapsableTitleHtmlWriter;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.IOException;
@@ -43,9 +43,8 @@ public class SpeedStats
     public static void main(String... args) throws IOException, XMLStreamException
     {
         Country country = Country.valueOf(args[0]);
-        DataSource dataSource = new SimpleDriverDataSource(DRIVER, getDataSourceUrl(), "stats", "4b0e7ff1");
-
-        SpeedStats stats = SpeedStats.newInstance(country, dataSource);
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
+        SpeedStats stats = SpeedStats.newInstance(database);
         Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord =
                 stats.collectCourseToAgeGroupToAgeGradeRecord();
         {
@@ -78,16 +77,16 @@ public class SpeedStats
 
     private final UrlGenerator urlGenerator = new UrlGenerator(COUNTRY.baseUrl);
 
-    private SpeedStats(Country country, DataSource dataSource)
+    private SpeedStats(Database database)
     {
-        this.resultDao = new ResultDao(country, dataSource);
+        this.resultDao = new ResultDao(database);
         this.courseRepository = new CourseRepository();
-        new CourseDao(country, dataSource, courseRepository);
+        new CourseDao(database, courseRepository);
     }
 
-    public static SpeedStats newInstance(Country country, DataSource dataSource)
+    public static SpeedStats newInstance(Database database)
     {
-        return new SpeedStats(country, dataSource);
+        return new SpeedStats(database);
     }
 
     public Map<Integer, Map<AgeCategory, AgeCategoryRecord>> collectCourseToAgeGroupToAgeGradeRecord()

@@ -4,7 +4,6 @@ import dnt.parkrun.datastructures.*;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -20,17 +19,10 @@ public class ResultDao extends BaseDao
             (:athleteId, :courseId, :date, :position, :time_seconds, :ageCategory, :ageGrade)
             """;
 
-    @Deprecated
-    public ResultDao(Country country, DataSource dataSource)
-    {
-        super(country, dataSource);
-    }
-
     public ResultDao(Database database)
     {
-        this(database.country, database.dataSource);
+        super(database.country, database.dataSource);
     }
-
 
     @Deprecated // Testing only. Do not use. Results too large
     List<Result> getResults()

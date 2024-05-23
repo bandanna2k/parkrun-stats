@@ -1,6 +1,5 @@
 package dnt.parkrun.menu;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.Database;
 import dnt.parkrun.database.LiveDatabase;
@@ -23,9 +22,7 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
 import java.io.BufferedReader;
 import java.io.File;
@@ -146,8 +143,8 @@ public class Menu
     {
         try
         {
-            DataSource dataSource = new SimpleDriverDataSource(new Driver(), getDataSourceUrl(), "stats", "4b0e7ff1");
-            SpeedStats stats = SpeedStats.newInstance(country, dataSource);
+            Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
+            SpeedStats stats = SpeedStats.newInstance(database);
 
             Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord =
                     stats.collectCourseToAgeGroupToAgeGradeRecord();
@@ -158,7 +155,7 @@ public class Menu
 
             new ProcessBuilder("xdg-open", modified.getAbsolutePath()).start();
         }
-        catch (SQLException | IOException | XMLStreamException e)
+        catch (IOException | XMLStreamException e)
         {
             System.out.println("ERROR: " + e.getMessage());
         }

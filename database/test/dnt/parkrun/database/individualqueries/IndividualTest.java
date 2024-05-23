@@ -1,21 +1,20 @@
 package dnt.parkrun.database.individualqueries;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.database.AthleteDao;
+import dnt.parkrun.database.Database;
+import dnt.parkrun.database.LiveDatabase;
 import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.datastructures.Athlete;
 import dnt.parkrun.datastructures.Country;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static dnt.parkrun.database.BaseDaoTest.TEST_DATABASE;
+import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 
 public class IndividualTest
@@ -28,10 +27,9 @@ public class IndividualTest
     @Before
     public void setUp() throws Exception
     {
-        final DataSource dataSource = new SimpleDriverDataSource(new Driver(),
-                "jdbc:mysql://localhost/parkrun_stats", "dao", "0b851094");
-        athleteDao = new AthleteDao(TEST_DATABASE);
-        resultDao = new ResultDao(country, dataSource);
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
+        athleteDao = new AthleteDao(database);
+        resultDao = new ResultDao(database);
 
         athleteToName = athleteDao.getAllAthletes();
     }
