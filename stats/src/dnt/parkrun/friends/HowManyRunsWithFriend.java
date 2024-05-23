@@ -19,6 +19,7 @@ public class HowManyRunsWithFriend
 
     private int prevCourseId = -1;
     private Date prevDate = Date.from(Instant.EPOCH);
+    private Date maxDate = Date.from(Instant.EPOCH);
 
     public HowManyRunsWithFriend(int inputAthleteId, int friendAthleteId)
     {
@@ -30,6 +31,9 @@ public class HowManyRunsWithFriend
     {
         int scanCourseId = result.courseId;
         Date scanDate = result.date;
+
+        // Set max
+        maxDate = new Date(Math.max(maxDate.getTime(), scanDate.getTime()));
 
         if(prevCourseId != scanCourseId || !scanDate.equals(prevDate))
         {
@@ -69,6 +73,7 @@ public class HowManyRunsWithFriend
         }
     }
 
+    public Date getLatestDate() { return maxDate; }
 //    public List<AthleteIdCount> after()
 //    {
 //        return friendAthleteIds.stream().map(friendAthleteId -> {

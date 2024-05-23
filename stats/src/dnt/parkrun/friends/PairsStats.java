@@ -1,5 +1,6 @@
 package dnt.parkrun.friends;
 
+import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.FindAndReplace;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.*;
@@ -11,9 +12,10 @@ import dnt.parkrun.htmlwriter.writers.PairsTableHtmlWriter;
 import dnt.parkrun.stats.MostEventStats;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -28,7 +30,7 @@ public class PairsStats
     private final AthleteDao athleteDao;
     private final CourseRepository courseRepository;
 
-    public static void main(String[] args) throws SQLException, XMLStreamException, IOException
+    public static void main(String[] args) throws XMLStreamException, IOException
     {
         final Country country = Country.valueOf(args[0]);
         LiveDatabase database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1", "sudo");
@@ -39,14 +41,14 @@ public class PairsStats
                 293223, // Julie GORDON
                 1048005, // Sarah JANTSCHER
                 4225353, // Dan JOE
-                293227, // Paul GORDON
+//                293227, // Paul GORDON
                 2147564, // Alison KING
                 141825, // Andrew CAPEL
                 2225176, // Andy MEARS
                 391111, // Gene RAND
                 291411, // Martin O'SULLIVAN
                 1590564, // Yvonne TSE
-                116049, // Richard NORTH
+//                116049, // Richard NORTH
                 414811, // David NORTH
                 547976, // Allan JANES
                 4072508 // Zoe NORTH
@@ -137,9 +139,25 @@ public class PairsStats
 
         try (HtmlWriter htmlWriter = HtmlWriter.newInstance(new Date(), NZ, "pairs_stat"))
         {
-            htmlWriter.writer.writeCharacters("{{css}}");
+            XMLStreamWriter writer = htmlWriter.writer;
+            writer.writeCharacters("{{css}}");
 
-            try (PairsTableHtmlWriter tableWriter = new PairsTableHtmlWriter(htmlWriter.writer, new UrlGenerator(NZ.baseUrl)))
+            writer.writeStartElement("h1");
+            writer.writeCharacters("Pairs Table");
+            writer.writeEndElement();
+
+            // Get latest date
+            Date latestDate = Date.from(Instant.EPOCH);
+            for (HowManyRunsWithFriend howManyRunsWithFriend : processors.values())
+            {
+                latestDate = new Date(Math.max(latestDate.getTime(), howManyRunsWithFriend.getLatestDate().getTime()));
+            }
+
+            writer.writeStartElement("h3");
+            writer.writeCharacters("Lastest Date: " + DateConverter.formatDateForHtml(latestDate));
+            writer.writeEndElement();
+
+            try (PairsTableHtmlWriter tableWriter = new PairsTableHtmlWriter(writer, new UrlGenerator(NZ.baseUrl)))
             {
                 pairsTable.consumeFirst((rowAthlete1, colAthletes1) ->
                 {
@@ -171,6 +189,11 @@ public class PairsStats
                     }
                 });
             }
+
+            writer.writeStartElement("p");
+            writer.writeCharacters("* This table shows how many events runner A, has run with runner B.");
+            writer.writeEndElement();
+
             return htmlWriter.getFile();
         }
 

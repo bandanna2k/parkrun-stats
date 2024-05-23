@@ -43,9 +43,29 @@ td
 .td8 { background-color:#191919; color:white; }
 .td9 { background-color:#000; color:white; }
 
-td:nth-child(1) {
+th {
+    color:black;
     font-weight:700;
     text-align:right;
+    writing-mode:vertical-rl;
+    transform:rotate(180deg);
+    vertical-align:center;
+    text-align:left;
+}
+th:nth-child(even) {
+    background-color:white
+}
+th:nth-child(odd) {
+    background-color:#f0f0f0
+}
+td:nth-child(1) {
     color:black;
-    background-color:#f0f7f7
+    font-weight:700;
+    text-align:right;
+}
+tr:nth-child(2n) > td:nth-child(1) {
+    background-color:#f0f0f0;
+}
+tr:nth-child(2n+1) > td:nth-child(1) {
+    background-color:white;
 }
