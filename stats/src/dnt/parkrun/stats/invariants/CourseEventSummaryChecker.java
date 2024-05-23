@@ -34,8 +34,8 @@ public class CourseEventSummaryChecker
     public static void main(String[] args) throws SQLException
     {
         Country country = Country.valueOf(args[0]);
-        LiveDatabase database = new LiveDatabase(
-                country, getDataSourceUrl(), "dao", "0b851094");
+        Database database = new LiveDatabase(
+                country, getDataSourceUrl(), "dao", "0b851094", "sudo");
 
         CourseEventSummaryChecker checker = new CourseEventSummaryChecker(database, System.currentTimeMillis());
 //        CourseEventSummaryChecker checker = new CourseEventSummaryChecker(

@@ -29,29 +29,24 @@ public abstract class BaseDao
         this.countryDatabaseName = database.getCountryDatabaseName();
     }
 
-    private static boolean test()
-    {
-        return null != System.getProperty("TEST") && Boolean.parseBoolean(System.getProperty("TEST"));
-    }
-
     protected String courseEventSummaryTable()
     {
-        return test() ? "parkrun_stats_test.course_event_summary" : countryDatabaseName + ".course_event_summary";
+        return countryDatabaseName + ".course_event_summary";
     }
     protected String courseTable()
     {
-        return test() ? "parkrun_stats_test.course" : globalDatabaseName + ".course";
+        return globalDatabaseName + ".course";
     }
     protected String athleteTable()
     {
-        return test() ? "parkrun_stats_test.athlete" : globalDatabaseName + ".athlete";
+        return globalDatabaseName + ".athlete";
     }
     protected String resultTable()
     {
-        return test() ? "parkrun_stats_test.result" : countryDatabaseName + ".result";
+        return countryDatabaseName + ".result";
     }
     protected String volunteerTable()
     {
-        return test() ? "parkrun_stats_test.event_volunteer" : countryDatabaseName + ".event_volunteer";
+        return countryDatabaseName + ".event_volunteer";
     }
 }

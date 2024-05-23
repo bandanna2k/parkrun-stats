@@ -35,7 +35,7 @@ public class BackfillVolunteersForACourse
         assert country.countryCode == 65;
         Course backfillCourse = new Course(44, "porirua", country, "Porirua parkrun", Course.Status.STOPPED);
 
-        Database database = new LiveDatabase(country, getDataSourceUrl(), "dao", "0b851094");
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "dao", "0b851094", "sudo");
 
         AthleteDao athleteDao = new AthleteDao(database);
         VolunteerDao volunteerDao = new VolunteerDao(database);

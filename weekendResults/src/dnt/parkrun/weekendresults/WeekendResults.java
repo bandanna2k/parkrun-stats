@@ -21,7 +21,7 @@ public class WeekendResults
     public static void main(String[] args) throws SQLException, IOException
     {
         Country country = Country.valueOf(args[0]);
-        Database database = new LiveDatabase(country, getDataSourceUrl(), "dao", "0b851094");
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "dao", "0b851094", "sudo");
         WeekendResults weekendResults = WeekendResults.newInstance(
                 database,
                 new WebpageProviderFactoryImpl(new UrlGenerator(country.baseUrl)));

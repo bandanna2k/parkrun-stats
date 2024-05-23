@@ -25,7 +25,7 @@ public class RewriteEvent
     public static void main(String[] args) throws SQLException
     {
         Country country = Country.valueOf(args[0]);
-        Database database = new LiveDatabase(country, getDataSourceUrl(), "dao", "0b851094");
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "dao", "0b851094", "sudo");
 
         RewriteEvent rewriteEvent = new RewriteEvent(database);
 //        rewriteEvent.rewriteCourseEvent("blenheim", 368);

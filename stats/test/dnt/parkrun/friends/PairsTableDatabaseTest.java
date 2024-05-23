@@ -25,7 +25,7 @@ public class PairsTableDatabaseTest
     @Before
     public void setUp() throws Exception
     {
-        LiveDatabase database = new LiveDatabase(NZ, getDataSourceUrl(), "stats", "4b0e7ff1");
+        LiveDatabase database = new LiveDatabase(NZ, getDataSourceUrl(), "stats", "4b0e7ff1", "sudo");
         resultDao = new ResultDao(database);
         athleteDao = new AthleteDao(database);
         courseRepository = new CourseRepository();

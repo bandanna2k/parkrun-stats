@@ -71,7 +71,7 @@ public class MostEventStats
         Country country = Country.valueOf(args[0]);
         Date date = args.length > 1 ? DateConverter.parseWebsiteDate(args[1]) : getParkrunDay(new Date());
 
-        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1", "sudo");
 
         MostEventStats stats = MostEventStats.newInstance(database, date);
 

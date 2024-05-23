@@ -31,7 +31,7 @@ public class PairsStats
     public static void main(String[] args) throws SQLException, XMLStreamException, IOException
     {
         final Country country = Country.valueOf(args[0]);
-        LiveDatabase database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
+        LiveDatabase database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1", "sudo");
 
         PairsStats pairsStats = new PairsStats(database);
         File file = pairsStats.generateStats(
