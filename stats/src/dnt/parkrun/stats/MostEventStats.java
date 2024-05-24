@@ -24,6 +24,7 @@ import dnt.parkrun.stats.invariants.CourseEventSummaryChecker;
 import dnt.parkrun.stats.processors.AttendanceProcessor;
 import dnt.parkrun.stats.processors.AverageAttendanceProcessor;
 import dnt.parkrun.stats.processors.AverageTimeProcessor;
+import dnt.parkrun.stats.processors.mostevents.MostEventsAtCourseProcessor;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 
 import javax.xml.stream.XMLStreamException;
@@ -144,8 +145,12 @@ public class MostEventStats
     private final AverageAttendanceProcessor averageAttendanceProcessor = new AverageAttendanceProcessor();
     private final AttendanceProcessor attendanceProcessor = new AttendanceProcessor();
     private final AverageTimeProcessor averageTimeProcessor = new AverageTimeProcessor();
+    private final MostEventsAtCourseProcessor mostEventsAtCourseProcessor = new MostEventsAtCourseProcessor();
     private final ResultDao.ResultProcessor[] processors = new ResultDao.ResultProcessor[] {
-            averageAttendanceProcessor, attendanceProcessor, averageTimeProcessor
+            mostEventsAtCourseProcessor,
+            averageAttendanceProcessor,
+            attendanceProcessor,
+            averageTimeProcessor
     };
 
     private MostEventStats(Database database, Date date)
@@ -512,6 +517,18 @@ public class MostEventStats
             for (Course course : courses)
             {
                 List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);       // ***** DB Access
+                System.out.println("-- -------------------- --");
+                System.out.println("-- TOP 10 from DAO --");
+                top10.forEach(r -> System.out.printf("%d %d%n", r.athlete.athleteId, r.count));
+                System.out.println("-- " + course + " --");
+
+                System.out.println("-- TOP 10 from processor --");
+                mostEventsAtCourseProcessor.getMostEventsForCourse(course.courseId)
+                        .forEach(objects -> {
+                            System.out.printf("%d %d%n", (int)objects[0], (int)objects[1]);
+                        });
+                System.out.println("-- -------------------- --");
+
                 if (top10.isEmpty())
                 {
                     System.out.println("* Populating top 10 run table for " + course.longName);

@@ -22,7 +22,7 @@ public class MostEventsDao extends BaseDao
 
     public static MostEventsDao getOrCreate(Database database, Date date)
     {
-        MostEventsDao mostVolunteersDao = MostEventsDao.getOrCreate(database, date);
+        MostEventsDao mostVolunteersDao = new MostEventsDao(database, date);
         mostVolunteersDao.init();
         return mostVolunteersDao;
     }
