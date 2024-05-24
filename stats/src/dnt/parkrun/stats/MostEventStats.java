@@ -25,6 +25,7 @@ import dnt.parkrun.stats.processors.AttendanceProcessor;
 import dnt.parkrun.stats.processors.AverageAttendanceProcessor;
 import dnt.parkrun.stats.processors.AverageTimeProcessor;
 import dnt.parkrun.stats.processors.mostevents.MostEventsAtCourseProcessor;
+import dnt.parkrun.stats.processors.mostevents.MostVolunteersAtCourseProcessor;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 
 import javax.xml.stream.XMLStreamException;
@@ -153,6 +154,12 @@ public class MostEventStats
             averageTimeProcessor
     };
 
+    private final MostVolunteersAtCourseProcessor mostVolunteersAtCourseProcessor = new MostVolunteersAtCourseProcessor();
+    private final VolunteerDao.Processor[] volunteerProcessors = new VolunteerDao.Processor[]
+            {
+                    mostVolunteersAtCourseProcessor
+            };
+
     private MostEventStats(Database database, Date date)
     {
         this.database = database;
@@ -185,8 +192,12 @@ public class MostEventStats
 
     public File generateStats() throws IOException, XMLStreamException
     {
-        System.out.print("Start tables scan for processors ... ");
+        System.out.print("Start result table scan with processors ... ");
         resultDao.tableScan(processors);
+        System.out.println("Done");
+
+        System.out.print("Start volunteer table scan with processors ... ");
+        volunteerDao.tableScan(volunteerProcessors);
         System.out.println("Done");
 
 //        {
@@ -517,17 +528,17 @@ public class MostEventStats
             for (Course course : courses)
             {
                 List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);       // ***** DB Access
-                System.out.println("-- -------------------- --");
-                System.out.println("-- TOP 10 from DAO --");
-                top10.forEach(r -> System.out.printf("%d %d%n", r.athlete.athleteId, r.count));
-                System.out.println("-- " + course + " --");
-
-                System.out.println("-- TOP 10 from processor --");
-                mostEventsAtCourseProcessor.getMostEventsForCourse(course.courseId)
-                        .forEach(objects -> {
-                            System.out.printf("%d %d%n", (int)objects[0], (int)objects[1]);
-                        });
-                System.out.println("-- -------------------- --");
+//                System.out.println("-- -------------------- --");
+//                System.out.println("-- TOP 10 from DAO --");
+//                top10.forEach(r -> System.out.printf("%d %d%n", r.athlete.athleteId, r.count));
+//                System.out.println("-- " + course + " --");
+//
+//                System.out.println("-- TOP 10 from processor --");
+//                mostEventsAtCourseProcessor.getMostEventsForCourse(course.courseId)
+//                        .forEach(objects -> {
+//                            System.out.printf("%d %d%n", (int)objects[0], (int)objects[1]);
+//                        });
+//                System.out.println("-- -------------------- --");
 
                 if (top10.isEmpty())
                 {
@@ -609,6 +620,19 @@ public class MostEventStats
             for (Course course : courses)
             {
                 List<AtEvent> top10 = top10VolunteerDao.getTop10VolunteersAtCourse(course.name);       // ***** DB Access
+
+                System.out.println("-- -------------------- --");
+                System.out.println("-- TOP 10 from DAO --");
+                top10.forEach(r -> System.out.printf("%d %d%n", r.athlete.athleteId, r.count));
+                System.out.println("-- " + course + " --");
+
+                System.out.println("-- TOP 10 from processor --");
+                mostVolunteersAtCourseProcessor.getMostVolunteersForCourse(course.courseId)
+                        .forEach(objects -> {
+                            System.out.printf("%d %d%n", (int)objects[0], (int)objects[1]);
+                        });
+                System.out.println("-- -------------------- --");
+
                 if (top10.isEmpty())
                 {
                     System.out.println("* Populating top 10 volunteer table for " + course.longName);

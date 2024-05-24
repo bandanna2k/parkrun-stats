@@ -22,6 +22,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- 90% Club ordered by score
+
 - Use processor for Most Runs at Courses (need AthleteId and Count)
 athlete -> course -> count
 

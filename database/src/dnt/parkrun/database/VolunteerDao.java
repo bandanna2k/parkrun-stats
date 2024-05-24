@@ -5,8 +5,10 @@ import dnt.parkrun.datastructures.Volunteer;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static dnt.parkrun.datastructures.Athlete.NO_ATHLETE_ID;
 
@@ -123,5 +125,40 @@ public class VolunteerDao extends BaseDao
                 .addValue("courseId", courseId)
                 .addValue("date", date);
         jdbc.update(sql, params);
+    }
+
+    public void tableScan(Processor... processors)
+    {
+        tableScan(volunteer -> Arrays.stream(processors)
+                .forEach(processor -> processor.visitInOrder(volunteer)),
+                "order by course_id asc, date asc");
+        Arrays.stream(processors).forEach(Processor::onFinishCourse);
+    }
+    private void tableScan(Consumer<Volunteer> consumer, String orderBy)
+    {
+        String sql = STR."""
+                select *
+                from \{volunteerTable()}
+                join \{athleteTable()} using (athlete_id)
+                \{orderBy}
+                """;
+        jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
+        {
+            Volunteer volunteer = new Volunteer(
+                    rs.getInt("course_id"),
+                    rs.getDate("date"),
+                    Athlete.from(
+                            rs.getString("name"),
+                            rs.getInt("athlete_id")
+                    ));
+            consumer.accept(volunteer);
+            return null;
+        });
+    }
+
+    public interface Processor
+    {
+        void visitInOrder(Volunteer volunteer);
+        void onFinishCourse();
     }
 }
