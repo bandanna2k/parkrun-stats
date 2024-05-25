@@ -36,6 +36,7 @@ public class PairsStats
         LiveDatabase database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1", "sudo");
 
         PairsStats pairsStats = new PairsStats(database);
+        /*
         File file = pairsStats.generateStats(
                 1340853, // Jonathan
                 293223, // Julie GORDON
@@ -52,6 +53,13 @@ public class PairsStats
                 414811, // David NORTH
                 547976, // Allan JANES
                 4072508 // Zoe NORTH
+        );
+        */
+        File file = pairsStats.generateStats(
+                4225353, // Dan JOE
+                291411, // Martin O'SULLIVAN
+                6459026, // Nathan HEAVER
+                796322 // Tim ROBBINS
         );
         File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
 
