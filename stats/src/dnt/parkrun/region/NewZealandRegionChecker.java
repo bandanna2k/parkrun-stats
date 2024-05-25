@@ -62,7 +62,7 @@ public class NewZealandRegionChecker extends RegionChecker
 
     public static boolean isTaranaki(Course course)
     {
-        String[] list = {"eastend", "whanganuiriverbank"};
+        String[] list = {"eastend", "whanganuiriverbank", "mangawheroriverwalkohakune"};
         return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
     }
 
