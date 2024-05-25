@@ -9,10 +9,12 @@ import dnt.parkrun.stats.MostEventStats;
 import dnt.parkrun.stats.invariants.postdownload.DatabaseInvariantTest;
 import dnt.parkrun.stats.invariants.postdownload.DatabaseWeeklyResultsInvariantTest;
 import dnt.parkrun.stats.invariants.postdownload.InvariantTest;
+import dnt.parkrun.stats.invariants.predownload.first.AreCoursesUpToDateTest;
 import dnt.parkrun.stats.invariants.predownload.first.ParsersTest;
 import dnt.parkrun.stats.invariants.predownload.first.PendingCoursesTest;
 import dnt.parkrun.stats.invariants.predownload.first.ProvinceTest;
-import dnt.parkrun.stats.invariants.predownload.last.HowYouDoingTest;
+import dnt.parkrun.stats.invariants.predownload.last.AreLastResultsInFromCanadaTest;
+import dnt.parkrun.stats.invariants.predownload.last.AreLatestRegionResultsInTest;
 import dnt.parkrun.stats.speed.AgeCategoryRecord;
 import dnt.parkrun.stats.speed.SpeedStats;
 import dnt.parkrun.webpageprovider.WebpageProviderFactoryImpl;
@@ -164,6 +166,7 @@ public class Menu
     private void runInvariantsQuick()
     {
         runInvariants(
+                AreCoursesUpToDateTest.class,
                 ParsersTest.class,
                 DatabaseInvariantTest.class,
                 DatabaseWeeklyResultsInvariantTest.class,
@@ -175,7 +178,8 @@ public class Menu
     {
         runInvariantsQuick();
         runInvariants(
-                HowYouDoingTest.class,
+                AreLatestRegionResultsInTest.class,
+                AreLastResultsInFromCanadaTest.class,
                 PendingCoursesTest.class
         );
     }
