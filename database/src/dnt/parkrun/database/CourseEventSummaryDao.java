@@ -23,9 +23,9 @@ public class CourseEventSummaryDao extends BaseDao
                 select course_id, event_number, date, finishers,
                     fma.name as first_male_name, first_male_athlete_id,
                     ffa.name as first_female_name, first_female_athlete_id
-                from course_event_summary
-                left join athlete fma on first_male_athlete_id = fma.athlete_id
-                left join athlete ffa on first_female_athlete_id = ffa.athlete_id
+                from \{courseEventSummaryTable()}
+                left join \{athleteTable()} fma on first_male_athlete_id = fma.athlete_id
+                left join \{athleteTable()} ffa on first_female_athlete_id = ffa.athlete_id
                 where course_id = :courseId
                 """;
         return jdbc.query(sql, new MapSqlParameterSource("courseId", course.courseId), (rs, rowNum) ->

@@ -18,8 +18,11 @@ public class LiveDatabase extends Database
         if("sudo".equals(secret)) return;
 
         Arrays.stream(Thread.currentThread().getStackTrace()).forEach(ste -> {
-            assert ste.getMethodName().toLowerCase().contains("junit") :
-                    "LiveDatabase not to be used during testing without permission.";
+            String methodName = ste.getMethodName();
+            assert !methodName.toLowerCase().contains("junit") : "LiveDatabase not to be used during testing without permission. " + methodName;
+
+            String className = ste.getClassName();
+            assert !methodName.toLowerCase().contains("junit") : "LiveDatabase not to be used during testing without permission. " + className;
         });
     }
 
