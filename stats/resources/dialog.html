@@ -1,6 +1,10 @@
 <dialog id="dialog">
 
-    <p style="text-align:left;margin-left:10px"><span onclick="dialog.close()">X</span></p>
+    <p style="text-align:left;margin-left:10px">
+        <span onclick="dialog.close()" class="click-me">X</span>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <span onclick="downloadChart()" class="click-me">PNG</span>
+    </p>
 
     <canvas id="myChart"></canvas>
 

@@ -28,11 +28,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - Add deltas to attendance processor
 
-- Use processor for Most Runs at Courses (need AthleteId and Count)
-athlete -> course -> count
-
-- Use processor for Most Volunteers at Courses (need AthleteId and Count)
-
 - Top 10 at course surely can be done with 1 processor
   Related: Why does 'Populating top 10 run table for Ōrākei Bay parkrun' take so long.
 Hopefully done now. Top 10 DAO might not be needed anymore.
@@ -53,7 +48,9 @@ Hopefully done now. Top 10 DAO might not be needed anymore.
 
 ## Issues Completed
 
-- 26/5/2024 Use processors for Top 10
+- 26/5/2024 Use processors for Top 10 
+Use processor for Most Runs at Courses (need AthleteId and Count) athlete -> course -> count 
+Use processor for Most Volunteers at Courses (need AthleteId and Count)
 
 - 26/5/2024 90% Club ordered by score
 
