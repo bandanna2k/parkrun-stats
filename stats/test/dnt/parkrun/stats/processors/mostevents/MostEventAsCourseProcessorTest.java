@@ -11,13 +11,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
-import static dnt.parkrun.stats.processors.mostevents.MostEventsAtCourseProcessor.MAX_RESULT_SIZE;
+import static dnt.parkrun.stats.processors.mostevents.MostRunsAtCourseProcessor.MAX_RESULT_SIZE;
 
 public class MostEventAsCourseProcessorTest
 {
     private int courseId = 49;
     private ResultTestBuilder builder = new ResultTestBuilder().courseId(courseId);
-    private MostEventsAtCourseProcessor processor = new MostEventsAtCourseProcessor();
+    private MostRunsAtCourseProcessor processor = new MostRunsAtCourseProcessor();
 
     @Test
     public void shouldSortCount()
@@ -41,7 +41,7 @@ public class MostEventAsCourseProcessorTest
         }
         processor.onFinishCourse();
 
-        List<Object[]> mostEventsForCourse = processor.getMostEventsForCourse(courseId);
+        List<Object[]> mostEventsForCourse = processor.getMostRunsForCourse(courseId);
         Object[] topAthleteCount = mostEventsForCourse.getFirst();
         Assertions.assertThat(topAthleteCount[0]).isEqualTo(MAX_RESULT_SIZE + 5 - 1);   // athleteId
         Assertions.assertThat(topAthleteCount[1]).isEqualTo(MAX_RESULT_SIZE + 5 + 5 - 1);   // courseCount
@@ -60,7 +60,7 @@ public class MostEventAsCourseProcessorTest
         }
         processor.onFinishCourse();
 
-        List<Object[]> mostEventsForCourse = processor.getMostEventsForCourse(courseId);
+        List<Object[]> mostEventsForCourse = processor.getMostRunsForCourse(courseId);
         Object[] topAthleteCount = mostEventsForCourse.getFirst();
         Assertions.assertThat(topAthleteCount[0]).isEqualTo(0);   // athleteId
         Assertions.assertThat(topAthleteCount[1]).isEqualTo(1);   // courseCount

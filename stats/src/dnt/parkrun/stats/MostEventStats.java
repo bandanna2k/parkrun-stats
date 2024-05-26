@@ -5,10 +5,8 @@ import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.*;
 import dnt.parkrun.database.stats.MostEventsDao;
-import dnt.parkrun.database.stats.Top10RunsDao;
 import dnt.parkrun.database.weekly.*;
 import dnt.parkrun.datastructures.*;
-import dnt.parkrun.datastructures.stats.AtEvent;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import dnt.parkrun.htmlwriter.HtmlWriter;
 import dnt.parkrun.htmlwriter.MostEventsRecord;
@@ -21,7 +19,7 @@ import dnt.parkrun.stats.invariants.CourseEventSummaryChecker;
 import dnt.parkrun.stats.processors.AttendanceProcessor;
 import dnt.parkrun.stats.processors.AverageAttendanceProcessor;
 import dnt.parkrun.stats.processors.AverageTimeProcessor;
-import dnt.parkrun.stats.processors.mostevents.MostEventsAtCourseProcessor;
+import dnt.parkrun.stats.processors.mostevents.MostRunsAtCourseProcessor;
 import dnt.parkrun.stats.processors.mostevents.MostVolunteersAtCourseProcessor;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 
@@ -143,9 +141,9 @@ public class MostEventStats
     private final AverageAttendanceProcessor averageAttendanceProcessor = new AverageAttendanceProcessor();
     private final AttendanceProcessor attendanceProcessor = new AttendanceProcessor();
     private final AverageTimeProcessor averageTimeProcessor = new AverageTimeProcessor();
-    private final MostEventsAtCourseProcessor mostEventsAtCourseProcessor = new MostEventsAtCourseProcessor();
+    private final MostRunsAtCourseProcessor mostRunsAtCourseProcessor = new MostRunsAtCourseProcessor();
     private final ResultDao.ResultProcessor[] processors = new ResultDao.ResultProcessor[] {
-            mostEventsAtCourseProcessor,
+            mostRunsAtCourseProcessor,
             averageAttendanceProcessor,
             attendanceProcessor,
             averageTimeProcessor
@@ -522,73 +520,118 @@ public class MostEventStats
         return result;
     }
 
+    private void writeMostEventsExtended(HtmlWriter writer,
+                                         List<MostEventsDao.MostEventsRecord> differentEventRecords,
+                                         Map<Integer, List<CourseDate>> athleteIdToFirstRuns) throws XMLStreamException
+    {
+        try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Events (Extended)").build())
+        {
+            try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, country, true))
+            {
+                for (MostEventsDao.MostEventsRecord der : differentEventRecords)
+                {
+                    Athlete athlete = athleteIdToAthlete.get(der.athlete.athleteId);
+                    List<AthleteCourseSummary> athleteCourseSummaries = athleteIdToAthleteCourseSummaries.get(der.athlete.athleteId);
+                    int globalCourseCount = athleteCourseSummaries.size();
+                    int globalTotalCourseCount = athleteCourseSummaries.stream().mapToInt(acs -> acs.countOfRuns).sum();
+
+                    final List<CourseDate> listOfFirstRuns;
+                    final String firstRuns;
+                    final int regionnaireCount;
+                    final String runsNeeded;
+                    final MostEventsRecord mostEventsRecord;
+
+                    listOfFirstRuns = athleteIdToFirstRuns.get(der.athlete.athleteId);
+                    listOfFirstRuns.sort(CourseDate.COMPARATOR);
+
+                    List<CourseDate> listOfRegionnaireDates = getListOfRegionnaireDates(startDates, stopDates, listOfFirstRuns);
+                    regionnaireCount = listOfRegionnaireDates.size();
+
+                    Object[] result = getRunsNeededAndMaxRunsNeeded(startDates, stopDates, listOfFirstRuns);
+                    runsNeeded = result[0] + " (" + result[1] + ")";
+
+                    String firstRunDatesHtmlString = listOfFirstRuns.stream().map(fr ->
+                    {
+                        int multiplier = listOfRegionnaireDates.contains(fr) ? -1 : 1;
+                        return String.valueOf(multiplier * fr.date.getTime() / 1000);
+                    }).collect(Collectors.joining(","));
+                    firstRuns = "[" +
+                            "[" + listOfFirstRuns.stream().map(fr -> String.valueOf(fr.course.courseId)).collect(Collectors.joining(",")) + "]," +
+                            "[" + firstRunDatesHtmlString + "]" +
+                            "]";
+                    mostEventsRecord = new MostEventsRecord(athlete,
+                            der.differentRegionCourseCount, der.totalRegionRuns,
+                            globalCourseCount, globalTotalCourseCount,
+                            der.positionDelta, der.isNewEntry,
+                            firstRuns,
+                            regionnaireCount,
+                            runsNeeded);
+
+                    tableWriter.writeMostEventRecord(mostEventsRecord);
+                }
+            }
+        }
+    }
+
     private void writeTop10Runs(HtmlWriter writer) throws XMLStreamException
     {
-        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Runs at Courses").build())
+        try (CollapsableTitleHtmlWriter ignored = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Runs at Courses")
+                .open().build())
         {
-            // Populate top 10 runs at courses
-            Top10RunsDao top10RunsDao = new Top10RunsDao(database);
+            final List<StatsRecord> clubDe90Percent = new ArrayList<>();
+            final List<StatsRecord> top10forRegion = new ArrayList<>();
+
             List<Course> courses = courseRepository.getCourses(country).stream()
                     .filter(c -> c.status == RUNNING).toList();
             for (Course course : courses)
             {
-                List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);       // ***** DB Access
-//                System.out.println("-- -------------------- --");
-//                System.out.println("-- TOP 10 from DAO --");
-//                top10.forEach(r -> System.out.printf("%d %d%n", r.athlete.athleteId, r.count));
-//                System.out.println("-- " + course + " --");
-//
-//                System.out.println("-- TOP 10 from processor --");
-//                mostEventsAtCourseProcessor.getMostEventsForCourse(course.courseId)
-//                        .forEach(objects -> {
-//                            System.out.printf("%d %d%n", (int)objects[0], (int)objects[1]);
-//                        });
-//                System.out.println("-- -------------------- --");
+                // Runs 90% Club
+                List<Object[]> mostRunsForCourse = mostRunsAtCourseProcessor.getMostRunsForCourse(course.courseId);
+                mostRunsForCourse.forEach(r -> {
+                    int athleteId = (int)r[0];
+                    Athlete athlete = athleteIdToAthlete.get(athleteId);
 
-                if (top10.isEmpty())
-                {
-                    System.out.println("* Populating top 10 run table for " + course.longName);
-                    top10.addAll(top10RunsDao.getTop10AtEvent(course.courseId));
-                    top10Dao.writeRunsAtEvents(top10);       // ***** DB Access
-                }
+                    int runCount = (int) r[1];
+                    double courseCount = courseToCount.get(course.name); // TODO Change to courseId
+                    double percentage = ((double)runCount) * 100.0 / courseCount;
+                    if(percentage > 90 && ((double)runCount) > 5)
+                    {
+                        clubDe90Percent.add(new StatsRecord()
+                                .athlete(athlete).course(course).count(runCount).percentage(percentage));
+                    }
+                });
+
+                // Top 10 for region
+                mostRunsForCourse.forEach(r -> {
+                    int athleteId = (int)r[0];
+                    Athlete athlete = athleteIdToAthlete.get(athleteId);
+
+                    int runCount = (int) r[1];
+
+                    top10forRegion.add(new StatsRecord().athlete(athlete).course(course).count(runCount));
+                });
             }
 
-            // Top 10 runs in region
+            // Sort
+            clubDe90Percent.sort(StatsRecord.COMPARATOR_FOR_SCORE);
+
+            // Sort top 10 and then crop
+            top10forRegion.sort(reverseOrder(Comparator.comparingInt(StatsRecord::count)));
+
+            // Top 10 volunteers in region
             try(CollapsableTitleHtmlWriter collapsableWriter = new CollapsableTitleHtmlWriter.Builder(writer.writer, country.countryName)
-                                .level(2).fontSizePercent(95).build())
+                    .level(2).fontSizePercent(95).build())
             {
                 try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(
                         writer.writer, urlGenerator, "Run"))
                 {
-                    List<AtEvent> top10InRegion = top10Dao.getTop10InRegion();       // ***** DB Access
-
-                    assert !top10InRegion.isEmpty() : "WARNING: Top 10 runs in region list is empty";
-                    for (AtEvent r : top10InRegion)
+                    for (StatsRecord statsRecord : top10forRegion.subList(0, 20))
                     {
-                        top10InRegionHtmlWriter.writeRecord(new StatsRecord()
-                                .athlete(r.athlete).course(r.course).count(r.count));
+                        top10InRegionHtmlWriter.writeRecord(statsRecord);
                     }
                 }
             }
 
-            // Runners 90% club
-            List<StatsRecord> clubDe90Percent = new ArrayList<>();
-            for (Course course : courses)
-            {
-                List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);       // ***** DB Access
-                for (AtEvent rae : top10)
-                {
-                    double courseCount = courseToCount.get(course.name);
-                    double runCount = rae.count;
-                    double percentage = runCount * 100.0 / courseCount;
-                    if(percentage > 90 && runCount > 5)
-                    {
-                        clubDe90Percent.add(new StatsRecord()
-                                .athlete(rae.athlete).course(course).count(rae.count).percentage(percentage));
-                    }
-                }
-            }
-            clubDe90Percent.sort(StatsRecord.COMPARATOR_FOR_SCORE);
             try(CollapsableTitleHtmlWriter collapsableWriter = new CollapsableTitleHtmlWriter.Builder(writer.writer, "90% Club")
                     .level(2).fontSizePercent(95).build())
             {
@@ -607,26 +650,30 @@ public class MostEventStats
                 writer.writer.writeEndElement();
                 writer.writer.writeEndElement();
             }
-
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
-            // Top 10 per course
+            // Top 10 runs per course
             for (Course course : courses)
             {
                 try(CollapsableTitleHtmlWriter collapsableWriter = new CollapsableTitleHtmlWriter.Builder(writer.writer, course.longName)
                         .level(2).fontSizePercent(95).build())
                 {
-                    try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, urlGenerator, "Run"))
+                    try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(
+                            writer.writer, urlGenerator, "Run"))
                     {
-                        List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);       // ***** DB Access
-                        for (AtEvent rae : top10)
+                        List<Object[]> mostRunsForCourse = mostRunsAtCourseProcessor.getMostRunsForCourse(course.courseId);
+                        for (Object[] objects : mostRunsForCourse)
                         {
+                            int athleteId = (int)objects[0];
+                            Athlete athlete = athleteIdToAthlete.get(athleteId);
+
+                            int runCount = (int)objects[1];
+
                             double courseCount = courseToCount.get(course.name);
-                            double runCount = rae.count;
-                            double percentage = runCount * 100.0 / courseCount;
+                            double percentage = ((double) runCount) * 100.0 / courseCount;
                             top10atCourse.writeRecord(new StatsRecord()
-                                    .athlete(rae.athlete).count(rae.count).percentage(percentage));
+                                    .athlete(athlete).count(runCount).percentage(percentage));
                         }
                     }
                 }
@@ -721,71 +768,22 @@ public class MostEventStats
                         .level(2).fontSizePercent(95).build())
                 {
                     try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(
-                            writer.writer, urlGenerator, "Volunteer"))
+                            writer.writer, urlGenerator, "Run"))
                     {
-                        List<AtEvent> top10 = top10VolunteerDao.getTop10VolunteersAtCourse(course.name);       // ***** DB Access
-                        for (AtEvent rae : top10)
+                        List<Object[]> mostVolunteersForCourse = mostVolunteersAtCourseProcessor.getMostVolunteersForCourse(course.courseId);
+                        for (Object[] objects : mostVolunteersForCourse)
                         {
+                            int athleteId = (int)objects[0];
+                            Athlete athlete = athleteIdToAthlete.get(athleteId);
+
+                            int volunteerCount = (int)objects[1];
+
                             double courseCount = courseToCount.get(course.name);
-                            double volunteerCount = rae.count;
-                            double percentage = volunteerCount * 100.0 / courseCount;
+                            double percentage = ((double) volunteerCount) * 100.0 / courseCount;
                             top10atCourse.writeRecord(new StatsRecord()
-                                    .athlete(rae.athlete).count(rae.count).percentage(percentage));
+                                    .athlete(athlete).count(volunteerCount).percentage(percentage));
                         }
                     }
-                }
-            }
-        }
-    }
-
-    private void writeMostEventsExtended(HtmlWriter writer,
-                                         List<MostEventsDao.MostEventsRecord> differentEventRecords,
-                                         Map<Integer, List<CourseDate>> athleteIdToFirstRuns) throws XMLStreamException
-    {
-        try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter.Builder(writer.writer, "Most Events (Extended)").build())
-        {
-            try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, country, true))
-            {
-                for (MostEventsDao.MostEventsRecord der : differentEventRecords)
-                {
-                    Athlete athlete = athleteIdToAthlete.get(der.athlete.athleteId);
-                    List<AthleteCourseSummary> athleteCourseSummaries = athleteIdToAthleteCourseSummaries.get(der.athlete.athleteId);
-                    int globalCourseCount = athleteCourseSummaries.size();
-                    int globalTotalCourseCount = athleteCourseSummaries.stream().mapToInt(acs -> acs.countOfRuns).sum();
-
-                    final List<CourseDate> listOfFirstRuns;
-                    final String firstRuns;
-                    final int regionnaireCount;
-                    final String runsNeeded;
-                    final MostEventsRecord mostEventsRecord;
-
-                    listOfFirstRuns = athleteIdToFirstRuns.get(der.athlete.athleteId);
-                    listOfFirstRuns.sort(CourseDate.COMPARATOR);
-
-                    List<CourseDate> listOfRegionnaireDates = getListOfRegionnaireDates(startDates, stopDates, listOfFirstRuns);
-                    regionnaireCount = listOfRegionnaireDates.size();
-
-                    Object[] result = getRunsNeededAndMaxRunsNeeded(startDates, stopDates, listOfFirstRuns);
-                    runsNeeded = result[0] + " (" + result[1] + ")";
-
-                    String firstRunDatesHtmlString = listOfFirstRuns.stream().map(fr ->
-                    {
-                        int multiplier = listOfRegionnaireDates.contains(fr) ? -1 : 1;
-                        return String.valueOf(multiplier * fr.date.getTime() / 1000);
-                    }).collect(Collectors.joining(","));
-                    firstRuns = "[" +
-                            "[" + listOfFirstRuns.stream().map(fr -> String.valueOf(fr.course.courseId)).collect(Collectors.joining(",")) + "]," +
-                            "[" + firstRunDatesHtmlString + "]" +
-                            "]";
-                    mostEventsRecord = new MostEventsRecord(athlete,
-                            der.differentRegionCourseCount, der.totalRegionRuns,
-                            globalCourseCount, globalTotalCourseCount,
-                            der.positionDelta, der.isNewEntry,
-                            firstRuns,
-                            regionnaireCount,
-                            runsNeeded);
-
-                    tableWriter.writeMostEventRecord(mostEventsRecord);
                 }
             }
         }

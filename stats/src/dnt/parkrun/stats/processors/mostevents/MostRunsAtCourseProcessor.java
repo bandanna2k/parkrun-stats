@@ -10,7 +10,7 @@ import java.util.Map;
 
 import static dnt.parkrun.datastructures.Athlete.NO_ATHLETE_ID;
 
-public class MostEventsAtCourseProcessor implements ResultDao.ResultProcessor
+public class MostRunsAtCourseProcessor implements ResultDao.ResultProcessor
 {
     static final int MAX_RESULT_SIZE = 20;
 
@@ -43,9 +43,8 @@ public class MostEventsAtCourseProcessor implements ResultDao.ResultProcessor
                 athleteCount.sort((r1, r2) -> {
                     int countR1 = (int)r1[1];
                     int countR2 = (int)r2[1];
-                    // DAVID These are wrong, inverted
-                    if(countR1 < countR2) return -1;
-                    if(countR1 > countR2) return 1;
+                    if(countR1 < countR2) return 1;
+                    if(countR1 > countR2) return -1;
 
                     int athleteR1 = (int)r1[0];
                     int athleteR2 = (int)r2[0];
@@ -61,7 +60,7 @@ public class MostEventsAtCourseProcessor implements ResultDao.ResultProcessor
         });
     }
 
-    public List<Object[]> getMostEventsForCourse(int courseId)
+    public List<Object[]> getMostRunsForCourse(int courseId)
     {
         return courseToAthleteCount.get(courseId);
     }
