@@ -29,7 +29,12 @@ public class MostRunsAtCourseProcessor implements ResultDao.ResultProcessor
     private final Map<Integer, List<Object[]>> courseToAthleteCount = new HashMap<>();
 
     @Override
-    public void onFinishCourse()
+    public void onFinish()
+    {
+        onFinishCourse();
+    }
+
+    void onFinishCourse()
     {
         courseToAthleteToCount.forEach((courseId, athleteToCount) -> {
             athleteToCount.forEach((athleteId, count) -> {

@@ -39,7 +39,12 @@ public class MaxAttendanceProcessor implements ResultDao.ResultProcessor
     }
 
     @Override
-    public void onFinishCourse()
+    public void onFinish()
+    {
+        onFinishCourse();
+    }
+
+    void onFinishCourse()
     {
         CourseRecord currentCourseRecord = courseIdToCourseRecord.computeIfAbsent(prevCourseId, courseId -> new CourseRecord());
         currentCourseRecord.maybeAddMaxAttendance(new EventDateCount(prevDate, currentCourseCount));

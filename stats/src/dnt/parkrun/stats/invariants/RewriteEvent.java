@@ -29,7 +29,7 @@ public class RewriteEvent
 
         RewriteEvent rewriteEvent = new RewriteEvent(database);
 //        rewriteEvent.rewriteCourseEvent("blenheim", 368);
-        rewriteEvent.rewriteCourseEvent("owairaka", 160);
+        rewriteEvent.rewriteCourseEvent("broadpark", 85);
     }
 
     public RewriteEvent(Database database)
@@ -89,16 +89,8 @@ public class RewriteEvent
             Parser parser = new Parser.Builder(course)
                     .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(course.name, eventNumber)))
                     .forEachResult(newResults::add)
-                    .forEachAthlete(e ->
-                    {
-//                      System.out.println("A " + e);
-                        newAthletes.add(e);
-                    })
-                    .forEachVolunteer(e1 ->
-                    {
-//                        System.out.println("V " + e1);
-                        newVolunteers.add(e1);
-                    })
+                    .forEachAthlete(newAthletes::add)
+                    .forEachVolunteer(newVolunteers::add)
                     .build();
             parser.parse();
         }

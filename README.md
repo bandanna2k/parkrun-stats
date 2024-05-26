@@ -22,10 +22,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Bad results 1716697342205
-
-- PNG for chart
-
 - Add deltas to attendance processor
 
 - Top 10 at course surely can be done with 1 processor
@@ -47,6 +43,10 @@ Hopefully done now. Top 10 DAO might not be needed anymore.
 - Unique runners at course / Add unique runs for runners / Add unique runs to Most Events???
 
 ## Issues Completed
+
+- 26/5/2024 Bad results 1716697342205
+
+- 26/5/2024 PNG for chart
 
 - 26/5/2024 Use processors for Top 10 
 Use processor for Most Runs at Courses (need AthleteId and Count) athlete -> course -> count 
