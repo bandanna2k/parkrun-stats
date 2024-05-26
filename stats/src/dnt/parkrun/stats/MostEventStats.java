@@ -5,7 +5,10 @@ import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.*;
 import dnt.parkrun.database.stats.MostEventsDao;
-import dnt.parkrun.database.weekly.*;
+import dnt.parkrun.database.weekly.AthleteCourseSummaryDao;
+import dnt.parkrun.database.weekly.AttendanceRecordsDao;
+import dnt.parkrun.database.weekly.PIndexDao;
+import dnt.parkrun.database.weekly.VolunteerCountDao;
 import dnt.parkrun.datastructures.*;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
 import dnt.parkrun.htmlwriter.HtmlWriter;
@@ -125,8 +128,6 @@ public class MostEventStats
     final AttendanceRecordsDao attendanceRecordsDao;
     private final ResultDao resultDao;
     private final AthleteCourseSummaryDao acsDao;
-    private final Top10AtCourseDao top10Dao;
-    private final Top10VolunteersAtCourseDao top10VolunteerDao;
     private final CourseEventSummaryDao courseEventSummaryDao;
     private final PIndexDao pIndexDao;
     private final VolunteerCountDao volunteerCountDao;
@@ -167,8 +168,6 @@ public class MostEventStats
 
         this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(database, this.date);
         this.acsDao = AthleteCourseSummaryDao.getInstance(database, this.date);
-        this.top10Dao = Top10AtCourseDao.getInstance(database, this.date);
-        this.top10VolunteerDao = Top10VolunteersAtCourseDao.getInstance(database, this.date);
         this.pIndexDao = PIndexDao.getInstance(database, date);
         this.volunteerCountDao = VolunteerCountDao.getInstance(database, this.date);
 

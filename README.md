@@ -22,8 +22,10 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- Bad results 1716697342205
+
 - PNG for chart
-- 
+
 - Add deltas to attendance processor
 
 - Use processor for Most Runs at Courses (need AthleteId and Count)
@@ -33,6 +35,7 @@ athlete -> course -> count
 
 - Top 10 at course surely can be done with 1 processor
   Related: Why does 'Populating top 10 run table for Ōrākei Bay parkrun' take so long.
+Hopefully done now. Top 10 DAO might not be needed anymore.
 
 - Speed stats for the year 
 

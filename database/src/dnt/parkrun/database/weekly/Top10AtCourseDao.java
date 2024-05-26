@@ -24,6 +24,7 @@ public class Top10AtCourseDao extends BaseDao
         this.date = date;
         createTable();
     }
+    @Deprecated(since = "DAO not used anymore, however it is used to demonstrate pairs table.")
     public static Top10AtCourseDao getInstance(Database database, Date date)
     {
         Top10AtCourseDao top10AtCourseDao = new Top10AtCourseDao(database, date);
