@@ -22,8 +22,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- 90% Club ordered by score
-
 - Use processors for Top 10 
 
 - Add deltas to attendance processor
@@ -51,6 +49,8 @@ athlete -> course -> count
 - Unique runners at course / Add unique runs for runners / Add unique runs to Most Events???
 
 ## Issues Completed
+
+- 26/5/2024 90% Club ordered by score
 
 - 23/5/2024 Remove sql from readme
 

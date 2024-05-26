@@ -16,14 +16,12 @@ public class Top10InRegionHtmlWriter extends BaseWriter implements Closeable
 
     public Top10InRegionHtmlWriter(XMLStreamWriter writer,
                                    UrlGenerator urlGenerator,
-                                   String courseLongName,
                                    String isRun) throws XMLStreamException
     {
-        this(writer, urlGenerator, courseLongName, isRun, false);
+        this(writer, urlGenerator, isRun, false);
     }
     public Top10InRegionHtmlWriter(XMLStreamWriter writer,
                                    UrlGenerator urlGenerator,
-                                   String courseLongName,
                                    String isRun,
                                    boolean showPercentageColumn) throws XMLStreamException
     {
@@ -31,10 +29,6 @@ public class Top10InRegionHtmlWriter extends BaseWriter implements Closeable
         this.urlGenerator = urlGenerator;
         this.isRun = isRun;
         this.showPercentageColumn = showPercentageColumn;
-        startSubDetails();
-        startElement("summary", "style", "font-size:16px;");
-        writer.writeCharacters(courseLongName);
-        endElement("summary");
 
         startElement("table", "class", "sortable name-name-data");
         writeHeader(writer);
@@ -75,14 +69,6 @@ public class Top10InRegionHtmlWriter extends BaseWriter implements Closeable
         try
         {
             endElement("table");
-
-            startElement("center");
-            startElement("p");
-            writer.writeCharacters("* Table sorted by percentage x count");
-            endElement("p");
-            endElement("center");
-
-            endSubDetails();
         }
         catch (XMLStreamException e)
         {

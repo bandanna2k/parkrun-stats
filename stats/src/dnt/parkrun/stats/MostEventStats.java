@@ -545,19 +545,25 @@ public class MostEventStats
                 }
             }
 
-            try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(
-                    writer.writer, urlGenerator,  country.countryName, "Run"))
+            // Top 10 runs in region
+            try(CollapsableTitleHtmlWriter collapsableWriter = new CollapsableTitleHtmlWriter.Builder(writer.writer, country.countryName)
+                                .level(2).fontSizePercent(95).build())
             {
-                List<AtEvent> top10InRegion = top10Dao.getTop10InRegion();       // ***** DB Access
-
-                assert !top10InRegion.isEmpty() : "WARNING: Top 10 runs in region list is empty";
-                for (AtEvent r : top10InRegion)
+                try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(
+                        writer.writer, urlGenerator, "Run"))
                 {
-                    top10InRegionHtmlWriter.writeRecord(new StatsRecord()
-                            .athlete(r.athlete).course(r.course).count(r.count));
+                    List<AtEvent> top10InRegion = top10Dao.getTop10InRegion();       // ***** DB Access
+
+                    assert !top10InRegion.isEmpty() : "WARNING: Top 10 runs in region list is empty";
+                    for (AtEvent r : top10InRegion)
+                    {
+                        top10InRegionHtmlWriter.writeRecord(new StatsRecord()
+                                .athlete(r.athlete).course(r.course).count(r.count));
+                    }
                 }
             }
 
+            // Runners 90% club
             List<StatsRecord> clubDe90Percent = new ArrayList<>();
             for (Course course : courses)
             {
@@ -575,30 +581,45 @@ public class MostEventStats
                 }
             }
             clubDe90Percent.sort(StatsRecord.COMPARATOR_FOR_SCORE);
-            try (Top10InRegionHtmlWriter top10atCourse = new Top10InRegionHtmlWriter(
-                    writer.writer, urlGenerator, "90% Club", "Run", true))
+            try(CollapsableTitleHtmlWriter collapsableWriter = new CollapsableTitleHtmlWriter.Builder(writer.writer, "90% Club")
+                    .level(2).fontSizePercent(95).build())
             {
-                for (StatsRecord record : clubDe90Percent)
+                try (Top10InRegionHtmlWriter top10atCourse = new Top10InRegionHtmlWriter(
+                        writer.writer, urlGenerator, "Run", true))
                 {
-                    top10atCourse.writeRecord(record);
+                    for (StatsRecord record : clubDe90Percent)
+                    {
+                        top10atCourse.writeRecord(record);
+                    }
                 }
+
+                writer.writer.writeStartElement("center");
+                writer.writer.writeStartElement("p");
+                writer.writer.writeCharacters("* Table sorted by percentage x count");
+                writer.writer.writeEndElement();
+                writer.writer.writeEndElement();
             }
 
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
+            // Top 10 per course
             for (Course course : courses)
             {
-                try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, urlGenerator, course.longName, "Run"))
+                try(CollapsableTitleHtmlWriter collapsableWriter = new CollapsableTitleHtmlWriter.Builder(writer.writer, course.longName)
+                        .level(2).fontSizePercent(95).build())
                 {
-                    List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);       // ***** DB Access
-                    for (AtEvent rae : top10)
+                    try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(writer.writer, urlGenerator, "Run"))
                     {
-                        double courseCount = courseToCount.get(course.name);
-                        double runCount = rae.count;
-                        double percentage = runCount * 100.0 / courseCount;
-                        top10atCourse.writeRecord(new StatsRecord()
-                                .athlete(rae.athlete).count(rae.count).percentage(percentage));
+                        List<AtEvent> top10 = top10Dao.getTop10AtCourse(course.name);       // ***** DB Access
+                        for (AtEvent rae : top10)
+                        {
+                            double courseCount = courseToCount.get(course.name);
+                            double runCount = rae.count;
+                            double percentage = runCount * 100.0 / courseCount;
+                            top10atCourse.writeRecord(new StatsRecord()
+                                    .athlete(rae.athlete).count(rae.count).percentage(percentage));
+                        }
                     }
                 }
             }
@@ -620,11 +641,8 @@ public class MostEventStats
 
                 System.out.println("-- -------------------- --");
                 System.out.println("-- TOP 10 from DAO --");
-                top10.forEach(r -> System.out.printf("%d %d%n", r.athlete.athleteId, r.count));
                 System.out.println("-- " + course + " --");
-                top10.forEach(atEvent -> {
-                    System.out.printf("%d %d%n", atEvent.athlete.athleteId, atEvent.count);
-                });
+                top10.forEach(r -> System.out.printf("%d %d%n", r.athlete.athleteId, r.count));
 
                 System.out.println("-- TOP 10 from processor --");
                 mostVolunteersAtCourseProcessor.getMostVolunteersForCourse(course.courseId)
@@ -641,22 +659,28 @@ public class MostEventStats
                 }
             }
 
-            try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(
-                    writer.writer, urlGenerator, country.countryName, "Volunteer"))
+            // Top 10 volunteers in region
+            try(CollapsableTitleHtmlWriter collapsableWriter = new CollapsableTitleHtmlWriter.Builder(writer.writer, country.countryName)
+                    .level(2).fontSizePercent(95).build())
             {
-                List<Object[]> top10VolunteersInRegion = top10VolunteerDao.getTop10VolunteersInRegion();       // ***** DB Access
-                assert !top10VolunteersInRegion.isEmpty() : "WARNING: Top 10 runs in region list is empty";
-
-                for (Object[] record : top10VolunteersInRegion)
+                try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(
+                        writer.writer, urlGenerator, "Volunteer"))
                 {
-                    Athlete athlete = (Athlete)record[0];
-                    Course course = courseRepository.getCourse((int) record[1]);
-                    int countOfVolunteersAtCourse = (int)record[2];
-                    top10InRegionHtmlWriter.writeRecord(new StatsRecord()
-                            .athlete(athlete).course(course).count(countOfVolunteersAtCourse));
+                    List<Object[]> top10VolunteersInRegion = top10VolunteerDao.getTop10VolunteersInRegion();       // ***** DB Access
+                    assert !top10VolunteersInRegion.isEmpty() : "WARNING: Top 10 runs in region list is empty";
+
+                    for (Object[] record : top10VolunteersInRegion)
+                    {
+                        Athlete athlete = (Athlete) record[0];
+                        Course course = courseRepository.getCourse((int) record[1]);
+                        int countOfVolunteersAtCourse = (int) record[2];
+                        top10InRegionHtmlWriter.writeRecord(new StatsRecord()
+                                .athlete(athlete).course(course).count(countOfVolunteersAtCourse));
+                    }
                 }
             }
 
+            // Volunteer 90% Club
             List<StatsRecord> clubDe90Percent = new ArrayList<>();
             for (Course course : courses)
             {
@@ -674,31 +698,45 @@ public class MostEventStats
                 }
             }
             clubDe90Percent.sort(StatsRecord.COMPARATOR_FOR_SCORE);
-            try (Top10InRegionHtmlWriter top10atCourse = new Top10InRegionHtmlWriter(
-                    writer.writer, urlGenerator, "90% Club", "Volunteer", true))
+            try(CollapsableTitleHtmlWriter collapsableWriter = new CollapsableTitleHtmlWriter.Builder(writer.writer, "90% Club")
+                    .level(2).fontSizePercent(95).build())
             {
-                for (StatsRecord record : clubDe90Percent)
+                try (Top10InRegionHtmlWriter top10atCourse = new Top10InRegionHtmlWriter(
+                        writer.writer, urlGenerator, "Volunteer", true))
                 {
-                    top10atCourse.writeRecord(record);
+                    for (StatsRecord record : clubDe90Percent)
+                    {
+                        top10atCourse.writeRecord(record);
+                    }
                 }
-            }
 
+                writer.writer.writeStartElement("center");
+                writer.writer.writeStartElement("p");
+                writer.writer.writeCharacters("* Table sorted by percentage x count");
+                writer.writer.writeEndElement();
+                writer.writer.writeEndElement();
+            }
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
+            // Top 10 volunteers per course
             for (Course course : courses)
             {
-                try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(
-                        writer.writer, urlGenerator, course.longName, "Volunteer"))
+                try(CollapsableTitleHtmlWriter collapsableWriter = new CollapsableTitleHtmlWriter.Builder(writer.writer, course.longName)
+                        .level(2).fontSizePercent(95).build())
                 {
-                    List<AtEvent> top10 = top10VolunteerDao.getTop10VolunteersAtCourse(course.name);       // ***** DB Access
-                    for (AtEvent rae : top10)
+                    try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(
+                            writer.writer, urlGenerator, "Volunteer"))
                     {
-                        double courseCount = courseToCount.get(course.name);
-                        double volunteerCount = rae.count;
-                        double percentage = volunteerCount * 100.0 / courseCount;
-                        top10atCourse.writeRecord(new StatsRecord()
-                                .athlete(rae.athlete).count(rae.count).percentage(percentage));
+                        List<AtEvent> top10 = top10VolunteerDao.getTop10VolunteersAtCourse(course.name);       // ***** DB Access
+                        for (AtEvent rae : top10)
+                        {
+                            double courseCount = courseToCount.get(course.name);
+                            double volunteerCount = rae.count;
+                            double percentage = volunteerCount * 100.0 / courseCount;
+                            top10atCourse.writeRecord(new StatsRecord()
+                                    .athlete(rae.athlete).count(rae.count).percentage(percentage));
+                        }
                     }
                 }
             }

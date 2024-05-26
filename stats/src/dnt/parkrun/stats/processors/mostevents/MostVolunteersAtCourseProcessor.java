@@ -43,7 +43,6 @@ public class MostVolunteersAtCourseProcessor implements VolunteerDao.Processor
                 athleteCount.sort((r1, r2) -> {
                     int countR1 = (int)r1[1];
                     int countR2 = (int)r2[1];
-                    // DAVID THese are now wrong
                     if(countR1 < countR2) return 1;
                     if(countR1 > countR2) return -1;
 

@@ -15,16 +15,11 @@ public class Top10AtCourseHtmlWriter extends BaseWriter implements Closeable
 
     public Top10AtCourseHtmlWriter(XMLStreamWriter writer,
                                    UrlGenerator urlGenerator,
-                                   String title,
                                    String runOrVolunteer) throws XMLStreamException
     {
         super(writer);
         this.urlGenerator = urlGenerator;
         this.runOrVolunteer = runOrVolunteer;
-        startSubDetails();
-        startElement("summary", "style", "font-size:16px;");
-        writer.writeCharacters(title);
-        endElement("summary");
 
         startElement("table", "class", "sortable name-data");
         writeHeader(writer);
@@ -58,8 +53,6 @@ public class Top10AtCourseHtmlWriter extends BaseWriter implements Closeable
         try
         {
             endElement("table");
-
-            endSubDetails();
         }
         catch (XMLStreamException e)
         {
