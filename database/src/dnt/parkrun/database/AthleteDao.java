@@ -60,12 +60,10 @@ public class AthleteDao extends BaseDao
                         ));
     }
 
-    // TODO: Write a test for me please.
-    // TODO: Testing only surely.
     public Map<Integer, Athlete> getAllAthletes()
     {
         Map<Integer, Athlete> result = new HashMap<>();
-        jdbc.query("select * from athlete",
+        jdbc.query("select * from " + athleteTable(),
                 EmptySqlParameterSource.INSTANCE,
                 (rs, rowNum) ->
                 {
