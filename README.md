@@ -24,6 +24,10 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - 90% Club ordered by score
 
+- Use processors for Top 10 
+
+- Add deltas to attendance processor
+
 - Use processor for Most Runs at Courses (need AthleteId and Count)
 athlete -> course -> count
 

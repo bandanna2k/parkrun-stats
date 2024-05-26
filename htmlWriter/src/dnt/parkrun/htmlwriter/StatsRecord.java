@@ -138,4 +138,15 @@ public class StatsRecord
         return 0;
     };
 
+    public static Comparator<StatsRecord> COMPARATOR_FOR_SCORE = (r1, r2) ->
+    {
+        double score1 = r1.percentage * r1.count;
+        double score2 = r2.percentage * r2.count;
+        if (score1 > score2) return -1;
+        if (score1 < score2) return 1;
+        if (r1.athlete.athleteId > r2.athlete.athleteId) return 1;
+        if (r1.athlete.athleteId < r2.athlete.athleteId) return -1;
+        return 0;
+    };
+
 }

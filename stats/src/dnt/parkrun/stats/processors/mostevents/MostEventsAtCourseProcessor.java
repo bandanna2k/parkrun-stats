@@ -43,8 +43,9 @@ public class MostEventsAtCourseProcessor implements ResultDao.ResultProcessor
                 athleteCount.sort((r1, r2) -> {
                     int countR1 = (int)r1[1];
                     int countR2 = (int)r2[1];
-                    if(countR1 < countR2) return 1;
-                    if(countR1 > countR2) return -1;
+                    // DAVID These are wrong, inverted
+                    if(countR1 < countR2) return -1;
+                    if(countR1 > countR2) return 1;
 
                     int athleteR1 = (int)r1[0];
                     int athleteR2 = (int)r2[0];

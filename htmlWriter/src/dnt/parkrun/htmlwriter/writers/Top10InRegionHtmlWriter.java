@@ -76,6 +76,12 @@ public class Top10InRegionHtmlWriter extends BaseWriter implements Closeable
         {
             endElement("table");
 
+            startElement("center");
+            startElement("p");
+            writer.writeCharacters("* Table sorted by percentage x count");
+            endElement("p");
+            endElement("center");
+
             endSubDetails();
         }
         catch (XMLStreamException e)

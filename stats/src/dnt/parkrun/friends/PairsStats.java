@@ -33,7 +33,7 @@ public class PairsStats
     public static void main(String[] args) throws XMLStreamException, IOException
     {
         final Country country = Country.valueOf(args[0]);
-        LiveDatabase database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1", "sudo");
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
 
         PairsStats pairsStats = new PairsStats(database);
         /*

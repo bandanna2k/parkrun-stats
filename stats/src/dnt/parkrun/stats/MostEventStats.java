@@ -1,6 +1,5 @@
 package dnt.parkrun.stats;
 
-import com.mysql.jdbc.Driver;
 import dnt.parkrun.athletecoursesummary.Parser;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
@@ -49,8 +48,6 @@ import static java.util.Collections.emptyList;
 
 public class MostEventStats
 {
-    private static final Driver DRIVER = dnt.parkrun.database.Driver.getDriver();
-
     public static final int MIN_P_INDEX = 5;
     public static final Comparator<PIndexTableHtmlWriter.Record> PINDEX_RECORD_COMPARATOR = (pIndexRecord1, pIndexRecord2) ->
     {
@@ -577,7 +574,7 @@ public class MostEventStats
                     }
                 }
             }
-            clubDe90Percent.sort(StatsRecord.COMPARATOR_FOR_PERCENTAGE_COUNT_ATHLETE);
+            clubDe90Percent.sort(StatsRecord.COMPARATOR_FOR_SCORE);
             try (Top10InRegionHtmlWriter top10atCourse = new Top10InRegionHtmlWriter(
                     writer.writer, urlGenerator, "90% Club", "Run", true))
             {
@@ -625,6 +622,9 @@ public class MostEventStats
                 System.out.println("-- TOP 10 from DAO --");
                 top10.forEach(r -> System.out.printf("%d %d%n", r.athlete.athleteId, r.count));
                 System.out.println("-- " + course + " --");
+                top10.forEach(atEvent -> {
+                    System.out.printf("%d %d%n", atEvent.athlete.athleteId, atEvent.count);
+                });
 
                 System.out.println("-- TOP 10 from processor --");
                 mostVolunteersAtCourseProcessor.getMostVolunteersForCourse(course.courseId)
@@ -673,7 +673,7 @@ public class MostEventStats
                     }
                 }
             }
-            clubDe90Percent.sort(StatsRecord.COMPARATOR_FOR_PERCENTAGE_COUNT_ATHLETE);
+            clubDe90Percent.sort(StatsRecord.COMPARATOR_FOR_SCORE);
             try (Top10InRegionHtmlWriter top10atCourse = new Top10InRegionHtmlWriter(
                     writer.writer, urlGenerator, "90% Club", "Volunteer", true))
             {
