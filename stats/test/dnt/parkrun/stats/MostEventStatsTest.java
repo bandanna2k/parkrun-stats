@@ -38,7 +38,6 @@ public class MostEventStatsTest
         jdbc.update("delete from result", EmptySqlParameterSource.INSTANCE);
         jdbc.update("delete from course", EmptySqlParameterSource.INSTANCE);
         jdbc.update("delete from course_event_summary", EmptySqlParameterSource.INSTANCE);
-        jdbc.update("delete from " + stats.attendanceRecordsDao.tableName(), EmptySqlParameterSource.INSTANCE);
     }
 
     @Test

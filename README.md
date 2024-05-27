@@ -22,13 +22,12 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Result 1716791313481, 1716794154811
-
-- Add deltas to attendance processor(Stalled until we can confirm attendance records)
+- Add deltas to attendance processor
+(Stalled until we can confirm attendance records)
 
 - Top 10 at course surely can be done with 1 processor
   Related: Why does 'Populating top 10 run table for Ōrākei Bay parkrun' take so long.
-  (Stalled until we can confirm this doesn't take that long, waiting until June 2nd, top 10 DAO might not be needed anymore.
+(Stalled until we can confirm this doesn't take that long, waiting until June 2nd, top 10 DAO might not be needed anymore.
 
 - Speed stats for the year 
 
@@ -45,6 +44,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 - Unique runners at course / Add unique runs for runners / Add unique runs to Most Events???
 
 ## Issues Completed
+
+- 27/6/2024 Result 1716791313481, 1716794154811
 
 - 26/5/2024 Bad results 1716697342205
 

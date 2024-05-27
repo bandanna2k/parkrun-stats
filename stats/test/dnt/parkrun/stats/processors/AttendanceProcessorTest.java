@@ -29,16 +29,12 @@ public class AttendanceProcessorTest
         Assertions.assertThat(processor.getMaxAttendance(1).getFirst().count).isEqualTo(10);
         Assertions.assertThat(processor.getMaxAttendance(1).getFirst().date)
                 .isEqualTo(Date.from(Instant.EPOCH.plus(70, ChronoUnit.DAYS)));
-        Assertions.assertThat(processor.getPrevMaxAttendance(1).getFirst().count).isEqualTo(9);
-        Assertions.assertThat(processor.getPrevMaxAttendance(1).getFirst().date)
-                .isEqualTo(Date.from(Instant.EPOCH.plus(63, ChronoUnit.DAYS)));
+        Assertions.assertThat(processor.getMaxDifference(1)).isEqualTo(1);
 
         Assertions.assertThat(processor.getLastAttendance(1).count).isEqualTo(10);
         Assertions.assertThat(processor.getLastAttendance(1).date)
                 .isEqualTo(Date.from(Instant.EPOCH.plus(70, ChronoUnit.DAYS)));
-        Assertions.assertThat(processor.getLastMinusOneAttendance(1).count).isEqualTo(9);
-        Assertions.assertThat(processor.getLastMinusOneAttendance(1).date)
-                .isEqualTo(Date.from(Instant.EPOCH.plus(63, ChronoUnit.DAYS)));
+        Assertions.assertThat(processor.getLastDifference(1)).isEqualTo(1);
     }
 
     @Test
@@ -61,15 +57,11 @@ public class AttendanceProcessorTest
         Assertions.assertThat(processor.getMaxAttendance(2).getFirst().count).isEqualTo(1);
         Assertions.assertThat(processor.getMaxAttendance(2).getFirst().date)
                 .isEqualTo(Date.from(Instant.EPOCH.plus(7, ChronoUnit.DAYS)));
-        Assertions.assertThat(processor.getPrevMaxAttendance(2).getFirst().count).isEqualTo(1);
-        Assertions.assertThat(processor.getPrevMaxAttendance(2).getFirst().date)
-                .isEqualTo(Date.from(Instant.EPOCH.plus(7, ChronoUnit.DAYS)));
+        Assertions.assertThat(processor.getMaxDifference(2)).isEqualTo(0);
 
         Assertions.assertThat(processor.getLastAttendance(2).count).isEqualTo(1);
         Assertions.assertThat(processor.getLastAttendance(2).date)
                 .isEqualTo(Date.from(Instant.EPOCH.plus(70, ChronoUnit.DAYS)));
-        Assertions.assertThat(processor.getLastMinusOneAttendance(2).count).isEqualTo(1);
-        Assertions.assertThat(processor.getLastMinusOneAttendance(2).date)
-                .isEqualTo(Date.from(Instant.EPOCH.plus(63, ChronoUnit.DAYS)));
+        Assertions.assertThat(processor.getLastDifference(2)).isEqualTo(0);
     }
 }

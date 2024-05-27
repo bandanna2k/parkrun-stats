@@ -6,7 +6,6 @@ import dnt.parkrun.database.*;
 import dnt.parkrun.datastructures.*;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -22,14 +21,13 @@ public class RewriteEvent
     private final CourseEventSummaryDao courseEventSummaryDao;
     private final AthleteDao athleteDao;
 
-    public static void main(String[] args) throws SQLException
+    public static void main(String[] args)
     {
-        Country country = Country.valueOf(args[0]);
-        Database database = new LiveDatabase(country, getDataSourceUrl(), "dao", "0b851094", "sudo");
+        Database database = new LiveDatabase(Country.NZ, getDataSourceUrl(), "dao", "0b851094", "sudo");
 
         RewriteEvent rewriteEvent = new RewriteEvent(database);
 //        rewriteEvent.rewriteCourseEvent("blenheim", 368);
-        rewriteEvent.rewriteCourseEvent("broadpark", 85);
+        rewriteEvent.rewriteCourseEvent("moanapointreserve", 6);
     }
 
     public RewriteEvent(Database database)
