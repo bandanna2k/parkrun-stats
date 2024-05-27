@@ -57,6 +57,7 @@ public class HowManyRunsWithFriend
         {
             int courseId = result.courseId;
             Date date = result.date;
+            //int eventNumber = result.eventNumber;
             runs.add(new Object[] { courseId, date });
 
 //            if (friendAthleteId == 4072508 && inputAthleteId == 291411)

@@ -5,9 +5,10 @@ import dnt.parkrun.common.FindAndReplace;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.*;
 import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.Country;
+import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.htmlwriter.HtmlWriter;
+import dnt.parkrun.htmlwriter.writers.EventTableHtmlWriter;
 import dnt.parkrun.htmlwriter.writers.PairsTableHtmlWriter;
 import dnt.parkrun.stats.MostEventStats;
 
@@ -32,8 +33,8 @@ public class PairsStats
 
     public static void main(String[] args) throws XMLStreamException, IOException
     {
-        final Country country = Country.valueOf(args[0]);
-        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
+//        final Country country = Country.valueOf(args[0]);
+        Database database = new LiveDatabase(NZ, getDataSourceUrl(), "stats", "4b0e7ff1");
 
         PairsStats pairsStats = new PairsStats(database);
         /*
@@ -72,6 +73,9 @@ public class PairsStats
                 {"{{meta}}", (Supplier<String>) () ->
 //                                getTextFromFile(MostEventStats.class.getResourceAsStream("/meta_most_events.xml"))
                         ""
+                },
+                {"{{javascript}}", (Supplier<String>) () ->
+                                getTextFromFile(MostEventStats.class.getResourceAsStream("/js/pairs_table.js"))
                 }
         };
         FindAndReplace.findAndReplace(file, modified, replacements);
@@ -149,6 +153,7 @@ public class PairsStats
         {
             XMLStreamWriter writer = htmlWriter.writer;
             writer.writeCharacters("{{css}}");
+            writer.writeCharacters("{{javascript}}");
 
             writer.writeStartElement("h1");
             writer.writeCharacters("Pairs Table");
@@ -182,11 +187,11 @@ public class PairsStats
                 {
                     try
                     {
-                        List<Integer> list = colAthletes.stream().map(c ->
+                        List<Object[]> list = colAthletes.stream().map(c ->
                         {
                             String key = rowAthlete.athleteId + " " + c.athleteId;
                             HowManyRunsWithFriend processor = processors.get(key);
-                            return processor.runs.size();
+                            return new Object[] { processor.runs.size(), key };
                         }).toList();
 
                         tableWriter.writeRecord(rowAthlete, max.get(), list);
@@ -196,6 +201,30 @@ public class PairsStats
                         throw new RuntimeException(e);
                     }
                 });
+            }
+
+            writer.writeStartElement("br"); writer.writeEndElement();
+            writer.writeStartElement("br"); writer.writeEndElement();
+
+            try (EventTableHtmlWriter tableWriter = new EventTableHtmlWriter(writer, new UrlGenerator(NZ.baseUrl)))
+            {
+//                String key = 291411 + " " + 4225353;
+                String key = 291411 + " " + 6459026;
+                HowManyRunsWithFriend processor = processors.get(key);
+
+                List<Object[]> runs = processor.runs.stream().sorted((r1, r2) ->
+                {
+                    Date date1 = (Date) r1[1];
+                    Date date2 = (Date) r2[1];
+                    if (date1.after(date2)) return -1;
+                    if (date1.before(date2)) return 1;
+                    return 0;
+                }).toList();
+                for (Object[] objects : runs)
+                {
+                    Course course = courseRepository.getCourse((int) objects[0]);
+                    tableWriter.writeRecord(course, (Date) objects[1], -1);
+                }
             }
 
             writer.writeStartElement("p");

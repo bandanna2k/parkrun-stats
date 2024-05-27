@@ -35,7 +35,9 @@ public class PairsTableHtmlWriter extends BaseWriter implements Closeable
         }
     }
 
-    public void writeRecord(Athlete rowAthlete, int max, List<Integer> colAthletes) throws XMLStreamException
+    public void writeRecord(Athlete rowAthlete,
+                            int max,
+                            List<Object[]> runsAndFriendshipKeys) throws XMLStreamException
     {
         writer.writeStartElement("tr");
 
@@ -48,9 +50,10 @@ public class PairsTableHtmlWriter extends BaseWriter implements Closeable
         endElement("a");
         endElement("td");
 
-        for (Integer colAthlete : colAthletes)
+        for (Object[] runsAndFriendshipKey : runsAndFriendshipKeys)
         {
-            double percentage = (double)100 * ((double)colAthlete / (double)max);
+            int runs = (int)runsAndFriendshipKey[0];
+            double percentage = (double)100 * ((double)runs / (double)max);
             if(percentage == 0) startElement("td", "class", "td_zero");
             else if(percentage < 1) startElement("td", "class", "td0");
             else if(percentage < 2) startElement("td", "class", "td1");
@@ -63,8 +66,10 @@ public class PairsTableHtmlWriter extends BaseWriter implements Closeable
             else if(percentage < 75) startElement("td", "class", "td8");
             else                     startElement("td", "class", "td9");
 
-            writer.writeCharacters(String.valueOf(colAthlete));
-            endElement("td");
+            startElement("span", "class", "click-me",
+                    "onclick", String.format("update('%s')", runsAndFriendshipKey[1]));
+            writer.writeCharacters(String.valueOf(runs));
+            endElement("span");
         }
 
         endElement("tr");
