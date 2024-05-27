@@ -8,11 +8,15 @@ public class EventDateCount
     public final Date date;
     public final int count;
 
-    public EventDateCount(Date date, int count)
+    public EventDateCount(Date date, int count, int eventNumber)
     {
         this.date = date;
         this.count = count;
-        this.eventNumber = -1;
+        this.eventNumber = eventNumber;
+    }
+    public EventDateCount(Date date, int count)
+    {
+        this(date, count, -1);
     }
 
     @Override

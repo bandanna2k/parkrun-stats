@@ -10,6 +10,7 @@ import java.util.*;
 
 import static dnt.parkrun.datastructures.Course.NO_COURSE_ID;
 
+@Deprecated(since = "Using average attendance at present")
 public class MaxAttendanceProcessor implements ResultDao.ResultProcessor
 {
     private final Map<Integer, CourseRecord> courseIdToCourseRecord = new HashMap<>();
@@ -44,7 +45,7 @@ public class MaxAttendanceProcessor implements ResultDao.ResultProcessor
         onFinishCourse();
     }
 
-    void onFinishCourse()
+    private void onFinishCourse()
     {
         CourseRecord currentCourseRecord = courseIdToCourseRecord.computeIfAbsent(prevCourseId, courseId -> new CourseRecord());
         currentCourseRecord.maybeAddMaxAttendance(new EventDateCount(prevDate, currentCourseCount));

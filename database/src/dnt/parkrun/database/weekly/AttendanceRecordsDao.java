@@ -5,6 +5,7 @@ import dnt.parkrun.database.BaseDao;
 import dnt.parkrun.database.Database;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
+import dnt.parkrun.datastructures.stats.EventDateCount;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -91,6 +92,7 @@ public class AttendanceRecordsDao extends BaseDao
         jdbc.update(sql, new MapSqlParameterSource("countryCode", country.getCountryCode()));
     }
 
+    @Deprecated(since = "Replaced with processor")
     public List<AttendanceRecord> getAttendanceRecords(Date date)
     {
         String attendanceTableName = weeklyDatabaseName + ".attendance_records_for_region_" + DateConverter.formatDateForDbTable(date);
@@ -106,11 +108,16 @@ public class AttendanceRecordsDao extends BaseDao
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
                 new AttendanceRecord(
                         rs.getInt("course_id"),
-                        rs.getInt("recent_event_number"),
-                        rs.getDate("recent_event_date"),
-                        rs.getInt("recent_event_finishers"),
-                        rs.getInt("record_event_number"),
-                        rs.getDate("record_event_date"),
-                        rs.getInt("record_event_finishers")));
+                        new EventDateCount(
+                            rs.getDate("recent_event_date"),
+                            rs.getInt("recent_event_number"),
+                            rs.getInt("recent_event_finishers")
+                        ),
+                        List.of(new EventDateCount(
+                            rs.getDate("record_event_date"),
+                            rs.getInt("record_event_number"),
+                            rs.getInt("record_event_finishers")
+                        )))
+        );
     }
 }

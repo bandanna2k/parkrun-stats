@@ -11,6 +11,7 @@ import dnt.parkrun.database.weekly.PIndexDao;
 import dnt.parkrun.database.weekly.VolunteerCountDao;
 import dnt.parkrun.datastructures.*;
 import dnt.parkrun.datastructures.stats.AttendanceRecord;
+import dnt.parkrun.datastructures.stats.EventDateCount;
 import dnt.parkrun.htmlwriter.HtmlWriter;
 import dnt.parkrun.htmlwriter.MostEventsRecord;
 import dnt.parkrun.htmlwriter.StatsRecord;
@@ -43,7 +44,6 @@ import static dnt.parkrun.common.FindAndReplace.getTextFromFile;
 import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Course.Status.*;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.reverseOrder;
 
 public class MostEventStats
@@ -260,14 +260,7 @@ public class MostEventStats
             writer.writer.writeCharacters(new SimpleDateFormat("yyyy MMM dd HH:mm").format(new Date()));
             writer.writer.writeEndElement();
 
-            List<AttendanceRecord> attendanceRecords = generateAndGetAttendanceRecords();
-            attendanceRecords.sort(Comparator.comparing(attendanceRecord ->
-            {
-                Course course = courseRepository.getCourse(attendanceRecord.courseId);
-                return course.name;
-            }));
-
-            writeAttendanceRecords(writer, attendanceRecords, false);
+            writeAttendanceRecords(writer, false);
 
             {
                 for (MostEventsDao.MostEventsRecord der : differentEventRecords)
@@ -286,7 +279,7 @@ public class MostEventStats
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
-            writeAttendanceRecords(writer, attendanceRecords, true);
+            writeAttendanceRecords(writer, true);
 
             {
                 System.out.print("Getting first runs ");
@@ -940,7 +933,7 @@ public class MostEventStats
         return date;
     }
 
-    private void writeAttendanceRecords(HtmlWriter writer, List<AttendanceRecord> attendanceRecords, boolean extended) throws XMLStreamException
+    private void writeAttendanceRecords(HtmlWriter writer, boolean extended) throws XMLStreamException
     {
         String title = extended ? "Attendance Records (Extended)" : "Attendance Records";
         try(CollapsableTitleHtmlWriter collapsableWriter = new CollapsableTitleHtmlWriter.Builder(writer.writer, title).build())
@@ -948,47 +941,33 @@ public class MostEventStats
             try (AttendanceRecordsTableHtmlWriter tableWriter =
                          new AttendanceRecordsTableHtmlWriter(writer.writer, urlGenerator, extended))
             {
-                for (AttendanceRecord ar : attendanceRecords)
+                List<Course> courses = courseRepository.getCourses(country).stream()
+                        .filter(c -> c.status == RUNNING).toList();
+                for (Course course : courses)
                 {
-                    int courseId = ar.courseId;
-                    Course course = courseRepository.getCourse(courseId);
+                    int courseId = course.courseId;
+                    List<EventDateCount> maxAttendances = attendanceProcessor.getMaxAttendance(courseId);
+
+                    EventDateCount lastAttendance = attendanceProcessor.getLastAttendance(courseId);
+
+                    double averageAttendance = averageAttendanceProcessor.getAverageAttendance(courseId);
+                    double recentAverageAttendance = averageAttendanceProcessor.getRecentAverageAttendance(courseId);
+
+                    Time averageTime = averageTimeProcessor.getAverageTime(courseId);
+
+                    AttendanceRecord ar = new AttendanceRecord(courseId, lastAttendance, maxAttendances);
                     if(course.status == PENDING) ar.courseSmallTest = "not started yet";
                     else if(course.status == STOPPED) ar.courseSmallTest = "no longer takes place";
-                    else if(ar.recentEventDate.before(date)) ar.courseSmallTest = "not run this week";
+                    else if(ar.recentEvent.date.before(date)) ar.courseSmallTest = "not run this week";
 
-                    tableWriter.writeAttendanceRecord(
-                            ar, courseRepository.getCourse(courseId),
-                            averageAttendanceProcessor.getAverageAttendance(courseId), averageAttendanceProcessor.getRecentAverageAttendance(courseId),
-                            averageTimeProcessor.getAverageTime(courseId),
-                            attendanceProcessor.getMaxAttendance(courseId), attendanceProcessor.getLastAttendance(courseId)
-                    );
+                    ar.recentAttendanceDelta = attendanceProcessor.getLastDifference(courseId);
+                    ar.maxAttendanceDelta = attendanceProcessor.getMaxDifference(courseId);
+
+                    tableWriter.writeAttendanceRecord(course, ar,
+                            averageAttendance, recentAverageAttendance, averageTime);
                 }
             }
         }
-    }
-
-    private List<AttendanceRecord> generateAndGetAttendanceRecords()
-    {
-        System.out.println("* Fetching attendance records *");
-        List<AttendanceRecord> attendanceRecords = attendanceRecordsDao.getAttendanceRecords(date);
-
-        System.out.println("* Calculate attendance deltas *");
-        List<AttendanceRecord> attendanceRecordsFromLastWeek = getAttendanceRecordsForLastWeek();
-        calculateAttendanceDeltas(attendanceRecords, attendanceRecordsFromLastWeek);
-        return attendanceRecords;
-    }
-
-    private List<AttendanceRecord> getAttendanceRecordsForLastWeek()
-    {
-        try
-        {
-            return attendanceRecordsDao.getAttendanceRecords(lastWeek);
-        }
-        catch (Exception ex)
-        {
-            assert false : "WARNING No attendance records for last week.";
-        }
-        return emptyList();
     }
 
     private void downloadAthleteCourseSummaries(List<MostEventsDao.MostEventsRecord> differentEventRecords)
@@ -1158,23 +1137,6 @@ public class MostEventStats
                 }
             }
             if(!found) thisWeek.isNewEntry = true;
-        }
-    }
-
-    private static void calculateAttendanceDeltas(List<AttendanceRecord> attendanceRecords,
-                                           List<AttendanceRecord> attendanceRecordsFromLastWeek)
-    {
-        for (AttendanceRecord thisWeek : attendanceRecords)
-        {
-            for (AttendanceRecord lastWeek : attendanceRecordsFromLastWeek)
-            {
-                if (thisWeek.courseId == lastWeek.courseId)
-                {
-                    // Found course
-                    thisWeek.maxAttendanceDelta = thisWeek.recordEventFinishers - lastWeek.recordEventFinishers;
-                    thisWeek.recentAttendanceDelta = thisWeek.recentEventFinishers - lastWeek.recentEventFinishers;
-                }
-            }
         }
     }
 

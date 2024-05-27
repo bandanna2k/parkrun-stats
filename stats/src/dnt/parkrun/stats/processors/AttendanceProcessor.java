@@ -44,16 +44,29 @@ public class AttendanceProcessor extends AbstractProcessor<AttendanceProcessor.R
     {
         return courseIdToCourseRecord.get(courseId).getMaxAttendance();
     }
+    public int getMaxDifference(int courseId)
+    {
+        return courseIdToCourseRecord.get(courseId).maxDelta;
+    }
 
     public EventDateCount getLastAttendance(int courseId)
     {
         return courseIdToCourseRecord.get(courseId).getLastAttendance();
     }
+    public int getLastDifference(int courseId)
+    {
+        return courseIdToCourseRecord.get(courseId).lastDelta;
+    }
+
 
     static class Record
     {
+        private List<EventDateCount> prevMax = new ArrayList<>();
         private List<EventDateCount> max = new ArrayList<>();
+        private EventDateCount prev = null;
         private EventDateCount last = null;
+        private int lastDelta = 0;
+        private int maxDelta = 0;
 
         public void onFinishCourse(Date date, int count)
         {
@@ -63,26 +76,39 @@ public class AttendanceProcessor extends AbstractProcessor<AttendanceProcessor.R
 
         private void onFinishCourseProcessLast(Date date, int count)
         {
+            prev = last;
             last = new EventDateCount(date, count);
+            if(prev != null) lastDelta = last.count - prev.count;
         }
 
         private void onFinishCourseProcessMax(Date date, int count)
         {
             if(max.isEmpty())
             {
-                max.add(new EventDateCount(date, count));
+                // First event
+                EventDateCount newEventDateCount = new EventDateCount(date, count);
+                prevMax.add(newEventDateCount);
+                max.add(newEventDateCount);
                 return;
             }
             if(count == max.getFirst().count)
             {
+                // Equalling the record
                 max.add(new EventDateCount(date, count));
                 return;
             }
             if(count > max.getFirst().count)
             {
+                // New event record
+                prevMax.clear();
+                prevMax.addAll(max);
+
+                maxDelta = count - prevMax.getFirst().count;
                 max.clear();
                 max.add(new EventDateCount(date, count));
+                return;
             }
+            maxDelta = 0;
         }
 
         public EventDateCount getLastAttendance()
@@ -90,9 +116,19 @@ public class AttendanceProcessor extends AbstractProcessor<AttendanceProcessor.R
             return last;
         }
 
+        public EventDateCount getLastMinusOneAttendance()
+        {
+            return prev;
+        }
+
         public List<EventDateCount> getMaxAttendance()
         {
             return max;
+        }
+
+        public List<EventDateCount> getPrevMaxAttendance()
+        {
+            return prevMax;
         }
     }
 }

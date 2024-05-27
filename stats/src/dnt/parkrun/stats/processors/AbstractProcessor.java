@@ -44,7 +44,7 @@ public abstract class AbstractProcessor<T> implements ResultDao.ResultProcessor
         onFinishCourse();
     }
 
-    void onFinishCourse()
+    private void onFinishCourse()
     {
         T prevRecord = courseIdToCourseRecord.computeIfAbsent(prevCourseId, courseId -> newRecord());
         onFinishCourse(prevDate, prevRecord);

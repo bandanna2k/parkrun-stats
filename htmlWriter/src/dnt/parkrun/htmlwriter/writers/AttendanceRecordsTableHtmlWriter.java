@@ -11,7 +11,6 @@ import dnt.parkrun.htmlwriter.BaseWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.Closeable;
-import java.util.List;
 
 public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Closeable
 {
@@ -93,13 +92,11 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         }
     }
 
-    public void writeAttendanceRecord(AttendanceRecord record,
-                                      Course course,
+    public void writeAttendanceRecord(Course course,
+                                      AttendanceRecord record,
                                       double averageAttendance,
                                       double recentAverageAttendance,
-                                      Time averageTime,
-                                      List<EventDateCount> maxAttendancesX,
-                                      EventDateCount lastAttendanceX) throws XMLStreamException
+                                      Time averageTime) throws XMLStreamException
     {
         writer.writeStartElement("tr");
 
@@ -121,10 +118,9 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         // Recent date (desktop only)
         startElement("td", "class", "dt");
         startElement("a", "target", course.name,
-                "href", urlGenerator.generateCourseEventUrl(course.name, record.recentEventNumber).toString());
-        writer.writeCharacters(DateConverter.formatDateForHtml(record.recentEventDate));
+                "href", urlGenerator.generateCourseEventUrl(course.name, record.recentEvent.eventNumber).toString());
+        writer.writeCharacters(DateConverter.formatDateForHtml(record.recentEvent.date));
         endElement("a");
-//        writer.writeCharacters(DateConverter.formatDateForHtml(lastAttendance.date));
         endElement("td");
 
         // Recent attendance (desktop only)
@@ -132,57 +128,37 @@ public class AttendanceRecordsTableHtmlWriter extends BaseWriter implements Clos
         if(record.recentAttendanceDelta >= 0)
         {
             startElement("abbr", "title", "+" + record.recentAttendanceDelta);
-            writer.writeCharacters(String.valueOf(record.recentEventFinishers));
+            writer.writeCharacters(String.valueOf(record.recentEvent.count));
             endElement("abbr");
         }
         else
         {
             startElement("abbr", "title", String.valueOf(record.recentAttendanceDelta));
-            writer.writeCharacters(String.valueOf(record.recentEventFinishers));
+            writer.writeCharacters(String.valueOf(record.recentEvent.count));
             endElement("abbr");
         }
         endElement("td");
-//        startElement("td", "class", "dt");
-//        writer.writeCharacters(String.valueOf(lastAttendance.count));
-//        endElement("td");
 
-
-        // Max Date
+        // Max Dates
         startElement("td");
-        startElement("a", "target", course.name, "href",
-                urlGenerator.generateCourseEventUrl(course.name, record.recordEventNumber).toString());
-        writer.writeCharacters(DateConverter.formatDateForHtml(record.recordEventDate));
-        endElement("a");
+        for (EventDateCount maxAttendance : record.maxEvent)
+        {
+            startElement("p");
+            startElement("a", "target", course.name, "href",
+                    urlGenerator.generateCourseEventUrl(course.name, maxAttendance.eventNumber).toString());
+            writer.writeCharacters(DateConverter.formatDateForHtml(maxAttendance.date));
+            endElement("a");
+            endElement("p");
+        }
         endElement("td");
 
         // Max attendance count
         startElement("td");
         startElement("p");
         writeDelta(record.maxAttendanceDelta, false);
-        writer.writeCharacters(String.valueOf(record.recordEventFinishers));
+        writer.writeCharacters(String.valueOf(record.maxEvent.getFirst().count));
         endElement("p");
         endElement("td");
-
-        // Max attendance date
-//        startElement("td");
-//        for (EventDateCount maxAttendance : maxAttendances)
-//        {
-//            startElement("p");
-////            startElement("a", "target", course.name, "href",
-////                    urlGenerator.generateCourseEventUrl(course.name, maxAttendance.eventNumber).toString());
-//            writer.writeCharacters(DateConverter.formatDateForHtml(maxAttendance.date));
-////            endElement("a");
-//            endElement("p");
-//        }
-//        endElement("td");
-
-        // Max attendance count
-//        startElement("td");
-//        startElement("p");
-//        writeDelta(record.maxAttendanceDelta, false);
-//        writer.writeCharacters(String.valueOf(maxAttendances.getFirst().count));
-//        endElement("p");
-//        endElement("td");
 
         // Avg attendance
         if(extended)

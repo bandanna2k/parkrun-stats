@@ -38,7 +38,7 @@ public class AverageTimeProcessorTest
             }
         }
 
-        processor.onFinishCourse();
+        processor.onFinish();
 
         Assertions.assertThat(processor.getAverageTime(1).getTotalSeconds()).isEqualTo(4);
         Assertions.assertThat(processor.getRecentAverageTime(1).getTotalSeconds()).isEqualTo(4);
@@ -59,7 +59,7 @@ public class AverageTimeProcessorTest
                     AgeCategory.UNKNOWN, AgeGrade.newInstanceNoAgeGrade()));
         }
 
-        processor.onFinishCourse();
+        processor.onFinish();
 
         Assertions.assertThat(processor.getAverageTime(2).getTotalSeconds()).isEqualTo(10);
         Assertions.assertThat(processor.getRecentAverageTime(2).getTotalSeconds()).isEqualTo(15);

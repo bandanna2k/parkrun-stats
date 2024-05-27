@@ -22,11 +22,13 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- Result 1716791313481, 1716794154811
+
 - Add deltas to attendance processor
 
 - Top 10 at course surely can be done with 1 processor
   Related: Why does 'Populating top 10 run table for Ōrākei Bay parkrun' take so long.
-Hopefully done now. Top 10 DAO might not be needed anymore.
+Hopefully done now. Top 10 DAO might not be needed anymore. (wait til June)
 
 - Speed stats for the year 
 
