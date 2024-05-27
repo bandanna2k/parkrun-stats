@@ -6,7 +6,6 @@ import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.*;
 import dnt.parkrun.database.stats.MostEventsDao;
 import dnt.parkrun.database.weekly.AthleteCourseSummaryDao;
-import dnt.parkrun.database.weekly.AttendanceRecordsDao;
 import dnt.parkrun.database.weekly.PIndexDao;
 import dnt.parkrun.database.weekly.VolunteerCountDao;
 import dnt.parkrun.datastructures.*;
@@ -123,9 +122,7 @@ public class MostEventStats
     private final CourseRepository courseRepository;
     private final Country country;
     private final Date date;
-    private final Date lastWeek;
     private final Database database;
-    final AttendanceRecordsDao attendanceRecordsDao;
     private final ResultDao resultDao;
     private final AthleteCourseSummaryDao acsDao;
     private final CourseEventSummaryDao courseEventSummaryDao;
@@ -163,10 +160,10 @@ public class MostEventStats
         this.urlGenerator = new UrlGenerator(database.country.baseUrl);
 
         this.date = date;
-        lastWeek = new Date();
+
+        Date lastWeek = new Date();
         lastWeek.setTime(date.getTime() - SEVEN_DAYS_IN_MILLIS);
 
-        this.attendanceRecordsDao = AttendanceRecordsDao.getInstance(database, this.date);
         this.acsDao = AthleteCourseSummaryDao.getInstance(database, this.date);
         this.pIndexDao = PIndexDao.getInstance(database, date);
         this.volunteerCountDao = VolunteerCountDao.getInstance(database, this.date);
