@@ -206,6 +206,8 @@ public class PairsStats
             writer.writeStartElement("br"); writer.writeEndElement();
             writer.writeStartElement("br"); writer.writeEndElement();
 
+            writeJavascriptMap(writer, pairsTable, processors);
+
             try (EventTableHtmlWriter tableWriter = new EventTableHtmlWriter(writer, new UrlGenerator(NZ.baseUrl)))
             {
 //                String key = 291411 + " " + 4225353;
@@ -248,5 +250,41 @@ public class PairsStats
 //                });
 //            }
 //        });
+    }
+
+    private void writeJavascriptMap(XMLStreamWriter writer,
+                                    PairsTable<Athlete> pairsTable,
+                                    Map<String, HowManyRunsWithFriend> processors)
+            throws XMLStreamException
+    {
+        writer.writeStartElement("script");
+        writer.writeCharacters("const map = new Map();\n");
+        pairsTable.forEach((rowAthlete, colAthletes) ->
+        {
+            try
+            {
+                for (Athlete c : colAthletes)
+                {
+                    String key = rowAthlete.athleteId + " " + c.athleteId;
+                    HowManyRunsWithFriend processor = processors.get(key);
+
+                    List<String> listOfCourseIdDate = new ArrayList<>();
+                    for (Object[] runValues : processor.runs)
+                    {
+                        int courseId = (int) runValues[0];
+                        Date date = (Date) runValues[1];
+                        String dateString = DateConverter.formatDateForHtml(date);
+                        listOfCourseIdDate.add(String.format("[%s,'%s']", courseId, dateString));
+                    }
+                    String courseIdDates = String.format("[%s]", String.join(",", listOfCourseIdDate));
+                    writer.writeCharacters(String.format("map.set('%s', %s);%n", key, courseIdDates));
+                }
+            }
+            catch (XMLStreamException e)
+            {
+                throw new RuntimeException(e);
+            }
+        });
+        writer.writeEndElement();
     }
 }
