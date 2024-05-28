@@ -5,10 +5,10 @@ import dnt.parkrun.common.FindAndReplace;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.*;
 import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.htmlwriter.HtmlWriter;
-import dnt.parkrun.htmlwriter.writers.EventTableHtmlWriter;
 import dnt.parkrun.htmlwriter.writers.PairsTableHtmlWriter;
 import dnt.parkrun.stats.MostEventStats;
 
@@ -30,6 +30,7 @@ public class PairsStats
     private final ResultDao resultDao;
     private final AthleteDao athleteDao;
     private final CourseRepository courseRepository;
+    private final Country country;
 
     public static void main(String[] args) throws XMLStreamException, IOException
     {
@@ -37,7 +38,7 @@ public class PairsStats
         Database database = new LiveDatabase(NZ, getDataSourceUrl(), "stats", "4b0e7ff1");
 
         PairsStats pairsStats = new PairsStats(database);
-        /*
+        //*
         File file = pairsStats.generateStats(
                 1340853, // Jonathan
                 293223, // Julie GORDON
@@ -55,13 +56,14 @@ public class PairsStats
                 547976, // Allan JANES
                 4072508 // Zoe NORTH
         );
-        */
+        /*/
         File file = pairsStats.generateStats(
                 4225353, // Dan JOE
                 291411, // Martin O'SULLIVAN
                 6459026, // Nathan HEAVER
                 796322 // Tim ROBBINS
         );
+        //*/
         File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
 
         final Object[][] replacements = new Object[][]{
@@ -70,13 +72,11 @@ public class PairsStats
                                 getTextFromFile(MostEventStats.class.getResourceAsStream("/css/pairs.css")) +
                                 "</style>"
                 },
-                {"{{meta}}", (Supplier<String>) () ->
-//                                getTextFromFile(MostEventStats.class.getResourceAsStream("/meta_most_events.xml"))
-                        ""
-                },
+                {"{{meta}}", (Supplier<String>) () -> "" },
                 {"{{javascript}}", (Supplier<String>) () ->
-                                getTextFromFile(MostEventStats.class.getResourceAsStream("/js/pairs_table.js"))
+                        getTextFromFile(MostEventStats.class.getResourceAsStream("/js/pairs_table.js"))
                 }
+//                ,{"{{blankLine}}", (Supplier<String>) () -> "<p>&nbsp;</p>"}
         };
         FindAndReplace.findAndReplace(file, modified, replacements);
 
@@ -88,6 +88,7 @@ public class PairsStats
         resultDao = new ResultDao(database);
         athleteDao = new AthleteDao(database);
         courseRepository = new CourseRepository();
+        country = database.country;
         new CourseDao(database, courseRepository);
     }
 
@@ -127,7 +128,7 @@ public class PairsStats
         resultDao.tableScan(result ->
         {
             processors.values().forEach(processor -> processor.visitInOrder(result));
-        }, "order by course_id desc, date desc");
+        }, "order by date desc, course_id desc");
 
         AtomicInteger max = new AtomicInteger(Integer.MIN_VALUE);
         pairsTable.forEach((rowAthlete, colAthletes) ->
@@ -156,7 +157,7 @@ public class PairsStats
             writer.writeCharacters("{{javascript}}");
 
             writer.writeStartElement("h1");
-            writer.writeCharacters("Pairs Table");
+            writer.writeCharacters("Friends Table");
             writer.writeEndElement();
 
             // Get latest date
@@ -166,9 +167,12 @@ public class PairsStats
                 latestDate = new Date(Math.max(latestDate.getTime(), howManyRunsWithFriend.getLatestDate().getTime()));
             }
 
-            writer.writeStartElement("h3");
-            writer.writeCharacters("Lastest Date: " + DateConverter.formatDateForHtml(latestDate));
-            writer.writeEndElement();
+            writer.writeStartElement("p");
+            writer.writeStartElement("bold");
+            writer.writeCharacters("Lastest Date: ");
+            writer.writeEndElement(); // bold
+            writer.writeCharacters(DateConverter.formatDateForHtml(latestDate));
+            writer.writeEndElement(); // p
 
             try (PairsTableHtmlWriter tableWriter = new PairsTableHtmlWriter(writer, new UrlGenerator(NZ.baseUrl)))
             {
@@ -203,53 +207,22 @@ public class PairsStats
                 });
             }
 
-            writer.writeStartElement("br"); writer.writeEndElement();
-            writer.writeStartElement("br"); writer.writeEndElement();
-
             writeJavascriptMap(writer, pairsTable, processors);
-
-            try (EventTableHtmlWriter tableWriter = new EventTableHtmlWriter(writer, new UrlGenerator(NZ.baseUrl)))
-            {
-//                String key = 291411 + " " + 4225353;
-                String key = 291411 + " " + 6459026;
-                HowManyRunsWithFriend processor = processors.get(key);
-
-                List<Object[]> runs = processor.runs.stream().sorted((r1, r2) ->
-                {
-                    Date date1 = (Date) r1[1];
-                    Date date2 = (Date) r2[1];
-                    if (date1.after(date2)) return -1;
-                    if (date1.before(date2)) return 1;
-                    return 0;
-                }).toList();
-                for (Object[] objects : runs)
-                {
-                    Course course = courseRepository.getCourse((int) objects[0]);
-                    tableWriter.writeRecord(course, (Date) objects[1], -1);
-                }
-            }
 
             writer.writeStartElement("p");
             writer.writeCharacters("* This table shows how many events runner A, has run with runner B.");
             writer.writeEndElement();
 
+            writer.writeStartElement("p");
+            writer.writeCharacters("* Click number to see runs where runner A and runner B both ran.");
+            writer.writeEndElement();
+
+            writer.writeStartElement("table");
+            writer.writeAttribute("id", "runs");
+            writer.writeEndElement(); // table
+
             return htmlWriter.getFile();
         }
-
-//        processors.values().forEach(processor -> {
-//            Athlete input = allAthletes.get(processor.inputAthleteId);
-//            Athlete friend = allAthletes.get(processor.friendAthleteId);
-//
-//            if(processor.runs.size() < 10)
-//            {
-//                processor.runs.forEach(runValues ->
-//                {
-//                    int courseId = (int)runValues[0];
-//                    Course course = courseRepository.getCourse(courseId);
-//                    System.out.printf("%s\t%s\t ran together on %s at %s%n", input.name, friend.name, runValues[1], course.longName);
-//                });
-//            }
-//        });
     }
 
     private void writeJavascriptMap(XMLStreamWriter writer,
@@ -258,6 +231,12 @@ public class PairsStats
             throws XMLStreamException
     {
         writer.writeStartElement("script");
+        writer.writeCharacters("const courseIdToLongName = new Map();\n");
+        for (Course course : courseRepository.getCourses(country))
+        {
+            writer.writeCharacters(String.format("courseIdToLongName.set(%d, '%s');%n", course.courseId, course.longName));
+        }
+
         writer.writeCharacters("const map = new Map();\n");
         pairsTable.forEach((rowAthlete, colAthletes) ->
         {
@@ -285,6 +264,6 @@ public class PairsStats
                 throw new RuntimeException(e);
             }
         });
-        writer.writeEndElement();
+        writer.writeEndElement(); // script
     }
 }

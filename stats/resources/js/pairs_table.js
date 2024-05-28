@@ -1,11 +1,26 @@
 <script>
 function update(key)
 {
+    var newData = "<tbody>";
+
     const courseIdDates = map.get(key);
-    console.log("START");
     courseIdDates.forEach(courseIdDate => {
-        console.log(courseIdDate[0] + " " + courseIdDate[1]);
+        newData += "<tr>"
+
+        newData += "<td>"
+        newData += courseIdToLongName.get(courseIdDate[0]);
+        newData += "</td>"
+
+        newData += "<td>"
+        newData += courseIdDate[1];
+        newData += "</td>"
+
+        newData += "</tr>"
     });
-    console.log("END");
+
+    newData += "</tbody>";
+
+    document.getElementById('runs').innerHTML = newData;
 }
+
 </script>

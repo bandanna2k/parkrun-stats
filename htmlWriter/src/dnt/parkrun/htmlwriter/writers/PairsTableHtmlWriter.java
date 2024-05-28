@@ -6,10 +6,9 @@ import dnt.parkrun.htmlwriter.BaseWriter;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.Closeable;
 import java.util.List;
 
-public class PairsTableHtmlWriter extends BaseWriter implements Closeable
+public class PairsTableHtmlWriter extends BaseWriter
 {
     private final UrlGenerator urlGenerator;
 
@@ -19,7 +18,7 @@ public class PairsTableHtmlWriter extends BaseWriter implements Closeable
         super(writer);
         this.urlGenerator = urlGenerator;
 
-        writer.writeStartElement("table");
+        startElement("table");
     }
 
     @Override
@@ -70,6 +69,7 @@ public class PairsTableHtmlWriter extends BaseWriter implements Closeable
                     "onclick", String.format("update('%s')", runsAndFriendshipKey[1]));
             writer.writeCharacters(String.valueOf(runs));
             endElement("span");
+            endElement("td");
         }
 
         endElement("tr");
@@ -77,22 +77,6 @@ public class PairsTableHtmlWriter extends BaseWriter implements Closeable
 
     public void writeHeaderRecord(Athlete rowAthlete, List<Athlete> colAthletes) throws XMLStreamException
     {
-//        startElement("colgroup");
-//        for (int i = 0; i < colAthletes.size(); i++)
-//        {
-//            if((i % 2) == 0)
-//            {
-//                startElement("colgroup");
-//                endElement("colgroup");
-//            }
-//            else
-//            {
-//                startElement("colgroup", "class", "colHighlight");
-//                endElement("colgroup");
-//            }
-//        }
-//        endElement("colgroup");
-//
         writer.writeStartElement("thead");
 
         startElement("th");

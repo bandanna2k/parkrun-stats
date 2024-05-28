@@ -1,18 +1,19 @@
 package dnt.parkrun.friends;
 
+import dnt.parkrun.database.ResultDao;
 import dnt.parkrun.datastructures.Result;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-public class HowManyRunsWithFriend
+public class HowManyRunsWithFriend implements ResultDao.ResultProcessor
 {
     public final int inputAthleteId;
     public final int friendAthleteId;
 
-    public final Set<Object[]> runs = new HashSet<>();
+    public final List<Object[]> runs = new ArrayList<>();
 
     private boolean didInputAthleteRun = false;
     private boolean didFriendAthleteRun = false;
@@ -27,6 +28,7 @@ public class HowManyRunsWithFriend
         this.friendAthleteId = friendAthleteId;
     }
 
+    @Override
     public void visitInOrder(Result result)
     {
         int scanCourseId = result.courseId;
@@ -60,38 +62,16 @@ public class HowManyRunsWithFriend
             //int eventNumber = result.eventNumber;
             runs.add(new Object[] { courseId, date });
 
-//            if (friendAthleteId == 4072508 && inputAthleteId == 291411)
-//            {
-//                System.out.println("Marty/Zoe " +  date + "\t" + courseId);
-//            }
-//            if (friendAthleteId == 414811 && inputAthleteId == 291411)
-//            {
-//                System.out.println("Marty/David" + date + "\t" + courseId);
-//            }
-
             didInputAthleteRun = false;
             didFriendAthleteRun = false;
         }
     }
 
+    @Override
+    public void onFinish()
+    {
+
+    }
+
     public Date getLatestDate() { return maxDate; }
-//    public List<AthleteIdCount> after()
-//    {
-//        return friendAthleteIds.stream().map(friendAthleteId -> {
-//            Integer countOfRunsWithFriend = athleteIdToCount.get(friendAthleteId);
-//            if(countOfRunsWithFriend == null)
-//            {
-//                return new AthleteIdCount(friendAthleteId, 0);
-//            }
-//            return new AthleteIdCount(friendAthleteId, countOfRunsWithFriend);
-//        }).collect(Collectors.toList());
-
-
-//
-//        return athleteIdToCount.entrySet().stream()
-//                .filter(athleteIdToCount -> friendAthleteIds.contains(athleteIdToCount.getKey()))
-//                .map(entry -> new AthleteIdCount(entry.getKey(), entry.getValue()))
-//                .sorted(AthleteIdCount.COMPARATOR)
-//                .collect(Collectors.toList());
-//    }
 }
