@@ -38,7 +38,7 @@ public class PairsStats
         Database database = new LiveDatabase(NZ, getDataSourceUrl(), "stats", "4b0e7ff1");
 
         PairsStats pairsStats = new PairsStats(database);
-        //*
+        /*
         File file = pairsStats.generateStats(
                 1340853, // Jonathan
                 293223, // Julie GORDON
@@ -58,10 +58,46 @@ public class PairsStats
         );
         /*/
         File file = pairsStats.generateStats(
-                4225353, // Dan JOE
-                291411, // Martin O'SULLIVAN
-                6459026, // Nathan HEAVER
-                796322 // Tim ROBBINS
+                547976, // Allan Janes
+                414811, // David NORTH
+                3084004, // Julie Collard
+                324011, // Rebecca Edgecombe
+                5887286, // Jay Trim
+                2394830, // Ruth Vaughan
+                1561462, // Liz Neill
+                293223, // Julia Gordon
+                796322, // Tim Robbins
+                369981, // Maggie Davies
+                1485250, // Jocelyn Fountain
+                4499960, // Graeme Fountain
+                514867, // Joce Jones
+                1804306, // Stephen Bates
+                2643110, // Rachael Wright
+                5271156, // Michelle Knight
+                300293, // Carole Wright
+                2328718, // Maria Amos
+                3267824, // Darren J Pead
+                532179, // Abdul-Raouf Mohamed-Isa
+                380651, // Gary Holford
+                2038252, // Paul Bryant
+                8616757, // Tim Gallagher
+                141825, // Andrew Capel
+                271960, // Andy Crosland
+                815695, // Russ Johnson
+                4917967, // Andy Ballard
+                576589, // Ian Ross
+                2147564, // Alison Fraser King
+                6232437, // Lauren Rowe
+                408932, // Chrissy Robertson
+                1048005, // Sarah Jantscher
+                359465, // Brent Foster
+                6865247, // SJ Caudwell
+                291411, // Martin Osullivan
+                6909555, // Nikola King
+                6459026, // Nathan Heaver
+                4225353, // Dan Joe
+                1202859, // Claire Taylor
+                2763465 // Colin Boyd
         );
         //*/
         File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());

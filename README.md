@@ -31,11 +31,6 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 - Speed stats for the year 
 
-- Friends table including at what venues
-      - 'Most runs with other athletes' table
-  Low priority
-  Create a demo table.
-
 - Need a loading icon whilst fastest times page is loading
 
 
@@ -45,7 +40,12 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Issues Completed
 
-- 27/6/2024 Result 1716791313481, 1716794154811
+- 29/5/2024 Friends table including at what venues
+'Most runs with other athletes' table
+Low priority
+Create a demo table.
+
+- 27/5/2024 Result 1716791313481, 1716794154811
 
 - 26/5/2024 Bad results 1716697342205
 
