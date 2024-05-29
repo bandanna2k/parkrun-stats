@@ -155,6 +155,8 @@ public class ResultDao extends BaseDao
                 join \{athleteTable()} a using (athlete_id)
                 join \{courseEventSummaryTable()} ces on r.date = ces.date and r.course_id = ces.course_id
                 """;
+//        public static int YEAR = 2019;
+//        where r.date >= '\{YEAR}-01-01' and r.date <= '\{YEAR}-12-31'
         jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             Result result = new Result(

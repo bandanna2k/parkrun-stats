@@ -1,6 +1,5 @@
 package dnt.parkrun.stats.speed;
 
-import com.mysql.cj.jdbc.Driver;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.database.Database;
@@ -32,7 +31,6 @@ import static dnt.parkrun.stats.speed.AgeCategoryRecordsHtmlWriter.Type.AGE_GRAD
 
 public class SpeedStats
 {
-    private static Driver DRIVER = dnt.parkrun.database.Driver.getDriver();
     private static final Country COUNTRY = NZ;
 
     private final CourseRepository courseRepository;
@@ -42,8 +40,8 @@ public class SpeedStats
      */
     public static void main(String... args) throws IOException, XMLStreamException
     {
-        Country country = Country.valueOf(args[0]);
-        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
+//        Country country = Country.valueOf(args[0]);
+        Database database = new LiveDatabase(NZ, getDataSourceUrl(), "stats", "4b0e7ff1");
         SpeedStats stats = SpeedStats.newInstance(database);
         Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord =
                 stats.collectCourseToAgeGroupToAgeGradeRecord();
@@ -146,6 +144,7 @@ public class SpeedStats
                 Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGroupRecord = courseToAgeGroupToAgeGradeRecord.get(course.courseId);
 
                 try(CollapsableTitleHtmlWriter collapse2 = new CollapsableTitleHtmlWriter.Builder(
+//                        writer.writer, YEAR + " - " + course.longName).level(2).fontSizePercent(95.0).build())
                         writer.writer, course.longName).level(2).fontSizePercent(95.0).build())
                 {
                     try (AgeCategoryRecordsHtmlWriter ageGroupRecordsWriter = new AgeCategoryRecordsHtmlWriter(
@@ -204,6 +203,7 @@ public class SpeedStats
                                 writer.writer, ageCategory.textOnWebpage).level(3).fontSizePercent(95.0).build())
                         {
                             writer.writer.writeStartElement("h3");
+//                            writer.writer.writeCharacters(YEAR + " - " + course.longName);
                             writer.writer.writeCharacters(course.longName);
                             writer.writer.writeEndElement();
 
@@ -227,8 +227,8 @@ public class SpeedStats
         if(record.result().ageCategory == AgeCategory.UNKNOWN) return;
 
         record.course(course);
-        record.isRecent(isRecent(record.result().date));
-        record.isNew(isNew(record.result().date));
+//        record.isRecent(isRecent(record.result().date));
+//        record.isNew(isNew(record.result().date));
 
         writer.write(record);
     }

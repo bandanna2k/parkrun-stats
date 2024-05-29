@@ -29,7 +29,9 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
   Related: Why does 'Populating top 10 run table for Ōrākei Bay parkrun' take so long.
 (Stalled until we can confirm this doesn't take that long, waiting until June 2nd, top 10 DAO might not be needed anymore.
 
-- Speed stats for the year 
+- Speed stats for the year
+Generate files DONE
+Upload html 
 
 - Need a loading icon whilst fastest times page is loading
 
