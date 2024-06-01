@@ -13,6 +13,7 @@ import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.time.Instant;
@@ -25,6 +26,7 @@ import static dnt.parkrun.datastructures.Country.NZ;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
+@RunWith(Parameterized.class)
 public class AreLatestRegionResultsInTest
 {
     @Parameterized.Parameter(0)
