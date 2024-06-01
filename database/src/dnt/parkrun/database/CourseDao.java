@@ -120,7 +120,7 @@ public class CourseDao extends BaseDao
 
     public void setCourseStatus(String courseName, Course.Status status)
     {
-        String sql = "update course set status = :status where course_name = :courseName";
+        String sql = STR."update \{courseTable()} set status = :status where course_name = :courseName";
         jdbc.update(sql, new MapSqlParameterSource()
                 .addValue("courseName", courseName)
                 .addValue("status", status.getStatusForDb())

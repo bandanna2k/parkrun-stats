@@ -27,13 +27,14 @@ public class AreCoursesUpToDateTest
     @Test
     public void areCoursesUpToDate() throws IOException
     {
+        boolean disableDatabaseRuns = false;
+        boolean addNewCourses = false;
+
         String permissionToInsertRecords = "sudo";
         Database database = new LiveDatabase(country, getDataSourceUrl(), "dao", "0b851094", permissionToInsertRecords);
         CourseRepository courseRepository = new CourseRepository();
         CourseDao courseDao = new CourseDao(database, courseRepository);
 
-        boolean disableDatabaseRuns = false;
-        boolean addNewCourses = false;
         Supplier<InputStream> supplier = () ->
         {
             try
