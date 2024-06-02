@@ -27,9 +27,12 @@ public class ResultDao extends BaseDao
     @Deprecated // Testing only. Do not use. Results too large
     List<Result> getResults()
     {
-        String sql = "select * from result " +
-                "left join athlete using (athlete_id) " +
-                "order by course_id asc, date asc, position asc, athlete_id asc";
+        String sql = STR."""
+                select * from \{resultTable()} r
+                left join \{athleteTable()} a using (athlete_id)
+                left join \{courseEventSummaryTable()} ces using (course_id, date)
+                order by r.course_id asc, r.date asc, r.position asc, r.athlete_id asc
+                """;
         List<Result> query = jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
         {
             Integer ageCategory = rs.getInt("age_group");
@@ -37,6 +40,7 @@ public class ResultDao extends BaseDao
             return new Result(
                     rs.getInt("course_id"),
                     rs.getDate("date"),
+                    rs.getInt("event_number"),
                     rs.getInt("position"),
                     Athlete.from(
                             rs.getString("name"),
@@ -54,6 +58,7 @@ public class ResultDao extends BaseDao
         String sql = STR."""
                 select * from \{resultTable()}
                 left join \{athleteTable()} using (athlete_id)
+                left join \{courseEventSummaryTable()} using (course_id, date)
                 where course_id = :courseId
                 and date = :date
                 order by course_id asc, date desc, position asc, athlete_id asc
@@ -68,6 +73,7 @@ public class ResultDao extends BaseDao
             return new Result(
                     rs.getInt("course_id"),
                     rs.getDate("date"),
+                    rs.getInt("event_number"),
                     rs.getInt("position"),
                     Athlete.from(
                             rs.getString("name"),
@@ -125,6 +131,7 @@ public class ResultDao extends BaseDao
                 select * 
                 from \{resultTable()}
                 join \{athleteTable()} using (athlete_id)
+                left join \{courseEventSummaryTable()} using (course_id, date)
                 \{orderBy}
                 """;
         jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
@@ -132,6 +139,7 @@ public class ResultDao extends BaseDao
             Result result = new Result(
                     rs.getInt("course_id"),
                     rs.getDate("date"),
+                    rs.getInt("event_number"),
                     rs.getInt("position"),
                     Athlete.from(
                             rs.getString("name"),
@@ -144,6 +152,7 @@ public class ResultDao extends BaseDao
             return null;
         });
     }
+    @Deprecated(since = "Event number now included in result")
     public void tableScanResultAndEventNumber(BiConsumer<Result, Integer> consumer)
     {
         String sql = STR."""
@@ -162,6 +171,7 @@ public class ResultDao extends BaseDao
             Result result = new Result(
                     rs.getInt("course_id"),
                     rs.getDate("date"),
+                    rs.getInt("event_number"),
                     rs.getInt("position"),
                     Athlete.from(
                             rs.getString("name"),

@@ -14,10 +14,6 @@ public class EventDateCount
         this.count = count;
         this.eventNumber = eventNumber;
     }
-    public EventDateCount(Date date, int count)
-    {
-        this(date, count, -1);
-    }
 
     @Override
     public String toString()

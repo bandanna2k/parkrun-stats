@@ -153,19 +153,19 @@ public class VolunteerDaoTest extends BaseDaoTest
             athleteDao.insert(johnDoe);
             athleteDao.insert(juniorDoeAdere);
             {
-                Result result1 = new Result(501, EPOCH_PLUS_7, 1, johnDoe, Time.from("1:31:02"), VM45_49, AgeGrade.newInstance(68.49));
+                Result result1 = new Result(501, EPOCH_PLUS_7, 2, 1, johnDoe, Time.from("1:31:02"), VM45_49, AgeGrade.newInstance(68.49));
                 volunteerDao.insert(new Volunteer(result1.courseId, result1.date, result1.athlete));
             }
             {
-                Result result1 = new Result(502, EPOCH_PLUS_14, 1, johnDoe, Time.from("1:32:02"), VM45_49, AgeGrade.newInstance(68.49));
-                Result result2 = new Result(502, EPOCH_PLUS_14, 2, janeDoe, Time.from("1:32:03"), VW45_49, AgeGrade.newInstance(68.50));
+                Result result1 = new Result(502, EPOCH_PLUS_14, 3, 1, johnDoe, Time.from("1:32:02"), VM45_49, AgeGrade.newInstance(68.49));
+                Result result2 = new Result(502, EPOCH_PLUS_14, 3, 2, janeDoe, Time.from("1:32:03"), VW45_49, AgeGrade.newInstance(68.50));
                 volunteerDao.insert(new Volunteer(result1.courseId, result1.date, result1.athlete));
                 volunteerDao.insert(new Volunteer(result2.courseId, result2.date, result2.athlete));
             }
             {
-                Result result1 = new Result(503, EPOCH_PLUS_21, 1, johnDoe, Time.from("1:32:02"), VM45_49, AgeGrade.newInstance(68.49));
-                Result result2 = new Result(503, EPOCH_PLUS_21, 2, janeDoe, Time.from("1:32:03"), VW45_49, AgeGrade.newInstance(68.50));
-                Result result3 = new Result(503, EPOCH_PLUS_21, 3, juniorDoeAdere, Time.from("1:32:04"), JM11_14, AgeGrade.newInstance(68.51));
+                Result result1 = new Result(503, EPOCH_PLUS_21, 4, 1, johnDoe, Time.from("1:32:02"), VM45_49, AgeGrade.newInstance(68.49));
+                Result result2 = new Result(503, EPOCH_PLUS_21, 4, 2, janeDoe, Time.from("1:32:03"), VW45_49, AgeGrade.newInstance(68.50));
+                Result result3 = new Result(503, EPOCH_PLUS_21, 4, 3, juniorDoeAdere, Time.from("1:32:04"), JM11_14, AgeGrade.newInstance(68.51));
                 volunteerDao.insert(new Volunteer(result1.courseId, result1.date, result1.athlete));
                 volunteerDao.insert(new Volunteer(result2.courseId, result2.date, result2.athlete));
                 volunteerDao.insert(new Volunteer(result3.courseId, result3.date, result3.athlete));

@@ -21,7 +21,7 @@ public class AverageTimeProcessorTest
             {
 //                System.out.printf("Loop %d %d%n", week, result);
                 processor.visitInOrder(new Result(
-                        1, date, result, Athlete.from("Name" + result, result), Time.from(result),
+                        1, date, week, result, Athlete.from("Name" + result, result), Time.from(result),
                         AgeCategory.UNKNOWN, AgeGrade.newInstanceNoAgeGrade()));
             }
         }
@@ -33,7 +33,7 @@ public class AverageTimeProcessorTest
             {
 //                System.out.printf("Loop %d %d%n", week, result);
                 processor.visitInOrder(new Result(
-                        2, date, result, Athlete.from("Name" + result, result), Time.from(result),
+                        2, date, week, result, Athlete.from("Name" + result, result), Time.from(result),
                         AgeCategory.UNKNOWN, AgeGrade.newInstanceNoAgeGrade()));
             }
         }
@@ -55,7 +55,7 @@ public class AverageTimeProcessorTest
             Date date = Date.from(Instant.EPOCH.plus(week * 7, ChronoUnit.DAYS));
 
             processor.visitInOrder(new Result(
-                    2, date, 1, Athlete.from("Name", 1), Time.from(week),
+                    2, date, week, 1, Athlete.from("Name", 1), Time.from(week),
                     AgeCategory.UNKNOWN, AgeGrade.newInstanceNoAgeGrade()));
         }
 

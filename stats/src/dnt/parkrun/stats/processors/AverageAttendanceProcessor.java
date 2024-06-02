@@ -30,7 +30,7 @@ public class AverageAttendanceProcessor extends AbstractProcessor<AverageAttenda
     }
 
     @Override
-    protected void onFinishCourse(Date date, Record record)
+    protected void onFinishCourse(Date date, int eventNumber, Record record)
     {
         record.onFinishCourseResults(currentCount);
         reset();

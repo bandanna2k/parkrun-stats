@@ -20,7 +20,6 @@ public class CourseEventSummaryDaoTest extends BaseDaoTest
     private CourseEventSummaryDao dao;
     private AthleteDao athleteDao;
     private CourseDao courseDao;
-    private CourseRepository courseRepository;
 
     @Before
     public void setUp() throws Exception
@@ -29,7 +28,7 @@ public class CourseEventSummaryDaoTest extends BaseDaoTest
         jdbc.update("delete from parkrun_stats_test.course", EmptySqlParameterSource.INSTANCE);
         jdbc.update("delete from parkrun_stats_test.course_event_summary", EmptySqlParameterSource.INSTANCE);
 
-        courseRepository = new CourseRepository();
+        CourseRepository courseRepository = new CourseRepository();
         dao = new CourseEventSummaryDao(TEST_DATABASE, courseRepository);
         courseDao = new CourseDao(TEST_DATABASE, courseRepository);
         athleteDao = new AthleteDao(TEST_DATABASE);

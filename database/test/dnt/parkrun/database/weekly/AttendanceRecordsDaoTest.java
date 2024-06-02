@@ -52,8 +52,8 @@ public class AttendanceRecordsDaoTest extends BaseDaoTest
         Athlete firstWoman = Athlete.fromAthleteSummaryLink("Terry EVANS", "https://www.parkrun.co.nz/parkrunner/12345/");
         athleteDao.insert(firstWoman);
         athleteDao.insert(firstMan);
-        resultDao.insert(new Result(course.courseId, date, 1, firstMan, Time.from("21:00"), SM25_29, newInstance("50.01%")));
-        resultDao.insert(new Result(course.courseId, date, 2, firstWoman, Time.from("21:01"), SM20_24, newInstance("51.01%")));
+        resultDao.insert(new Result(course.courseId, date, 1, 1, firstMan, Time.from("21:00"), SM25_29, newInstance("50.01%")));
+        resultDao.insert(new Result(course.courseId, date, 1, 2, firstWoman, Time.from("21:01"), SM20_24, newInstance("51.01%")));
 
         courseEventSummaryDao.insert(new CourseEventSummary(
                 course, 1, Date.from(Instant.EPOCH), 2, Optional.of(firstMan), Optional.of(firstWoman)));
@@ -75,12 +75,12 @@ public class AttendanceRecordsDaoTest extends BaseDaoTest
         athleteDao.insert(firstWoman);
         athleteDao.insert(firstMan);
         {
-            resultDao.insert(new Result(course.courseId, run1, 1, firstMan, Time.from("21:00"), SM25_29, newInstance("50.01%")));
-            resultDao.insert(new Result(course.courseId, run1, 2, firstWoman, Time.from("21:01"), SM20_24, newInstance("51.01%")));
+            resultDao.insert(new Result(course.courseId, run1, 1, 1, firstMan, Time.from("21:00"), SM25_29, newInstance("50.01%")));
+            resultDao.insert(new Result(course.courseId, run1, 1, 2, firstWoman, Time.from("21:01"), SM20_24, newInstance("51.01%")));
         }
         {
-            resultDao.insert(new Result(course.courseId, run2, 1, firstMan, Time.from("21:00"), SM25_29, newInstance("50.01%")));
-            resultDao.insert(new Result(course.courseId, run2, 2, firstWoman, Time.from("21:01"), SM20_24, newInstance("51.01%")));
+            resultDao.insert(new Result(course.courseId, run2, 1, 1, firstMan, Time.from("21:00"), SM25_29, newInstance("50.01%")));
+            resultDao.insert(new Result(course.courseId, run2, 1, 2, firstWoman, Time.from("21:01"), SM20_24, newInstance("51.01%")));
         }
         courseEventSummaryDao.insert(new CourseEventSummary(
                 course, 1, run1, 2, Optional.of(firstMan), Optional.of(firstWoman)));

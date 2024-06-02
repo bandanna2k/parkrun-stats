@@ -61,6 +61,7 @@ Set silver, same athlete: Result{courseId=40, date=2024-04-13, position=3, athle
                 1,
                 Date.from(Instant.EPOCH),
                 1,
+                1,
                 Athlete.from(name, athleteId),
                 Time.from(2000),
                 AgeCategory.SW30_34,

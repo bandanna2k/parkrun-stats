@@ -11,6 +11,7 @@ public class ResultTestBuilder
 {
     private int courseId = NO_COURSE_ID;
     private Date date = Date.from(Instant.now());
+    private int eventNumber = 52;
     private int position = 1;
     private Athlete athlete = new AthleteTestBuilder().build();
     private Time time = Time.from(20 * 60); // 20:00
@@ -19,7 +20,7 @@ public class ResultTestBuilder
 
     public Result build()
     {
-        return new Result(courseId, date, position, athlete, time, ageCategory, ageGrade);
+        return new Result(courseId, date, eventNumber, position, athlete, time, ageCategory, ageGrade);
     }
 
     public ResultTestBuilder athlete(Athlete athlete)

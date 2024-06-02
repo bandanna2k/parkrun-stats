@@ -44,9 +44,9 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
 
         courseEventSummaryDao.insert(
                 new CourseEventSummary(course, 5, date, 2, Optional.of(boy), Optional.of(girl)));
-        resultDao.insert(new Result(course.courseId, date,
+        resultDao.insert(new Result(course.courseId, date, 1,
                 1, girl, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89)));
-        resultDao.insert(new Result(course.courseId, date,
+        resultDao.insert(new Result(course.courseId, date, 1,
                 2, boy, Time.from("22:23"), SM30_34, AgeGrade.newInstance(70.89)));
     }
 
@@ -55,8 +55,8 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
     {
         CourseEventSummaryChecker checker = new Stub(TEST_DATABASE,
                 List.of(
-                        new Result(course.courseId, date, 1, girl, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89)),
-                        new Result(course.courseId, date, 2, boy, Time.from("22:23"), SM30_34, AgeGrade.newInstance(70.89))
+                        new Result(course.courseId, date, 1,  1, girl, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89)),
+                        new Result(course.courseId, date, 1, 2, boy, Time.from("22:23"), SM30_34, AgeGrade.newInstance(70.89))
                 ));
         List<String> validate = checker.validate();
         assertThat(validate.size()).isEqualTo(0);
@@ -67,7 +67,7 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
     {
         CourseEventSummaryChecker checker = new Stub(TEST_DATABASE,
                 List.of(
-                        new Result(course.courseId, date, 1, girl, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89))
+                        new Result(course.courseId, date, 1, 1, girl, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89))
                 ));
         List<String> validate = checker.validate();
         assertThat(validate.size()).isEqualTo(1);
@@ -79,8 +79,8 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
     {
         CourseEventSummaryChecker checker = new Stub(TEST_DATABASE,
                 List.of(
-                        new Result(course.courseId, date, 1, girl, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89)),
-                        new Result(course.courseId, date, 2, boy, Time.from("22:23"), SM30_34, AgeGrade.newInstance(67.89))
+                        new Result(course.courseId, date, 1, 1, girl, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89)),
+                        new Result(course.courseId, date, 1, 2, boy, Time.from("22:23"), SM30_34, AgeGrade.newInstance(67.89))
                 ));
         List<String> validate = checker.validate();
         assertThat(validate.size()).isEqualTo(1);
@@ -92,8 +92,8 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
     {
         CourseEventSummaryChecker checker = new Stub(TEST_DATABASE,
                 List.of(
-                        new Result(course.courseId, date, 1, girl, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89)),
-                        new Result(course.courseId, date, 2, boy, Time.from("22:23"), SM25_29, AgeGrade.newInstance(70.89))
+                        new Result(course.courseId, date, 1, 1, girl, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89)),
+                        new Result(course.courseId, date, 1, 2, boy, Time.from("22:23"), SM25_29, AgeGrade.newInstance(70.89))
                 ));
         List<String> validate = checker.validate();
         assertThat(validate.size()).isEqualTo(1);
@@ -105,8 +105,8 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
     {
         CourseEventSummaryChecker checker = new Stub(TEST_DATABASE,
                 List.of(
-                        new Result(course.courseId, date, 1, boy, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89)),
-                        new Result(course.courseId, date, 2, boy, Time.from("22:23"), SM30_34, AgeGrade.newInstance(70.89))
+                        new Result(course.courseId, date, 1, 1, boy, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89)),
+                        new Result(course.courseId, date, 1, 2, boy, Time.from("22:23"), SM30_34, AgeGrade.newInstance(70.89))
                 ));
         List<String> validate = checker.validate();
         assertThat(validate.size()).isEqualTo(1);
@@ -118,8 +118,8 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
     {
         CourseEventSummaryChecker checker = new Stub(TEST_DATABASE,
                 List.of(
-                        new Result(course.courseId, date, 1, girl, Time.from("22:20"), SM25_29, AgeGrade.newInstance(67.89)),
-                        new Result(course.courseId, date, 2, boy, Time.from("22:23"), SM30_34, AgeGrade.newInstance(70.89))
+                        new Result(course.courseId, date, 1, 1, girl, Time.from("22:20"), SM25_29, AgeGrade.newInstance(67.89)),
+                        new Result(course.courseId, date, 1, 2, boy, Time.from("22:23"), SM30_34, AgeGrade.newInstance(70.89))
                 ));
         List<String> validate = checker.validate();
         assertThat(validate.size()).isEqualTo(1);
@@ -130,12 +130,12 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
     public void checkZeroTimesAreGood()
     {
         jdbc.update("delete from result", EmptySqlParameterSource.INSTANCE);
-        resultDao.insert(new Result(course.courseId, date,
+        resultDao.insert(new Result(course.courseId, date, 1,
                 1, Athlete.NO_ATHLETE, null, UNKNOWN, AgeGrade.newInstanceNoAgeGrade()));
 
         CourseEventSummaryChecker checker = new Stub(TEST_DATABASE,
                 List.of(
-                        new Result(course.courseId, date, 1, Athlete.NO_ATHLETE, null, UNKNOWN, AgeGrade.newInstanceNoAgeGrade())
+                        new Result(course.courseId, date, 1, 1, Athlete.NO_ATHLETE, null, UNKNOWN, AgeGrade.newInstanceNoAgeGrade())
                 ));
         List<String> validate = checker.validate();
         assertThat(validate.size()).isEqualTo(0);
@@ -145,12 +145,12 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
     public void checkZeroTimesAreBad()
     {
         jdbc.update("delete from result", EmptySqlParameterSource.INSTANCE);
-        resultDao.insert(new Result(course.courseId, date,
+        resultDao.insert(new Result(course.courseId, date, 1,
                 1, Athlete.NO_ATHLETE, null, UNKNOWN, AgeGrade.newInstanceNoAgeGrade()));
 
         CourseEventSummaryChecker checker = new Stub(TEST_DATABASE,
                 List.of(
-                        new Result(course.courseId, date, 1, Athlete.NO_ATHLETE, Time.NO_TIME, UNKNOWN, AgeGrade.newInstanceNoAgeGrade())
+                        new Result(course.courseId, date, 1, 1, Athlete.NO_ATHLETE, Time.NO_TIME, UNKNOWN, AgeGrade.newInstanceNoAgeGrade())
                 ));
         List<String> validate = checker.validate();
         assertThat(validate.size()).isEqualTo(1);

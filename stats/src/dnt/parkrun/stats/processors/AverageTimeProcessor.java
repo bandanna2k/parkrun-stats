@@ -36,7 +36,7 @@ public class AverageTimeProcessor extends AbstractProcessor<AverageTimeProcessor
     }
 
     @Override
-    protected void onFinishCourse(Date date, Record record)
+    protected void onFinishCourse(Date date, int eventNumber, Record record)
     {
         record.onFinishCourseResults(currentCount, currentTime);
         reset();

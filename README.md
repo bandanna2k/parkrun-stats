@@ -22,12 +22,16 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+- Max attendance deltas are appearing randomly.
+
+- Attendance links are -1
+
+- Don't download already downloaded. Weekly Results.
+
+- Why do I have weekly WeeklyStatsNz and WeeklyStats
+
 - Add deltas to attendance processor
 (Stalled until we can confirm attendance records)
-
-- Top 10 at course surely can be done with 1 processor
-  Related: Why does 'Populating top 10 run table for Ōrākei Bay parkrun' take so long.
-(Stalled until we can confirm this doesn't take that long, waiting until June 2nd, top 10 DAO might not be needed anymore.
 
 - Need a loading icon whilst fastest times page is loading
 
@@ -37,6 +41,10 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 - Unique runners at course / Add unique runs for runners / Add unique runs to Most Events???
 
 ## Issues Completed
+
+- Top 10 at course surely can be done with 1 processor
+  Related: Why does 'Populating top 10 run table for Ōrākei Bay parkrun' take so long.
+  (Stalled until we can confirm this doesn't take that long, waiting until June 2nd, top 10 DAO might not be needed anymore.
 
 - 30/9/2024 Speed stats for the year
   Generate files DONE

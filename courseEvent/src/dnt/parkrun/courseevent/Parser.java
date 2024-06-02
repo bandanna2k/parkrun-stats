@@ -44,12 +44,12 @@ public class Parser
 
         Elements resultsHeader = doc.getElementsByClass("Results-header");
 
-//        // As of May 25th 2024, this can sometimes by blank
-//        Node eventNumberNode = resultsHeader.getFirst()
-//                .childNode(1)   // h3
-//                .childNode(2)   // span
-//                .childNode(0);
-//        int eventNumber = Integer.parseInt(eventNumberNode.toString().replace("#", ""));
+        // TODO  As of May 25th 2024, this can sometimes by blank. Need to make this tolerant
+        Node eventNumberNode = resultsHeader.getFirst()
+                .childNode(1)   // h3
+                .childNode(2)   // span
+                .childNode(0);
+        int eventNumber = Integer.parseInt(eventNumberNode.toString().replace("#", ""));
 
         Node dateNode = resultsHeader.getFirst()
                 .childNode(1)   // h3
@@ -131,7 +131,7 @@ public class Parser
 
                 final Time time = timeDiv.childNodes().isEmpty() ? null : Time.from(timeDiv.childNode(0).toString());
 
-                resultConsumer.accept(new Result(course.courseId, date, position, athlete, time, ageCategory, ageGrade));
+                resultConsumer.accept(new Result(course.courseId, date, eventNumber, position, athlete, time, ageCategory, ageGrade));
             }
         }
 

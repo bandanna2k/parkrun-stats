@@ -10,7 +10,7 @@ import static dnt.parkrun.datastructures.Athlete.NO_ATHLETE;
 public class AgeCategoryRecord
 {
     private static final Result NO_RESULT = new Result(
-            0, null, 0, NO_ATHLETE, Time.MAX_TIME, null, AgeGrade.newInstance(0));
+            0, null, 0, 0, NO_ATHLETE, Time.MAX_TIME, null, AgeGrade.newInstance(0));
 
     int GOLD = 0;
     int SILVER = 1;

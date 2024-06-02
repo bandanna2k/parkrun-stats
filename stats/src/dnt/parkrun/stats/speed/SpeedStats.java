@@ -227,8 +227,8 @@ public class SpeedStats
         if(record.result().ageCategory == AgeCategory.UNKNOWN) return;
 
         record.course(course);
-//        record.isRecent(isRecent(record.result().date));
-//        record.isNew(isNew(record.result().date));
+        record.isRecent(isRecent(record.result().date));
+        record.isNew(isNew(record.result().date));
 
         writer.write(record);
     }

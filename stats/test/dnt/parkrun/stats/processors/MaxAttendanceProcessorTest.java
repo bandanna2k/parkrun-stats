@@ -21,7 +21,7 @@ public class MaxAttendanceProcessorTest
             {
 //                System.out.printf("Loop %d %d%n", week, result);
                 processor.visitInOrder(new Result(
-                        1, date, result, Athlete.NO_ATHLETE, Time.NO_TIME, AgeCategory.UNKNOWN, AgeGrade.newInstanceNoAgeGrade()));
+                        1, date, week ,result, Athlete.NO_ATHLETE, Time.NO_TIME, AgeCategory.UNKNOWN, AgeGrade.newInstanceNoAgeGrade()));
             }
         }
         for (int week = 1; week <= 10; week++)
@@ -32,7 +32,7 @@ public class MaxAttendanceProcessorTest
             {
 //                System.out.printf("Loop %d %d%n", week, result);
                 processor.visitInOrder(new Result(
-                        2, date, result, Athlete.NO_ATHLETE, Time.NO_TIME, AgeCategory.UNKNOWN, AgeGrade.newInstanceNoAgeGrade()));
+                        2, date, week, result, Athlete.NO_ATHLETE, Time.NO_TIME, AgeCategory.UNKNOWN, AgeGrade.newInstanceNoAgeGrade()));
             }
         }
 
