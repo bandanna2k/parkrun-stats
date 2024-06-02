@@ -83,7 +83,7 @@ public class ResultDaoTest extends BaseDaoTest
     }
 
     @Test
-    public void shouldDeleteResults() throws InterruptedException
+    public void shouldDeleteResults()
     {
         athleteDao.insert(janeDoe);
         athleteDao.insert(johnDoe);
