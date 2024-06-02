@@ -109,14 +109,14 @@ public class AttendanceRecordsDao extends BaseDao
                 new AttendanceRecord(
                         rs.getInt("course_id"),
                         new EventDateCount(
-                            rs.getDate("recent_event_date"),
-                            rs.getInt("recent_event_number"),
-                            rs.getInt("recent_event_finishers")
+                                rs.getInt("recent_event_number"),
+                                rs.getDate("recent_event_date"),
+                                rs.getInt("recent_event_finishers")
                         ),
                         List.of(new EventDateCount(
-                            rs.getDate("record_event_date"),
-                            rs.getInt("record_event_number"),
-                            rs.getInt("record_event_finishers")
+                                rs.getInt("record_event_number"),
+                                rs.getDate("record_event_date"),
+                                rs.getInt("record_event_finishers")
                         )))
         );
     }

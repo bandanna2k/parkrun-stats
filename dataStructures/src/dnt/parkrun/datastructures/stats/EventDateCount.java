@@ -8,7 +8,7 @@ public class EventDateCount
     public final Date date;
     public final int count;
 
-    public EventDateCount(Date date, int count, int eventNumber)
+    public EventDateCount(int eventNumber, Date date, int count)
     {
         this.date = date;
         this.count = count;

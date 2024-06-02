@@ -77,7 +77,7 @@ public class AttendanceProcessor extends AbstractProcessor<AttendanceProcessor.R
         private void onFinishCourseProcessLast(Date date, int eventNumber, int count)
         {
             prev = last;
-            last = new EventDateCount(date, count, eventNumber);
+            last = new EventDateCount(eventNumber, date, count);
             if(prev != null) lastDelta = last.count - prev.count;
         }
 
@@ -86,7 +86,7 @@ public class AttendanceProcessor extends AbstractProcessor<AttendanceProcessor.R
             if(max.isEmpty())
             {
                 // First event
-                EventDateCount newEventDateCount = new EventDateCount(date, eventNumber, count);
+                EventDateCount newEventDateCount = new EventDateCount(eventNumber, date, count);
                 prevMax.add(newEventDateCount);
                 max.add(newEventDateCount);
                 return;
@@ -94,7 +94,7 @@ public class AttendanceProcessor extends AbstractProcessor<AttendanceProcessor.R
             if(count == max.getFirst().count)
             {
                 // Equalling the record
-                max.add(new EventDateCount(date, eventNumber, count));
+                max.add(new EventDateCount(eventNumber, date, count));
                 return;
             }
             if(count > max.getFirst().count)
@@ -105,7 +105,7 @@ public class AttendanceProcessor extends AbstractProcessor<AttendanceProcessor.R
 
                 maxDelta = count - prevMax.getFirst().count;
                 max.clear();
-                max.add(new EventDateCount(date, eventNumber, count));
+                max.add(new EventDateCount(eventNumber, date, count));
                 return;
             }
             maxDelta = 0;
