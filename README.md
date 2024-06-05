@@ -22,13 +22,63 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-- Max attendance deltas are appearing randomly.
+page 1
+Random question from seed.
+Calc answer
+Write to DB
+Write answer to DB
+Write athlete to DB
 
-- Attendance links are -1
+Friend Session
+-------
+FriendSessionId  Seed        Expectation   AthleteId   Given
+1                1717479069  101           414811      101
 
-- Don't download already downloaded. Weekly Results.
+Friend Counts
+-------
+FriendSessionId  Row  Athlete  Date
+1                1    116049   278
+1                1    54321    52
+1                2    10101    1
 
-- Why do I have weekly WeeklyStatsNz and WeeklyStats
+
+
+- Questions
+How many people ran at <course> on your <x'th> visit? (slow due to results)
+
+select *
+from parkrun_stats_NZ.course_event_summary ces
+right join (
+    select * 
+    from parkrun_stats_NZ.result
+    where athlete_id = 414811
+    order by rand()
+    limit 1
+) as sub1 using (course_id, date);
+
+When you volunteered at <x> on <date>, how many finishers where there?
+
+select *
+from parkrun_stats_NZ.course_event_summary ces
+right join (
+select *
+from parkrun_stats_NZ.event_volunteer
+where athlete_id = 414811
+order by rand()
+limit 1
+) as sub1 using (course_id, date);
+
+What position did you finish at <course> on your <x.th> visit? (slow due to results)
+
+What <event number> was your first/second/third volunteer at <course>?
+
+
+- Auto-friend calculator
+
+- Don't download already downloaded. Weekly Results. More info please?
+
+- Why do I have weekly WeeklyStatsNz and WeeklyStats backing up
+  (weekly_stats not needed anymore, weekly_stats_NZ)
 
 - Add deltas to attendance processor
 (Stalled until we can confirm attendance records)
@@ -42,7 +92,10 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Issues Completed
 
-- Top 10 at course surely can be done with 1 processor
+- 2/6/2024 Max attendance deltas are appearing randomly. 
+Attendance links are -1
+
+- 2/6/2024 Top 10 at course surely can be done with 1 processor
   Related: Why does 'Populating top 10 run table for Ōrākei Bay parkrun' take so long.
   (Stalled until we can confirm this doesn't take that long, waiting until June 2nd, top 10 DAO might not be needed anymore.
 

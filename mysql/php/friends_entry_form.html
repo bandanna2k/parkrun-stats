@@ -1,0 +1,49 @@
+<html>
+
+<body>
+<h1>Friends Table</h1>
+</body>
+
+<script>
+    function getRandomInt(max) {
+      return Math.floor(Math.random() * max);
+    }
+    function getQuestion(questionNumber) {
+        if(questionNumber == 0) return `How many finishers were there at your 1st volunteer in NZ?`;
+        if(questionNumber == 1) return `What was the event number for your 1st volunteer in NZ?`;
+        return 'No more questions';
+    }
+
+    const questionNumber = getRandomInt(2);
+
+    const question = getQuestion(questionNumber);
+</script>
+
+<form action="friends_entry_form.php" method="POST">
+
+    Your athlete ID: <input type="number" name="athleteId" value="414811"><br />
+
+    <script>
+        document.writeln(`<input type="hidden" name="question" value="${questionNumber}"><br />`);
+
+        document.writeln(question);
+        document.writeln(`<input type="number" name="answer" value="100"><br />`);
+    </script>
+
+    Friend athlete ID: <input type="number" name="athleteId1" value="100001"><br />
+    Friend athlete ID: <input type="number" name="athleteId2" value="100002"><br />
+    Friend athlete ID: <input type="number" name="athleteId3" value="100003"><br />
+    Friend athlete ID: <input type="number" name="athleteId4" value="100004"><br />
+    Friend athlete ID: <input type="number" name="athleteId5" value="100005"><br />
+
+    Friend athlete ID: <input type="number" name="athleteId6" value="100006"><br />
+    Friend athlete ID: <input type="number" name="athleteId7" value="100007"><br />
+    Friend athlete ID: <input type="number" name="athleteId8" value="100008"><br />
+    Friend athlete ID: <input type="number" name="athleteId9" value="100009"><br />
+
+    <input type="submit">
+
+</form>
+
+
+</html>
