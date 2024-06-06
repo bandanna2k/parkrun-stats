@@ -7,6 +7,7 @@
 <?php
 
 include 'credentials.php';
+include 'friends_functions.php';
 
 $athleteId = $_POST["athleteId"];
 $question = $_POST["question"];
@@ -23,7 +24,13 @@ if ($conn->connect_error) {
 }
 
 // If url exists, goto url
-echo "<p>Url does not exist. Proceeding</p>\n";
+$currentUrl = getCurrentUrl($conn);
+echo "<p>Url: " . $currentUrl . "</p>\n";
+if (!is_null($currentUrl)) {
+    header('Location: /friends_table.php?id=' . $currentUrl);
+    return;
+}
+
 
 // 1. Insert into session (insert into athlete_id, eventQuestion, givenAnswer, url)
 // 1a - Get actual answer
@@ -122,6 +129,7 @@ echo "</p>\n";
 echo "<p>Process friends</p>\n";
 
 $conn->close();
+
 
 ?>
 
