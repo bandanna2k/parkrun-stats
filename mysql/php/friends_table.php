@@ -107,22 +107,29 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$query = 'select a.name, fa.name as friend, fc.count
-          from friend_counts fc
-          join athlete a on fc.athlete_id = a.athlete_id
-          join athlete fa on fc.friend_athlete_id = fa.athlete_id
-          where url = \'fe057c269c7ca966893344bc6f45d6aff36aca1c7098d8aee93fa4d8994bab2d\'';
+$athleteSet = new \Ds\Set();
+
+$query = 'SELECT fc.*
+          FROM friend_session fs
+          LEFT JOIN friend_counts fc USING (friend_session_id)
+          WHERE fs.athlete_id = 414811
+          ORDER BY fc.athlete_id1, fc.athlete_id2;'
 
 $result = $conn->query($query);
 while ($row = $result->fetch_assoc()) {
-    $name = $row['name'];
-    $friend = $row['friend'];
-    $count = $row['count'];
-    echo '<tr>\n';
-    echo '<td>' . $name . '</td>\n';
-    echo '<td>' . $friend . '</td>\n';
-    echo '<td>' . $count . '</td>\n';
-    echo '</tr>\n';
+
+    $athleteId1 = $row['athlete_id1'];
+    $athleteId2 = $row['athlete_id2'];
+
+    $athleteSet.add();
+}
+
+while ($row = $result->fetch_assoc()) {
+
+    $athleteId1 = $row['athlete_id1'];
+    $athleteId2 = $row['athlete_id2'];
+
+    $athleteSet.add();
 }
 
 ?>
