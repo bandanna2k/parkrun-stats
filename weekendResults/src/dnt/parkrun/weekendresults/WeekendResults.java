@@ -84,16 +84,16 @@ public class WeekendResults
             if(course.name.startsWith("p")) return;
             if(course.name.startsWith("q")) return;
             if(course.name.startsWith("r")) return;
-            if(course.name.startsWith("s")) return;
-//            if(course.name.startsWith("t")) return;
-//            if(course.name.startsWith("u")) return;
-//            if(course.name.startsWith("v")) return;
-//            if(course.name.startsWith("w")) return;
-//            if(course.name.startsWith("x")) return;
-//            if(course.name.startsWith("y")) return;
-//            if(course.name.startsWith("z")) return;
-//            if(course.name.startsWith("hagley")) return;
-//            if(course.name.startsWith("hamiltonlake")) return;
+//            if(course.name.startsWith("s")) return;
+            if(course.name.startsWith("t")) return;
+            if(course.name.startsWith("u")) return;
+            if(course.name.startsWith("v")) return;
+            if(course.name.startsWith("w")) return;
+            if(course.name.startsWith("x")) return;
+            if(course.name.startsWith("y")) return;
+            if(course.name.startsWith("z")) return;
+            if(course.name.startsWith("hagley")) return;
+            if(course.name.startsWith("hamiltonlake")) return;
 
             System.out.printf("* [%s] Get course summaries from database... ", course.longName);
             List<CourseEventSummary> courseEventSummariesFromDao = courseEventSummaryDao.getCourseEventSummaries(course);

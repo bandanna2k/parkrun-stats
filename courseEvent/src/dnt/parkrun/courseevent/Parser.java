@@ -44,12 +44,13 @@ public class Parser
 
         Elements resultsHeader = doc.getElementsByClass("Results-header");
 
-        // TODO  As of May 25th 2024, this can sometimes by blank. Need to make this tolerant
-        Node eventNumberNode = resultsHeader.getFirst()
-                .childNode(1)   // h3
-                .childNode(2)   // span
-                .childNode(0);
-        int eventNumber = Integer.parseInt(eventNumberNode.toString().replace("#", ""));
+//        // TODO  As of May 25th 2024, this can sometimes by blank. Need to make this tolerant
+//        Node eventNumberNode = resultsHeader.getFirst()
+//                .childNode(1)   // h3
+//                .childNode(2)   // span
+//                .childNode(0);
+//        int eventNumber = Integer.parseInt(eventNumberNode.toString().replace("#", ""));
+        int eventNumber = getEventNumberFromUrl(doc.baseUri());
 
         Node dateNode = resultsHeader.getFirst()
                 .childNode(1)   // h3
@@ -150,6 +151,21 @@ public class Parser
                 volunteerConsumer.accept(new Volunteer(course.courseId, date, athlete));
             }
         });
+    }
+
+    static int getEventNumberFromUrl(String url)
+    {
+        try
+        {
+            String resultsOnward = url.substring(url.indexOf("results") + 7 + 1);
+            String removeSlashes = resultsOnward.replace("/", "");
+            return Integer.parseInt(removeSlashes);
+        }
+        catch(Exception ex)
+        {
+            System.err.println("ERROR: Failed to get event number from url: " + url);
+            return 0;
+        }
     }
 
     public Date getDate() { return this.date; }
