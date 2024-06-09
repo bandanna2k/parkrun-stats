@@ -52,7 +52,7 @@ public class PendingCoursesTest
 
             AtomicInteger volunteers = new AtomicInteger(0);
             AtomicInteger finishers = new AtomicInteger(0);
-            Parser parser = new Parser.Builder(pc)
+            Parser parser = new Parser.Builder(courseRepository)
                     .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(pc.name, 1)))
                     .forEachResult(result -> finishers.incrementAndGet())
                     .forEachVolunteer(volunteer -> volunteers.incrementAndGet())

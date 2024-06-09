@@ -15,20 +15,23 @@ import java.util.function.Consumer;
 public class Parser
 {
     private final Document doc;
-    private final Course course;
+    private final CourseRepository courseRepository;
     private final Consumer<Athlete> athleteConsumer;
     private final Consumer<Result> resultConsumer;
     private final Consumer<Volunteer> volunteerConsumer;
+
     private Date date;
+    private int eventNumber;
+    private Course course;
 
     public Parser(Document doc,
-                  Course course,
+                  CourseRepository courseRepository,
                   Consumer<Athlete> athleteConsumer,
                   Consumer<Result> resultConsumer,
                   Consumer<Volunteer> volunteerConsumer)
     {
         this.doc = doc;
-        this.course = course;
+        this.courseRepository = courseRepository;
         this.athleteConsumer = athleteConsumer;
         this.resultConsumer = resultConsumer;
         this.volunteerConsumer = volunteerConsumer;
@@ -42,6 +45,14 @@ public class Parser
             return;
         }
 
+        Element access = doc.getElementById("access");
+        Node homeHrefNode = access.children().first() // div
+                .childNode(0)   // ul
+                .childNode(0)  // li
+                .childNode(0);  // a
+        String courseName = Course.extractCourseNameFromAthleteAtCourseLink(homeHrefNode.attr("href"));
+        course = courseRepository.getCourseFromName(courseName);
+
         Elements resultsHeader = doc.getElementsByClass("Results-header");
 
 //        // TODO  As of May 25th 2024, this can sometimes by blank. Need to make this tolerant
@@ -50,7 +61,7 @@ public class Parser
 //                .childNode(2)   // span
 //                .childNode(0);
 //        int eventNumber = Integer.parseInt(eventNumberNode.toString().replace("#", ""));
-        int eventNumber = getEventNumberFromUrl(doc.baseUri());
+        eventNumber = getEventNumberFromUrl(doc.baseUri());
 
         Node dateNode = resultsHeader.getFirst()
                 .childNode(1)   // h3
@@ -78,7 +89,16 @@ public class Parser
                         .childNode(1)   // td
                         .childNode(0)  // a
                         .childNode(0);  // div
-                Athlete athlete = Athlete.fromAthleteAtCourseLink(name, athleteAtEventLink.attr("href"));
+                String href = athleteAtEventLink.attr("href");
+                Athlete athlete = Athlete.fromAthleteAtCourseLink(name, href);
+                if(course == null)
+                {
+                    if(!href.isEmpty())
+                    {
+                        course = courseRepository.getCourseFromName(
+                                Course.extractCourseNameFromAthleteAtCourseLink(href));
+                    }
+                }
                 athleteConsumer.accept(athlete);
 
                 // 2 - Gender
@@ -136,13 +156,16 @@ public class Parser
             }
         }
 
+        assert course != null : "Unable to find course";
+
         Elements thanksToTheVolunteers = doc.getElementsMatchingText("Thanks to the volunteers");
         Elements parents = thanksToTheVolunteers.parents();
 
         List<Node> volunteers = parents.last().childNode(1).childNodes();
-        volunteers.forEach(volunteerNode -> {
+        for (Node volunteerNode : volunteers)
+        {
             Node volunteerAthleteNode = volunteerNode.firstChild();
-            if(volunteerAthleteNode != null)
+            if (volunteerAthleteNode != null)
             {
 //                Athlete athlete = Athlete.fromAthleteHistoryAtEventLink(volunteerAthleteNode.toString(), volunteerNode.attr("href"));
 //                Athlete athlete = Athlete.fromAthleteHistoryAtEventLink2(volunteerAthleteNode.toString(), volunteerNode.attr("href"));
@@ -150,7 +173,7 @@ public class Parser
                 athleteConsumer.accept(athlete);
                 volunteerConsumer.accept(new Volunteer(course.courseId, date, athlete));
             }
-        });
+        }
     }
 
     static int getEventNumberFromUrl(String url)
@@ -170,23 +193,33 @@ public class Parser
 
     public Date getDate() { return this.date; }
 
+    public int getEventNumber()
+    {
+        return this.eventNumber;
+    }
+
+    public Course getCourse()
+    {
+        return course;
+    }
+
 
     public static class Builder
     {
+        private final CourseRepository courseRepository;
         private Consumer<Athlete> athleteConsumer = r -> {};
         private Consumer<Result> resultConsumer = r -> {};
         private Consumer<Volunteer> volunteerConsumer = r -> {};
-        private final Course course;
         private WebpageProvider webpageProvider;
 
-        public Builder(Course course)
+        public Builder(CourseRepository courseRepository)
         {
-            this.course = course;
+            this.courseRepository = courseRepository;
         }
 
         public Parser build()
         {
-            return new Parser(webpageProvider.getDocument(), course, athleteConsumer, resultConsumer, volunteerConsumer);
+            return new Parser(webpageProvider.getDocument(), courseRepository, athleteConsumer, resultConsumer, volunteerConsumer);
         }
 
         public Builder forEachAthlete(Consumer<Athlete> consumer)

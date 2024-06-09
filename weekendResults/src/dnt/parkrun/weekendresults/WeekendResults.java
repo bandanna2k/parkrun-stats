@@ -119,7 +119,7 @@ public class WeekendResults
                     List<Result> results = new ArrayList<>();
                     List<Volunteer> volunteers = new ArrayList<>();
 
-                    dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(ces.course)
+                    dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(courseRepository)
                             .webpageProvider(webpageProviderFactory.createCourseEventWebpageProvider(ces.course.name, ces.eventNumber))
                             .forEachAthlete(runners::add)
                             .forEachResult(results::add)

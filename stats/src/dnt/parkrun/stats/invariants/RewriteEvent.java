@@ -85,7 +85,7 @@ public class RewriteEvent
         List<Athlete> newAthletes = new ArrayList<>();
         List<Volunteer> newVolunteers = new ArrayList<>();
         {
-            Parser parser = new Parser.Builder(course)
+            Parser parser = new Parser.Builder(courseRepository)
                     .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(course.name, eventNumber)))
                     .forEachResult(newResults::add)
                     .forEachAthlete(newAthletes::add)

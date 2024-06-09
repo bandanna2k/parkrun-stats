@@ -1,7 +1,7 @@
 package dnt.parkrun.courseevent;
 
-import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
+import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.datastructures.Result;
 import dnt.parkrun.filewebpageprovider.FileWebpageProvider;
 import org.assertj.core.api.Assertions;
@@ -14,10 +14,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static dnt.parkrun.datastructures.Country.*;
+import static dnt.parkrun.datastructures.Course.Status.RUNNING;
+
 @RunWith(Parameterized.class)
 public class ParserTest
 {
-    private Course cornwall = new Course(27, "Cornwall", Country.NZ, "Cornwall", Course.Status.RUNNING);
+    private Course cornwall = new Course(27, "Cornwall", NZ, "Cornwall", RUNNING);
 
     @Parameterized.Parameter(0)
     public String resource;
@@ -46,8 +49,19 @@ public class ParserTest
 
     private void parseResource(URL resource)
     {
+        CourseRepository courseRepository = new CourseRepository();
+        courseRepository.addCourse(new Course(1, "colermountainbikepreserve", USA, "", RUNNING));
+        courseRepository.addCourse(new Course(2, "bushy", UK, "", RUNNING));
+        courseRepository.addCourse(new Course(3, "sunriseonsea", SOUTH_AFRICA, "", RUNNING));
+        courseRepository.addCourse(new Course(4, "cornwall", NZ, "", RUNNING));
+        courseRepository.addCourse(new Course(5, "blenheim", NZ, "", RUNNING));
+        courseRepository.addCourse(new Course(6, "dunedin", NZ, "", RUNNING));
+        courseRepository.addCourse(new Course(7, "hamiltonpark", NZ, "", RUNNING));
+        courseRepository.addCourse(new Course(8, "barrycurtis", NZ, "", RUNNING));
+        courseRepository.addCourse(new Course(9, "hamiltonlake", NZ, "", RUNNING));
+
         List<Result> results = new ArrayList<>();
-        Parser parser = new Parser.Builder(cornwall)
+        Parser parser = new Parser.Builder(courseRepository)
                 .forEachAthlete(x -> System.out.println("Athlete: " + x))
                 .forEachResult(results::add)
                 .forEachVolunteer(x -> System.out.println("Volunteer: " + x))

@@ -3,11 +3,11 @@ package dnt.parkrun.stats.invariants.predownload.last;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.datastructures.Country;
 import dnt.parkrun.datastructures.Course;
+import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.Date;
 
 import static dnt.parkrun.common.DateConverter.ONE_DAY_IN_MILLIS;
@@ -15,7 +15,7 @@ import static dnt.parkrun.common.DateConverter.ONE_DAY_IN_MILLIS;
 public class AreLastResultsInFromCanadaTest
 {
     @Test
-    public void areLastResultsIn() throws IOException
+    public void areLastResultsIn()
     {
         SoftAssertions softly = new SoftAssertions();
         softly.assertThat(areResultsIn(new Course(12345, "shawniganhills", Country.CANADA, "shawniganhills", Course.Status.RUNNING)))
@@ -31,8 +31,11 @@ public class AreLastResultsInFromCanadaTest
     }
     public boolean areResultsIn(Course course)
     {
+        CourseRepository courseRepository = new CourseRepository();
+        courseRepository.addCourse(course);
+
         UrlGenerator urlGenerator = new UrlGenerator(Country.CANADA.baseUrl);
-        dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(course)
+        dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(courseRepository)
                 .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseLatestResultsUrl(course.name)))
                 .build();
         parser.parse();

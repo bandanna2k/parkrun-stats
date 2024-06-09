@@ -68,7 +68,7 @@ public class BackfillResults
 
             int courseId = Integer.parseInt(courseIdAndDate.substring(0, courseIdAndDate.indexOf('-')));
             Course backfillCourse = courseRepository.getCourse(courseId);
-            Parser parser = new Parser.Builder(backfillCourse)
+            Parser parser = new Parser.Builder(courseRepository)
                     .webpageProvider(new WebpageProviderImpl(
                             urlGenerator.generateCourseEventUrl(backfillCourse.name, eventNumber)))
                     .forEachResult(result -> updateResult(resultDao, result))
@@ -127,7 +127,7 @@ public class BackfillResults
 
                 if (backfillCourse.name.equals("pegasus") && ces.eventNumber < 167) continue;
 
-                Parser parser = new Parser.Builder(ces.course)
+                Parser parser = new Parser.Builder(courseRepository)
                         .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(backfillCourse.name, ces.eventNumber)))
                         .forEachResult(r -> updateResult(resultDao, r))
                         .build();

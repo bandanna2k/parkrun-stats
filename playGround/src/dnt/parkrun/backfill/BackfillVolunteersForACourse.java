@@ -53,7 +53,7 @@ public class BackfillVolunteersForACourse
         for (CourseEventSummary ces : courseEventSummaries)
         {
             System.out.printf("Downloading %d of %d ", counter++, size);
-            Parser parser = new Parser.Builder(ces.course)
+            Parser parser = new Parser.Builder(courseRepository)
                     .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(backfillCourse.name, ces.eventNumber)))
                     .forEachVolunteer(v ->
                     {

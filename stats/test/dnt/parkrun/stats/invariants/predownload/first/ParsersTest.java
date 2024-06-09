@@ -43,9 +43,12 @@ public class ParsersTest
     @Test
     public void testCourseEventParser()
     {
+        CourseRepository courseRepository = new CourseRepository();
+        courseRepository.addCourse(LOWER_HUTT);
+
         List<Volunteer> listOfVolunteers = new ArrayList<>();
         List<Athlete> listOfAthletes = new ArrayList<>();
-        dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(LOWER_HUTT)
+        dnt.parkrun.courseevent.Parser parser = new dnt.parkrun.courseevent.Parser.Builder(courseRepository)
                 .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(LOWER_HUTT.name, 1)))
                 .forEachAthlete(listOfAthletes::add)
                 .forEachVolunteer(listOfVolunteers::add)

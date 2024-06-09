@@ -21,6 +21,17 @@ public class Course
         this.status = status;
     }
 
+    /*
+        https://www.parkrun.us/colermountainbikepreserve/parkrunner/9265263
+     */
+    public static String extractCourseNameFromAthleteAtCourseLink(String href)
+    {
+        String chopOffProtocol = href.substring(href.indexOf("//") + 2);
+        String chopOffParkrunUrl = chopOffProtocol.substring(chopOffProtocol.indexOf("/") + 1);
+        String chopEndsOff = chopOffParkrunUrl.substring(0, chopOffParkrunUrl.indexOf("/"));
+        return chopEndsOff;
+    }
+
     @Override
     public boolean equals(Object o)
     {

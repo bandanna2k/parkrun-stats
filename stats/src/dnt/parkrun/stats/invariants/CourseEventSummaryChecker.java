@@ -203,7 +203,7 @@ public class CourseEventSummaryChecker
     protected List<Result> getResultsFromWeb(CourseEventSummary ces)
     {
         List<Result> results = new ArrayList<>();
-        Parser parser = new Parser.Builder(ces.course)
+        Parser parser = new Parser.Builder(courseRepository)
                 .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(ces.course.name, ces.eventNumber)))
                 .forEachResult(results::add)
                 .build();
