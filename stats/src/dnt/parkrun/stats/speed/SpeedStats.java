@@ -43,10 +43,13 @@ public class SpeedStats
 //        Country country = Country.valueOf(args[0]);
         Database database = new LiveDatabase(NZ, getDataSourceUrl(), "stats", "4b0e7ff1");
         SpeedStats stats = SpeedStats.newInstance(database);
-        Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord =
-                stats.collectCourseToAgeGroupToAgeGradeRecord();
+
+        Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord = new HashMap<>();
+        Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToTimeRecord = new HashMap<>();
+        stats.collectCourseToAgeGroupStats(courseToAgeGroupToAgeGradeRecord, courseToAgeGroupToTimeRecord);
+
         {
-            File file = stats.generateFastTimeStats(courseToAgeGroupToAgeGradeRecord);
+            File file = stats.generateFastTimeStats(courseToAgeGroupToAgeGradeRecord, courseToAgeGroupToTimeRecord);
             File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
 
             findAndReplace(file, modified, fileReplacements());
@@ -87,26 +90,32 @@ public class SpeedStats
         return new SpeedStats(database);
     }
 
-    public Map<Integer, Map<AgeCategory, AgeCategoryRecord>> collectCourseToAgeGroupToAgeGradeRecord()
+    public void collectCourseToAgeGroupStats(
+            Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord,
+            Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToTimeRecord)
     {
-        Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord = new HashMap<>();
-        resultDao.tableScanResultAndEventNumber((result, eventNumber) -> {
-            //if(result.courseId == 40 && result.ageCategory == AgeCategory.SW30_34)
-            //if(result.courseId == 2)
+        resultDao.tableScan((result) -> {
             {
                 Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGradeRecord = courseToAgeGroupToAgeGradeRecord
                         .computeIfAbsent(result.courseId, courseId -> new HashMap<>());
                 AgeCategoryRecord ageCategoryRecord = ageGroupToAgeGradeRecord.computeIfAbsent(result.ageCategory, ageGroup -> new AgeCategoryRecord());
-                ageCategoryRecord.maybeAddByAgeGrade(new StatsRecord().result(result).eventNumber(eventNumber));
+                ageCategoryRecord.maybeAddByAgeGrade(new StatsRecord().result(result).eventNumber(result.eventNumber));
+            }
+            {
+                Map<AgeCategory, AgeCategoryRecord> ageGroupToTimeRecord = courseToAgeGroupToTimeRecord
+                        .computeIfAbsent(result.courseId, courseId -> new HashMap<>());
+                AgeCategoryRecord ageCategoryRecord = ageGroupToTimeRecord.computeIfAbsent(result.ageCategory, ageGroup -> new AgeCategoryRecord());
+                ageCategoryRecord.maybeAddByTime(new StatsRecord().result(result).eventNumber(result.eventNumber));
             }
             if(result.date.getTime() > mostRecentDate.getTime())
                 mostRecentDate = new Date(result.date.getTime());
         });
         System.out.println(mostRecentDate);
-        return courseToAgeGroupToAgeGradeRecord;
     }
 
-    public File generateFastTimeStats(Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord) throws IOException, XMLStreamException
+    public File generateFastTimeStats(
+            Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord,
+            Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToTimeRecord) throws IOException, XMLStreamException
     {
         try (HtmlWriter writer = HtmlWriter.newInstance(mostRecentDate, COUNTRY, "stats_for_speed"))
         {
@@ -117,7 +126,7 @@ public class SpeedStats
             writer.writer.writeCharacters(new SimpleDateFormat("yyyy MMM dd HH:mm").format(new Date()));
             writer.writer.writeEndElement();
 
-            writeAgeCategoryRecords(writer, courseToAgeGroupToAgeGradeRecord);
+            writeAgeCategoryTimeRecords(writer, courseToAgeGroupToTimeRecord);
 
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
@@ -127,21 +136,21 @@ public class SpeedStats
         }
     }
 
-    private void writeAgeCategoryRecords(HtmlWriter writer,
-                                         Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord) throws XMLStreamException
+    private void writeAgeCategoryTimeRecords(HtmlWriter writer,
+                                             Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToTimeRecord) throws XMLStreamException
     {
         try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter.Builder(
                 writer.writer, "Age Category Records (Time)").build())
         {
             List<Course> sortedCourses = new ArrayList<>();
-            courseToAgeGroupToAgeGradeRecord.keySet().forEach(courseId -> {
+            courseToAgeGroupToTimeRecord.keySet().forEach(courseId -> {
                 sortedCourses.add(courseRepository.getCourse(courseId));
             });
             sortedCourses.sort(Comparator.comparing(s -> s.name));
 
             for (Course course : sortedCourses)
             {
-                Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGroupRecord = courseToAgeGroupToAgeGradeRecord.get(course.courseId);
+                Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGroupRecord = courseToAgeGroupToTimeRecord.get(course.courseId);
 
                 try(CollapsableTitleHtmlWriter collapse2 = new CollapsableTitleHtmlWriter.Builder(
 //                        writer.writer, YEAR + " - " + course.longName).level(2).fontSizePercent(95.0).build())

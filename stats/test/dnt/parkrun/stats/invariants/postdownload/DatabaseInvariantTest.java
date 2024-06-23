@@ -5,7 +5,6 @@ import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.AthleteDao;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.datastructures.Athlete;
-import dnt.parkrun.datastructures.Course;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.stats.invariants.AbstractDatabaseInvariantTest;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
@@ -111,18 +110,18 @@ public class DatabaseInvariantTest extends AbstractDatabaseInvariantTest
         {
             query.forEach(fields -> {
                 int courseId = (int) fields[0];
-                Course course = courseRepository.getCourse(courseId);
 
                 Date date = (Date) fields[1];
                 int resultCount = (int) fields[2];
 
-                Integer eventNumber = jdbc.queryForObject("select event_number from course_event_summary where course_id = :courseId and date = :date",
+                Integer eventNumber = jdbc.queryForObject(
+                        "select event_number from parkrun_stats_NZ.course_event_summary where course_id = :courseId and date = :date",
                         new MapSqlParameterSource()
                                 .addValue("courseId", courseId)
                                 .addValue("date", date),
                         Integer.class);
 
-                softly.fail(String.format("Course: %s, Date %s, Event number %s, Result Count: %s", course.name, date, eventNumber, resultCount));
+                softly.fail(String.format("Course: %s, Date %s, Event number %s, Result Count: %s", courseId, date, eventNumber, resultCount));
             });
             softly.assertAll();
         }

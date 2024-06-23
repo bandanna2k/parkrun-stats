@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -148,10 +149,12 @@ public class Menu
             Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
             SpeedStats stats = SpeedStats.newInstance(database);
 
-            Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord =
-                    stats.collectCourseToAgeGroupToAgeGradeRecord();
+            Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord = new HashMap<>();
+            Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToTimeRecord = new HashMap<>();
 
-            File file = stats.generateFastTimeStats(courseToAgeGroupToAgeGradeRecord);
+            stats.collectCourseToAgeGroupStats(courseToAgeGroupToAgeGradeRecord, courseToAgeGroupToTimeRecord);
+
+            File file = stats.generateFastTimeStats(courseToAgeGroupToAgeGradeRecord, courseToAgeGroupToTimeRecord);
             File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
             findAndReplace(file, modified, SpeedStats.fileReplacements());
 

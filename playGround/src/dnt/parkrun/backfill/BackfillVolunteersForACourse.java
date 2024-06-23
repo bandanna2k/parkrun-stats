@@ -9,7 +9,6 @@ import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
@@ -26,11 +25,11 @@ public class BackfillVolunteersForACourse
         this.urlGenerator = new UrlGenerator(country.baseUrl);
     }
 
-    public static void main(String[] args) throws SQLException
+    public static void main(String[] args)
     {
         new BackfillVolunteersForACourse(Country.valueOf(args[0])).backfill();
     }
-    public void backfill() throws SQLException
+    public void backfill()
     {
         assert country.countryCode == 65;
         Course backfillCourse = new Course(44, "porirua", country, "Porirua parkrun", Course.Status.STOPPED);
