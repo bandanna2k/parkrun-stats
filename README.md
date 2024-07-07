@@ -22,6 +22,10 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+Volunteer miscount
+- Add volunteer count to CES
+- Populate volunteer count with current volunteer event history.
+
 page 1
 Random question from seed.
 Calc answer

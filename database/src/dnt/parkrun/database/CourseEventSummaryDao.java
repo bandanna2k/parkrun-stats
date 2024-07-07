@@ -22,7 +22,7 @@ public class CourseEventSummaryDao extends BaseDao
         Course course = courseRepository.getCourse(courseId);
         assert course != null : "Could not find course. " + courseId;
         String sql = STR."""
-                select course_id, event_number, date, finishers,
+                select course_id, event_number, date, finishers, volunteers,
                     fma.name as first_male_name, first_male_athlete_id,
                     ffa.name as first_female_name, first_female_athlete_id
                 from \{courseEventSummaryTable()}
@@ -43,7 +43,7 @@ public class CourseEventSummaryDao extends BaseDao
                     rs.getInt("event_number"),
                     rs.getDate("date"),
                     rs.getInt("finishers"),
-                    -1, // TODO CES Volunteers
+                    rs.getInt("volunteers"),
                     firstMale,
                     firstFemale
             );
@@ -58,7 +58,7 @@ public class CourseEventSummaryDao extends BaseDao
     public List<CourseEventSummary> getCourseEventSummaries()
     {
         String sql = STR."""
-                select course_id, event_number, date, finishers,
+                select course_id, event_number, date, finishers, volunteers,
                     fma.name as first_male_name, first_male_athlete_id,
                     ffa.name as first_female_name, first_female_athlete_id
                 from \{courseEventSummaryTable()}
@@ -83,7 +83,7 @@ public class CourseEventSummaryDao extends BaseDao
                     rs.getInt("event_number"),
                     rs.getDate("date"),
                     rs.getInt("finishers"),
-                    -1, // TODO CES Volunteers
+                    rs.getInt("volunteers"),
                     firstMale,
                     firstFemale
             );
@@ -94,15 +94,16 @@ public class CourseEventSummaryDao extends BaseDao
     {
         String sql = STR."""
                 insert into \{courseEventSummaryTable()}
-                (course_id, event_number, date, finishers, first_male_athlete_id, first_female_athlete_id)
+                (course_id, event_number, date, finishers, volunteers, first_male_athlete_id, first_female_athlete_id)
                 values
-                (:courseId, :eventNumber, :date, :finishers, :firstMaleAthleteId, :firstFemaleAthleteId)
+                (:courseId, :eventNumber, :date, :finishers, :volunteers, :firstMaleAthleteId, :firstFemaleAthleteId)
                 """;
         jdbc.update(sql, new MapSqlParameterSource()
                 .addValue("courseId", courseEventSummary.course.courseId)
                 .addValue("eventNumber", courseEventSummary.eventNumber)
                 .addValue("date", courseEventSummary.date)
                 .addValue("finishers", courseEventSummary.finishers)
+                .addValue("volunteers", courseEventSummary.volunteers)
                 .addValue("firstMaleAthleteId", courseEventSummary.firstMale.map(a -> a.athleteId).orElse(Athlete.NO_ATHLETE_ID))
                 .addValue("firstFemaleAthleteId", courseEventSummary.firstFemale.map(a -> a.athleteId).orElse(Athlete.NO_ATHLETE_ID))
         );

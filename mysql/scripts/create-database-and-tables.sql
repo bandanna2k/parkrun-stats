@@ -75,6 +75,7 @@ course_event_summary (
     date                    DATE                NOT NULL,
     event_number            INT                 NOT NULL,
     finishers               INT                 NOT NULL,
+    volunteers              INT                 NOT NULL,
     first_male_athlete_id   BIGINT              NOT NULL,
     first_female_athlete_id BIGINT              NOT NULL,
 
