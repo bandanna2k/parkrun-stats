@@ -36,8 +36,8 @@ public class AreLatestRegionResultsInTest
     public static Object[] data()
     {
         final Country country = NZ;
-        String needsToGetCoursesFromDatabase = "sudo";
-        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1", needsToGetCoursesFromDatabase);
+//        String needsToGetCoursesFromDatabase = "sudo";
+        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
 
         CourseRepository courseRepository = new CourseRepository();
         CourseDao courseDao = new CourseDao(database, courseRepository);
