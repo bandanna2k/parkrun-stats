@@ -41,6 +41,7 @@ public class CourseEventSummaryDao extends BaseDao
                     rs.getInt("event_number"),
                     rs.getDate("date"),
                     rs.getInt("finishers"),
+                    -1, // TODO CES Volunteers
                     firstMale,
                     firstFemale
             );
@@ -75,6 +76,7 @@ public class CourseEventSummaryDao extends BaseDao
                     rs.getInt("event_number"),
                     rs.getDate("date"),
                     rs.getInt("finishers"),
+                    -1, // TODO CES Volunteers
                     firstMale,
                     firstFemale
             );

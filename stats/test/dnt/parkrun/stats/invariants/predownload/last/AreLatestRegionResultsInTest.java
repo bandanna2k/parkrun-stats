@@ -12,6 +12,7 @@ import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -23,8 +24,6 @@ import java.util.List;
 
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 public class AreLatestRegionResultsInTest
@@ -50,6 +49,7 @@ public class AreLatestRegionResultsInTest
     @Test
     public void howManyResultsAreInTest()
     {
+        SoftAssertions softly = new SoftAssertions();
         UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
 
         List<CourseEventSummary> courseEventSummaries = new ArrayList<>();
@@ -67,11 +67,13 @@ public class AreLatestRegionResultsInTest
         else
         {
             CourseEventSummary ces = courseEventSummaries.getFirst();
-            assertTrue(ces.finishers > 0);
-            assertThat(ces.date).isAfter(Date.from(Instant.now().minusSeconds(60 * 60 * 24 * 5)));
-            assertThat(ces.firstMale).isNotEmpty();
-            assertThat(ces.firstFemale).isNotEmpty();
+            softly.assertThat(ces.finishers).isGreaterThan(0);
+            softly.assertThat(ces.volunteers).isGreaterThan(0);
+            softly.assertThat(ces.date).isAfter(Date.from(Instant.now().minusSeconds(60 * 60 * 24 * 5)));
+            softly.assertThat(ces.firstMale).isNotEmpty();
+            softly.assertThat(ces.firstFemale).isNotEmpty();
             System.out.println(ces.finishers + "\t" + DateConverter.formatDateForHtml(ces.date) + "\t" + ces.course.longName);
+            softly.assertAll();
         }
     }
 }

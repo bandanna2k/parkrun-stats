@@ -44,7 +44,7 @@ public class CourseEventSummaryDaoTest extends BaseDaoTest
 
         Course course = courseDao.insert(new Course(Course.NO_COURSE_ID, "cornwall", NZ, null, Status.RUNNING));
         CourseEventSummary ces = new CourseEventSummary(
-                course, 1, Date.from(Instant.now()), 1234, Optional.of(firstMan), Optional.of(firstWoman));
+                course, 1, Date.from(Instant.now()), 1234, 33, Optional.of(firstMan), Optional.of(firstWoman));
         dao.insert(ces);
         System.out.println(ces);
         assertThat(dao.getCourseEventSummaries()).isNotEmpty();
@@ -61,7 +61,7 @@ public class CourseEventSummaryDaoTest extends BaseDaoTest
         Course course = courseDao.insert(new Course(Course.NO_COURSE_ID, "cornwall", NZ, null, Status.RUNNING));
 
         CourseEventSummary ces = new CourseEventSummary(
-                course, 1, DateConverter.parseWebsiteDate("25/12/2023"), 1234, Optional.of(firstMan), Optional.of(firstWoman));
+                course, 1, DateConverter.parseWebsiteDate("25/12/2023"), 1234, 33, Optional.of(firstMan), Optional.of(firstWoman));
         dao.insert(ces);
 
         List<CourseDate> courseStartDates = dao.getCourseStartDates();

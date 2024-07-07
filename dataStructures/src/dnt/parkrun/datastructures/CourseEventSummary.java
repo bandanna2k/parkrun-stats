@@ -10,6 +10,7 @@ public class CourseEventSummary
     public final int eventNumber;
     public final Date date;
     public final int finishers;
+    public final int volunteers;
     public final Optional<Athlete> firstMale;
     public final Optional<Athlete> firstFemale;
 
@@ -17,6 +18,7 @@ public class CourseEventSummary
                               int eventNumber,
                               Date date,
                               int finishers,
+                              int volunteers,
                               Optional<Athlete> firstMale,
                               Optional<Athlete> firstFemale)
     {
@@ -26,6 +28,7 @@ public class CourseEventSummary
         this.date = date;
         this.firstMale = firstMale;
         this.firstFemale = firstFemale;
+        this.volunteers = volunteers;
     }
 
     @Override
@@ -57,6 +60,7 @@ public class CourseEventSummary
                 ", eventNumber=" + eventNumber +
                 ", date=" + date +
                 ", finishers=" + finishers +
+                ", volunteers=" + volunteers +
                 ", firstMale=" + firstMale +
                 ", firstFemale=" + firstFemale +
                 '}';

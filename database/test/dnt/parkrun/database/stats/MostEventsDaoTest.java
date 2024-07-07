@@ -66,7 +66,7 @@ public class MostEventsDaoTest extends BaseDaoTest
             Date date = Date.from(instant);
 
             courseEventSummaryDao.insert(
-                    new CourseEventSummary(course, 5, date, 2, Optional.of(boy), Optional.of(girl)));
+                    new CourseEventSummary(course, 5, date, 22, 5, Optional.of(boy), Optional.of(girl)));
             resultDao.insert(new Result(course.courseId, date, i,
                     1, girl, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89 + i)));
             resultDao.insert(new Result(course.courseId, date, i,

@@ -62,8 +62,8 @@ public class ResultDaoTest extends BaseDaoTest
 
         Course course1 = courseDao.insert(CORNWALL);
         Course course2 = courseDao.insert(ELLIÐAÁRDALUR);
-        courseEventSummaryDao.insert(new CourseEventSummary(course1, 2, EPOCH_PLUS_7, 234, Optional.of(johnDoe), Optional.of(janeDoe)));
-        courseEventSummaryDao.insert(new CourseEventSummary(course2, 3, EPOCH_PLUS_14, 234, Optional.of(johnDoe), Optional.of(janeDoe)));
+        courseEventSummaryDao.insert(new CourseEventSummary(course1, 2, EPOCH_PLUS_7, 234, 20, Optional.of(johnDoe), Optional.of(janeDoe)));
+        courseEventSummaryDao.insert(new CourseEventSummary(course2, 3, EPOCH_PLUS_14, 234, 20, Optional.of(johnDoe), Optional.of(janeDoe)));
 
         Result result = new Result(course1.courseId, EPOCH_PLUS_7, 2, 1, athlete, Time.from("1:30:02"), VW45_49, AgeGrade.newInstance(68.49));
         resultDao.insert(result);

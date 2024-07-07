@@ -56,7 +56,7 @@ public class AttendanceRecordsDaoTest extends BaseDaoTest
         resultDao.insert(new Result(course.courseId, date, 1, 2, firstWoman, Time.from("21:01"), SM20_24, newInstance("51.01%")));
 
         courseEventSummaryDao.insert(new CourseEventSummary(
-                course, 1, Date.from(Instant.EPOCH), 2, Optional.of(firstMan), Optional.of(firstWoman)));
+                course, 1, Date.from(Instant.EPOCH), 22, 2, Optional.of(firstMan), Optional.of(firstWoman)));
 
         AttendanceRecordsDao attendanceRecordsDao = AttendanceRecordsDao.getInstance(TEST_DATABASE, date);
         List<AttendanceRecord> attendanceRecords = attendanceRecordsDao.getAttendanceRecords(Date.from(Instant.EPOCH));
@@ -83,9 +83,9 @@ public class AttendanceRecordsDaoTest extends BaseDaoTest
             resultDao.insert(new Result(course.courseId, run2, 1, 2, firstWoman, Time.from("21:01"), SM20_24, newInstance("51.01%")));
         }
         courseEventSummaryDao.insert(new CourseEventSummary(
-                course, 1, run1, 2, Optional.of(firstMan), Optional.of(firstWoman)));
+                course, 1, run1, 22, 2, Optional.of(firstMan), Optional.of(firstWoman)));
         courseEventSummaryDao.insert(new CourseEventSummary(
-                course, 1, run2, 2, Optional.of(firstMan), Optional.of(firstWoman)));
+                course, 1, run2, 22, 2, Optional.of(firstMan), Optional.of(firstWoman)));
 
         AttendanceRecordsDao attendanceRecordsDao = AttendanceRecordsDao.getInstance(TEST_DATABASE, date);
         List<AttendanceRecord> attendanceRecords = attendanceRecordsDao.getAttendanceRecords(Date.from(Instant.EPOCH));

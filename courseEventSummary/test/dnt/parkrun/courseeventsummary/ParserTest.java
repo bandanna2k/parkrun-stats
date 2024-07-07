@@ -2,7 +2,6 @@ package dnt.parkrun.courseeventsummary;
 
 import dnt.parkrun.datastructures.CourseEventSummary;
 import dnt.parkrun.filewebpageprovider.FileWebpageProvider;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.io.File;
@@ -11,10 +10,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
+
 public class ParserTest
 {
     @Test
-    public void shouldParse() throws IOException
+    public void shouldParse()
     {
         List<CourseEventSummary> courseEventSummaries = new ArrayList<>();
         URL resource = this.getClass().getResource("/example.eventhistory.html");
@@ -23,11 +25,20 @@ public class ParserTest
                 .webpageProvider(new FileWebpageProvider(new File(resource.getFile())))
                 .build()
                 .parse();
-        Assertions.assertThat(courseEventSummaries).isNotEmpty();
+        assertCourseEventSummaries(courseEventSummaries);
+    }
+
+    private void assertCourseEventSummaries(List<CourseEventSummary> courseEventSummaries)
+    {
+        assertThat(courseEventSummaries).isNotEmpty();
+        courseEventSummaries.forEach(ces -> {
+            assertThat(ces.finishers).isGreaterThan(0);
+            assertTrue(ces.volunteers == 0 || ces.volunteers > 1);
+        });
     }
 
     @Test
-    public void shouldParseWithUnknownFirstAthlete() throws IOException
+    public void shouldParseWithUnknownFirstAthlete()
     {
         List<CourseEventSummary> courseEventSummaries = new ArrayList<>();
         URL resource = this.getClass().getResource("/example.eventhistory.with.nulls.html");
@@ -36,7 +47,7 @@ public class ParserTest
                 .webpageProvider(new FileWebpageProvider(new File(resource.getFile())))
                 .build()
                 .parse();
-        Assertions.assertThat(courseEventSummaries).isNotEmpty();
+        assertCourseEventSummaries(courseEventSummaries);
     }
 
     @Test
@@ -49,6 +60,6 @@ public class ParserTest
                 .webpageProvider(new FileWebpageProvider(new File(resource.getFile())))
                 .build()
                 .parse();
-        Assertions.assertThat(courseEventSummaries).isNotEmpty();
+        assertCourseEventSummaries(courseEventSummaries);
     }
 }

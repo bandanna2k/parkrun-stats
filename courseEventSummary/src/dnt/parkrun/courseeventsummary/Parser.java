@@ -54,6 +54,10 @@ public class Parser
 //                System.out.print(date);
 //                System.out.print("\t");
 
+                String volunteers = getValueFromNode(row.childNode(3));
+//                System.out.print(date);
+//                System.out.print("\t");
+
                 Athlete maleFirstFinisher = null;
                 try
                 {
@@ -109,11 +113,21 @@ public class Parser
                         Integer.parseInt(eventNumber.toString()),
                         date,
                         Integer.parseInt(finishers),
+                        getVolunteers(volunteers),
                         Optional.ofNullable(maleFirstFinisher),
                         Optional.ofNullable(femaleFirstFinisher));
                 consumer.accept(eventSummary);
             }
         }
+    }
+
+    private static int getVolunteers(String volunteers)
+    {
+        if(volunteers.contains("Unknown"))
+        {
+            return 0;
+        }
+        return Integer.parseInt(volunteers);
     }
 
     private static String getValueFromNode(Node node)

@@ -43,7 +43,7 @@ public class CourseEventSummaryInvariantTest extends BaseDaoTest
         boy = athleteDao.insert(Athlete.from("Albert LYING", 10002));
 
         courseEventSummaryDao.insert(
-                new CourseEventSummary(course, 5, date, 2, Optional.of(boy), Optional.of(girl)));
+                new CourseEventSummary(course, 5, date, 22, 2, Optional.of(boy), Optional.of(girl)));
         resultDao.insert(new Result(course.courseId, date, 1,
                 1, girl, Time.from("22:22"), SM25_29, AgeGrade.newInstance(67.89)));
         resultDao.insert(new Result(course.courseId, date, 1,
