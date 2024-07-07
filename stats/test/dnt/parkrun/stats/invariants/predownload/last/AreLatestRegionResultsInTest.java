@@ -4,6 +4,7 @@ import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.database.CourseDao;
+import dnt.parkrun.database.CourseEventSummaryDao;
 import dnt.parkrun.database.Database;
 import dnt.parkrun.database.LiveDatabase;
 import dnt.parkrun.datastructures.Country;
@@ -18,9 +19,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
@@ -28,19 +27,19 @@ import static dnt.parkrun.datastructures.Country.NZ;
 @RunWith(Parameterized.class)
 public class AreLatestRegionResultsInTest
 {
+    private static final Country country = NZ;
+    private static final Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
+    private static final CourseRepository courseRepository = new CourseRepository();;
+    private static final CourseDao courseDao = new CourseDao(database, courseRepository);
+    private static final CourseEventSummaryDao courseEventSummaryDao = new CourseEventSummaryDao(database, courseRepository);
+
     @Parameterized.Parameter(0)
     public Course course;
+    private final Map<Integer, CourseEventSummary> eventNumberToCourseEventSummary = new HashMap<>();
 
     @Parameterized.Parameters(name = "{0}")
     public static Object[] data()
     {
-        final Country country = NZ;
-//        String needsToGetCoursesFromDatabase = "sudo";
-        Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
-
-        CourseRepository courseRepository = new CourseRepository();
-        CourseDao courseDao = new CourseDao(database, courseRepository);
-
         return courseDao.getCourses(country).stream()
                 .filter(c -> c.status == Course.Status.RUNNING)
                 .toArray();
@@ -55,7 +54,11 @@ public class AreLatestRegionResultsInTest
         List<CourseEventSummary> courseEventSummaries = new ArrayList<>();
         Parser parser = new Parser.Builder()
                 .course(course)
-                .forEachCourseEvent(courseEventSummaries::add)
+                .forEachCourseEvent(e ->
+                {
+                    eventNumberToCourseEventSummary.put(e.eventNumber, e);
+                    courseEventSummaries.add(e);
+                })
                 .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventSummaryUrl(course.name)))
                 .build();
         parser.parse();
@@ -66,13 +69,21 @@ public class AreLatestRegionResultsInTest
         }
         else
         {
-            CourseEventSummary ces = courseEventSummaries.getFirst();
-            softly.assertThat(ces.finishers).isGreaterThan(0);
-            softly.assertThat(ces.volunteers).isGreaterThan(0);
-            softly.assertThat(ces.date).isAfter(Date.from(Instant.now().minusSeconds(60 * 60 * 24 * 5)));
-            softly.assertThat(ces.firstMale).isNotEmpty();
-            softly.assertThat(ces.firstFemale).isNotEmpty();
-            System.out.println(ces.finishers + "\t" + DateConverter.formatDateForHtml(ces.date) + "\t" + ces.course.longName);
+            CourseEventSummary ces1 = courseEventSummaries.getFirst();
+            System.out.println(ces1.finishers + "\t" + DateConverter.formatDateForHtml(ces1.date) + "\t" + ces1.course.longName);
+            softly.assertThat(ces1.finishers).isGreaterThan(0);
+            softly.assertThat(ces1.volunteers).isGreaterThan(0);
+            softly.assertThat(ces1.date).isAfter(Date.from(Instant.now().minusSeconds(60 * 60 * 24 * 5)));
+            softly.assertThat(ces1.firstMale).isNotEmpty();
+            softly.assertThat(ces1.firstFemale).isNotEmpty();
+
+            List<CourseEventSummary> databaseCourseEventSummaries = courseEventSummaryDao.getCourseEventSummaries(course.courseId);
+            databaseCourseEventSummaries.forEach(dces -> {
+                int eventNumber = dces.eventNumber;
+               CourseEventSummary liveCes =  eventNumberToCourseEventSummary.get(eventNumber);
+                softly.assertThat(liveCes.finishers).isEqualTo(dces.finishers);
+                softly.assertThat(liveCes.volunteers).isEqualTo(dces.volunteers);
+            });
             softly.assertAll();
         }
     }

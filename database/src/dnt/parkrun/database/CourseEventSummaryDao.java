@@ -17,8 +17,10 @@ public class CourseEventSummaryDao extends BaseDao
         this.courseRepository = courseRepository;
     }
 
-    public List<CourseEventSummary> getCourseEventSummaries(Course course)
+    public List<CourseEventSummary> getCourseEventSummaries(int courseId)
     {
+        Course course = courseRepository.getCourse(courseId);
+        assert course != null : "Could not find course. " + courseId;
         String sql = STR."""
                 select course_id, event_number, date, finishers,
                     fma.name as first_male_name, first_male_athlete_id,
@@ -46,6 +48,11 @@ public class CourseEventSummaryDao extends BaseDao
                     firstFemale
             );
         });
+    }
+
+    public List<CourseEventSummary> getCourseEventSummaries(Course course)
+    {
+        return getCourseEventSummaries(course.courseId);
     }
 
     public List<CourseEventSummary> getCourseEventSummaries()
