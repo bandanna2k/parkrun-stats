@@ -79,10 +79,11 @@ public class AreLatestRegionResultsInTest
 
             List<CourseEventSummary> databaseCourseEventSummaries = courseEventSummaryDao.getCourseEventSummaries(course.courseId);
             databaseCourseEventSummaries.forEach(dces -> {
+                String error = String.format("'%s%d'", dces.course.name, dces.eventNumber);
                 int eventNumber = dces.eventNumber;
-               CourseEventSummary liveCes =  eventNumberToCourseEventSummary.get(eventNumber);
-                softly.assertThat(liveCes.finishers).isEqualTo(dces.finishers);
-                softly.assertThat(liveCes.volunteers).isEqualTo(dces.volunteers);
+                CourseEventSummary liveCes =  eventNumberToCourseEventSummary.get(eventNumber);
+                softly.assertThat(liveCes.finishers).describedAs(error + "(Finishers)").isEqualTo(dces.finishers);
+                softly.assertThat(liveCes.volunteers).describedAs(error + "(Volunteers)").isEqualTo(dces.volunteers);
             });
             softly.assertAll();
         }
