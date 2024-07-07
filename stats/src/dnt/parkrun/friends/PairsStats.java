@@ -38,7 +38,7 @@ public class PairsStats
         Database database = new LiveDatabase(NZ, getDataSourceUrl(), "stats", "4b0e7ff1");
 
         PairsStats pairsStats = new PairsStats(database);
-        /*
+        //*
         File file = pairsStats.generateStats(
                 1340853, // Jonathan
                 293223, // Julie GORDON
@@ -54,6 +54,8 @@ public class PairsStats
 //                116049, // Richard NORTH
                 414811, // David NORTH
                 547976, // Allan JANES
+                547065, // SJS
+                403732, // Frank
                 4072508 // Zoe NORTH
         );
         /*/

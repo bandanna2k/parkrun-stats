@@ -107,29 +107,48 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$athleteSet = new \Ds\Set();
-
-$query = 'SELECT fc.*
+$query = "SELECT fc.*
           FROM friend_session fs
           LEFT JOIN friend_counts fc USING (friend_session_id)
           WHERE fs.athlete_id = 414811
-          ORDER BY fc.athlete_id1, fc.athlete_id2;'
+          ORDER BY fc.athlete_id1, fc.athlete_id2;";
 
+$athleteIdToFriendToCount = array();
+// $athleteIdToFriendToCount->put("x", "Tutorials");
+// $athleteIdToFriendToCount->put("y", "Point");
+// $athleteIdToFriendToCount->put("z", "India");
+//
 $result = $conn->query($query);
-while ($row = $result->fetch_assoc()) {
-
+while ($row = $result->fetch_assoc())
+{
     $athleteId1 = $row['athlete_id1'];
     $athleteId2 = $row['athlete_id2'];
+    $count = $row['count'];
 
-    $athleteSet.add();
+    if(array_key_exists($athleteId1, $athleteIdToFriendToCount))
+    {
+        $friendToCount = $athleteIdToFriendToCount[$athleteId1];
+    }
+    else
+    {
+        $friendToCount = array();
+    }
+
+    $friendToCount[$athleteId2] = $count;
+    $athleteIdToFriendToCount[$athleteId1] = $friendToCount;
 }
 
-while ($row = $result->fetch_assoc()) {
+foreach(array_keys($athleteIdToFriendToCount) as $athleteId1)
+{
+    echo "<p>Athlete ID: " . $athleteId1 . " -> ";
+    $friendToCount = $athleteIdToFriendToCount[$athleteId1];
 
-    $athleteId1 = $row['athlete_id1'];
-    $athleteId2 = $row['athlete_id2'];
-
-    $athleteSet.add();
+    foreach(array_keys($friendToCount) as $athleteId2)
+    {
+        $count = $friendToCount[$athleteId2];
+        echo $athleteId2 . "(" . $count . ")";
+    }
+    echo "</p>";
 }
 
 ?>
