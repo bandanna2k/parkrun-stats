@@ -25,7 +25,7 @@ import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Country.NZ;
 
 @RunWith(Parameterized.class)
-public class AreLatestRegionResultsInTest
+public class LatestResultsAndEventHistoryTest
 {
     private static final Country country = NZ;
     private static final Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
