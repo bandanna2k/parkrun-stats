@@ -35,6 +35,7 @@ public class LatestResultsAndEventHistoryTest
 
     @Parameterized.Parameter(0)
     public Course course;
+
     private final Map<Integer, CourseEventSummary> eventNumberToCourseEventSummary = new HashMap<>();
 
     @Parameterized.Parameters(name = "{0}")

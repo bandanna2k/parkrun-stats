@@ -61,25 +61,12 @@ public class RewriteEvent
                     .build();
             parser.parse();
         }
+
         assert maybeCourseEventSummary.get() != null;
         CourseEventSummary newCourseEventSummary = maybeCourseEventSummary.get();
-
-        {
-            System.out.printf("INFO Fixing results for course: %s, date: %s, event number: %d %n",
-                    course.name, newCourseEventSummary.date, eventNumber);
-
-            System.out.print("WARNING Deleting results ... ");
-            resultDao.delete(course.courseId, newCourseEventSummary.date);
-            System.out.printf("Done%n");
-
-            System.out.print("WARNING Deleting volunteers ... ");
-            volunteerDao.delete(course.courseId, newCourseEventSummary.date);
-            System.out.printf("Done%n");
-
-            System.out.print("WARNING Deleting course event summary ... ");
-            courseEventSummaryDao.delete(course.courseId, newCourseEventSummary.date);
-            System.out.printf("Done%n");
-        }
+        System.out.printf("INFO Fixing results for course: %s, date: %s, event number: %d %n",
+                course.name, newCourseEventSummary.date, eventNumber);
+        System.out.printf("INFO Course Event Summary %s%n", newCourseEventSummary);
 
         List<Result> newResults = new ArrayList<>();
         List<Athlete> newAthletes = new ArrayList<>();
@@ -93,22 +80,35 @@ public class RewriteEvent
                     .build();
             parser.parse();
         }
+        {
+            System.out.print("WARNING Deleting results ... ");
+            resultDao.delete(course.courseId, newCourseEventSummary.date);
+            System.out.printf("Done%n");
 
-        System.out.print("INFO Re-entering course event summary ... ");
-        courseEventSummaryDao.insert(maybeCourseEventSummary.get());
-        System.out.printf("Done%n");
+            System.out.print("WARNING Deleting volunteers ... ");
+            volunteerDao.delete(course.courseId, newCourseEventSummary.date);
+            System.out.printf("Done%n");
 
-        System.out.print("INFO Re-entering athletes ... ");
-        athleteDao.insert(newAthletes);
-        System.out.printf("Done%n");
+            System.out.print("WARNING Deleting course event summary ... ");
+            courseEventSummaryDao.delete(course.courseId, newCourseEventSummary.date);
+            System.out.printf("Done%n");
+        }
+        {
+            System.out.print("INFO Re-entering course event summary ... ");
+            courseEventSummaryDao.insert(maybeCourseEventSummary.get());
+            System.out.printf("Done%n");
 
-        System.out.print("INFO Re-entering volunteers ... ");
-        volunteerDao.insert(newVolunteers);
-        System.out.printf("Done%n");
+            System.out.print("INFO Re-entering athletes ... ");
+            athleteDao.insert(newAthletes);
+            System.out.printf("Done%n");
 
-        System.out.print("INFO Re-entering results ... ");
-        resultDao.insert(newResults);
-        System.out.printf("Done%n");
+            System.out.print("INFO Re-entering volunteers ... ");
+            volunteerDao.insert(newVolunteers);
+            System.out.printf("Done%n");
 
+            System.out.print("INFO Re-entering results ... ");
+            resultDao.insert(newResults);
+            System.out.printf("Done%n");
+        }
     }
 }

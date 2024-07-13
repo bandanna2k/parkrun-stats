@@ -74,7 +74,7 @@ public class ProcessDownloadedHtmlFiles
         int eventNumber = parser.getEventNumber();
         assert eventNumber > 0 : "Event number not given";
         CourseEventSummary ces = new CourseEventSummary(
-                parser.getCourse(), eventNumber, parser.getDate(), results.size(), firstMale, firstFemale);
+                parser.getCourse(), eventNumber, parser.getDate(), results.size(), volunteers.size(), firstMale, firstFemale);
 //        courseEventSummaryDao.insert(ces);
 //        athleteDao.insert(runners);
 //        volunteerDao.insert(volunteers);
