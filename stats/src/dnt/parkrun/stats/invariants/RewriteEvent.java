@@ -26,9 +26,9 @@ public class RewriteEvent
         Database database = new LiveDatabase(Country.NZ, getDataSourceUrl(), "dao", "0b851094", "sudo");
 
         RewriteEvent rewriteEvent = new RewriteEvent(database);
-//        rewriteEvent.rewriteCourseEvent("blenheim", 368);
-//        rewriteEvent.rewriteCourseEvent("whakatanegardens", 91);
-//        rewriteEvent.rewriteCourseEvent("whakatanegardens", 92);
+//        rewriteEvent.rewriteCourseEvent("otakiriver", 76); // David 1st place
+        rewriteEvent.rewriteCourseEvent("greytownwoodsidetrail", 263);
+        rewriteEvent.rewriteCourseEvent("cambridgenz", 338);
     }
 
     public RewriteEvent(Database database)

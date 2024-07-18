@@ -22,6 +22,7 @@ import dnt.parkrun.stats.invariants.CourseEventSummaryChecker;
 import dnt.parkrun.stats.processors.AttendanceProcessor;
 import dnt.parkrun.stats.processors.AverageAttendanceProcessor;
 import dnt.parkrun.stats.processors.AverageTimeProcessor;
+import dnt.parkrun.stats.processors.InauguralEventsProcessor;
 import dnt.parkrun.stats.processors.mostevents.MostRunsAtCourseProcessor;
 import dnt.parkrun.stats.processors.mostevents.MostVolunteersAtCourseProcessor;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
@@ -140,11 +141,13 @@ public class MostEventStats
     private final AttendanceProcessor attendanceProcessor = new AttendanceProcessor();
     private final AverageTimeProcessor averageTimeProcessor = new AverageTimeProcessor();
     private final MostRunsAtCourseProcessor mostRunsAtCourseProcessor = new MostRunsAtCourseProcessor();
+    private final InauguralEventsProcessor inauguralEventsProcessor = new InauguralEventsProcessor();
     private final ResultDao.ResultProcessor[] processors = new ResultDao.ResultProcessor[] {
             mostRunsAtCourseProcessor,
             averageAttendanceProcessor,
             attendanceProcessor,
-            averageTimeProcessor
+            averageTimeProcessor,
+            inauguralEventsProcessor
     };
 
     private final MostVolunteersAtCourseProcessor mostVolunteersAtCourseProcessor = new MostVolunteersAtCourseProcessor();
@@ -548,13 +551,17 @@ public class MostEventStats
                             "[" + listOfFirstRuns.stream().map(fr -> String.valueOf(fr.course.courseId)).collect(Collectors.joining(",")) + "]," +
                             "[" + firstRunDatesHtmlString + "]" +
                             "]";
+
+                    final int inauguralCount = inauguralEventsProcessor.getInauguralCount(athlete.athleteId);
+
                     mostEventsRecord = new MostEventsRecord(athlete,
                             der.differentRegionCourseCount, der.totalRegionRuns,
                             globalCourseCount, globalTotalCourseCount,
                             der.positionDelta, der.isNewEntry,
                             firstRuns,
                             regionnaireCount,
-                            runsNeeded);
+                            runsNeeded,
+                            inauguralCount);
 
                     tableWriter.writeMostEventRecord(mostEventsRecord);
                 }

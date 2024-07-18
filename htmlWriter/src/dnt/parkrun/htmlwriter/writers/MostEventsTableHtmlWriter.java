@@ -77,6 +77,14 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 
         if(extended)
         {
+            // Inaugural runs
+            startElement("th", "class", "dt");
+            writer.writeCharacters("Inaugural Runs");
+            endElement("th");
+        }
+
+        if(extended)
+        {
             // Chart
             startElement("th", "class", "dt");
             endElement("th");
@@ -164,6 +172,15 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 
         if(extended)
         {
+            // Inaugural runs
+            startElement("td", "class", "dt");
+            writer.writeCharacters(String.valueOf(mostEventsRecord.inauguralRuns));
+            endElement("td");
+        }
+
+        if(extended)
+        {
+            // Charts
             startElement("td", "class", "dt");
             startElement("span", "class", "click-me",
                     "onclick",
