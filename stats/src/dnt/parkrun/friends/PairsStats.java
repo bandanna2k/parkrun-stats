@@ -38,8 +38,9 @@ public class PairsStats
         Database database = new LiveDatabase(NZ, getDataSourceUrl(), "stats", "4b0e7ff1");
 
         PairsStats pairsStats = new PairsStats(database);
+        File file;
         //*
-        File file = pairsStats.generateStats(
+        file = pairsStats.generateStats(
                 1340853, // Jonathan
                 293223, // Julie GORDON
                 1048005, // Sarah JANTSCHER
@@ -59,7 +60,7 @@ public class PairsStats
                 4072508 // Zoe NORTH
         );
         /*/
-        File file = pairsStats.generateStats(
+        file = pairsStats.generateStats(
                 547976, // Allan Janes
                 414811, // David NORTH
                 3084004, // Julie Collard
@@ -102,7 +103,13 @@ public class PairsStats
                 2763465 // Colin Boyd
         );
         //*/
-        File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
+        file = pairsStats.generateStats(
+                3172547, // Elise
+                3172524, // Peet
+                414811 // David NORTH
+        );
+
+                File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
 
         final Object[][] replacements = new Object[][]{
                 {"{{css}}", (Supplier<String>) () ->
