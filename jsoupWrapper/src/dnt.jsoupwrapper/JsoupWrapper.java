@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 public class JsoupWrapper
 {
     private static final Random RANDOM = new Random();
+    public static final int INITIAL_COUNTER = 2;
 
     private final boolean shouldSleep;
     private final Supplier<Proxy> proxyFactory;
@@ -32,7 +33,7 @@ public class JsoupWrapper
 Document doc = Jsoup.connect("url").proxy(proxy).get();
          */
 
-        int counter = 2;
+        int counter = INITIAL_COUNTER;
         Document document = null;
         while(document == null && counter > 0)
         {
@@ -63,6 +64,10 @@ Document doc = Jsoup.connect("url").proxy(proxy).get();
             {
                 ex.printStackTrace();
             }
+        }
+        if(document == null)
+        {
+            throw new RuntimeException(String.format("Failed to get URL after %d retries. %s%n", INITIAL_COUNTER, url));
         }
         return document;
     }
