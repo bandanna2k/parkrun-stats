@@ -59,6 +59,14 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 
         if(extended)
         {
+            // Inaugural runs
+            startElement("th", "class", "dt");
+            writer.writeCharacters("Inaugural Runs");
+            endElement("th");
+        }
+
+        if(extended)
+        {
             startElement("th");
             information("Regionnaire Count",
                     "Regionnaire is someone who has completed all parkruns in a region. " +
@@ -72,14 +80,6 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             information("Events Needed (Max)",
                     "Events needed to be regionnaire. " +
                             "(Maximum running events this person has ever needed to become a regionnaire.)");
-            endElement("th");
-        }
-
-        if(extended)
-        {
-            // Inaugural runs
-            startElement("th", "class", "dt");
-            writer.writeCharacters("Inaugural Runs");
             endElement("th");
         }
 
@@ -156,6 +156,14 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
 
         if(extended)
         {
+            // Inaugural runs
+            startElement("td", "class", "dt");
+            writer.writeCharacters(String.valueOf(mostEventsRecord.inauguralRuns));
+            endElement("td");
+        }
+
+        if(extended)
+        {
             // Regionnaire count
             startElement("td");
             writer.writeCharacters(String.valueOf(mostEventsRecord.regionnaireCount));
@@ -167,14 +175,6 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             // Max courses needed
             startElement("td", "class", "dt");
             writer.writeCharacters(mostEventsRecord.runsNeeded);
-            endElement("td");
-        }
-
-        if(extended)
-        {
-            // Inaugural runs
-            startElement("td", "class", "dt");
-            writer.writeCharacters(String.valueOf(mostEventsRecord.inauguralRuns));
             endElement("td");
         }
 
