@@ -520,6 +520,7 @@ public class MostEventStats
         {
             try (MostEventsTableHtmlWriter tableWriter = new MostEventsTableHtmlWriter(writer.writer, country, true))
             {
+                List<MostEventsRecord> mostEventsRecords = new ArrayList<>();
                 for (MostEventsDao.MostEventsRecord der : differentEventRecords)
                 {
                     Athlete athlete = athleteIdToAthlete.get(der.athlete.athleteId);
@@ -530,7 +531,6 @@ public class MostEventStats
                     final List<CourseDate> listOfFirstRuns;
                     final String firstRuns;
                     final int regionnaireCount;
-                    final String runsNeeded;
                     final MostEventsRecord mostEventsRecord;
 
                     listOfFirstRuns = athleteIdToFirstRuns.get(der.athlete.athleteId);
@@ -540,7 +540,10 @@ public class MostEventStats
                     regionnaireCount = listOfRegionnaireDates.size();
 
                     Object[] result = getRunsNeededAndMaxRunsNeeded(startDates, stopDates, listOfFirstRuns);
-                    runsNeeded = result[0] + " (" + result[1] + ")";
+                    final int runsNeeded;
+                    final int maxRunsNeeded;
+                    runsNeeded = (int)result[0];
+                    maxRunsNeeded = (int)result[1];
 
                     String firstRunDatesHtmlString = listOfFirstRuns.stream().map(fr ->
                     {
@@ -561,8 +564,23 @@ public class MostEventStats
                             firstRuns,
                             regionnaireCount,
                             runsNeeded,
+                            maxRunsNeeded,
                             inauguralCount);
-
+                    mostEventsRecords.add(mostEventsRecord);
+                }
+//                mostEventsRecords.sort((r1, r2) -> {
+//                    if(r1.runsNeeded < r2.runsNeeded) return -1;
+//                    if(r1.runsNeeded > r2.runsNeeded) return 1;
+//                    if(r1.differentRegionCourseCount > r2.differentRegionCourseCount) return -1;
+//                    if(r1.differentRegionCourseCount < r2.differentRegionCourseCount) return 1;
+//                    if(r1.totalRegionRuns > r2.totalRegionRuns) return -1;
+//                    if(r1.totalRegionRuns < r2.totalRegionRuns) return 1;
+//                    if(r1.athlete.athleteId > r2.athlete.athleteId) return -1;
+//                    if(r1.athlete.athleteId < r2.athlete.athleteId) return 1;
+//                    return 0;
+//                });
+                for (MostEventsRecord mostEventsRecord : mostEventsRecords)
+                {
                     tableWriter.writeMostEventRecord(mostEventsRecord);
                 }
             }

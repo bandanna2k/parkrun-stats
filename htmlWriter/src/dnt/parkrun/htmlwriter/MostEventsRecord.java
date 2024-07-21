@@ -14,14 +14,18 @@ public class MostEventsRecord
 
     public final int positionDelta;
     public final boolean isNewEntry;
-    public final String runsNeeded;
+
+    public final int runsNeeded;
+    public final int maxRunsNeeded;
+
     public final int inauguralRuns;
 
     public MostEventsRecord(Athlete athlete,
                             int differentRegionCourseCount, int totalRegionRuns,
                             int differentGlobalCourseCount, int totalGlobalRuns,
                             int positionDelta, boolean isNewEntry,
-                            String firstRuns, int regionnaireCount, String runsNeeded,
+                            String firstRuns, int regionnaireCount,
+                            int runsNeeded, int maxRunsNeeded,
                             int inauguralRuns)
     {
         this.athlete = athlete;
@@ -34,6 +38,7 @@ public class MostEventsRecord
         this.firstRuns = firstRuns;
         this.regionnaireCount = regionnaireCount;
         this.runsNeeded = runsNeeded;
+        this.maxRunsNeeded = maxRunsNeeded;
         this.inauguralRuns = inauguralRuns;
     }
 
@@ -47,7 +52,7 @@ public class MostEventsRecord
     {
         this(athlete, differentRegionCourseCount, totalRegionRuns,
                 differentGlobalCourseCount, totalGlobalRuns, positionDelta, isNewEntry,
-                null, -1 , null, -1);
+                null, -1 , -1, -1, -1);
     }
 
     @Override
@@ -63,7 +68,8 @@ public class MostEventsRecord
                 ", regionnaireCount=" + regionnaireCount +
                 ", positionDelta=" + positionDelta +
                 ", isNewEntry=" + isNewEntry +
-                ", runsNeeded='" + runsNeeded + '\'' +
+                ", runsNeeded=" + runsNeeded +
+                ", maxRunsNeeded=" + maxRunsNeeded +
                 ", inauguralRuns=" + inauguralRuns +
                 '}';
     }

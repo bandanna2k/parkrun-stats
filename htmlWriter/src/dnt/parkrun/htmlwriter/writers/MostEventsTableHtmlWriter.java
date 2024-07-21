@@ -174,7 +174,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         {
             // Max courses needed
             startElement("td", "class", "dt");
-            writer.writeCharacters(mostEventsRecord.runsNeeded);
+            writer.writeCharacters(String.format(mostEventsRecord.runsNeeded + " (" + mostEventsRecord.maxRunsNeeded + ")"));
             endElement("td");
         }
 
