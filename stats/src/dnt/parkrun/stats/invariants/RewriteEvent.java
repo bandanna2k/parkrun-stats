@@ -27,8 +27,7 @@ public class RewriteEvent
 
         RewriteEvent rewriteEvent = new RewriteEvent(database);
 //        rewriteEvent.rewriteCourseEvent("otakiriver", 76); // David 1st place
-        rewriteEvent.rewriteCourseEvent("greytownwoodsidetrail", 263);
-        rewriteEvent.rewriteCourseEvent("cambridgenz", 338);
+        rewriteEvent.rewriteCourseEvent("westernsprings", 394);
     }
 
     public RewriteEvent(Database database)
