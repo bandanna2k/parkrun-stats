@@ -107,18 +107,23 @@ public class MostEventsDao extends BaseDao
     }
 
     /*
-    Second pass
+    Second pass to update empty columns
      */
-    public void updateDifferentCourseRecord(int athleteId, int differentCourseCount, int totalRuns)
+    public void updateDifferentCourseRecord(int athleteId, int differentCourseCount, int totalRuns, int runsNeeded)
     {
-        String sql = "update " + getTableName() + " set " +
-                "different_course_count = :differentCourseCount, " +
-                "total_runs = :totalRuns " +
-                "where athlete_id = :athleteId";
+        String sql = STR."""
+            update \{getTableName()}
+            set
+                different_course_count = :differentCourseCount,
+                total_runs = :totalRuns,
+                runs_needed_for_regionnaire = :runsNeeded
+                where athlete_id = :athleteId
+            """;
 
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("athleteId", athleteId)
                 .addValue("differentCourseCount", differentCourseCount)
+                .addValue("runsNeeded", runsNeeded)
                 .addValue("totalRuns", totalRuns);
         jdbc.update(sql, params);
     }
