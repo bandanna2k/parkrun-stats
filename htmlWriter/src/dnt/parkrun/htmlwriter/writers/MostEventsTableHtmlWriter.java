@@ -2,8 +2,8 @@ package dnt.parkrun.htmlwriter.writers;
 
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.datastructures.Country;
+import dnt.parkrun.datastructures.stats.MostEventsRecord;
 import dnt.parkrun.htmlwriter.BaseWriter;
-import dnt.parkrun.htmlwriter.MostEventsRecord;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -128,9 +128,9 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         // Name
         startElement("td");
         writer.writeStartElement("a");
-        writer.writeAttribute("href", urlGenerator.generateAthleteEventSummaryUrl(mostEventsRecord.athlete.athleteId).toString());
-        writer.writeAttribute("target", String.valueOf(mostEventsRecord.athlete.name));
-        writer.writeCharacters(mostEventsRecord.athlete.name);
+        writer.writeAttribute("href", urlGenerator.generateAthleteEventSummaryUrl(mostEventsRecord.athleteId).toString());
+        writer.writeAttribute("target", String.valueOf(mostEventsRecord.name));
+        writer.writeCharacters(mostEventsRecord.name);
         endElement("a");
         endElement("td");
 
@@ -185,7 +185,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             startElement("span", "class", "click-me",
                     "onclick",
                     "dialog.showModal();" +
-                            "setFirstRuns('" + mostEventsRecord.athlete.name.replace("'", "\\'") + "'," + mostEventsRecord.firstRuns + ");" +
+                            "setFirstRuns('" + mostEventsRecord.name.replace("'", "\\'") + "'," + mostEventsRecord.firstRuns + ");" +
                             "refreshStartDates();"
             );
             writer.writeCharacters("\uD83D\uDCC8");

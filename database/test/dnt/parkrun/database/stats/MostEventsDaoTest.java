@@ -3,6 +3,7 @@ package dnt.parkrun.database.stats;
 import dnt.parkrun.database.*;
 import dnt.parkrun.database.weekly.AttendanceRecordsDao;
 import dnt.parkrun.datastructures.*;
+import dnt.parkrun.datastructures.stats.MostEventsRecord;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
@@ -76,7 +77,7 @@ public class MostEventsDaoTest extends BaseDaoTest
         MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(TEST_DATABASE, epoch);
         mostEventsDao.populateMostEventsTable();
 
-        List<MostEventsDao.MostEventsRecord> mostEvents = mostEventsDao.getMostEvents();
+        List<MostEventsRecord> mostEvents = mostEventsDao.getMostEvents();
         System.out.println(mostEvents);
         assertThat(mostEvents).isNotEmpty();
     }

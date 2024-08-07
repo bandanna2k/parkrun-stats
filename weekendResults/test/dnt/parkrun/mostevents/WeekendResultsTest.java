@@ -37,7 +37,7 @@ public class WeekendResultsTest extends BaseDaoTest
         Course bushy = courseDao.insert(new Course(Course.NO_COURSE_ID, "bushynewzealand", NZ, "Fake Bushy parkrun", Course.Status.RUNNING));
 
         CourseEventSummaryDao courseEventSummaryDao = new CourseEventSummaryDao(TEST_DATABASE, courseRepository);
-        courseEventSummaryDao.insert(new CourseEventSummary(bushy, 1, Date.from(Instant.EPOCH), 2545,
+        courseEventSummaryDao.insert(new CourseEventSummary(bushy, 1, Date.from(Instant.EPOCH), 2545, 25,
                 Optional.of(johnDoe), Optional.of(janeDoe)));
 
         weekendResults = WeekendResults.newInstance(TEST_DATABASE, new TestWebpageProviderFactory());

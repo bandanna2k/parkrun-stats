@@ -4,6 +4,7 @@ import dnt.parkrun.database.Database;
 import dnt.parkrun.database.LiveDatabase;
 import dnt.parkrun.database.stats.MostEventsDao;
 import dnt.parkrun.database.weekly.PIndexDao;
+import dnt.parkrun.datastructures.stats.MostEventsRecord;
 import dnt.parkrun.stats.invariants.AbstractDatabaseInvariantTest;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -24,11 +25,11 @@ public class DatabaseWeeklyResultsInvariantTest extends AbstractDatabaseInvarian
         Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
 
         Date parkrunDay = getParkrunDay(new Date());
-        List<MostEventsDao.MostEventsRecord> recordsToCheck = new ArrayList<>();
+        List<MostEventsRecord> recordsToCheck = new ArrayList<>();
         {
             Date lastWeek = Date.from(parkrunDay.toInstant().minus(7, ChronoUnit.DAYS));
             MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(database, lastWeek);
-            List<MostEventsDao.MostEventsRecord> mostEvents = mostEventsDao.getMostEvents();
+            List<MostEventsRecord> mostEvents = mostEventsDao.getMostEvents();
 
             Assertions.assertThat(mostEvents.size()).isGreaterThan(11);
 
@@ -43,14 +44,14 @@ public class DatabaseWeeklyResultsInvariantTest extends AbstractDatabaseInvarian
 
         {
             MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(database, parkrunDay);
-            List<MostEventsDao.MostEventsRecord> mostEventsForThisWeek = mostEventsDao.getMostEvents();
+            List<MostEventsRecord> mostEventsForThisWeek = mostEventsDao.getMostEvents();
 
             recordsToCheck.forEach(recordToCheckFromLastWeek -> {
-                MostEventsDao.MostEventsRecord recordToCheckThisWeek = mostEventsForThisWeek.stream()
-                        .filter(r -> r.athlete.athleteId == recordToCheckFromLastWeek.athlete.athleteId).findFirst().orElseThrow();
-                Assertions.assertThat(recordToCheckThisWeek.totalRuns).isGreaterThanOrEqualTo(recordToCheckFromLastWeek.totalRuns);
+                MostEventsRecord recordToCheckThisWeek = mostEventsForThisWeek.stream()
+                        .filter(r -> r.athleteId == recordToCheckFromLastWeek.athleteId).findFirst().orElseThrow();
+                Assertions.assertThat(recordToCheckThisWeek.totalGlobalRuns).isGreaterThanOrEqualTo(recordToCheckFromLastWeek.totalGlobalRuns);
                 Assertions.assertThat(recordToCheckThisWeek.totalRegionRuns).isGreaterThanOrEqualTo(recordToCheckFromLastWeek.totalRegionRuns);
-                Assertions.assertThat(recordToCheckThisWeek.differentCourseCount).isGreaterThanOrEqualTo(recordToCheckFromLastWeek.differentCourseCount);
+                Assertions.assertThat(recordToCheckThisWeek.differentGlobalCourseCount).isGreaterThanOrEqualTo(recordToCheckFromLastWeek.differentGlobalCourseCount);
                 Assertions.assertThat(recordToCheckThisWeek.differentRegionCourseCount).isGreaterThanOrEqualTo(recordToCheckFromLastWeek.differentRegionCourseCount);
             });
         }

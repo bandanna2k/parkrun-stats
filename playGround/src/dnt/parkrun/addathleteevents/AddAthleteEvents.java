@@ -110,7 +110,7 @@ public class AddAthleteEvents
         System.out.println(course);
 
         CourseEventSummary courseEventSummary = new CourseEventSummary(
-                course, ace.eventNumber, ace.date, 0, empty(), empty());
+                course, ace.eventNumber, ace.date, 0, 0, empty(), empty());
         System.out.println(courseEventSummary);
 
         Result result = new Result(course.courseId, ace.date, ace.eventNumber,

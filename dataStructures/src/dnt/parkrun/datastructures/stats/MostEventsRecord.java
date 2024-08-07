@@ -3,29 +3,39 @@ package dnt.parkrun.datastructures.stats;
 public class MostEventsRecord
 {
     public final int athleteId;
+    public final String name;
+
     public final int differentRegionCourseCount;
     public final int totalRegionRuns;
-    public final int differentCourseCount;
-    public final int totalRuns;
-    public final String name;
-    public final int positionDelta;
-    public final int pIndex;
+
+    public int differentGlobalCourseCount;
+    public int totalGlobalRuns;
+
+    public int pIndex;
+
+    public String firstRuns;
+    public int regionnaireCount;
+
+    public int positionDelta;
+    public boolean isNewEntry;
+
+    public int runsNeeded;
+    public int maxRunsNeeded;
+
+    public int inauguralRuns;
+
 
     public MostEventsRecord(String name,
                             int athleteId,
                             int differentRegionCourseCount, int totalRegionRuns,
-                            int differentCourseCount, int totalRuns,
-                            int positionDelta,
-                            int pIndex)
+                            int differentGlobalCourseCount, int totalGlobalRuns)
     {
         this.athleteId = athleteId;
         this.differentRegionCourseCount = differentRegionCourseCount;
         this.totalRegionRuns = totalRegionRuns;
-        this.differentCourseCount = differentCourseCount;
-        this.totalRuns = totalRuns;
+        this.differentGlobalCourseCount = differentGlobalCourseCount;
+        this.totalGlobalRuns = totalGlobalRuns;
         this.name = name;
-        this.positionDelta = positionDelta;
-        this.pIndex = pIndex;
     }
 
     @Override
@@ -33,13 +43,19 @@ public class MostEventsRecord
     {
         return "MostEventsRecord{" +
                 "athleteId=" + athleteId +
+                ", name='" + name + '\'' +
                 ", differentRegionCourseCount=" + differentRegionCourseCount +
                 ", totalRegionRuns=" + totalRegionRuns +
-                ", differentCourseCount=" + differentCourseCount +
-                ", totalRuns=" + totalRuns +
-                ", name='" + name + '\'' +
-                ", positionDelta=" + positionDelta +
+                ", differentGlobalCourseCount=" + differentGlobalCourseCount +
+                ", totalGlobalRuns=" + totalGlobalRuns +
                 ", pIndex=" + pIndex +
+                ", firstRuns='" + firstRuns + '\'' +
+                ", regionnaireCount=" + regionnaireCount +
+                ", positionDelta=" + positionDelta +
+                ", isNewEntry=" + isNewEntry +
+                ", runsNeeded=" + runsNeeded +
+                ", maxRunsNeeded=" + maxRunsNeeded +
+                ", inauguralRuns=" + inauguralRuns +
                 '}';
     }
 }

@@ -3,7 +3,7 @@ package dnt.parkrun.database.stats;
 import dnt.parkrun.common.DateConverter;
 import dnt.parkrun.database.BaseDao;
 import dnt.parkrun.database.Database;
-import dnt.parkrun.datastructures.Athlete;
+import dnt.parkrun.datastructures.stats.MostEventsRecord;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -50,6 +50,7 @@ public class MostEventsDao extends BaseDao
                       total_region_runs              INT             NOT NULL,
                       different_course_count         INT             NOT NULL,
                       total_runs                     INT             NOT NULL,
+                      runs_needed_for_regionnaire    INT             NOT NULL,
                       PRIMARY KEY (athlete_id)
                 ) DEFAULT CHARSET=utf8mb4
                 """;
@@ -66,11 +67,14 @@ public class MostEventsDao extends BaseDao
             String sql = STR."""
                 insert into \{getTableName()}(
                     athlete_id, different_region_course_count, total_region_runs,
-                    different_course_count, total_runs)
+                    different_course_count, total_runs, runs_needed_for_regionnaire)
                 select a.athlete_id,
                     sub1.count as different_region_course_count,
                     sub2.count as total_region_runs,
-                    0 as different_course_count, 0 as total_runs from \{athleteTable()} a
+                    0 as different_course_count,
+                    0 as total_runs,
+                    0 as runs_needed_for_regionnaire
+                from \{athleteTable()} a
                 join (
                     select athlete_id, count(course_id) as count
                     from (
@@ -150,10 +154,8 @@ public class MostEventsDao extends BaseDao
         """;
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
                 new MostEventsRecord(
-                        Athlete.from(
-                                rs.getString("name"),
-                                rs.getInt("athlete_id")
-                        ),
+                        rs.getString("name"),
+                        rs.getInt("athlete_id"),
                         rs.getInt("different_region_course_count"),
                         rs.getInt("total_region_runs"),
                         rs.getInt("different_course_count"),
@@ -179,44 +181,5 @@ public class MostEventsDao extends BaseDao
             rs.getInt("course_id"),
             rs.getDate("first_run")
         });
-    }
-
-    public static class MostEventsRecord
-    {
-        public final Athlete athlete;
-        public final int differentRegionCourseCount;
-        public final int totalRegionRuns;
-        public final int differentCourseCount;
-        public final int totalRuns;
-
-        public int positionDelta = 0;
-        public boolean isNewEntry = false;
-
-        public MostEventsRecord(Athlete athlete,
-                                int differentRegionCourseCount,
-                                int totalRegionRuns,
-                                int differentCourseCount,
-                                int totalRuns)
-        {
-            this.athlete = athlete;
-            this.differentRegionCourseCount = differentRegionCourseCount;
-            this.totalRegionRuns = totalRegionRuns;
-            this.differentCourseCount = differentCourseCount;
-            this.totalRuns = totalRuns;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "MostEventsRecord{" +
-                    "athleteId=" + athlete +
-                    ", differentRegionCourseCount=" + differentRegionCourseCount +
-                    ", totalRegionRuns=" + totalRegionRuns +
-                    ", differentCourseCount=" + differentCourseCount +
-                    ", totalRuns=" + totalRuns +
-                    ", positionDelta=" + positionDelta +
-                    ", isNewEntry=" + isNewEntry +
-                    '}';
-        }
     }
 }
