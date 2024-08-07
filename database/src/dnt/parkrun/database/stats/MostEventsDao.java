@@ -18,6 +18,13 @@ public class MostEventsDao extends BaseDao
 {
     private static final String MIN_DIFFERENT_REGION_COURSE_COUNT = "20";
 
+    private static final String ORDER_BY = STR."""
+        order by runs_needed_for_regionnaire asc,
+            different_region_course_count desc, total_region_runs desc,
+            different_course_count desc, total_runs desc,
+            athlete_id asc
+            """;
+
     private final Date date;
 
     public static MostEventsDao getOrCreate(Database database, Date date)
@@ -96,7 +103,7 @@ public class MostEventsDao extends BaseDao
                     order by count desc, athlete_id asc
                 ) as sub2 on sub2.athlete_id = a.athlete_id
                 where a.name is not null
-                order by different_region_course_count desc, total_region_runs desc, a.athlete_id desc
+                \{ORDER_BY}
             """;
             jdbc.update(sql, new MapSqlParameterSource("minDifferentRegionCourseCount", MIN_DIFFERENT_REGION_COURSE_COUNT));
         }
@@ -152,10 +159,11 @@ public class MostEventsDao extends BaseDao
         String sql = STR."""
         select a.name, a.athlete_id,
             different_region_course_count, total_region_runs,
-            different_course_count, total_runs
+            different_course_count, total_runs,
+            runs_needed_for_regionnaire
         from \{mostEventsTable}
         join \{athleteTable()} a using (athlete_Id)
-        order by different_region_course_count desc, total_region_runs desc, athlete_id asc
+        \{ORDER_BY}
         """;
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
                 new MostEventsRecord(

@@ -211,7 +211,7 @@ public class MostEventStats
         stopDates.addAll(courseEventSummaryDao.getCourseStopDates(country));
         System.out.println("Done");
 
-        System.out.println("* Generating most events table *");
+        System.out.println("* Populate most events table *");
         MostEventsDao mostEventsDao = MostEventsDao.getOrCreate(database, date);
         mostEventsDao.populateMostEventsTable();
 
@@ -219,12 +219,20 @@ public class MostEventStats
         List<MostEventsRecord> differentEventRecords = mostEventsDao.getMostEvents();
 
         System.out.println("* Get most events for last week  *");
-        List<MostEventsRecord> differentEventRecordsFromLastWeek = mostEventsDao.getMostEventsForLastWeek();
-
-        System.out.println("* Calculate most event position deltas *");
-        calculatePositionDeltas(differentEventRecords, differentEventRecordsFromLastWeek);
+        List<MostEventsRecord> mostEventRecordsFromLastWeekSorted = mostEventsDao.getMostEventsForLastWeek();
 
         downloadAthleteCourseSummaries(differentEventRecords);
+
+        {
+            System.out.println("* Populate most event records (part 2) *");
+            Map<Integer, List<CourseDate>> athletesFirstRuns = getAthletesFirstRuns(mostEventsDao);
+            populateMostEventRecordsPart2(differentEventRecords, athletesFirstRuns);
+        }
+
+        System.out.println("* Calculate most event position deltas *");
+        calculatePositionDeltas(differentEventRecords, mostEventRecordsFromLastWeekSorted);
+
+
 
         try (HtmlWriter writer = HtmlWriter.newInstance(date, country, "most_event_stats"))
         {
@@ -249,30 +257,13 @@ public class MostEventStats
 
             writeAttendanceRecords(writer, false);
 
+            for (MostEventsRecord der : differentEventRecords)
             {
-                System.out.print("Getting first runs ");
-                final Map<Integer, List<CourseDate>> athleteIdToFirstRuns = new HashMap<>();
-
-                mostEventsDao.getFirstRuns().forEach(record ->
-                {
-                    int athleteId = (int) record[0];
-                    CourseDate firstRun = new CourseDate(courseRepository.getCourse((int) record[1]), (Date) record[2]);
-                    List<CourseDate> firstRuns = athleteIdToFirstRuns.computeIfAbsent(athleteId, k -> new ArrayList<>());
-                    firstRuns.add(firstRun);
-                });
-                System.out.println("DONE");
-
-                populateMostEventRecords(differentEventRecords, athleteIdToFirstRuns);
+                mostEventsDao.updateDifferentCourseRecord(der.athleteId, der.totalGlobalRuns, der.totalGlobalRuns, der.runsNeeded);
             }
 
-            {
-                for (MostEventsRecord der : differentEventRecords)
-                {
-                    mostEventsDao.updateDifferentCourseRecord(der.athleteId, der.totalGlobalRuns, der.totalGlobalRuns, der.runsNeeded);
-                }
+            writeMostEvents(writer, differentEventRecords);
 
-                writeMostEvents(writer, differentEventRecords);
-            }
             writer.writer.writeStartElement("hr");
             writer.writer.writeEndElement();
 
@@ -289,6 +280,42 @@ public class MostEventStats
             writeTop10Volunteers(writer);
             return writer.getFile();
         }
+    }
+
+    private Map<Integer, List<CourseDate>> getAthletesFirstRuns(MostEventsDao mostEventsDao)
+    {
+        System.out.print("Getting first runs ");
+        final Map<Integer, List<CourseDate>> athleteIdToFirstRuns = new HashMap<>();
+
+        mostEventsDao.getFirstRuns().forEach(record ->
+        {
+            int athleteId = (int) record[0];
+            CourseDate firstRun = new CourseDate(courseRepository.getCourse((int) record[1]), (Date) record[2]);
+            List<CourseDate> firstRuns = athleteIdToFirstRuns.computeIfAbsent(athleteId, k -> new ArrayList<>());
+            firstRuns.add(firstRun);
+        });
+        System.out.println("DONE");
+        return athleteIdToFirstRuns;
+    }
+
+    private void sortMostEventRecords(List<MostEventsRecord> mostEventsRecords)
+    {
+        mostEventsRecords.sort((r1, r2) ->
+        {
+            if(r1.runsNeeded < r2.runsNeeded) return -1;
+            if(r1.runsNeeded > r2.runsNeeded) return 1;
+            if(r1.differentRegionCourseCount > r2.differentRegionCourseCount) return -1;
+            if(r1.differentRegionCourseCount < r2.differentRegionCourseCount) return 1;
+            if(r1.totalRegionRuns > r2.totalRegionRuns) return -1;
+            if(r1.totalRegionRuns < r2.totalRegionRuns) return 1;
+            if(r1.differentGlobalCourseCount > r2.differentGlobalCourseCount) return -1;
+            if(r1.differentGlobalCourseCount < r2.differentGlobalCourseCount) return 1;
+            if(r1.totalGlobalRuns > r2.totalGlobalRuns) return -1;
+            if(r1.totalGlobalRuns < r2.totalGlobalRuns) return 1;
+            if(r1.athleteId > r2.athleteId) return -1;
+            if(r1.athleteId < r2.athleteId) return 1;
+            return 0;
+        });
     }
 
     private static String getStopDates()
@@ -496,8 +523,8 @@ public class MostEventStats
         return result;
     }
 
-    private void populateMostEventRecords(List<MostEventsRecord> mostEventsRecords,
-                                          Map<Integer, List<CourseDate>> athleteIdToFirstRuns)
+    private void populateMostEventRecordsPart2(List<MostEventsRecord> mostEventsRecords,
+                                               Map<Integer, List<CourseDate>> athleteIdToFirstRuns)
     {
         for (MostEventsRecord der : mostEventsRecords)
         {
