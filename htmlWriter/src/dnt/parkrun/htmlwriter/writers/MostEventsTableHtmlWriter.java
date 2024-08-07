@@ -41,9 +41,18 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         writer.writeCharacters("Name");
         endElement("th");
 
-        startElement("th");
-        writer.writeCharacters("Region Events");
-        endElement("th");
+        if(extended)
+        {
+            startElement("th");
+            writer.writeCharacters("Region Events (Events Needed to be Regionnaire)");
+            endElement("th");
+        }
+        else
+        {
+            startElement("th");
+            writer.writeCharacters("Region Events");
+            endElement("th");
+        }
 
         startElement("th");
         writer.writeCharacters("Total Region Runs");
@@ -74,14 +83,14 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             endElement("th");
         }
 
-        if(extended)
-        {
-            startElement("th", "class", "dt");
-            information("Events Needed (Max)",
-                    "Events needed to be regionnaire. " +
-                            "(Maximum running events this person has ever needed to become a regionnaire.)");
-            endElement("th");
-        }
+//        if(extended)
+//        {
+//            startElement("th", "class", "dt");
+//            information("Events Needed (Max)",
+//                    "Events needed to be regionnaire. " +
+//                            "(Maximum running events this person has ever needed to become a regionnaire.)");
+//            endElement("th");
+//        }
 
         if(extended)
         {
@@ -135,9 +144,18 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         endElement("td");
 
         // Different region courses
-        startElement("td");
-        writer.writeCharacters(String.valueOf(mostEventsRecord.differentRegionCourseCount));
-        endElement("td");
+        if (extended)
+        {
+            startElement("td");
+            writer.writeCharacters(mostEventsRecord.differentRegionCourseCount + " (" + mostEventsRecord.runsNeeded + ")");
+            endElement("td");
+        }
+        else
+        {
+            startElement("td");
+            writer.writeCharacters(String.valueOf(mostEventsRecord.differentRegionCourseCount));
+            endElement("td");
+        }
 
         // Total region runs
         startElement("td");
@@ -170,14 +188,14 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
             endElement("td");
         }
 
-        if(extended)
-        {
-            // Max courses needed
-            startElement("td", "class", "dt");
-            writer.writeCharacters(String.format(mostEventsRecord.runsNeeded + " (" + mostEventsRecord.maxRunsNeeded + ")"));
-            endElement("td");
-        }
-
+//        if(extended)
+//        {
+//            // Max courses needed
+//            startElement("td", "class", "dt");
+//            writer.writeCharacters(String.format(mostEventsRecord.runsNeeded + " (" + mostEventsRecord.maxRunsNeeded + ")"));
+//            endElement("td");
+//        }
+//
         if(extended)
         {
             // Charts
