@@ -80,6 +80,9 @@ td,th {
 .hl7 td:nth-child(7) { background-color:#f7f7f7; }
 .tinypadding6 td:nth-child(6) { padding:1; }
 .tinypadding7 td:nth-child(7) { padding:1; }
+.gold { background-color:gold; }
+.silver { background-color:silver; }
+.bronze { background-color:bronze; }
 
 
 

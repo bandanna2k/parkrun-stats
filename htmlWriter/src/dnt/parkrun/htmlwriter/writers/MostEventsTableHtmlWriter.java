@@ -146,7 +146,7 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         // Different region courses
         if (extended)
         {
-            startElement("td");
+            startElement(regionnaireTableCellClass(mostEventsRecord.runsNeeded));
             writer.writeCharacters(mostEventsRecord.differentRegionCourseCount + " (" + mostEventsRecord.runsNeeded + ")");
             endElement("td");
         }
@@ -221,4 +221,14 @@ public class MostEventsTableHtmlWriter extends BaseWriter implements Closeable
         endElement("tr");
     }
 
+    private static String regionnaireTableCellClass(int runsNeeded)
+    {
+        return switch(runsNeeded)
+        {
+            case 0 -> "td class=\"gold\"";
+            case 1 -> "td class=\"silver\"";
+            case 2 -> "td class=\"bronze\"";
+            default -> "td";
+        };
+    }
 }
