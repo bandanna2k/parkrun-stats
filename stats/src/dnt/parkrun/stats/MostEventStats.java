@@ -203,19 +203,6 @@ public class MostEventStats
         volunteerDao.tableScan(volunteerProcessors);
         System.out.println("Done");
 
-//        {
-//            Course course = courseRepository.getCourseFromName("lowerhutt");
-//            System.out.println("Average attendance: " + averageAttendanceProcessor.getAverageAttendance(course.courseId));
-//            System.out.println("Moving average attendance: " + averageAttendanceProcessor.getRecentAverageAttendance(course.courseId));
-//            System.out.println("Average time: " + averageTimeProcessor.getAverageTime(course.courseId).toHtmlString());
-//            System.out.println("Moving average time: " + averageTimeProcessor.getRecentAverageTime(course.courseId).toHtmlString());
-//
-//            System.out.println("Record attendance: " + attendanceProcessor.getMaxAttendance(course.courseId));
-//            System.out.println("Recent attendance: " + attendanceProcessor.getLastAttendance(course.courseId));
-//            assert false;
-//        }
-
-
         System.out.print("Getting start dates ");
         startDates.addAll(courseEventSummaryDao.getCourseStartDates());
         System.out.println("Done");
@@ -281,12 +268,6 @@ public class MostEventStats
             {
                 for (MostEventsRecord der : differentEventRecords)
                 {
-//                    Athlete athlete = athleteIdToAthlete.get(der.athleteId);
-//                    List<AthleteCourseSummary> athleteCourseSummaries = athleteIdToAthleteCourseSummaries.get(der.athleteId);
-//
-//                    int globalCourseCount = athleteCourseSummaries.size();
-//                    int globalTotalCourseCount = athleteCourseSummaries.stream().mapToInt(acs -> acs.countOfRuns).sum();
-
                     mostEventsDao.updateDifferentCourseRecord(der.athleteId, der.totalGlobalRuns, der.totalGlobalRuns, der.runsNeeded);
                 }
 
