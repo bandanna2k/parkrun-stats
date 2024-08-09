@@ -44,7 +44,7 @@ public class NewZealandRegionChecker extends RegionChecker
 
     public static boolean isWaikato(Course course)
     {
-        String[] list = {"taupo", "cambridgenz", "hamiltonlake", "universityofwaikato"};
+        String[] list = {"taupo", "cambridgenz", "hamiltonlake", "universityofwaikato", "morrinsvillerecreationground"};
         return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
     }
 
