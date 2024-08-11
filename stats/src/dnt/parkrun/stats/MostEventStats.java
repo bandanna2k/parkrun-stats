@@ -229,10 +229,18 @@ public class MostEventStats
             populateMostEventRecordsPart2(differentEventRecords, athletesFirstRuns);
         }
 
+        // Write extra most event data to database
+        for (MostEventsRecord der : differentEventRecords)
+        {
+            mostEventsDao.updateDifferentCourseRecord(der.athleteId, der.totalGlobalRuns, der.totalGlobalRuns, der.runsNeeded);
+        }
+
+        // I need to have these re-sorted after updating with extra most event data. But is there a nicer way?
+        differentEventRecords = mostEventsDao.getMostEvents();
+        mostEventRecordsFromLastWeekSorted = mostEventsDao.getMostEventsForLastWeek();
+
         System.out.println("* Calculate most event position deltas *");
         calculatePositionDeltas(differentEventRecords, mostEventRecordsFromLastWeekSorted);
-
-
 
         try (HtmlWriter writer = HtmlWriter.newInstance(date, country, "most_event_stats"))
         {
@@ -256,11 +264,6 @@ public class MostEventStats
             writer.writer.writeEndElement();
 
             writeAttendanceRecords(writer, false);
-
-            for (MostEventsRecord der : differentEventRecords)
-            {
-                mostEventsDao.updateDifferentCourseRecord(der.athleteId, der.totalGlobalRuns, der.totalGlobalRuns, der.runsNeeded);
-            }
 
             writeMostEvents(writer, differentEventRecords);
 
