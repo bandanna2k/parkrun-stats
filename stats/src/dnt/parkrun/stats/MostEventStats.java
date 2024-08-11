@@ -217,9 +217,6 @@ public class MostEventStats
         System.out.println("* Get most events *");
         List<MostEventsRecord> differentEventRecords = mostEventsDao.getMostEvents();
 
-        System.out.println("* Get most events for last week  *");
-        List<MostEventsRecord> mostEventRecordsFromLastWeekSorted = mostEventsDao.getMostEventsForLastWeek();
-
         downloadAthleteCourseSummaries(differentEventRecords);
 
         {
@@ -227,16 +224,16 @@ public class MostEventStats
             Map<Integer, List<CourseDate>> athletesFirstRuns = getAthletesFirstRuns(mostEventsDao);
             populateMostEventRecordsPart2(differentEventRecords, athletesFirstRuns);
         }
-
         // Write extra most event data to database
         for (MostEventsRecord der : differentEventRecords)
         {
-            mostEventsDao.updateDifferentCourseRecord(der.athleteId, der.totalGlobalRuns, der.totalGlobalRuns, der.runsNeeded);
+            mostEventsDao.updateDifferentCourseRecord(der.athleteId, der.differentGlobalCourseCount, der.totalGlobalRuns, der.runsNeeded);
         }
 
         // I need to have these re-sorted after updating with extra most event data. But is there a nicer way?
+        System.out.println("* Get most events from database again *");
         differentEventRecords = mostEventsDao.getMostEvents();
-        mostEventRecordsFromLastWeekSorted = mostEventsDao.getMostEventsForLastWeek();
+        List<MostEventsRecord> mostEventRecordsFromLastWeekSorted = mostEventsDao.getMostEventsForLastWeek();
 
         System.out.println("* Calculate most event position deltas *");
         calculatePositionDeltas(differentEventRecords, mostEventRecordsFromLastWeekSorted);
