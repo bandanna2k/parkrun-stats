@@ -19,9 +19,10 @@ public class MostEventsDao extends BaseDao
     private static final String MIN_DIFFERENT_REGION_COURSE_COUNT = "20";
 
     private static final String ORDER_BY = STR."""
-        order by runs_needed_for_regionnaire asc,
-            different_region_course_count desc, total_region_runs desc,
-            different_course_count desc, total_runs desc,
+        order by
+            runs_needed_for_regionnaire asc,
+            different_region_course_count desc, total_region_runs desc, 
+            different_course_count desc, total_runs desc, 
             athlete_id asc
             """;
 
@@ -166,14 +167,18 @@ public class MostEventsDao extends BaseDao
         \{ORDER_BY}
         """;
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
-                new MostEventsRecord(
-                        rs.getString("name"),
-                        rs.getInt("athlete_id"),
-                        rs.getInt("different_region_course_count"),
-                        rs.getInt("total_region_runs"),
-                        rs.getInt("different_course_count"),
-                        rs.getInt("total_runs")
-                ));
+        {
+            MostEventsRecord mostEventsRecord = new MostEventsRecord(
+                    rs.getString("name"),
+                    rs.getInt("athlete_id"),
+                    rs.getInt("different_region_course_count"),
+                    rs.getInt("total_region_runs"),
+                    rs.getInt("different_course_count"),
+                    rs.getInt("total_runs")
+            );
+            mostEventsRecord.runsNeeded = rs.getInt("runs_needed_for_regionnaire");
+            return mostEventsRecord;
+        });
     }
 
     /**

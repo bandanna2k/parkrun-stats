@@ -66,7 +66,6 @@ public class MostEventStats
     /*
             02/03/2024
      */
-    @Deprecated(since = "Use menu from now on.")
     public static void main(String[] args) throws SQLException, IOException, XMLStreamException
     {
         Country country = args.length == 0 ? Country.NZ : Country.valueOf(args[0]);
