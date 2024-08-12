@@ -61,14 +61,14 @@ public class AgeCategoryRecordsHtmlWriter extends BaseWriter implements Closeabl
         writer.writeCharacters("Name");
         endElement("th");
 
-        // Time
-        startElement("th");
-        writer.writeCharacters("Time");
-        endElement("th");
-
         // Age grade
         startElement("th");
         writer.writeCharacters("Age Grade");
+        endElement("th");
+
+        // Time
+        startElement("th");
+        writer.writeCharacters("Time");
         endElement("th");
 
         endElement("tr");
@@ -132,14 +132,14 @@ public class AgeCategoryRecordsHtmlWriter extends BaseWriter implements Closeabl
         endElement("a");
         endElement("td");
 
-        // Time
-        startElement("td");
-        writer.writeCharacters(result.time.toHtmlString());
-        endElement("td");
-
         // Age grade
         startElement("td");
         writer.writeCharacters(result.ageGrade.toHtmlString());
+        endElement("td");
+
+        // Time
+        startElement("td");
+        writer.writeCharacters(result.time.toHtmlString());
         endElement("td");
 
         endElement("tr");
