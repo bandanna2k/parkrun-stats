@@ -22,6 +22,8 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
+Graph needs fixing. Its getting overwritten on reload.
+
 1723015615295
 
 1718500620786

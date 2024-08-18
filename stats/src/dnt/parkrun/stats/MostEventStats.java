@@ -219,21 +219,26 @@ public class MostEventStats
 
         downloadAthleteCourseSummaries(differentEventRecords);
 
+        Map<Integer, List<CourseDate>> athletesFirstRuns;
         {
             System.out.println("* Populate most event records (part 2) *");
-            Map<Integer, List<CourseDate>> athletesFirstRuns = getAthletesFirstRuns(mostEventsDao);
+            athletesFirstRuns = getAthletesFirstRuns(mostEventsDao);
             populateMostEventRecordsPart2(differentEventRecords, athletesFirstRuns);
+            populateMostEventRecordsPart3(differentEventRecords, athletesFirstRuns);
         }
+
         // Write extra most event data to database
         for (MostEventsRecord der : differentEventRecords)
         {
-            mostEventsDao.updateDifferentCourseRecord(der.athleteId, der.differentGlobalCourseCount, der.totalGlobalRuns, der.runsNeeded);
+            mostEventsDao.updateDifferentCourseRecord(der.athleteId, der.differentGlobalCourseCount, der.totalGlobalRuns, der.runsNeeded,
+                    der.inauguralRuns, der.regionnaireCount);
         }
 
         // I need to have these re-sorted after updating with extra most event data. But is there a nicer way?
         System.out.println("* Get most events from database again *");
         differentEventRecords = mostEventsDao.getMostEvents();
         List<MostEventsRecord> mostEventRecordsFromLastWeekSorted = mostEventsDao.getMostEventsForLastWeek();
+        populateMostEventRecordsPart3(differentEventRecords, athletesFirstRuns); // Grrr, another loop.
 
         System.out.println("* Calculate most event position deltas *");
         calculatePositionDeltas(differentEventRecords, mostEventRecordsFromLastWeekSorted);
@@ -544,16 +549,6 @@ public class MostEventStats
                 List<CourseDate> listOfRegionnaireDates = getListOfRegionnaireDates(startDates, stopDates, listOfFirstRuns);
                 der.regionnaireCount = listOfRegionnaireDates.size();
 
-                String firstRunDatesHtmlString = listOfFirstRuns.stream().map(fr ->
-                {
-                    int multiplier = listOfRegionnaireDates.contains(fr) ? -1 : 1;
-                    return String.valueOf(multiplier * fr.date.getTime() / 1000);
-                }).collect(Collectors.joining(","));
-                der.firstRuns = "[" +
-                        "[" + listOfFirstRuns.stream().map(fr -> String.valueOf(fr.course.courseId)).collect(Collectors.joining(",")) + "]," +
-                        "[" + firstRunDatesHtmlString + "]" +
-                        "]";
-
                 Object[] result = getRunsNeededAndMaxRunsNeeded(startDates, stopDates, listOfFirstRuns);
                 der.runsNeeded = (int) result[0];
                 der.maxRunsNeeded = (int) result[1];
@@ -562,6 +557,29 @@ public class MostEventStats
             {
                 der.inauguralRuns = inauguralEventsProcessor.getInauguralCount(der.athleteId);
             }
+        }
+    }
+
+    private void populateMostEventRecordsPart3(List<MostEventsRecord> mostEventsRecords,
+                                               Map<Integer, List<CourseDate>> athleteIdToFirstRuns)
+    {
+        for (MostEventsRecord der : mostEventsRecords)
+        {
+            final List<CourseDate> listOfFirstRuns;
+            listOfFirstRuns = athleteIdToFirstRuns.get(der.athleteId);
+            listOfFirstRuns.sort(CourseDate.COMPARATOR);
+
+            List<CourseDate> listOfRegionnaireDates = getListOfRegionnaireDates(startDates, stopDates, listOfFirstRuns);
+
+            String firstRunDatesHtmlString = listOfFirstRuns.stream().map(fr ->
+            {
+                int multiplier = listOfRegionnaireDates.contains(fr) ? -1 : 1;
+                return String.valueOf(multiplier * fr.date.getTime() / 1000);
+            }).collect(Collectors.joining(","));
+            der.firstRuns = "[" +
+                    "[" + listOfFirstRuns.stream().map(fr -> String.valueOf(fr.course.courseId)).collect(Collectors.joining(",")) + "]," +
+                    "[" + firstRunDatesHtmlString + "]" +
+                    "]";
         }
     }
 

@@ -24,11 +24,13 @@ public class MostEventsRecord
 
     public int inauguralRuns;
 
-
     public MostEventsRecord(String name,
                             int athleteId,
                             int differentRegionCourseCount, int totalRegionRuns,
-                            int differentGlobalCourseCount, int totalGlobalRuns)
+                            int differentGlobalCourseCount, int totalGlobalRuns,
+                            int runsNeeded,
+                            int inauguralRuns,
+                            int regionnaireCount)
     {
         this.athleteId = athleteId;
         this.differentRegionCourseCount = differentRegionCourseCount;
@@ -36,6 +38,9 @@ public class MostEventsRecord
         this.differentGlobalCourseCount = differentGlobalCourseCount;
         this.totalGlobalRuns = totalGlobalRuns;
         this.name = name;
+        this.runsNeeded = runsNeeded;
+        this.inauguralRuns = inauguralRuns;
+        this.regionnaireCount = regionnaireCount;
     }
 
     @Override

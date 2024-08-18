@@ -59,6 +59,8 @@ public class MostEventsDao extends BaseDao
                       different_course_count         INT             NOT NULL,
                       total_runs                     INT             NOT NULL,
                       runs_needed_for_regionnaire    INT             NOT NULL,
+                      inaugural_runs                 INT             NOT NULL,
+                      regionnaire_count              INT             NOT NULL,
                       PRIMARY KEY (athlete_id)
                 ) DEFAULT CHARSET=utf8mb4
                 """;
@@ -75,13 +77,16 @@ public class MostEventsDao extends BaseDao
             String sql = STR."""
                 insert into \{getTableName()}(
                     athlete_id, different_region_course_count, total_region_runs,
-                    different_course_count, total_runs, runs_needed_for_regionnaire)
+                    different_course_count, total_runs,
+                    runs_needed_for_regionnaire, inaugural_runs, regionnaire_count)
                 select a.athlete_id,
                     sub1.count as different_region_course_count,
                     sub2.count as total_region_runs,
                     0 as different_course_count,
                     0 as total_runs,
-                    0 as runs_needed_for_regionnaire
+                    0 as runs_needed_for_regionnaire,
+                    0 as inaugural_runs,
+                    0 as regionnaire_count
                 from \{athleteTable()} a
                 join (
                     select athlete_id, count(course_id) as count
@@ -117,14 +122,17 @@ public class MostEventsDao extends BaseDao
     /*
     Second pass to update empty columns
      */
-    public void updateDifferentCourseRecord(int athleteId, int differentCourseCount, int totalRuns, int runsNeeded)
+    public void updateDifferentCourseRecord(int athleteId, int differentCourseCount, int totalRuns, int runsNeeded,
+                                            int inauguralRuns, int regionnaireCount)
     {
         String sql = STR."""
             update \{getTableName()}
             set
                 different_course_count = :differentCourseCount,
                 total_runs = :totalRuns,
-                runs_needed_for_regionnaire = :runsNeeded
+                runs_needed_for_regionnaire = :runsNeeded,
+                inaugural_runs = :inauguralRuns,
+                regionnaire_count = :regionnaireCount
                 where athlete_id = :athleteId
             """;
 
@@ -132,6 +140,8 @@ public class MostEventsDao extends BaseDao
                 .addValue("athleteId", athleteId)
                 .addValue("differentCourseCount", differentCourseCount)
                 .addValue("runsNeeded", runsNeeded)
+                .addValue("inauguralRuns", inauguralRuns)
+                .addValue("regionnaireCount", regionnaireCount)
                 .addValue("totalRuns", totalRuns);
         jdbc.update(sql, params);
     }
@@ -161,24 +171,23 @@ public class MostEventsDao extends BaseDao
         select a.name, a.athlete_id,
             different_region_course_count, total_region_runs,
             different_course_count, total_runs,
-            runs_needed_for_regionnaire
+            runs_needed_for_regionnaire, inaugural_runs, regionnaire_count
         from \{mostEventsTable}
         join \{athleteTable()} a using (athlete_Id)
         \{ORDER_BY}
         """;
         return jdbc.query(sql, EmptySqlParameterSource.INSTANCE, (rs, rowNum) ->
-        {
-            MostEventsRecord mostEventsRecord = new MostEventsRecord(
-                    rs.getString("name"),
-                    rs.getInt("athlete_id"),
-                    rs.getInt("different_region_course_count"),
-                    rs.getInt("total_region_runs"),
-                    rs.getInt("different_course_count"),
-                    rs.getInt("total_runs")
-            );
-            mostEventsRecord.runsNeeded = rs.getInt("runs_needed_for_regionnaire");
-            return mostEventsRecord;
-        });
+                new MostEventsRecord(
+                        rs.getString("name"),
+                        rs.getInt("athlete_id"),
+                        rs.getInt("different_region_course_count"),
+                        rs.getInt("total_region_runs"),
+                        rs.getInt("different_course_count"),
+                        rs.getInt("total_runs"),
+                        rs.getInt("runs_needed_for_regionnaire"),
+                        rs.getInt("inaugural_runs"),
+                        rs.getInt("regionnaire_count")
+                ));
     }
 
     /**
