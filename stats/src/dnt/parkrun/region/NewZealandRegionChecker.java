@@ -112,7 +112,7 @@ public class NewZealandRegionChecker extends RegionChecker
 
     public static boolean isCantebury(Course course)
     {
-        String[] list = {"broadpark", "hagley", "pegasus", "foster", "scarborough", "ashburtondomain"};
+        String[] list = {"broadpark", "hagley", "pegasus", "foster", "scarborough", "ashburtondomain", "hanmerforest"};
         return Arrays.stream(list).anyMatch(v -> v.equals(course.name));
     }
 
