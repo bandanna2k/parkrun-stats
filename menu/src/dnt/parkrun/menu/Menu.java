@@ -1,5 +1,6 @@
 package dnt.parkrun.menu;
 
+import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.Database;
 import dnt.parkrun.database.LiveDatabase;
@@ -26,10 +27,9 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
 import javax.xml.stream.XMLStreamException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
@@ -115,8 +115,12 @@ public class Menu
             Database database = new LiveDatabase(country, getDataSourceUrl(), "stats", "4b0e7ff1");
             MostEventStats stats = MostEventStats.newInstance(database, getParkrunDay(new Date()));
             File file = stats.generateStats();
+
             File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
             findAndReplace(file, modified, MostEventStats.fileReplacements());
+
+            File compressed = new File(file.getAbsoluteFile().getParent() + "/compressed_" + file.getName());
+            compress(modified, compressed);
 
             new ProcessBuilder("xdg-open", modified.getAbsolutePath()).start();
         }
@@ -158,7 +162,10 @@ public class Menu
             File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
             findAndReplace(file, modified, SpeedStats.fileReplacements());
 
-            new ProcessBuilder("xdg-open", modified.getAbsolutePath()).start();
+            File compressed = new File(file.getAbsoluteFile().getParent() + "/compressed_" + file.getName());
+            compress(modified, compressed);
+
+            new ProcessBuilder("xdg-open", compressed.getAbsolutePath()).start();
         }
         catch (IOException | XMLStreamException e)
         {
@@ -226,6 +233,19 @@ public class Menu
             System.err.println(failure.getTestHeader() + "\t" + failure.getMessage());
         });
     }
+
+    private static void compress(File input, File output) throws IOException
+    {
+        HtmlCompressor compressor = new HtmlCompressor();
+        String html = Files.readString(input.toPath(), StandardCharsets.UTF_8);
+        try (FileOutputStream fos = new FileOutputStream(output);
+             OutputStreamWriter osw = new OutputStreamWriter(fos);
+             BufferedWriter writer = new BufferedWriter(osw))
+        {
+            writer.write(compressor.compress(html));
+        }
+    }
+
 
     private void displayOptions()
     {
