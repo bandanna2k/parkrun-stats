@@ -18,7 +18,7 @@ public class InvariantTest
     {
         Database database = new LiveDatabase(NZ, getDataSourceUrl(), "stats", "4b0e7ff1");
         long seed = System.currentTimeMillis();
-        //seed = 1723015615295L;
+        //seed = 1724541784239L;
         CourseEventSummaryChecker courseEventSummaryChecker = new CourseEventSummaryChecker(database, seed);
         List<String> validate = courseEventSummaryChecker.validate();
         assertThat(validate).isEmpty();
