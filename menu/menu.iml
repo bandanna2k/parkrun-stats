@@ -22,5 +22,6 @@
     <orderEntry type="library" name="junit.platform.launcher" level="project" />
     <orderEntry type="library" name="junit" level="project" />
     <orderEntry type="library" name="github.hazendaz.htmlcompressor" level="project" />
+    <orderEntry type="library" name="github.hazendaz.maven.yuicompressor.plugin" level="project" />
   </component>
 </module>

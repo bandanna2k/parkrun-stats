@@ -1,6 +1,8 @@
 package dnt.parkrun.menu;
 
 import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
+import com.googlecode.htmlcompressor.compressor.YuiCssCompressor;
+import com.googlecode.htmlcompressor.compressor.YuiJavaScriptCompressor;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.Database;
 import dnt.parkrun.database.LiveDatabase;
@@ -119,8 +121,8 @@ public class Menu
             File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
             findAndReplace(file, modified, MostEventStats.fileReplacements());
 
-            File compressed = new File(file.getAbsoluteFile().getParent() + "/compressed_" + file.getName());
-            compress(modified, compressed);
+//            File compressed = new File(file.getAbsoluteFile().getParent() + "/compressed_" + file.getName());
+//            compress(modified, compressed);
 
             new ProcessBuilder("xdg-open", modified.getAbsolutePath()).start();
         }
@@ -162,10 +164,10 @@ public class Menu
             File modified = new File(file.getAbsoluteFile().getParent() + "/modified_" + file.getName());
             findAndReplace(file, modified, SpeedStats.fileReplacements());
 
-            File compressed = new File(file.getAbsoluteFile().getParent() + "/compressed_" + file.getName());
-            compress(modified, compressed);
+//            File compressed = new File(file.getAbsoluteFile().getParent() + "/compressed_" + file.getName());
+//            compress(modified, compressed);
 
-            new ProcessBuilder("xdg-open", compressed.getAbsolutePath()).start();
+                new ProcessBuilder("xdg-open", modified.getAbsolutePath()).start();
         }
         catch (IOException | XMLStreamException e)
         {
@@ -242,8 +244,41 @@ public class Menu
              OutputStreamWriter osw = new OutputStreamWriter(fos);
              BufferedWriter writer = new BufferedWriter(osw))
         {
+            compressor.setGenerateStatistics(true);
+
+            compressor.setEnabled(true);                   //if false all compression is off (default is true)
+            compressor.setRemoveComments(true);            //if false keeps HTML comments (default is true)
+            compressor.setRemoveMultiSpaces(true);         //if false keeps multiple whitespace characters (default is true)
+            compressor.setRemoveIntertagSpaces(true);      //removes iter-tag whitespace characters
+            compressor.setRemoveQuotes(true);              //removes unnecessary tag attribute quotes
+            compressor.setSimpleDoctype(true);             //simplify existing doctype
+            compressor.setRemoveScriptAttributes(true);    //remove optional attributes from script tags
+            compressor.setRemoveStyleAttributes(true);     //remove optional attributes from style tags
+            compressor.setRemoveLinkAttributes(true);      //remove optional attributes from link tags
+            compressor.setRemoveFormAttributes(true);      //remove optional attributes from form tags
+            compressor.setRemoveInputAttributes(true);     //remove optional attributes from input tags
+            compressor.setSimpleBooleanAttributes(true);   //remove values from boolean tag attributes
+            compressor.setRemoveJavaScriptProtocol(true);  //remove "javascript:" from inline event handlers
+            compressor.setRemoveHttpProtocol(true);        //replace "http://" with "//" inside tag attributes
+            compressor.setRemoveHttpsProtocol(true);       //replace "https://" with "//" inside tag attributes
+            compressor.setRemoveSurroundingSpaces("br,p"); //remove spaces around provided tags
+
+            compressor.setCompressCss(true);               //compress inline css
+            compressor.setCompressJavaScript(true);        //compress inline javascript
+
+            compressor.setJavaScriptCompressor(new YuiJavaScriptCompressor());
+            compressor.setCssCompressor(new YuiCssCompressor());
+
+            compressor.compress(html);
+            System.out.println(String.format(
+                    "Compression time: %,d ms, Original size: %,d bytes, Compressed size: %,d bytes",
+                    compressor.getStatistics().getTime(),
+                    compressor.getStatistics().getOriginalMetrics().getFilesize(),
+                    compressor.getStatistics().getCompressedMetrics().getFilesize()
+            ));
             writer.write(compressor.compress(html));
         }
+
     }
 
 
