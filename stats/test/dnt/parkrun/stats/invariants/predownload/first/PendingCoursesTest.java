@@ -43,27 +43,33 @@ public class PendingCoursesTest
         UrlGenerator urlGenerator = new UrlGenerator(NZ.baseUrl);
         SoftAssertions softly = new SoftAssertions();
         pendingCourses.forEach(pc -> {
-
-            if(coursesToStart.contains(pc.name))
+            try
             {
-                courseDao.setCourseStatus(pc.name, RUNNING);
-                System.out.printf("Course '%s' is set to %s%n", pc.name, RUNNING);
+                if(coursesToStart.contains(pc.name))
+                {
+                    courseDao.setCourseStatus(pc.name, RUNNING);
+                    System.out.printf("Course '%s' is set to %s%n", pc.name, RUNNING);
+                }
+
+                AtomicInteger volunteers = new AtomicInteger(0);
+                AtomicInteger finishers = new AtomicInteger(0);
+                Parser parser = new Parser.Builder(courseRepository)
+                        .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(pc.name, 1)))
+                        .forEachResult(result -> finishers.incrementAndGet())
+                        .forEachVolunteer(volunteer -> volunteers.incrementAndGet())
+                        .build();
+                parser.parse();
+
+                System.out.printf("Course '%s' (%s), has results in for event number 1. Finishers %d, Volunteers %d%n",
+                        pc.name, pc.longName, finishers.get(), volunteers.get());
+                softly.assertThat(finishers.get() == 0 && volunteers.get() == 0)
+                        .describedAs("Course %s has finishers and volunteers, but is set to pending?", pc.name)
+                        .isTrue();
             }
-
-            AtomicInteger volunteers = new AtomicInteger(0);
-            AtomicInteger finishers = new AtomicInteger(0);
-            Parser parser = new Parser.Builder(courseRepository)
-                    .webpageProvider(new WebpageProviderImpl(urlGenerator.generateCourseEventUrl(pc.name, 1)))
-                    .forEachResult(result -> finishers.incrementAndGet())
-                    .forEachVolunteer(volunteer -> volunteers.incrementAndGet())
-                    .build();
-            parser.parse();
-
-            System.out.printf("Course '%s' (%s), has results in for event number 1. Finishers %d, Volunteers %d%n",
-                    pc.name, pc.longName, finishers.get(), volunteers.get());
-            softly.assertThat(finishers.get() == 0 && volunteers.get() == 0)
-                    .describedAs("Course %s has finishers and volunteers, but is set to pending?", pc.name)
-                    .isTrue();
+            catch (Exception ex)
+            {
+                softly.fail(String.format("Exception for course '%s' %s", pc.name, ex.getMessage()));
+            }
         });
         softly.assertAll();
     }
