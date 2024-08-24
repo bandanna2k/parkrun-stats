@@ -51,6 +51,22 @@ public class CourseDaoTest extends BaseDaoTest
     }
 
     @Test
+    @Ignore
+    public void shouldUpdateRealDatabase() throws SQLException
+    {
+        DataSource realDataSource = new SimpleDriverDataSource(new Driver(),
+                "jdbc:mysql://proliant.local/parkrun_stats", "dao", "0b851094");
+
+        NamedParameterJdbcTemplate realJdbc = new NamedParameterJdbcTemplate(realDataSource);
+        String sql = STR."""
+    UPDATE course
+    SET course_long_name = 'Y Promenâd, Aberhonddu parkrun'
+    WHERE course_name = 'ypromenad'
+    """;
+        realJdbc.update(sql, EmptySqlParameterSource.INSTANCE);
+    }
+
+    @Test
     public void shouldInsertUtf8Course()
     {
         Course course = courseDao.insert(new Course(Course.NO_COURSE_ID, "otakiriver", NZ, "\u014ctaki River parkrun", RUNNING));

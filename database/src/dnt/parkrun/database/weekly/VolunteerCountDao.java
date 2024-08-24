@@ -79,11 +79,12 @@ order by different_region_course_count desc, total_region_volunteers desc, a.ath
                 rs.getInt("total_global_volunteer_count")
         });
         query.forEach(result -> {
-//            Athlete athlete = (Athlete) result[0];
+            Athlete athlete = (Athlete) result[0];
             int regionCourseCount = (int)result[1];
             int regionTotalVolunteers = (int)result[2];
-            int regionGlobalVolunteers = (int)result[3];
-            assert regionGlobalVolunteers >= regionTotalVolunteers;
+            int globalTotalVolunteers = (int)result[3];
+            assert globalTotalVolunteers >= regionTotalVolunteers :
+                    String.format("Region volunteers: %d, Global volunteers: %d, Athlete: %s", regionTotalVolunteers, globalTotalVolunteers, athlete);
 
             // Not true. You can volunteer at 2 courses. Only 1 is counted for total. But course should be counted
             assert regionCourseCount <= regionTotalVolunteers : "Global volunteers should be greated than regional volunteers.";

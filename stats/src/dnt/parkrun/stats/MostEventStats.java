@@ -1067,7 +1067,7 @@ public class MostEventStats
             Parser parser = new Parser.Builder()
                     .webpageProvider(new WebpageProviderImpl(urlGenerator.generateAthleteEventSummaryUrl(athleteId)))
                     .courseNotFound(courseNotFound -> {
-                        throw new RuntimeException("Course not found. " + courseNotFound);
+                        throw new RuntimeException("Course not found, possibly renamed. " + courseNotFound);
                     })
                     .forEachAthleteCourseSummary(acsDao::writeAthleteCourseSummary)
                     .forEachVolunteerRecord(objects ->

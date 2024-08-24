@@ -5,15 +5,17 @@ import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.database.CourseDao;
 import dnt.parkrun.datastructures.*;
 import dnt.parkrun.webpageprovider.WebpageProviderImpl;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static dnt.parkrun.database.BaseDaoTest.TEST_DATABASE;
 import static dnt.parkrun.datastructures.Athlete.NO_ATHLETE_ID;
 import static dnt.parkrun.datastructures.Country.NZ;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ParsersTest
 {
@@ -37,7 +39,7 @@ public class ParsersTest
                 .build();
         parser.parse();
 
-        Assertions.assertThat(listOfCourseEvents.size()).isGreaterThan(500);
+        assertThat(listOfCourseEvents.size()).isGreaterThan(500);
     }
 
     @Test
@@ -55,7 +57,7 @@ public class ParsersTest
                 .build();
         parser.parse();
         {
-            Assertions.assertThat(listOfAthletes.size()).isGreaterThan(20);
+            assertThat(listOfAthletes.size()).isGreaterThan(20);
             int noIds = listOfAthletes.stream().filter(a -> a.athleteId == NO_ATHLETE_ID).toList().size();
             int unknowns = listOfAthletes.stream().filter(a -> a.name == null).toList().size();
             int knowns = listOfAthletes.stream().filter(a -> a.athleteId != NO_ATHLETE_ID).toList().size();
@@ -66,11 +68,11 @@ public class ParsersTest
             assert knowns > unknowns : "knowns > unknowns";
         }
         {
-            Assertions.assertThat(listOfVolunteers.size()).isGreaterThan(2);
+            assertThat(listOfVolunteers.size()).isGreaterThan(2);
             listOfVolunteers.forEach(v ->
             {
-                Assertions.assertThat(v.athlete.name).isNotNull();
-                Assertions.assertThat(v.athlete.athleteId).isNotEqualTo(NO_ATHLETE_ID);
+                assertThat(v.athlete.name).isNotNull();
+                assertThat(v.athlete.athleteId).isNotEqualTo(NO_ATHLETE_ID);
             });
         }
     }
@@ -82,12 +84,18 @@ public class ParsersTest
         new CourseDao(TEST_DATABASE, courseRepository);
 
         List<AthleteCourseSummary> list = new ArrayList<>();
+        Map<String, Integer> volunteerTypeToCount = new HashMap<>();
         Parser parser = new Parser.Builder()
-                .webpageProvider(new WebpageProviderImpl(urlGenerator.generateAthleteEventSummaryUrl(414811)))
+                .webpageProvider(new WebpageProviderImpl(urlGenerator.generateAthleteEventSummaryUrl(2147564)))
+                .forEachVolunteerRecord(obj -> volunteerTypeToCount.put((String)obj[1], (int)obj[2]))
                 .forEachAthleteCourseSummary(list::add)
                 .build(courseRepository);
         parser.parse();
 
-        Assertions.assertThat(list.size()).isGreaterThan(49);
+        volunteerTypeToCount.forEach((type, count) -> assertThat(count).isGreaterThan(0));
+        Integer totalCredits = volunteerTypeToCount.get("Total Credits");
+        System.out.printf("Count: %d, Total Credits: %d%n", volunteerTypeToCount.size(), totalCredits);
+        assertThat(totalCredits).isNotNull();
+        assertThat(list.size()).isGreaterThan(49);
     }
 }

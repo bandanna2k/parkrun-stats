@@ -3,7 +3,6 @@ package dnt.parkrun.athletecoursesummary;
 
 import dnt.parkrun.datastructures.CourseRepository;
 import dnt.parkrun.filewebpageprovider.FileWebpageProvider;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.io.File;
@@ -14,6 +13,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static dnt.parkrun.datastructures.AgeCategory.VM45_49;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ParserTest
 {
@@ -27,7 +27,12 @@ public class ParserTest
         URL resource = this.getClass().getResource("/example.athlete.course.summary.html");
         Parser parser = new Parser.Builder()
                 .webpageProvider(new FileWebpageProvider(new File(resource.getFile())))
-                .forEachVolunteerRecord(record -> volunteerTypeToCount.put((String) record[1], (int) record[2]))
+                .forEachVolunteerRecord(record ->
+                {
+                    String volunteerType = (String) record[1];
+                    int volunteerCount = (int) record[2];
+                    volunteerTypeToCount.put(volunteerType, volunteerCount);
+                })
                 .forEachAthleteCourseSummary(x ->
                 {
                     counter.addAndGet(x.countOfRuns);
@@ -36,9 +41,9 @@ public class ParserTest
                 .build(courseRepository);
         parser.parse();
         System.out.println("Total:" + counter.get());
-        Assertions.assertThat(volunteerTypeToCount.get("Marshal")).isEqualTo(9);
-        Assertions.assertThat(volunteerTypeToCount.get("Total Credits")).isEqualTo(21);
-        Assertions.assertThat(parser.getAthlete().name).isEqualTo("David NORTH");
-        Assertions.assertThat(parser.getAgeCategory()).isEqualTo(VM45_49);
+        assertThat(volunteerTypeToCount.get("Marshal")).isEqualTo(9);
+        assertThat(volunteerTypeToCount.get("Total Credits")).isEqualTo(21);
+        assertThat(parser.getAthlete().name).isEqualTo("David NORTH");
+        assertThat(parser.getAgeCategory()).isEqualTo(VM45_49);
     }
 }

@@ -22,7 +22,7 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Minor
 
-Graph needs fixing. Its getting overwritten on reload.
+ACS table, Global v.count column not needed???
 
 1723015615295
 
@@ -315,3 +315,11 @@ https://www.parkrun.co.nz/parkrunner/6297704/.
 This URL I envision parkrun will soon hide behind authentication, so we this code will lose the ability to
 download global athlete data. Hopefully not.
 
+```
+delete from volunteer_count_2024_08_24 where athlete_id = 2147564;
+delete from athlete_course_summary_2024_08_24 where athlete_id = 2147564;
+delete from most_events_for_region_2024_08_24 where athlete_id = 2147564;
+delete from p_index where athlete_id = 2147564;
+delete from p_index_2024_08_24 where athlete_id = 2147564;
+delete from volunteer_count_2024_08_24 where athlete_id = 2147564;
+```
