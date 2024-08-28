@@ -81,6 +81,7 @@ public class AgeCategoryRecordsHtmlWriter extends BaseWriter implements Closeabl
         try
         {
             endElement("table");
+            writer.flush();
 
 //            startElement("center");
 //            startElement("p");

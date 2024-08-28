@@ -175,7 +175,8 @@ public class SpeedStats
     }
 
     private void writeAgeGradeRecords(HtmlWriter writer,
-                                      Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord) throws XMLStreamException
+                                      Map<Integer, Map<AgeCategory, AgeCategoryRecord>> courseToAgeGroupToAgeGradeRecord)
+            throws XMLStreamException, IOException
     {
         try(CollapsableTitleHtmlWriter collapse1 = new CollapsableTitleHtmlWriter.Builder(
                 writer.writer, "Age Grade Records").open().build())
@@ -201,26 +202,33 @@ public class SpeedStats
                         List<StatsRecord> records = new ArrayList<>();
                         for (StatsRecord record : ageCategoryRecord.records)
                         {
-                            if(record.result().date == null) continue; // TODO: Need a better way of telling that a result is null.
-                            if(record.result().ageCategory == AgeCategory.UNKNOWN) continue;
+                            if (record.result().date == null)
+                                continue; // TODO: Need a better way of telling that a result is null.
+                            if (record.result().ageCategory == AgeCategory.UNKNOWN) continue;
 
                             records.add(record);
                         }
-                        if(records.isEmpty()) continue;
+                        if (records.isEmpty()) continue;
 
-                        try (CollapsableTitleHtmlWriter collapse3 = new CollapsableTitleHtmlWriter.Builder(
-                                writer.writer, ageCategory.textOnWebpage).level(3).fontSizePercent(95.0).build())
+                        try(HtmlWriter htmlWriter = HtmlWriter.newInstance(mostRecentDate, course.country, ageCategory.name(), course.name + ".html");
+                            AgeCategoryRecordsHtmlWriter ageGroupRecordsWriter2 =
+                                    new AgeCategoryRecordsHtmlWriter(htmlWriter.writer, urlGenerator, AGE_GRADE))
                         {
-                            writer.writer.writeStartElement("h3");
-//                            writer.writer.writeCharacters(YEAR + " - " + course.longName);
-                            writer.writer.writeCharacters(course.longName);
-                            writer.writer.writeEndElement();
-
-                            try (AgeCategoryRecordsHtmlWriter ageGroupRecordsWriter = new AgeCategoryRecordsHtmlWriter(writer.writer, urlGenerator, AGE_GRADE))
+                            try (CollapsableTitleHtmlWriter collapse3 = new CollapsableTitleHtmlWriter.Builder(
+                                    writer.writer, ageCategory.textOnWebpage).level(3).fontSizePercent(95.0).build())
                             {
-                                for (StatsRecord record : ageCategoryRecord.records)
+                                writer.writer.writeStartElement("h3");
+                                //                            writer.writer.writeCharacters(YEAR + " - " + course.longName);
+                                writer.writer.writeCharacters(course.longName);
+                                writer.writer.writeEndElement();
+
+                                try (AgeCategoryRecordsHtmlWriter ageGroupRecordsWriter = new AgeCategoryRecordsHtmlWriter(writer.writer, urlGenerator, AGE_GRADE))
                                 {
-                                    writeAgeGroupRecord(ageGroupRecordsWriter, record, course);
+                                    for (StatsRecord record : ageCategoryRecord.records)
+                                    {
+                                        writeAgeGroupRecord(ageGroupRecordsWriter, record, course);
+                                        writeAgeGroupRecord(ageGroupRecordsWriter2, record, course);
+                                    }
                                 }
                             }
                         }

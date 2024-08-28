@@ -20,6 +20,11 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Major
 
+Write files to project structure
+
+parkrun_stats/speed_stats/2012/time/cornwall_park
+parkrun_stats/speed_stats/2012/age_grade/cornwall_park
+
 ## Minor
 
 ACS table, Global v.count column not needed???

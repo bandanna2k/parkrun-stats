@@ -11,13 +11,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class HtmlWriter extends BaseWriter
 {
+    private static final SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
     private final Date date;
     private final File file;
     private final Country country;
+    private final boolean writeHeaderAndFooter;
 
     public static HtmlWriter newInstance(Date date, Country country, String prefix) throws IOException, XMLStreamException
     {
@@ -30,14 +34,31 @@ public class HtmlWriter extends BaseWriter
         return new HtmlWriter(writer, date, country, file);
     }
 
+    public static HtmlWriter newInstance(Date date, Country country, String extraPath, String fileName) throws IOException, XMLStreamException
+    {
+        Path path = Path.of("parkrun_stats", country.name(), sdfYear.format(date), "time", extraPath, fileName);
+        path.getParent().toFile().mkdirs();
+
+        XMLStreamWriter writer = XMLOutputFactory
+                .newInstance()
+                .createXMLStreamWriter(
+                        new OutputStreamWriter(new FileOutputStream(path.toFile()), StandardCharsets.UTF_8));
+        return new HtmlWriter(writer, date, country, path.toFile(), false);
+    }
+
     private HtmlWriter(XMLStreamWriter writer, Date date, Country country, File file) throws XMLStreamException, IOException
+    {
+        this(writer, date, country, file, true);
+    }
+    private HtmlWriter(XMLStreamWriter writer, Date date, Country country, File file, boolean writeHeaderAndFooter) throws XMLStreamException, IOException
     {
         super(writer);
         this.date = date;
         this.file = file;
         this.country = country;
+        this.writeHeaderAndFooter = writeHeaderAndFooter;
 
-        startHtml();
+        if(writeHeaderAndFooter) startHtml();
     }
 
     private void startHtml() throws XMLStreamException
@@ -66,10 +87,13 @@ public class HtmlWriter extends BaseWriter
     {
         try
         {
-            endElement("body");
-            endElement("html");
-
+            if(writeHeaderAndFooter)
+            {
+                endElement("body");
+                endElement("html");
+            }
             writer.writeEndDocument();
+            writer.flush();
             writer.close();
         }
         catch (XMLStreamException e)
