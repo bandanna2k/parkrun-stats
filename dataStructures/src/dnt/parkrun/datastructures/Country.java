@@ -21,6 +21,7 @@ public enum Country
     IRELAND("Ireland", 42, "EI", ""),
     ITALY("Italy", 44, "IT", ""),
     JAPAN("Japan", 46, "JP", ""),
+    LITHUANIA("Lithuania", 54, "LT", ""),
     MALAYSIA("Malaysia", 57, "MA", "parkrun.my"),
     NETHERLANDS("Netherlands", 64, "NE", ""),
     NZ("New Zealand", 65, "NZ", "parkrun.co.nz"),
