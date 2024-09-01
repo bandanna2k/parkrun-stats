@@ -107,8 +107,9 @@ public enum AgeCategory
         assert values().length == dbCodeToAgeCategory.size();
     }
 
-    public static AgeCategory from(String textOnWebpage)
+    public static AgeCategory from(String dirtyTextOnWebpage)
     {
+        String textOnWebpage = dirtyTextOnWebpage.replace("{", "").replace("}", "");
         AgeCategory ageCategory = textOnWebpageToAgeCategory.get(textOnWebpage);
         assert ageCategory != null : "Age group not found: " + textOnWebpage;
         return ageCategory;
