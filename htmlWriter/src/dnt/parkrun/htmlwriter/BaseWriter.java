@@ -3,14 +3,29 @@ package dnt.parkrun.htmlwriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.Closeable;
+import java.io.IOException;
 
-public abstract class BaseWriter implements Closeable
+public class BaseWriter implements Closeable
 {
     public final XMLStreamWriter writer;
 
     public BaseWriter(XMLStreamWriter writer)
     {
         this.writer = writer;
+    }
+
+    @Override
+    public void close() throws IOException
+    {
+        try
+        {
+            writer.flush();
+            writer.close();
+        }
+        catch (XMLStreamException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     protected void startElement(String tag) throws XMLStreamException

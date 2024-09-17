@@ -1,31 +1,28 @@
 package dnt.parkrun.pindex;
 
-import dnt.parkrun.datastructures.AthleteCourseSummary;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparingInt;
 
 public class PIndex
 {
-    public static Result pIndexAndNeeded(List<AthleteCourseSummary> listOfRuns)
+    public static Result pIndexAndNeeded(List<Integer> listOfRuns)
     {
-        listOfRuns.sort(comparingInt(acs -> -acs.countOfRuns));
+        listOfRuns.sort((t1, t2) -> -t1.compareTo(t2));
 
         // pIndex calculation
-        int pIndex = pIndex(listOfRuns.stream().map(acs -> acs.countOfRuns).collect(Collectors.toList()));
+        int pIndex = pIndex(listOfRuns);
 
         // Needed calculation
         int needed = 0;
         int nextPIndex = pIndex + 1;
         for (int i = 0; i < pIndex; i++)
         {
-            needed += Math.max(0, nextPIndex - listOfRuns.get(i).countOfRuns);
+            needed += Math.max(0, nextPIndex - listOfRuns.get(i));
         }
         if(listOfRuns.size() > nextPIndex)
         {
-            needed += Math.max(0, nextPIndex - listOfRuns.get(pIndex).countOfRuns);
+            needed += Math.max(0, nextPIndex - listOfRuns.get(pIndex));
         }
         else
         {

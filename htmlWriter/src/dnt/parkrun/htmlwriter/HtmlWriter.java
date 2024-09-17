@@ -6,10 +6,7 @@ import dnt.parkrun.datastructures.Country;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -27,23 +24,26 @@ public class HtmlWriter extends BaseWriter
     {
         File file = new File(prefix + "_" + DateConverter.formatDateForDbTable(date) + ".html");
 
-        XMLStreamWriter writer = XMLOutputFactory
-                .newInstance()
-                .createXMLStreamWriter(
-                        new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
+        XMLStreamWriter writer = newXmlStreamWriter(file);
         return new HtmlWriter(writer, date, country, file);
     }
 
+    @Deprecated(since = "Please delete this. It is crap")
     public static HtmlWriter newInstance(Date date, Country country, String extraPath, String fileName) throws IOException, XMLStreamException
     {
         Path path = Path.of("parkrun_stats", country.name(), sdfYear.format(date), "time", extraPath, fileName);
         path.getParent().toFile().mkdirs();
 
-        XMLStreamWriter writer = XMLOutputFactory
+        XMLStreamWriter writer = newXmlStreamWriter(path.toFile());
+        return new HtmlWriter(writer, date, country, path.toFile(), false);
+    }
+
+    private static XMLStreamWriter newXmlStreamWriter(File file) throws FileNotFoundException, XMLStreamException
+    {
+        return XMLOutputFactory
                 .newInstance()
                 .createXMLStreamWriter(
-                        new OutputStreamWriter(new FileOutputStream(path.toFile()), StandardCharsets.UTF_8));
-        return new HtmlWriter(writer, date, country, path.toFile(), false);
+                        new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
     }
 
     private HtmlWriter(XMLStreamWriter writer, Date date, Country country, File file) throws XMLStreamException, IOException
@@ -93,17 +93,37 @@ public class HtmlWriter extends BaseWriter
                 endElement("html");
             }
             writer.writeEndDocument();
-            writer.flush();
-            writer.close();
         }
         catch (XMLStreamException e)
         {
             throw new RuntimeException(e);
         }
+        super.close();
     }
 
     public File getFile()
     {
         return file;
+    }
+
+    public BaseWriter createSubPageWriter(String fileString, String... pathStrings) throws XMLStreamException, FileNotFoundException
+    {
+        String pathString = String.join(File.separator, pathStrings);
+        Path path = Path.of(pathString);
+        path.toFile().mkdirs();
+        if(path.toFile().exists() && path.toFile().isDirectory())
+        {
+            writer.writeStartElement("object");
+            writer.writeAttribute("data", pathString + File.separator + fileString);
+            writer.writeEndElement();
+
+            File file = new File(path.toFile(), fileString);
+            XMLStreamWriter xmlStreamWriter = newXmlStreamWriter(file);
+            return new BaseWriter(xmlStreamWriter);
+        }
+        else
+        {
+            throw new RuntimeException("Failed to create sub page writer.");
+        }
     }
 }

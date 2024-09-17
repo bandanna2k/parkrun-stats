@@ -44,6 +44,7 @@ import static dnt.parkrun.common.FindAndReplace.getTextFromFile;
 import static dnt.parkrun.common.ParkrunDay.getParkrunDay;
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
 import static dnt.parkrun.datastructures.Course.Status.*;
+import static dnt.parkrun.pindex.PIndex.pIndexAndNeeded;
 import static java.util.Collections.reverseOrder;
 
 public class MostEventStats
@@ -377,13 +378,13 @@ public class MostEventStats
 //                        }
 //                    });
 
-                    PIndex.Result globalPIndex = PIndex.pIndexAndNeeded(summariesForAthlete);
+                    PIndex.Result globalPIndex = athleteCourseSummaryPIndex(summariesForAthlete);
                     if (globalPIndex.pIndex <= MIN_P_INDEX)
                     {
                         continue;
                     }
 
-                    PIndex.Result regionPIndex = PIndex.pIndexAndNeeded(summariesForAthlete.stream()
+                    PIndex.Result regionPIndex = athleteCourseSummaryPIndex(summariesForAthlete.stream()
                             .filter(acs -> acs.course.country == country).collect(Collectors.toList()));
                     if (regionPIndex.pIndex <= MIN_P_INDEX)
                     {
@@ -441,13 +442,13 @@ public class MostEventStats
                     Athlete athlete = athleteIdToAthlete.get(athleteId);
                     List<AthleteCourseSummary> summariesForAthlete = entry.getValue();
 
-                    PIndex.Result globalPIndex = PIndex.pIndexAndNeeded(summariesForAthlete);
+                    PIndex.Result globalPIndex = athleteCourseSummaryPIndex(summariesForAthlete);
                     if (globalPIndex.pIndex <= MIN_P_INDEX)
                     {
                         continue;
                     }
 
-                    PIndex.Result regionPIndex = PIndex.pIndexAndNeeded(summariesForAthlete.stream()
+                    PIndex.Result regionPIndex = athleteCourseSummaryPIndex(summariesForAthlete.stream()
                             .filter(acs -> acs.course.country == country).collect(Collectors.toList()));
                     if (regionPIndex.pIndex <= MIN_P_INDEX)
                     {
@@ -1185,5 +1186,11 @@ public class MostEventStats
             }
             if(!found) thisWeek.isNewEntry = true;
         }
+    }
+
+    private static PIndex.Result athleteCourseSummaryPIndex(List<AthleteCourseSummary> listOfRuns)
+    {
+        return pIndexAndNeeded(new ArrayList<>(
+                listOfRuns.stream().map(acs -> acs.countOfRuns).toList()));
     }
 }

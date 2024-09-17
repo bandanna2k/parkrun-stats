@@ -3,10 +3,12 @@ package dnt.parkrun.pindex;
 import dnt.parkrun.datastructures.AthleteCourseSummary;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static dnt.parkrun.pindex.PIndex.pIndexAndNeeded;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PIndexTest
@@ -41,8 +43,14 @@ public class PIndexTest
         List<AthleteCourseSummary> summaries = Arrays.stream(countOfRuns)
                 .mapToObj(n -> new AthleteCourseSummary(null, null, n))
                 .collect(Collectors.toList());
-        assertThat(PIndex.pIndexAndNeeded(summaries).pIndex).isEqualTo(expectedPIndex);
-        assertThat(PIndex.pIndexAndNeeded(summaries).neededForNextPIndex).isEqualTo(expectedNeededForNextPIndex);
+        assertThat(athleteCourseSummaryPIndex(summaries).pIndex).isEqualTo(expectedPIndex);
+        assertThat(athleteCourseSummaryPIndex(summaries).neededForNextPIndex).isEqualTo(expectedNeededForNextPIndex);
         assertThat(PIndex.pIndex(summaries.stream().map(acs -> acs.countOfRuns).collect(Collectors.toList()))).isEqualTo(expectedPIndex);
+    }
+
+    private static PIndex.Result athleteCourseSummaryPIndex(List<AthleteCourseSummary> listOfRuns)
+    {
+        return pIndexAndNeeded(new ArrayList<>(
+                listOfRuns.stream().map(acs -> acs.countOfRuns).toList()));
     }
 }

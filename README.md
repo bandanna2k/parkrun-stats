@@ -20,7 +20,16 @@ Run Stats.main <date> E.g. java -jar Stats.jar 25/12/2023, this creates
 
 ## Major
 
-Write files to project structure
+1/ Write files to different structure
+
+Speed Stats > Cornwall Park > Age Category Records (Time)
+parkrun_stats/cornwall_park/speed_stats/time.html
+
+Speed Stats > Cornwall Park > Age Grade Records > VM
+parkrun_stats/cornwall_park/speed_stats/age_grade_VM45_49.html
+
+
+2/ Write files to project structure
 
 parkrun_stats/speed_stats/2012/time/cornwall_park
 parkrun_stats/speed_stats/2012/age_grade/cornwall_park
@@ -321,10 +330,9 @@ This URL I envision parkrun will soon hide behind authentication, so we this cod
 download global athlete data. Hopefully not.
 
 ```
-delete from volunteer_count_2024_08_24 where athlete_id = 2147564;
-delete from athlete_course_summary_2024_08_24 where athlete_id = 2147564;
-delete from most_events_for_region_2024_08_24 where athlete_id = 2147564;
-delete from p_index where athlete_id = 2147564;
-delete from p_index_2024_08_24 where athlete_id = 2147564;
-delete from volunteer_count_2024_08_24 where athlete_id = 2147564;
+delete from volunteer_count_2024_09_07 where athlete_id = 2147564;
+delete from athlete_course_summary_2024_09_07 where athlete_id = 2147564;
+drop table most_events_for_region_2024_09_07;
+delete from p_index_2024_09_07 where athlete_id = 2147564;
+delete from volunteer_count_2024_09_07 where athlete_id = 2147564;
 ```

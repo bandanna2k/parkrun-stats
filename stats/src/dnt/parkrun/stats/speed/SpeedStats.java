@@ -189,6 +189,22 @@ public class SpeedStats
 
             for (Course course : sortedCourses)
             {
+//                try(BaseWriter subHtml = writer.createSubPageWriter(course.name + ".html",
+//                        "parkrun_stats", course.country.name(), "speed_stats", "age_grade_records"))
+//                {
+//                    subHtml.writer.writeStartElement("html");
+//                    subHtml.writer.writeStartElement("body");
+//                    subHtml.writer.writeAttribute("style", "margin:0;padding:0");
+//
+//                    subHtml.writer.writeStartElement("font");
+//                    subHtml.writer.writeAttribute("color", "red");
+//                    subHtml.writer.writeCharacters(course.longName);
+//                    subHtml.writer.writeEndElement();
+//
+//                    subHtml.writer.writeEndElement();
+//                    subHtml.writer.writeEndElement();
+//                }
+//
                 Map<AgeCategory, AgeCategoryRecord> ageGroupToAgeGroupRecord = courseToAgeGroupToAgeGradeRecord.get(course.courseId);
 
                 try(CollapsableTitleHtmlWriter collapse2 = new CollapsableTitleHtmlWriter.Builder(
