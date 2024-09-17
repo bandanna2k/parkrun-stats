@@ -53,6 +53,21 @@ public class BaseWriter implements Closeable
         writer.writeCharacters("\n");
     }
 
+    protected void startElement(String tag,
+                                String attribute,
+                                String attributeValue,
+                                String attribute2,
+                                String attributeValue2,
+                                String attribute3,
+                                String attributeValue3) throws XMLStreamException
+    {
+        writer.writeStartElement(tag);
+        writer.writeAttribute(attribute, attributeValue);
+        writer.writeAttribute(attribute2, attributeValue2);
+        writer.writeAttribute(attribute3, attributeValue3);
+        writer.writeCharacters("\n");
+    }
+
     protected void endElement(String tag) throws XMLStreamException
     {
         writer.writeEndElement();

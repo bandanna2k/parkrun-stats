@@ -40,6 +40,10 @@ public class PIndexTest
 
         testPIndex(10,  6,
                 65, 12, 6, 4, 3, 11, 15, 13, 1, 10, 2, 1, 19, 2, 2, 5, 68, 4, 22, 2, 19);
+        testPIndex(14, 15,
+                65, 51, 47, 36, 30, 22, 22, 16, 15, 15, 14, 14, 14, 14, // 14 (1 + 1 + 1 + 1 + 11)
+                4, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1
+                );
     }
     private void testPIndex(int expectedPIndex, int expectedNeededForNextPIndex, int ... countOfRuns)
     {

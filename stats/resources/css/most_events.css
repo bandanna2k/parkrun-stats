@@ -69,8 +69,13 @@ td,th {
 .left1 td:nth-child(1) { text-align:left; }
 .left2 td:nth-child(2) { text-align:left; }
 .left3 td:nth-child(3) { text-align:left; }
+.left4 td:nth-child(4) { text-align:left; }
+.left5 td:nth-child(5) { text-align:left; }
 .left6 td:nth-child(6) { text-align:left; }
 .left7 td:nth-child(7) { text-align:left; }
+.right3 td:nth-child(3) { text-align:right; }
+.right4 td:nth-child(4) { text-align:right; }
+.right5 td:nth-child(5) { text-align:right; }
 .right6 td:nth-child(6) { text-align:right; }
 .right7 td:nth-child(7) { text-align:right; }
 .hl1 td:nth-child(1) { background-color:#f7f7f7; }
@@ -78,6 +83,8 @@ td,th {
 .hl3 td:nth-child(3) { background-color:#f7f7f7; }
 .hl6 td:nth-child(6) { background-color:#f7f7f7; }
 .hl7 td:nth-child(7) { background-color:#f7f7f7; }
+.tinypadding4 td:nth-child(4) { padding:1; }
+.tinypadding5 td:nth-child(5) { padding:1; }
 .tinypadding6 td:nth-child(6) { padding:1; }
 .tinypadding7 td:nth-child(7) { padding:1; }
 .gold { background-color:gold; }

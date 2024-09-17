@@ -31,37 +31,51 @@ public class VolunteerCountDao extends BaseDao
     }
     private void init()
     {
-        String sql =
-                "create table if not exists " + getTableName() + " ( " +
-                        "    athlete_id                     INT               NOT NULL," +
-                        "    total_global_volunteer_count   INT               NOT NULL," +
-                        " PRIMARY KEY (athlete_id) " +
-                        ") DEFAULT CHARSET=utf8mb4";
+        String sql = STR."""
+                        create table if not exists \{getTableName()} (
+                            athlete_id                     INT               NOT NULL    PRIMARY KEY,
+                            total_global_volunteer_count   INT               NOT NULL,
+                            v_index                        INT               NOT NULL,
+                            needed_for_next_v_index        INT               NOT NULL
+                        )
+                        DEFAULT CHARSET=utf8mb4;
+                """;
         jdbc.update(sql, EmptySqlParameterSource.INSTANCE);
     }
 
-    public void insertVolunteerCount(int athleteId, int volunteerCount)
+    public void insertVolunteerCount(int athleteId, int volunteerCount, int vIndex, int neededForNextVIndex)
     {
-        String sql = "insert into " + getTableName() + " (" +
-                "athlete_id, total_global_volunteer_count" +
-                ") values ( " +
-                ":athleteId, :volunteerCount" +
-                ")";
+        String sql = STR."""
+                insert into \{getTableName()} (
+                    athlete_id, total_global_volunteer_count, v_index, needed_for_next_v_index
+                ) values (
+                    :athleteId,
+                    :volunteerCount,
+                    :vIndex,
+                    :neededForNextVIndex
+                )
+                """;
         jdbc.update(sql, new MapSqlParameterSource()
                 .addValue("athleteId", athleteId)
                 .addValue("volunteerCount", volunteerCount)
+                .addValue("vIndex", vIndex)
+                .addValue("neededForNextVIndex", neededForNextVIndex)
         );
     }
 
     private String getTableName()
     {
+        // TODO Should be volunteer_data now as it includes vIndex
         return weeklyDatabaseName + ".volunteer_count_" + DateConverter.formatDateForDbTable(date);
     }
 
     public List<Object[]> getMostVolunteers()
     {
         String sql = STR."""
-select a.name, a.athlete_id, sub1.count as different_region_course_count, sub2.count as total_region_volunteers, vc.total_global_volunteer_count
+select a.name, a.athlete_id,
+    sub1.count as different_region_course_count,
+    sub2.count as total_region_volunteers,
+    vc.total_global_volunteer_count, vc.v_index, vc.needed_for_next_v_index
 from \{athleteTable()} a
 join (
     \{getSqlForVolunteersAtDifferentCourse(volunteerTable())}
@@ -76,7 +90,9 @@ order by different_region_course_count desc, total_region_volunteers desc, a.ath
                 Athlete.from(rs.getString("name"), rs.getInt("athlete_id")),
                 rs.getInt("different_region_course_count"),
                 rs.getInt("total_region_volunteers"),
-                rs.getInt("total_global_volunteer_count")
+                rs.getInt("total_global_volunteer_count"),
+                rs.getInt("v_index"),
+                rs.getInt("needed_for_next_v_index")
         });
         query.forEach(result -> {
             Athlete athlete = (Athlete) result[0];
@@ -87,7 +103,7 @@ order by different_region_course_count desc, total_region_volunteers desc, a.ath
                     String.format("Region volunteers: %d, Global volunteers: %d, Athlete: %s", regionTotalVolunteers, globalTotalVolunteers, athlete);
 
             // Not true. You can volunteer at 2 courses. Only 1 is counted for total. But course should be counted
-            assert regionCourseCount <= regionTotalVolunteers : "Global volunteers should be greated than regional volunteers.";
+            assert regionCourseCount <= regionTotalVolunteers : "Global volunteers should be greater than regional volunteers.";
         });
         return query;
     }

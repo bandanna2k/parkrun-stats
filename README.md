@@ -330,9 +330,9 @@ This URL I envision parkrun will soon hide behind authentication, so we this cod
 download global athlete data. Hopefully not.
 
 ```
-delete from volunteer_count_2024_09_07 where athlete_id = 2147564;
-delete from athlete_course_summary_2024_09_07 where athlete_id = 2147564;
-drop table most_events_for_region_2024_09_07;
-delete from p_index_2024_09_07 where athlete_id = 2147564;
-delete from volunteer_count_2024_09_07 where athlete_id = 2147564;
+delete from volunteer_count_2024_09_14 where athlete_id = 2147564;
+delete from athlete_course_summary_2024_09_14 where athlete_id = 2147564;
+drop table most_events_for_region_2024_09_14;
+delete from p_index_2024_09_14 where athlete_id = 2147564;
+delete from volunteer_count_2024_09_14 where athlete_id = 2147564;
 ```

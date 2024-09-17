@@ -18,7 +18,7 @@ public class MostVolunteersTableHtmlWriter extends BaseWriter implements Closeab
         super(writer.writer);
         this.urlGenerator = urlGenerator;
 
-        startElement("table", "class", "sortable name-name-data");
+        startElement("table", "class", "sortable name-name-data right6 left7 tinypadding6 tinypadding7");
         writeHeader(writer.writer);
     }
 
@@ -46,6 +46,10 @@ public class MostVolunteersTableHtmlWriter extends BaseWriter implements Closeab
 
         startElement("th");
         writer.writeCharacters("Total Global Volunteers");
+        endElement("th");
+
+        startElement("th", "colSpan", "2", "width", "100px", "class", "dt");
+        writer.writeCharacters("v-Index");
         endElement("th");
 
         endElement("tr");
@@ -101,6 +105,14 @@ public class MostVolunteersTableHtmlWriter extends BaseWriter implements Closeab
         writer.writeCharacters(String.valueOf(record.totalGlobalVolunteers));
         endElement("td");
 
+        // vIndex (vIndex needed)
+        startElement("td", "class", "dt");
+        writer.writeCharacters(String.valueOf(record.vIndex));
+        endElement("td");
+        startElement("td", "class", "dt");
+        writer.writeCharacters(String.format("(%d)", record.neededForNextVIndex));
+        endElement("td");
+
         endElement("tr");
     }
 
@@ -110,6 +122,8 @@ public class MostVolunteersTableHtmlWriter extends BaseWriter implements Closeab
         public final int differentRegionCourseCount;
         public final int totalRegionVolunteers;
         public final int totalGlobalVolunteers;
+        public final int vIndex;
+        public final int neededForNextVIndex;
 
         public int positionDelta;
         public boolean isNewEntry;
@@ -117,12 +131,16 @@ public class MostVolunteersTableHtmlWriter extends BaseWriter implements Closeab
         public Record(Athlete athlete,
                       int differentRegionCourseCount,
                       int totalRegionVolunteers,
-                      int totalGlobalVolunteers)
+                      int totalGlobalVolunteers,
+                      int vIndex,
+                      int neededForNextVIndex)
         {
             this.athlete = athlete;
             this.differentRegionCourseCount = differentRegionCourseCount;
             this.totalRegionVolunteers = totalRegionVolunteers;
             this.totalGlobalVolunteers = totalGlobalVolunteers;
+            this.vIndex = vIndex;
+            this.neededForNextVIndex = neededForNextVIndex;
         }
 
         @Override
@@ -133,6 +151,8 @@ public class MostVolunteersTableHtmlWriter extends BaseWriter implements Closeab
                     ", differentRegionCourseCount=" + differentRegionCourseCount +
                     ", totalRegionVolunteers=" + totalRegionVolunteers +
                     ", totalGlobalVolunteers=" + totalGlobalVolunteers +
+                    ", vIndex=" + vIndex +
+                    ", neededForNextVIndex=" + neededForNextVIndex +
                     ", positionDelta=" + positionDelta +
                     ", isNewEntry=" + isNewEntry +
                     '}';

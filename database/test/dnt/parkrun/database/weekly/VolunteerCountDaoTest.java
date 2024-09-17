@@ -53,7 +53,7 @@ public class VolunteerCountDaoTest extends BaseDaoTest
                 instant = instant.plus(7, ChronoUnit.DAYS);
             }
 
-            volunteerCountDao.insertVolunteerCount(athlete.athleteId, 25);
+            volunteerCountDao.insertVolunteerCount(athlete.athleteId, 25, 5, 3);
 
             assertThat(volunteerDao.getMostVolunteers().size()).isEqualTo(1);
             assertThat(volunteerDao.getMostVolunteers().get(0)[2]).isEqualTo(20);

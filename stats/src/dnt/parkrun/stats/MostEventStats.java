@@ -338,8 +338,10 @@ public class MostEventStats
                 assert !mostVolunteers.isEmpty() : "WARNING: No records for Most Volunteers";
                 for (Object[] record : mostVolunteers)
                 {
+                    int vIndex = (int)record[4];
+                    int neededForNextVIndex = (int)record[5];
                     tableWriter.writeRecord(new MostVolunteersTableHtmlWriter.Record(
-                            (Athlete)record[0], (int) record[1], (int) record[2], (int) record[3]));
+                            (Athlete)record[0], (int) record[1], (int) record[2], (int) record[3], vIndex, neededForNextVIndex));
                 }
             }
         }
@@ -1065,6 +1067,10 @@ public class MostEventStats
             int athleteId = listOfAthletesToDownload.get(i - 1);
 
             System.out.printf("Downloading %d of %d ", i, countOfAthletesToDownload);
+
+            List<Integer> listOfVolunteers = new ArrayList<>();
+            List<Integer> listOfTotalCredits = new ArrayList<>();
+
             Parser parser = new Parser.Builder()
                     .webpageProvider(new WebpageProviderImpl(urlGenerator.generateAthleteEventSummaryUrl(athleteId)))
                     .courseNotFound(courseNotFound -> {
@@ -1074,14 +1080,23 @@ public class MostEventStats
                     .forEachVolunteerRecord(objects ->
                     {
                         String type = (String)objects[1];
+                        int count = (int) objects[2];
                         if("Total Credits".equals(type))
                         {
-                            int count = (int) objects[2];
-                            volunteerCountDao.insertVolunteerCount(athleteId, count);
+                            listOfTotalCredits.add(count);
+                        }
+                        else
+                        {
+                            listOfVolunteers.add(count);
                         }
                     })
                     .build(courseRepository);
             parser.parse();
+
+            assert listOfTotalCredits.size() == 1;
+            PIndex.Result vIndex = pIndexAndNeeded(listOfVolunteers);
+            volunteerCountDao.insertVolunteerCount(athleteId, listOfTotalCredits.getFirst(),
+                    vIndex.pIndex, vIndex.neededForNextPIndex);
         }
 
         acsDao.getAthleteCourseSummaries().forEach(objects ->
