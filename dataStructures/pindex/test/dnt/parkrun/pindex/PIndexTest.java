@@ -37,6 +37,9 @@ public class PIndexTest
         testPIndex(4,  9, 4, 4, 4, 4);
 
         testPIndex(8,  9, 94, 57, 19, 17, 13, 9, 8, 8, 2, 1, 1, 1);
+
+        testPIndex(10,  6,
+                65, 12, 6, 4, 3, 11, 15, 13, 1, 10, 2, 1, 19, 2, 2, 5, 68, 4, 22, 2, 19);
     }
     private void testPIndex(int expectedPIndex, int expectedNeededForNextPIndex, int ... countOfRuns)
     {
