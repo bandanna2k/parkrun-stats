@@ -759,7 +759,7 @@ public class MostEventStats
                     .level(2).fontSizePercent(95).build())
             {
                 try (Top10InRegionHtmlWriter top10InRegionHtmlWriter = new Top10InRegionHtmlWriter(
-                        writer.writer, urlGenerator, "Volunteer"))
+                        writer.writer, urlGenerator, "Vol."))
                 {
                     for (StatsRecord statsRecord : top10forRegion.subList(0, 20))
                     {
@@ -772,7 +772,7 @@ public class MostEventStats
                     .level(2).fontSizePercent(95).build())
             {
                 try (Top10InRegionHtmlWriter top10atCourse = new Top10InRegionHtmlWriter(
-                        writer.writer, urlGenerator, "Volunteer", true))
+                        writer.writer, urlGenerator, "Vol.", true))
                 {
                     for (StatsRecord record : clubDe90Percent)
                     {
@@ -796,7 +796,7 @@ public class MostEventStats
                         .level(2).fontSizePercent(95).build())
                 {
                     try (Top10AtCourseHtmlWriter top10atCourse = new Top10AtCourseHtmlWriter(
-                            writer.writer, urlGenerator, "Run"))
+                            writer.writer, urlGenerator, "Vol."))
                     {
                         List<Object[]> mostVolunteersForCourse = mostVolunteersAtCourseProcessor.getMostVolunteersForCourse(course.courseId);
                         for (Object[] objects : mostVolunteersForCourse)

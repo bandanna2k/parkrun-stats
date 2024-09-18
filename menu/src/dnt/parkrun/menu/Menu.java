@@ -17,7 +17,7 @@ import dnt.parkrun.stats.invariants.predownload.first.ParsersTest;
 import dnt.parkrun.stats.invariants.predownload.first.PendingCoursesTest;
 import dnt.parkrun.stats.invariants.predownload.first.ProvinceTest;
 import dnt.parkrun.stats.invariants.predownload.last.AreLastResultsInFromCanadaTest;
-import dnt.parkrun.stats.invariants.predownload.last.AreLatestRegionResultsInTest;
+import dnt.parkrun.stats.invariants.predownload.last.LatestResultsAndEventHistoryTest;
 import dnt.parkrun.stats.speed.AgeCategoryRecord;
 import dnt.parkrun.stats.speed.SpeedStats;
 import dnt.parkrun.webpageprovider.WebpageProviderFactoryImpl;
@@ -190,7 +190,7 @@ public class Menu
     {
         runInvariantsQuick();
         runInvariants(
-                AreLatestRegionResultsInTest.class,
+                LatestResultsAndEventHistoryTest.class,
                 AreLastResultsInFromCanadaTest.class,
                 PendingCoursesTest.class
         );
