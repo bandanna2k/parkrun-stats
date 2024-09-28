@@ -1093,10 +1093,17 @@ public class MostEventStats
                     .build(courseRepository);
             parser.parse();
 
-            assert listOfTotalCredits.size() == 1;
-            PIndex.Result vIndex = pIndexAndNeeded(listOfVolunteers);
-            volunteerCountDao.insertVolunteerCount(athleteId, listOfTotalCredits.getFirst(),
-                    vIndex.pIndex, vIndex.neededForNextPIndex);
+            if(listOfTotalCredits.size() == 1)
+            {
+                PIndex.Result vIndex = pIndexAndNeeded(listOfVolunteers);
+                volunteerCountDao.insertVolunteerCount(athleteId, listOfTotalCredits.getFirst(),
+                        vIndex.pIndex, vIndex.neededForNextPIndex);
+            }
+            else
+            {
+                System.out.printf("WARNING: Size of volunteers is %d for %d%n" +
+                        "Athlete does not want data visible?%n", listOfTotalCredits.size(), athleteId);
+            }
         }
 
         acsDao.getAthleteCourseSummaries().forEach(objects ->
