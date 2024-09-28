@@ -1,5 +1,6 @@
 package dnt.parkrun.weekendresults;
 
+import dnt.parkrun.common.ParkrunDay;
 import dnt.parkrun.common.UrlGenerator;
 import dnt.parkrun.courseeventsummary.Parser;
 import dnt.parkrun.courses.reader.EventsJsonFileReader;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static dnt.parkrun.database.DataSourceUrlBuilder.getDataSourceUrl;
@@ -29,7 +31,6 @@ public class WeekendResults
         weekendResults.fetchWeekendResults();
     }
 
-    private final Database database;
     private final Country country;
     private final CourseRepository courseRepository;
 
@@ -43,7 +44,6 @@ public class WeekendResults
     private WeekendResults(Database database,
                            WebpageProviderFactory webpageProviderFactory) throws SQLException
     {
-        this.database = database;
         this.country = database.country;
         this.courseRepository = new CourseRepository();
         this.courseDao = new CourseDao(database, courseRepository);
@@ -62,6 +62,7 @@ public class WeekendResults
 
     public void fetchWeekendResults() throws IOException
     {
+        Date parkrunDay = ParkrunDay.getParkrunDay(new Date());
         courseRepository.getCourses(country).forEach(course ->
         {
             if(course.status != Course.Status.RUNNING) return;
@@ -98,6 +99,13 @@ public class WeekendResults
             System.out.printf("* [%s] Get course summaries from database... ", course.longName);
             List<CourseEventSummary> courseEventSummariesFromDao = courseEventSummaryDao.getCourseEventSummaries(course);
             System.out.printf("Count: %d *%n", courseEventSummariesFromDao.size());
+
+            if(courseEventSummariesFromDao.stream()
+                    .anyMatch(ces ->
+                            ces.course.courseId == course.courseId && 0 == ces.date.compareTo(parkrunDay)))
+            {
+                return;
+            }
 
             System.out.printf("* [%s] Get course summaries from web... ", course.longName);
             List<CourseEventSummary> courseEventSummariesFromWeb = getCourseEventSummariesFromWeb(course);
