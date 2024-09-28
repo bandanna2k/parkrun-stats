@@ -336,3 +336,8 @@ drop table most_events_for_region_2024_09_14;
 delete from p_index_2024_09_14 where athlete_id = 2147564;
 delete from volunteer_count_2024_09_14 where athlete_id = 2147564;
 ```
+
+```
+select distinct course_id, max(date) as mmax 
+from course_event_summary group by course_id order by mmax desc;
+```
