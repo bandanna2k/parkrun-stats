@@ -46,7 +46,9 @@ Document doc = Jsoup.connect("url").proxy(proxy).get();
                         .timeout(10000);
                 if(shouldSleep)
                 {
-                    int sleepTime = 3000 + RANDOM.nextInt(3000);
+                    int sleepTime;
+                    sleepTime = 3000 + RANDOM.nextInt(3000);
+                    sleepTime = 5000 + RANDOM.nextInt(3000);
                     System.out.print("Sleeping for " + sleepTime + " ... ");
                     Thread.sleep(sleepTime);
                     System.out.print("Loading URL: " + url + " ");
