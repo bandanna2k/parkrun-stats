@@ -28,7 +28,22 @@ public class RewriteEvent
         RewriteEvent rewriteEvent = new RewriteEvent(database);
 //        rewriteEvent.rewriteCourseEvent("otakiriver", 76); // David 1st place
 
-        rewriteEvent.rewriteCourseEvent("pegasus", 394);
+        rewriteEvent.rewriteCourseEvent("araharakeke96");
+        rewriteEvent.rewriteCourseEvent("broadpark106");
+        rewriteEvent.rewriteCourseEvent("eastend275");
+        rewriteEvent.rewriteCourseEvent("gisborne294");
+        rewriteEvent.rewriteCourseEvent("hagley482");
+        rewriteEvent.rewriteCourseEvent("invercargill301");
+    }
+
+    private void rewriteCourseEvent(String eventString)
+    {
+        int i = eventString.length() - 1;
+        while(Character.isDigit(eventString.charAt(i)))
+        {
+            i--;
+        }
+        rewriteCourseEvent(eventString.substring(0, i+1), Integer.parseInt(eventString.substring(i + 1)));
     }
 
     public RewriteEvent(Database database)
